@@ -40,8 +40,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
@@ -89,7 +92,7 @@ public class BRF001ReportService {
 
 	@Autowired
 	BRF1_DetaiRep BRF1_DetaiRep1;
-	
+
 	@Autowired
 	MANUAL_Service_Rep mANUAL_Service_Rep;
 
@@ -2297,6 +2300,9 @@ public class BRF001ReportService {
 
 	}
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	public String detailChanges1(BRF1_DETAIL_ENTITY detail, String foracid, String report_addl_criteria_1,
 			BigDecimal act_balance_amt_lc, String report_label_1, String report_name_1) {
 
@@ -2326,8 +2332,10 @@ public class BRF001ReportService {
 					BRFdetail.setReport_name_1(report_name_1);
 				}
 				if (!Objects.equals(BRFdetail.getAct_balance_amt_lc(), act_balance_amt_lc)) {
-					oldValues.add(BRFdetail.getAct_balance_amt_lc().toString());
-					newValues.add(act_balance_amt_lc.toString());
+					oldValues.add(
+							BRFdetail.getAct_balance_amt_lc() != null ? BRFdetail.getAct_balance_amt_lc().toString()
+									: "null");
+					newValues.add(act_balance_amt_lc != null ? act_balance_amt_lc.toString() : "null");
 					fieldNames.add("act_balance_amt_lc");
 					BRFdetail.setAct_balance_amt_lc(act_balance_amt_lc);
 				}
@@ -2371,6 +2379,42 @@ public class BRF001ReportService {
 					audit.setAudit_ref_no(auditID);
 
 					mANUAL_Service_Rep.save(audit);
+
+					// =========================================================================
+					// PROCEDURE EXECUTION LOGIC (Added without changing method arguments)
+					// =========================================================================
+					try {
+						// Assuming the entity has a getReport_date() method returning a Date object
+						Date entityDate = BRFdetail.getReport_date();
+
+						if (entityDate != null) {
+							String formattedDate = new SimpleDateFormat("dd-MM-yyyy").format(entityDate);
+
+							// Run summary procedure after commit
+							TransactionSynchronizationManager
+									.registerSynchronization(new TransactionSynchronizationAdapter() {
+										@Override
+										public void afterCommit() {
+											try {
+												logger.info(
+														"Transaction committed — calling BRF1_SUMMARY_PROCEDURE({})",
+														formattedDate);
+												// Make sure 'jdbcTemplate' is available in this class
+												jdbcTemplate.update("BEGIN BRF1_SUMMARY_PROCEDURE(?); END;",
+														formattedDate);
+												logger.info("Procedure executed successfully after commit.");
+											} catch (Exception e) {
+												logger.error("Error executing procedure after commit", e);
+											}
+										}
+									});
+						} else {
+							logger.warn("Report Date is null in entity, skipping summary procedure.");
+						}
+					} catch (Exception e) {
+						logger.error("Error preparing procedure call", e);
+					}
+					// =========================================================================
 
 					msg = "Edited Successfully";
 				}

@@ -10,18 +10,17 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.ZoneId;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -45,8 +44,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
@@ -89,16 +91,16 @@ public class BRF004ReportService {
 
 	@Autowired
 	BRF4_DetaiRep BRF4_DetaiRep1;
-	
+
 	@Autowired
 	MANUAL_Service_Rep mANUAL_Service_Rep;
-	
+
 	@Autowired
 	SequenceGenerator sequence;
 
 	@Autowired
 	UserProfileRep userProfileRep;
-	
+
 	/*
 	 * @Autowired BRF73ServiceRepo brf73ServiceRepo;
 	 */
@@ -427,7 +429,7 @@ public class BRF004ReportService {
 					e.printStackTrace();
 				}
 				outputFile = new File(path);
-				
+
 				HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 						.getRequest();
 				String user1 = (String) request.getSession().getAttribute("USERID");
@@ -464,7 +466,7 @@ public class BRF004ReportService {
 				audit.setAudit_ref_no(auditID);
 
 				mANUAL_Service_Rep.save(audit);
-				
+
 				return outputFile;
 			} else {
 
@@ -909,92 +911,135 @@ public class BRF004ReportService {
 
 	}
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	public String detailChanges4(BRF4_DETAIL_ENTITY detail, String report_label_1, BigDecimal act_balance_amt_lc,
 			String foracid, String report_name_1, String report_addl_criteria_1) {
 
 		String msg = "";
 
 		try {
-
 			Session hs = sessionFactory.getCurrentSession();
 			Optional<BRF4_DETAIL_ENTITY> Brf4detail = BRF4_DetaiRep1.findById(foracid);
 
 			if (Brf4detail.isPresent()) {
 				BRF4_DETAIL_ENTITY BRFdetail = Brf4detail.get();
-				if (Brf4detail != null && report_label_1 != null && report_name_1 != null
-						&& report_addl_criteria_1 != null) {
 
-					if (act_balance_amt_lc.equals(BRFdetail.getAct_balance_amt_lc())
-							&& report_label_1.equals(BRFdetail.getReport_label_1())
-							&& report_name_1.equals(BRFdetail.getReport_name_1())
-							&& report_addl_criteria_1.equals(BRFdetail.getReport_addl_criteria_1())) {
-						msg = "No modification done";
-					} else {
+				// Improved Null-safe check to determine if any changes exist
+				boolean isUnchanged = Objects.equals(BRFdetail.getReport_label_1(), report_label_1)
+						&& Objects.equals(BRFdetail.getReport_name_1(), report_name_1)
+						&& Objects.equals(BRFdetail.getAct_balance_amt_lc(), act_balance_amt_lc)
+						&& Objects.equals(BRFdetail.getReport_addl_criteria_1(), report_addl_criteria_1);
 
-						List<String> oldValues = new ArrayList<>();
-						List<String> newValues = new ArrayList<>();
-						List<String> fieldNames = new ArrayList<>();
+				if (isUnchanged) {
+					msg = "No modification done";
+				} else {
 
-						if (!Objects.equals(BRFdetail.getReport_label_1(), report_label_1)) {
-							oldValues.add(BRFdetail.getReport_label_1());
-							newValues.add(report_label_1);
-							fieldNames.add("report_label_1");
-							BRFdetail.setReport_label_1(report_label_1);
-						}
-						if (!Objects.equals(BRFdetail.getReport_name_1(), report_name_1)) {
-							oldValues.add(BRFdetail.getReport_name_1());
-							newValues.add(report_name_1);
-							fieldNames.add("report_name_1");
-							BRFdetail.setReport_name_1(report_name_1);
-						}
-						if (!Objects.equals(BRFdetail.getAct_balance_amt_lc(), act_balance_amt_lc)) {
-							oldValues.add(BRFdetail.getAct_balance_amt_lc().toString());
-							newValues.add(act_balance_amt_lc.toString());
-							fieldNames.add("act_balance_amt_lc");
-							BRFdetail.setAct_balance_amt_lc(act_balance_amt_lc);
-						}
-						if (!Objects.equals(BRFdetail.getReport_addl_criteria_1(), report_addl_criteria_1)) {
-							oldValues.add(BRFdetail.getReport_addl_criteria_1());
-							newValues.add(report_addl_criteria_1);
-							fieldNames.add("report_addl_criteria_1");
-							BRFdetail.setReport_addl_criteria_1(report_addl_criteria_1);
-						}
+					List<String> oldValues = new ArrayList<>();
+					List<String> newValues = new ArrayList<>();
+					List<String> fieldNames = new ArrayList<>();
 
-						BRF4_DetaiRep1.save(BRFdetail);
-
-						// === Begin Audit Block ===
-						HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
-								.getRequestAttributes()).getRequest();
-						String user1 = (String) request.getSession().getAttribute("USERID");
-						String username = (String) request.getSession().getAttribute("USERNAME");
-
-						String auditID = sequence.generateRequestUUId();
-
-						MANUAL_Service_Entity audit = new MANUAL_Service_Entity();
-						audit.setAudit_date(new Date());
-						audit.setEntry_time(new Date());
-						audit.setEntry_user(user1);
-						audit.setFunc_code("EDIT");
-						audit.setAudit_table("BRF4_DETAILTABLE");
-						audit.setAudit_screen("Edit");
-						audit.setEvent_id(user1);
-						audit.setEvent_name(username);
-						audit.setRemarks("Edit Successfully");
-						audit.setField_name(String.join("; ", fieldNames));
-						audit.setOld_value(String.join("; ", oldValues));
-						audit.setNew_value(String.join("; ", newValues));
-
-						UserProfile values1 = userProfileRep.getRole(user1);
-						audit.setAuth_user(values1.getAuth_user());
-						audit.setAuth_time(values1.getAuth_time());
-						audit.setAudit_ref_no(auditID);
-
-						mANUAL_Service_Rep.save(audit);
-						// === End Audit Block ===
-
-						logger.info("Edited Record");
-						msg = "Edited Successfully";
+					// Detect specific changes
+					if (!Objects.equals(BRFdetail.getReport_label_1(), report_label_1)) {
+						oldValues.add(BRFdetail.getReport_label_1());
+						newValues.add(report_label_1);
+						fieldNames.add("report_label_1");
+						BRFdetail.setReport_label_1(report_label_1);
 					}
+					if (!Objects.equals(BRFdetail.getReport_name_1(), report_name_1)) {
+						oldValues.add(BRFdetail.getReport_name_1());
+						newValues.add(report_name_1);
+						fieldNames.add("report_name_1");
+						BRFdetail.setReport_name_1(report_name_1);
+					}
+					if (!Objects.equals(BRFdetail.getAct_balance_amt_lc(), act_balance_amt_lc)) {
+						oldValues.add(
+								BRFdetail.getAct_balance_amt_lc() != null ? BRFdetail.getAct_balance_amt_lc().toString()
+										: "null");
+						newValues.add(act_balance_amt_lc != null ? act_balance_amt_lc.toString() : "null");
+						fieldNames.add("act_balance_amt_lc");
+						BRFdetail.setAct_balance_amt_lc(act_balance_amt_lc);
+					}
+					if (!Objects.equals(BRFdetail.getReport_addl_criteria_1(), report_addl_criteria_1)) {
+						oldValues.add(BRFdetail.getReport_addl_criteria_1());
+						newValues.add(report_addl_criteria_1);
+						fieldNames.add("report_addl_criteria_1");
+						BRFdetail.setReport_addl_criteria_1(report_addl_criteria_1);
+					}
+
+					BRF4_DetaiRep1.save(BRFdetail);
+
+					// === Begin Audit Block ===
+					HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+							.getRequestAttributes()).getRequest();
+					String user1 = (String) request.getSession().getAttribute("USERID");
+					String username = (String) request.getSession().getAttribute("USERNAME");
+
+					String auditID = sequence.generateRequestUUId();
+
+					MANUAL_Service_Entity audit = new MANUAL_Service_Entity();
+					audit.setAudit_date(new Date());
+					audit.setEntry_time(new Date());
+					audit.setEntry_user(user1);
+					audit.setFunc_code("EDIT");
+					audit.setAudit_table("BRF4_DETAILTABLE");
+					audit.setAudit_screen("Edit");
+					audit.setEvent_id(user1);
+					audit.setEvent_name(username);
+					audit.setRemarks("Edit Successfully");
+					audit.setField_name(String.join("; ", fieldNames));
+					audit.setOld_value(String.join("; ", oldValues));
+					audit.setNew_value(String.join("; ", newValues));
+
+					UserProfile values1 = userProfileRep.getRole(user1);
+					audit.setAuth_user(values1.getAuth_user());
+					audit.setAuth_time(values1.getAuth_time());
+					audit.setAudit_ref_no(auditID);
+
+					mANUAL_Service_Rep.save(audit);
+					// === End Audit Block ===
+
+					// =========================================================================
+					// PROCEDURE EXECUTION LOGIC (BRF4)
+					// =========================================================================
+					try {
+						// Extract Date from the entity
+						Date entityDate = BRFdetail.getReport_date();
+
+						if (entityDate != null) {
+							String formattedDate = new SimpleDateFormat("dd-MM-yyyy").format(entityDate);
+
+							// Run summary procedure after commit
+							TransactionSynchronizationManager
+									.registerSynchronization(new TransactionSynchronizationAdapter() {
+										@Override
+										public void afterCommit() {
+											try {
+												logger.info(
+														"Transaction committed — calling BRF4_SUMMARY_PROCEDURE({})",
+														formattedDate);
+
+												// Make sure 'jdbcTemplate' is available
+												jdbcTemplate.update("BEGIN BRF4_SUMMARY_PROCEDURE(?); END;",
+														formattedDate);
+
+												logger.info("BRF4 Procedure executed successfully after commit.");
+											} catch (Exception e) {
+												logger.error("Error executing BRF4 procedure after commit", e);
+											}
+										}
+									});
+						} else {
+							logger.warn("Report Date is null in BRF4 entity, skipping summary procedure.");
+						}
+					} catch (Exception e) {
+						logger.error("Error preparing BRF4 procedure call", e);
+					}
+					// =========================================================================
+
+					logger.info("Edited Record");
+					msg = "Edited Successfully";
 				}
 			} else {
 				msg = "No data Found";
@@ -1217,113 +1262,108 @@ public class BRF004ReportService {
 
 	public Map<String, BigDecimal> getBRF004View_one() {
 
-	    Session hs = sessionFactory.getCurrentSession();
-	    Map<String, BigDecimal> monthlyProfitMap = new LinkedHashMap<>();
+		Session hs = sessionFactory.getCurrentSession();
+		Map<String, BigDecimal> monthlyProfitMap = new LinkedHashMap<>();
 
-	    try {
-	        LocalDate now = LocalDate.now(); // Current date
-	        LocalDate startOfYear = now.withDayOfYear(1);
-	        LocalDate endOfYear = now.withMonth(12).withDayOfMonth(31);
+		try {
+			LocalDate now = LocalDate.now(); // Current date
+			LocalDate startOfYear = now.withDayOfYear(1);
+			LocalDate endOfYear = now.withMonth(12).withDayOfMonth(31);
 
-	        // Using current date instead of a fixed date
-	        LocalDate filterDate = now; // Current date
+			// Using current date instead of a fixed date
+			LocalDate filterDate = now; // Current date
 
-	        List<BRF4_ENTITY> T1Master = hs.createQuery(
-	            "from BRF4_ENTITY a where a.report_date = :reportDate", BRF4_ENTITY.class)
-	            .setParameter("reportDate", java.sql.Date.valueOf(filterDate)) // Passing the current date
-	            .getResultList();
+			List<BRF4_ENTITY> T1Master = hs
+					.createQuery("from BRF4_ENTITY a where a.report_date = :reportDate", BRF4_ENTITY.class)
+					.setParameter("reportDate", java.sql.Date.valueOf(filterDate)) // Passing the current date
+					.getResultList();
 
-	        // Initialize all months with 0
-	        for (int i = 1; i <= 12; i++) {
-	            String monthName = String.format("%02d", i); // e.g., "01", "02"
-	            monthlyProfitMap.put(monthName, BigDecimal.ZERO);
-	        }
+			// Initialize all months with 0
+			for (int i = 1; i <= 12; i++) {
+				String monthName = String.format("%02d", i); // e.g., "01", "02"
+				monthlyProfitMap.put(monthName, BigDecimal.ZERO);
+			}
 
-	        for (BRF4_ENTITY entity : T1Master) {
-	            Date reportDate = entity.getReport_date();
-	            BigDecimal profit = entity.getR67_year_to_date();
+			for (BRF4_ENTITY entity : T1Master) {
+				Date reportDate = entity.getReport_date();
+				BigDecimal profit = entity.getR67_year_to_date();
 
-	            if (reportDate != null && profit != null) {
-	                // Convert java.sql.Date to java.util.Date first
-	                java.util.Date utilDate = new java.util.Date(reportDate.getTime());
-	                
-	                // Then convert java.util.Date to LocalDate
-	                LocalDate localDate = utilDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				if (reportDate != null && profit != null) {
+					// Convert java.sql.Date to java.util.Date first
+					java.util.Date utilDate = new java.util.Date(reportDate.getTime());
 
-	                if (localDate != null) {
-	                    String monthName = String.format("%02d", localDate.getMonthValue()); // e.g., "03" for March
+					// Then convert java.util.Date to LocalDate
+					LocalDate localDate = utilDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-	                    BigDecimal current = monthlyProfitMap.getOrDefault(monthName, BigDecimal.ZERO);
-	                    monthlyProfitMap.put(monthName, current.add(profit));
-	                }
-	            }
-	        }
+					if (localDate != null) {
+						String monthName = String.format("%02d", localDate.getMonthValue()); // e.g., "03" for March
 
-	        // Print all values for debugging
-	        for (Map.Entry<String, BigDecimal> entry : monthlyProfitMap.entrySet()) {
-	            System.out.println("Month: " + entry.getKey() + " - Profit: " + entry.getValue());
-	        }
+						BigDecimal current = monthlyProfitMap.getOrDefault(monthName, BigDecimal.ZERO);
+						monthlyProfitMap.put(monthName, current.add(profit));
+					}
+				}
+			}
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+			// Print all values for debugging
+			for (Map.Entry<String, BigDecimal> entry : monthlyProfitMap.entrySet()) {
+				System.out.println("Month: " + entry.getKey() + " - Profit: " + entry.getValue());
+			}
 
-	    return monthlyProfitMap;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return monthlyProfitMap;
 	}
-
-
-
-	
 
 	public Map<String, BigDecimal> getMonthlyProfitByYear(String year) {
 
-	    Session hs = sessionFactory.getCurrentSession();
-	    Map<String, BigDecimal> monthlyProfitMap = new LinkedHashMap<>();
+		Session hs = sessionFactory.getCurrentSession();
+		Map<String, BigDecimal> monthlyProfitMap = new LinkedHashMap<>();
 
-	    try {
-	        // Parse the year string to an integer
-	        int yearInt = Integer.parseInt(year);
+		try {
+			// Parse the year string to an integer
+			int yearInt = Integer.parseInt(year);
 
-	        // Create start and end dates for the given year
-	        LocalDate startOfYear = LocalDate.of(yearInt, 1, 1);
-	        LocalDate endOfYear = LocalDate.of(yearInt, 12, 31);
+			// Create start and end dates for the given year
+			LocalDate startOfYear = LocalDate.of(yearInt, 1, 1);
+			LocalDate endOfYear = LocalDate.of(yearInt, 12, 31);
 
-	        // Fetch all records within the year
-	        List<BRF4_ENTITY> T1Master = hs.createQuery(
-	            "from BRF4_ENTITY a where a.report_date between :start and :end", BRF4_ENTITY.class)
-	            .setParameter("start", java.sql.Date.valueOf(startOfYear))
-	            .setParameter("end", java.sql.Date.valueOf(endOfYear))
-	            .getResultList();
+			// Fetch all records within the year
+			List<BRF4_ENTITY> T1Master = hs
+					.createQuery("from BRF4_ENTITY a where a.report_date between :start and :end", BRF4_ENTITY.class)
+					.setParameter("start", java.sql.Date.valueOf(startOfYear))
+					.setParameter("end", java.sql.Date.valueOf(endOfYear)).getResultList();
 
-	        // Initialize all months with 0
-	        for (int i = 1; i <= 12; i++) {
-	            String monthName = String.format("%02d", i); // "01", "02", etc.
-	            monthlyProfitMap.put(monthName, BigDecimal.ZERO);
-	        }
+			// Initialize all months with 0
+			for (int i = 1; i <= 12; i++) {
+				String monthName = String.format("%02d", i); // "01", "02", etc.
+				monthlyProfitMap.put(monthName, BigDecimal.ZERO);
+			}
 
-	        for (BRF4_ENTITY entity : T1Master) {
-	            Date reportDate = entity.getReport_date();
-	            BigDecimal profit = entity.getR67_year_to_date();
+			for (BRF4_ENTITY entity : T1Master) {
+				Date reportDate = entity.getReport_date();
+				BigDecimal profit = entity.getR67_year_to_date();
 
-	            if (reportDate != null && profit != null) {
-	                java.util.Date utilDate = new java.util.Date(reportDate.getTime());
-	                LocalDate localDate = utilDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				if (reportDate != null && profit != null) {
+					java.util.Date utilDate = new java.util.Date(reportDate.getTime());
+					LocalDate localDate = utilDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-	                String monthName = String.format("%02d", localDate.getMonthValue());
-	                BigDecimal current = monthlyProfitMap.getOrDefault(monthName, BigDecimal.ZERO);
-	                monthlyProfitMap.put(monthName, current.add(profit));
-	            }
-	        }
+					String monthName = String.format("%02d", localDate.getMonthValue());
+					BigDecimal current = monthlyProfitMap.getOrDefault(monthName, BigDecimal.ZERO);
+					monthlyProfitMap.put(monthName, current.add(profit));
+				}
+			}
 
-	        // Debug print
-	        for (Map.Entry<String, BigDecimal> entry : monthlyProfitMap.entrySet()) {
-	            System.out.println("Month: " + entry.getKey() + " - Profit: " + entry.getValue());
-	        }
+			// Debug print
+			for (Map.Entry<String, BigDecimal> entry : monthlyProfitMap.entrySet()) {
+				System.out.println("Month: " + entry.getKey() + " - Profit: " + entry.getValue());
+			}
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-	    return monthlyProfitMap;
+		return monthlyProfitMap;
 	}
 }

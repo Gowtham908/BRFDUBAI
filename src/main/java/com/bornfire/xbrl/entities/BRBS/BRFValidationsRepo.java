@@ -70,10 +70,10 @@ public interface BRFValidationsRepo extends JpaRepository<BRFValidations, String
 	List<Object[]> getCheckSrlNo8(String report_date);
 	
 	////Srl_no9 (PROFIT and LOSS)
-	@Query(value = "SELECT b.R84_TOTAL_AMOUNT, c.R66_YEAR_TO_DATE " +
+	@Query(value = "SELECT b.R84_TOTAL_AMOUNT, c.R67_YEAR_TO_DATE " +
 	        "FROM BRF2_SUMMARYTABLE b, BRF4_SUMMARYTABLE c " +
 	        "WHERE b.REPORT_DATE = ?1 AND c.REPORT_DATE = ?1 " +
-	        "AND b.R84_TOTAL_AMOUNT = c.R66_YEAR_TO_DATE", nativeQuery = true)
+	        "AND b.R84_TOTAL_AMOUNT = c.R67_YEAR_TO_DATE", nativeQuery = true)
 	List<Object[]> getCheckSrlNo9(String report_date);
 	
 	///BRF-3
@@ -103,10 +103,10 @@ public interface BRFValidationsRepo extends JpaRepository<BRFValidations, String
 	Integer getCheckSrlNo15(String report_date);
 	
 	////Srl_no9 (PROFIT and LOSS)
-	@Query(value = "SELECT b.R84_TOTAL_AMOUNT, c.R66_YEAR_TO_DATE " +
+	@Query(value = "SELECT b.R84_TOTAL_AMOUNT, c.R67_YEAR_TO_DATE " +
 	        "FROM BRF2_SUMMARYTABLE b, BRF4_SUMMARYTABLE c " +
 	        "WHERE b.REPORT_DATE = ?1 AND c.REPORT_DATE = ?1 " +
-	        "AND b.R84_TOTAL_AMOUNT = c.R66_YEAR_TO_DATE", nativeQuery = true)
+	        "AND b.R84_TOTAL_AMOUNT = c.R67_YEAR_TO_DATE", nativeQuery = true)
 	List<Object[]> getCheckSrlNo16(String report_date);
 	
 	///BRF-5
