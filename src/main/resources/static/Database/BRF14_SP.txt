@@ -1,0 +1,4087 @@
+create or replace procedure BRF14_SUMMARY_PROCEDURE(Report_date VARCHAR2)
+IS
+----30-SEP-2020--
+---VARARIBLE DECLARE
+V_REPORT_DATE DATE := TO_DATE(Report_date,'DD-MM-YYYY');
+V_REPORT_DUE_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), +3);
+V_REPORT_FROM_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), -3)+1;
+V_variable1 varchar(1):='F';
+V_R10_PRODUCT	varchar2(100 BYTE):='Coins and banknotes';
+V_R10_MARKET_VALUE	Number(24,4):=0;
+V_R10_WEIGHT	Number(24,4):=1.00;
+V_R10_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R11_PRODUCT	varchar2(100 BYTE):='Total central bank reserves; of which:';
+V_R11_MARKET_VALUE	Number(24,4):=0;
+V_R11_WEIGHT	Number(24,4):=0.00;
+V_R11_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R12_PRODUCT	varchar2(100 BYTE):='part of central bank reserves and CDs that can be drawn in times of stress';
+V_R12_MARKET_VALUE	Number(24,4):=0;
+V_R12_WEIGHT	Number(24,4):=1.00;
+V_R12_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R13_PRODUCT	varchar2(100 BYTE):='Securities with a 0% risk weight:';
+V_R13_MARKET_VALUE	Number(24,4):=0;
+V_R13_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R14_PRODUCT	varchar2(100 BYTE):='issued by UAE Federal Govt or Local Government';
+V_R14_MARKET_VALUE	Number(24,4):=0;
+V_R14_WEIGHT	Number(24,4):=1.00;
+V_R14_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R15_PRODUCT	varchar2(100 BYTE):='guaranteed by UAE Federal Govt or Local Government';
+V_R15_MARKET_VALUE	Number(24,4):=0;
+V_R15_WEIGHT	Number(24,4):=1.00;
+V_R15_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R16_PRODUCT	varchar2(100 BYTE):='issued or guaranteed by Foreign Sovereign Central Bank or guaranteed debt';
+V_R16_MARKET_VALUE	Number(24,4):=0;
+V_R16_WEIGHT	Number(24,4):=1.00;
+V_R16_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R17_PRODUCT	varchar2(100 BYTE):='issued or guaranteed by UAE PSEs GREs (which receive 0% RW)';
+V_R17_MARKET_VALUE	Number(24,4):=0;
+V_R17_WEIGHT	Number(24,4):=1.00;
+V_R17_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R18_PRODUCT	varchar2(100 BYTE):='issued or guaranteed by IMF and MDBs';
+V_R18_MARKET_VALUE	Number(24,4):=0;
+V_R18_WEIGHT	Number(24,4):=1.00;
+V_R18_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R19_PRODUCT	varchar2(100 BYTE):='For non-0% risk-weighted sovereigns:';
+V_R19_MARKET_VALUE	Number(24,4):=0;
+V_R19_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R20_PRODUCT	varchar2(400 BYTE):='sovereign or central bank debt securities issued in domestic currencies by the sovereign or central bank in the country in which the liquidity risk is being taken or in the bank’s home country';
+V_R20_MARKET_VALUE	Number(24,4):=0;
+V_R20_WEIGHT	Number(24,4):=1.00;
+V_R20_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R21_PRODUCT	varchar2(500 BYTE):='Domestic sovereign or central bank debt securities issued in foreign currencies are eligible up to the amount of the bank’s stressed net cash outflows in that specific foreign currency stemming from the bank’s operations in the jurisdiction where the banks liquidity risk is being taken';
+V_R21_MARKET_VALUE	Number(24,4):=0;
+V_R21_WEIGHT	Number(24,4):=1.00;
+V_R21_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R22_PRODUCT	varchar2(100 BYTE):='Total stock of Level 1 assets';
+V_R22_MARKET_VALUE	Number(24,4):=0;
+V_R22_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R23_PRODUCT	varchar2(100 BYTE):='Unrated Securities with  Risk weight (Cannot exceed more than 25 of Level 1 HQLA)';
+V_R23_MARKET_VALUE	Number(24,4):=0;
+V_R23_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R24_PRODUCT	varchar2(100 BYTE):='Adjustment to stock of Level 1 assets';
+V_R24_MARKET_VALUE	Number(24,4):=0;
+V_R24_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R25_PRODUCT	varchar2(100 BYTE):='Adjusted amount of Level 1 assets';
+V_R25_MARKET_VALUE	Number(24,4):=0;
+V_R25_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R28_PRODUCT	varchar2(100 BYTE):='Marketable Securities with a 20% risk weight';
+V_R28_MARKET_VALUE	Number(24,4):=0;
+V_R28_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R29_PRODUCT	varchar2(100 BYTE):='issued by sovereigns';
+V_R29_MARKET_VALUE	Number(24,4):=0;
+V_R29_WEIGHT	Number(24,4):=0.85;
+V_R29_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R30_PRODUCT	varchar2(100 BYTE):='guaranteed by sovereigns';
+V_R30_MARKET_VALUE	Number(24,4):=0;
+V_R30_WEIGHT	Number(24,4):=0.85;
+V_R30_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R31_PRODUCT	varchar2(100 BYTE):='issued or guaranteed by central banks';
+V_R31_MARKET_VALUE	Number(24,4):=0;
+V_R31_WEIGHT	Number(24,4):=0.85;
+V_R31_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R32_PRODUCT	varchar2(100 BYTE):='issued or guaranteed by PSEs';
+V_R32_MARKET_VALUE	Number(24,4):=0;
+V_R32_WEIGHT	Number(24,4):=0.85;
+V_R32_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R33_PRODUCT	varchar2(100 BYTE):='issued or guaranteed by MDBs';
+V_R33_MARKET_VALUE	Number(24,4):=0;
+V_R33_WEIGHT	Number(24,4):=0.85;
+V_R33_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R34_PRODUCT	varchar2(100 BYTE):='Non-financial corporate bonds, rated AA- or better	';
+V_R34_MARKET_VALUE	Number(24,4):=0;
+V_R34_WEIGHT	Number(24,4):=0.85;
+V_R34_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R35_PRODUCT	varchar2(100 BYTE):='Covered bonds, not self-issued, rated AA- or better';
+V_R35_MARKET_VALUE	Number(24,4):=0;
+V_R35_WEIGHT	Number(24,4):=0.85;
+V_R35_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R36_PRODUCT	varchar2(100 BYTE):='Unrated UAE PSE/ GRE';
+V_R36_MARKET_VALUE	Number(24,4):=0;
+V_R36_WEIGHT	Number(24,4):=0.70;
+V_R36_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R37_PRODUCT	varchar2(100 BYTE):='Total stock of Level 2A assets';
+V_R37_MARKET_VALUE	Number(24,4):=0;
+V_R37_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R38_PRODUCT	varchar2(100 BYTE):='Adjustment to stock of Level 2A assets	';
+V_R38_MARKET_VALUE	Number(24,4):=0;
+V_R38_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R39_PRODUCT	varchar2(100 BYTE):='Adjusted amount of Level 2A assets';
+V_R39_MARKET_VALUE	Number(24,4):=0;
+V_R39_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R42_PRODUCT	varchar2(100 BYTE):='Residential mortgage-backed securities (RMBS), rated AA or better';
+V_R42_MARKET_VALUE	Number(24,4):=0;
+V_R42_WEIGHT	Number(24,4):=0.75;
+V_R42_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R43_PRODUCT	varchar2(100 BYTE):='Non-financial corporate bonds, rated BBB- to A+ ';
+V_R43_MARKET_VALUE	Number(24,4):=0;
+V_R43_WEIGHT	Number(24,4):=0.50;
+V_R43_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R44_PRODUCT	varchar2(100 BYTE):='Non-financial common equity shares';
+V_R44_MARKET_VALUE	Number(24,4):=0;
+V_R44_WEIGHT	Number(24,4):=0.50;
+V_R44_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R45_PRODUCT	varchar2(100 BYTE):='Sovereign or central bank debt securities, rated BBB- to BBB+';
+V_R45_MARKET_VALUE	Number(24,4):=0;
+V_R45_WEIGHT	Number(24,4):=0.50;
+V_R45_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R46_PRODUCT	varchar2(100 BYTE):='Total stock of Level 2B RMBS assets';
+V_R46_MARKET_VALUE	Number(24,4):=0;
+V_R46_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R47_PRODUCT	varchar2(100 BYTE):='Adjustment to stock of Level 2B RMBS assets';
+V_R47_MARKET_VALUE	Number(24,4):=0;
+V_R47_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R48_PRODUCT	varchar2(100 BYTE):='Adjusted amount of Level 2B RMBS assets';
+V_R48_MARKET_VALUE	Number(24,4):=0;
+V_R48_WEIGHT	Number(24,4):=0.75;
+V_R48_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R49_PRODUCT	varchar2(100 BYTE):='Total stock of Level 2B non-RMBS assets';
+V_R49_MARKET_VALUE	Number(24,4):=0;
+V_R49_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R50_PRODUCT	varchar2(100 BYTE):='Adjustment to stock of Level 2B non-RMBS assets';
+V_R50_MARKET_VALUE	Number(24,4):=0;
+V_R50_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R51_PRODUCT	varchar2(100 BYTE):='Adjusted amount of Level 2B non-RMBS assets';
+V_R51_MARKET_VALUE	Number(24,4):=0;
+V_R51_WEIGHT	Number(24,4):=0.50;
+V_R51_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R52_PRODUCT	varchar2(100 BYTE):='Adjusted amount of Level 2B (RMBS and non-RMBS) assets';
+V_R52_MARKET_VALUE	Number(24,4):=0;
+V_R52_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R53_PRODUCT	varchar2(100 BYTE):='Adjustment to stock of HQLA due to cap on Level 2B assets	';
+V_R53_MARKET_VALUE	Number(24,4):=0;
+V_R53_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R54_PRODUCT	varchar2(100 BYTE):='Adjustment to stock of HQLA due to cap on Level 2 assets';
+V_R54_MARKET_VALUE	Number(24,4):=0;
+V_R54_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R57_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R60_PRODUCT	varchar2(200 BYTE):='Market value of Level 1 Assets held at the entity level, but excluded from the consolidated stock of HQLA';
+V_R60_MARKET_VALUE	Number(24,4):=0;
+V_R61_PRODUCT	varchar2(200 BYTE):='"Market value of Level 2A Assets held at the entity level, but excluded from the consolidated stock of HQLA"';
+V_R61_MARKET_VALUE	Number(24,4):=0;
+V_R62_PRODUCT	varchar2(200 BYTE):='"Market value of Level 2B - RMBS Assets held at the entity level, but excluded from the consolidated stock of HQLA"';
+V_R62_MARKET_VALUE	Number(24,4):=0;
+V_R63_PRODUCT	varchar2(200 BYTE):='"Market value of Level 2B - non RMBS Assets held at the entity level, but excluded from the consolidated stock of HQLA"';
+V_R63_MARKET_VALUE	Number(24,4):=0;
+V_R64_PRODUCT	varchar2(200 BYTE):='"Market value of Level 1 Assets excluded from the stock of high quality liquid assets due to operational restrictions"';
+V_R64_MARKET_VALUE	Number(24,4):=0;
+V_R65_PRODUCT	varchar2(200 BYTE):='"Market Value of Level 2A Assets excluded from the stock of high quality liquid assets due to operational restrictions"';
+V_R65_MARKET_VALUE	Number(24,4):=0;
+V_R66_PRODUCT	varchar2(200 BYTE):='"Market value of Level 2B - RMBS Assets excluded from the stock of high quality liquid assets due to operational restrictions"';
+V_R66_MARKET_VALUE	Number(24,4):=0;
+V_R67_PRODUCT	varchar2(300 BYTE):='"Market value of Level 2B - non RMBS Assets excluded from the stock of high quality liquid assets due to operational restrictions"';
+V_R67_MARKET_VALUE	Number(24,4):=0;
+V_R72_PRODUCT	varchar2(100 BYTE):='Total retail deposits; of which:';
+V_R72_AMOUNT	Number(24,4):=0;
+V_R72_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R73_PRODUCT	varchar2(100 BYTE):='in Stable retail; of which:';
+V_R73_AMOUNT	Number(24,4):=0;
+V_R73_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R74_PRODUCT	varchar2(100 BYTE):='Non SME retail deposit eligible for a 5% run-off rate';
+V_R74_AMOUNT	Number(24,4):=0;
+V_R74_WEIGHT	Number(24,4):=0.05;
+V_R74_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R75_PRODUCT	varchar2(100 BYTE):='SME retail deposit eligible for 5% runoff rate';
+V_R75_AMOUNT	Number(24,4):=0;
+V_R75_WEIGHT	Number(24,4):=0.05;
+V_R75_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R76_PRODUCT	varchar2(200 BYTE):='in non-transactional (Less Stable retail) accounts with established relationships that make deposit withdrawal highly unlikely; of which:';
+V_R76_AMOUNT	Number(24,4):=0;
+V_R76_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R77_PRODUCT	varchar2(100 BYTE):='eligible for a 5% run-off rate';
+V_R77_AMOUNT	Number(24,4):=0;
+V_R77_WEIGHT	Number(24,4):=0.05;
+V_R77_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R78_PRODUCT	varchar2(100 BYTE):='Non SME in non-transactional and non-relationship accounts';
+V_R78_AMOUNT	Number(24,4):=0;
+V_R78_WEIGHT	Number(24,4):=0.10;
+V_R78_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R79_PRODUCT	varchar2(100 BYTE):='SME in non transactional and non relationship accounts';
+V_R79_AMOUNT	Number(24,4):=0;
+V_R79_WEIGHT	Number(24,4):=0.10;
+V_R79_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R80_PRODUCT	varchar2(100 BYTE):='Sourced from an unaffiliated third-party	';
+V_R80_AMOUNT	Number(24,4):=0;
+V_R80_WEIGHT	Number(24,4):=0.10;
+V_R80_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R81_PRODUCT	varchar2(100 BYTE):='Term deposits with a remaining maturity of  > 30 days';
+V_R81_AMOUNT	Number(24,4):=0;
+V_R81_WEIGHT	Number(24,4):=0.00;
+V_R81_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R82_PRODUCT	varchar2(100 BYTE):='Total retail deposits run-off';
+V_R82_AMOUNT	Number(24,4):=0;
+V_R82_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R83_PRODUCT	varchar2(100 BYTE):='Total Qualifying Retail Deposit Run-Off';
+V_R83_AMOUNT	Number(24,4):=0;
+V_R83_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R86_PRODUCT	varchar2(100 BYTE):='Total unsecured wholesale funding ';
+V_R86_AMOUNT	Number(24,4):=0;
+V_R86_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R87_PRODUCT	varchar2(100 BYTE):='Total operational deposits; of which:';
+V_R87_AMOUNT	Number(24,4):=0;
+V_R87_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R88_PRODUCT	varchar2(100 BYTE):='provided by non-financial corporates';
+V_R88_AMOUNT	Number(24,4):=0;
+V_R88_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R89_PRODUCT	varchar2(100 BYTE):='insured, with a 3% run-off rate';
+V_R89_AMOUNT	Number(24,4):=0;
+V_R89_WEIGHT	Number(24,4):=0.03;
+V_R89_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R90_PRODUCT	varchar2(100 BYTE):='insured, with a 5% run-off rate';
+V_R90_AMOUNT	Number(24,4):=0;
+V_R90_WEIGHT	Number(24,4):=0.05;
+V_R90_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R91_PRODUCT	varchar2(100 BYTE):='uninsured';
+V_R91_AMOUNT	Number(24,4):=0;
+V_R91_WEIGHT	Number(24,4):=0.25;
+V_R91_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R92_PRODUCT	varchar2(100 BYTE):='provided by SME';
+V_R92_AMOUNT	Number(24,4):=0;
+V_R92_WEIGHT	Number(24,4):=0.25;
+V_R92_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R93_PRODUCT	varchar2(100 BYTE):='provided by sovereigns, central banks, PSEs and MDBs';
+V_R93_AMOUNT	Number(24,4):=0;
+V_R93_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R94_PRODUCT	varchar2(100 BYTE):='insured, with a 3% run-off rate';
+V_R94_AMOUNT	Number(24,4):=0;
+V_R94_WEIGHT	Number(24,4):=0.03;
+V_R94_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R95_PRODUCT	varchar2(100 BYTE):='insured, with a 5% run-off rate';
+V_R95_AMOUNT	Number(24,4):=0;
+V_R95_WEIGHT	Number(24,4):=0.05;
+V_R95_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R96_PRODUCT	varchar2(100 BYTE):='uninsured';
+V_R96_AMOUNT	Number(24,4):=0;
+V_R96_WEIGHT	Number(24,4):=0.25;
+V_R96_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R97_PRODUCT	varchar2(100 BYTE):='provided by banks	';
+V_R97_AMOUNT	Number(24,4):=0;
+V_R97_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R98_PRODUCT	varchar2(100 BYTE):='insured, with a 3% run-off rate';
+V_R98_AMOUNT	Number(24,4):=0;
+V_R98_WEIGHT	Number(24,4):=0.03;
+V_R98_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R99_PRODUCT	varchar2(100 BYTE):='insured, with a 5% run-off rate';
+V_R99_AMOUNT	Number(24,4):=0;
+V_R99_WEIGHT	Number(24,4):=0.05;
+V_R99_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R100_PRODUCT	varchar2(100 BYTE):='uninsured';
+V_R100_AMOUNT	Number(24,4):=0;
+V_R100_WEIGHT	Number(24,4):=0.25;
+V_R100_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R101_PRODUCT	varchar2(100 BYTE):='provided by other financial institutions/ legal entities';
+V_R101_AMOUNT	Number(24,4):=0;
+V_R101_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R102_PRODUCT	varchar2(100 BYTE):='insured, with a 3% run-off rate';
+V_R102_AMOUNT	Number(24,4):=0;
+V_R102_WEIGHT	Number(24,4):=0.03;
+V_R102_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R103_PRODUCT	varchar2(100 BYTE):='insured, with a 5% run-off rate';
+V_R103_AMOUNT	Number(24,4):=0;
+V_R103_WEIGHT	Number(24,4):=0.05;
+V_R103_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R104_PRODUCT	varchar2(100 BYTE):='uninsured';
+V_R104_AMOUNT	Number(24,4):=0;
+V_R104_WEIGHT	Number(24,4):=0.25;
+V_R104_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R105_PRODUCT	varchar2(100 BYTE):='Total non-operational deposits; of which:';
+V_R105_AMOUNT	Number(24,4):=0;
+V_R105_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R106_PRODUCT	varchar2(100 BYTE):='provided by non-financial corporates; of which:';
+V_R106_AMOUNT	Number(24,4):=0;
+V_R106_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R107_PRODUCT	varchar2(100 BYTE):='provided by corporate, sovereigns, GRE, PSEs and MDBs';
+V_R107_AMOUNT	Number(24,4):=0;
+V_R107_WEIGHT	Number(24,4):=0.40;
+V_R107_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R108_PRODUCT	varchar2(100 BYTE):='Provided by SME';
+V_R108_AMOUNT	Number(24,4):=0;
+V_R108_WEIGHT	Number(24,4):=0.40;
+V_R108_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R109_PRODUCT	varchar2(100 BYTE):='provided by other banks';
+V_R109_AMOUNT	Number(24,4):=0;
+V_R109_WEIGHT	Number(24,4):=1.00;
+V_R109_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R110_PRODUCT	varchar2(100 BYTE):='provided by other financial institutions/ legal entities';
+V_R110_AMOUNT	Number(24,4):=0;
+V_R110_WEIGHT	Number(24,4):=1.00;
+V_R110_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R111_PRODUCT	varchar2(100 BYTE):='Unsecured debt issuance';
+V_R111_AMOUNT	Number(24,4):=0;
+V_R111_WEIGHT	Number(24,4):=1.00;
+V_R111_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R112_PRODUCT	varchar2(100 BYTE):='Additional balances required to be installed in central bank reserves';
+V_R112_AMOUNT	Number(24,4):=0;
+V_R112_WEIGHT	Number(24,4):=1.00;
+V_R112_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R113_PRODUCT	varchar2(100 BYTE):='Total unsecured wholesale funding run-off';
+V_R113_AMOUNT	Number(24,4):=0;
+V_R113_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R114_PRODUCT	varchar2(100 BYTE):='Total Qualifying Operational Deposit';
+V_R114_AMOUNT	Number(24,4):=0;
+V_R114_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R115_PRODUCT	varchar2(100 BYTE):='Total Non Operational Deposit';
+V_R115_AMOUNT	Number(24,4):=0;
+V_R115_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R116_PRODUCT	varchar2(100 BYTE):='Total Qualifying Unsecured Wholesale funding run-off';
+V_R116_AMOUNT	Number(24,4):=0;
+V_R116_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R119_PRODUCT	 varchar2(100 BYTE):='Transactions maturing ≤ 30 days conducted with the banks domestic central bank of which:';
+V_R119_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R119_MARKET_VALUE	Number(24,4):=0;
+V_R119_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R120_PRODUCT	varchar2(100 BYTE):='Backed by Level 1 assets; of which:';
+V_R120_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R120_MARKET_VALUE	Number(24,4):=0;
+V_R120_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R121_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R121_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R121_MARKET_VALUE	Number(24,4):=0;
+V_R121_WEIGHT	Number(24,4):=0.00;
+V_R121_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R122_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R122_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R122_MARKET_VALUE	Number(24,4):=0;
+V_R122_WEIGHT	Number(24,4):=0.00;
+V_R122_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R123_PRODUCT	varchar2(100 BYTE):='Backed by Level 2A assets; of which:';
+V_R123_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R123_MARKET_VALUE	Number(24,4):=0;
+V_R123_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R124_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R124_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R124_MARKET_VALUE	Number(24,4):=0;
+V_R124_WEIGHT	Number(24,4):=0.00;
+V_R124_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R125_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R125_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R125_MARKET_VALUE	Number(24,4):=0;
+V_R125_WEIGHT	Number(24,4):=0.00;
+V_R125_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R126_PRODUCT	varchar2(100 BYTE):='Backed by Level 2B RMBS assets; of which:';
+V_R126_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R126_MARKET_VALUE	Number(24,4):=0;
+V_R126_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R127_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R127_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R127_MARKET_VALUE	Number(24,4):=0;
+V_R127_WEIGHT	Number(24,4):=0.00;
+V_R127_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R128_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R128_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R128_MARKET_VALUE	Number(24,4):=0;
+V_R128_WEIGHT	Number(24,4):=0.00;
+V_R128_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R129_PRODUCT	varchar2(100 BYTE):='Backed by Level 2B non-RMBS assets; of which:';
+V_R129_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R129_MARKET_VALUE	Number(24,4):=0;
+V_R129_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R130_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R130_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R130_MARKET_VALUE	Number(24,4):=0;
+V_R130_WEIGHT	Number(24,4):=0.00;
+V_R130_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R131_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R131_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R131_MARKET_VALUE	Number(24,4):=0;
+V_R131_WEIGHT	Number(24,4):=0.00;
+V_R131_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R132_PRODUCT	varchar2(100 BYTE):='Backed by other assets';
+V_R132_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R132_MARKET_VALUE	Number(24,4):=0;
+V_R132_WEIGHT	Number(24,4):=0.00;
+V_R132_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R133_PRODUCT	varchar2(200 BYTE):='Transactions maturing ≤ 30 days not conducted with the banks domestic central bank and backed by Level 1 assets; of which:';
+V_R133_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R133_MARKET_VALUE	Number(24,4):=0;
+V_R133_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R134_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R134_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R134_MARKET_VALUE	Number(24,4):=0;
+V_R134_WEIGHT	Number(24,4):=0.00;
+V_R134_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R135_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R135_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R135_MARKET_VALUE	Number(24,4):=0;
+V_R135_WEIGHT	Number(24,4):=0.00;
+V_R135_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R136_PRODUCT	varchar2(200 BYTE):='Transactions maturing ≤ 30 days not conducted with the banks domestic central bank and backed by Level 2A assets; of which:';
+V_R136_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R136_MARKET_VALUE	Number(24,4):=0;
+V_R136_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R137_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R137_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R137_MARKET_VALUE	Number(24,4):=0;
+V_R137_WEIGHT	Number(24,4):=0.15;
+V_R137_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R138_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R138_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R138_MARKET_VALUE	Number(24,4):=0;
+V_R138_WEIGHT	Number(24,4):=0.15;
+V_R138_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R139_PRODUCT	varchar2(200 BYTE):='Transactions maturing ≤ 30 days not conducted with the banks domestic central bank and backed by Level 2B RMBS assets; of which:';
+V_R139_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R139_MARKET_VALUE	Number(24,4):=0;
+V_R139_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R140_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R140_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R140_MARKET_VALUE	Number(24,4):=0;
+V_R140_WEIGHT	Number(24,4):=0.25;
+V_R140_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R141_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R141_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R141_MARKET_VALUE	Number(24,4):=0;
+V_R141_WEIGHT	Number(24,4):=0.25;
+V_R141_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R142_PRODUCT	varchar2(200 BYTE):='Transactions maturing ≤ 30 days not conducted with the banks domestic central bank and backed by Level 2B non-RMBS assets; of which:';
+V_R142_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R142_MARKET_VALUE	Number(24,4):=0;
+V_R142_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R143_PRODUCT	varchar2(100 BYTE):='Counterparties are Sovereigns, MDBs or GRE, PSEs with a 20% risk weight; of which:';
+V_R143_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R143_MARKET_VALUE	Number(24,4):=0;
+
+V_R143_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R144_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R144_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R144_MARKET_VALUE	Number(24,4):=0;
+V_R144_WEIGHT	Number(24,4):=0.25;
+V_R144_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R145_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R145_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R145_MARKET_VALUE	Number(24,4):=0;
+V_R145_WEIGHT	Number(24,4):=0.25;
+V_R145_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R146_PRODUCT	varchar2(100 BYTE):='Counterparties are not Sovereigns, MDBs or GRE, PSEs with a 20% risk weight; of which:';
+V_R146_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R146_MARKET_VALUE	Number(24,4):=0;
+
+V_R146_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R147_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R147_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R147_MARKET_VALUE	Number(24,4):=0;
+V_R147_WEIGHT	Number(24,4):=0.50;
+V_R147_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R148_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R148_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R148_MARKET_VALUE	Number(24,4):=0;
+V_R148_WEIGHT	Number(24,4):=0.50;
+V_R148_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R149_PRODUCT	varchar2(200 BYTE):='Transactions maturing ≤ 30 days not conducted with the banks domestic central bank and backed by other assets (non-HQLA); of which:';
+V_R149_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R149_MARKET_VALUE	Number(24,4):=0;
+
+V_R149_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R150_PRODUCT	varchar2(100 BYTE):='Counterparties are domestic sovereigns, MDBs or domestic PSEs with a 20% risk weight';
+V_R150_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R150_MARKET_VALUE	Number(24,4):=0;
+V_R150_WEIGHT	Number(24,4):=0.25;
+V_R150_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R151_PRODUCT	varchar2(100 BYTE):='Counterparties are not Sovereigns, MDBs or GRE, PSEs with a 20% risk weight	';
+V_R151_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R151_MARKET_VALUE	Number(24,4):=0;
+V_R151_WEIGHT	Number(24,4):=1.00;
+V_R151_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R152_PRODUCT	varchar2(100 BYTE):='Total secured wholesale funding run-off	';
+V_R152_AMOUNT_RECEVIED	Number(24,4):=0;
+V_R152_MARKET_VALUE	Number(24,4):=0;
+
+V_R152_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R155_PRODUCT	varchar2(100 BYTE):='Derivatives cash outflow';
+V_R155_AMOUNT	Number(24,4):=0;
+V_R155_WEIGHT	Number(24,4):=1.00;
+V_R155_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R156_PRODUCT	varchar2(200 BYTE):='Increased liquidity needs related to downgrade triggers in derivatives and other financing transactions';
+V_R156_AMOUNT	Number(24,4):=0;
+V_R156_WEIGHT	Number(24,4):=1.00;
+V_R156_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R157_PRODUCT	varchar2(200 BYTE):='Increased liquidity needs related to the potential for valuation changes on posted collateral securing derivative and other transactions:';
+V_R157_AMOUNT	Number(24,4):=0;
+
+V_R157_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R158_PRODUCT	varchar2(100 BYTE):='Cash and Level 1 assets';
+V_R158_AMOUNT	Number(24,4):=0;
+V_R158_WEIGHT	Number(24,4):=0.00;
+V_R158_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R159_PRODUCT	varchar2(100 BYTE):='For other collateral (ie all non-Level 1 collateral)';
+V_R159_AMOUNT	Number(24,4):=0;
+V_R159_WEIGHT	Number(24,4):=0.20;
+V_R159_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R160_PRODUCT	varchar2(200 BYTE):='Increased liquidity needs related to excess non-segregated collateral held by the bank that could contractually be called at any time by the counterparty';
+V_R160_AMOUNT	Number(24,4):=0;
+V_R160_WEIGHT	Number(24,4):=1.00;
+V_R160_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R161_PRODUCT	varchar2(200 BYTE):='Increased liquidity needs related to contractually required collateral on transactions for which the counterparty has not yet demanded the collateral be posted';
+V_R161_AMOUNT	Number(24,4):=0;
+V_R161_WEIGHT	Number(24,4):=1.00;
+V_R161_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R162_PRODUCT	varchar2(100 BYTE):='Increased liquidity needs related to contracts that allow collateral substitution to non-HQLA assets';
+V_R162_AMOUNT	Number(24,4):=0;
+V_R162_WEIGHT	Number(24,4):=1.00;
+V_R162_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R163_PRODUCT	varchar2(100 BYTE):='Increased liquidity needs related to market valuation changes on derivative or other transactions';
+V_R163_AMOUNT	Number(24,4):=0;
+V_R163_WEIGHT	Number(24,4):=1.00;
+V_R163_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R164_PRODUCT	varchar2(200 BYTE):='Loss of funding on ABS and other structured financing instruments issued by the bank, excluding covered bonds';
+V_R164_AMOUNT	Number(24,4):=0;
+V_R164_WEIGHT	Number(24,4):=1.00;
+V_R164_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R165_PRODUCT	varchar2(100 BYTE):='Loss of funding on covered bonds issued by the bank';
+V_R165_AMOUNT	Number(24,4):=0;
+V_R165_WEIGHT	Number(24,4):=1.00;
+V_R165_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R166_PRODUCT	varchar2(100 BYTE):='Loss of funding on ABCP, conduits, SIVs and other such financing activities; of which:';
+V_R166_AMOUNT	Number(24,4):=0;
+
+V_R166_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R167_PRODUCT	varchar2(100 BYTE):='debt maturing ≤ 30 days';
+V_R167_AMOUNT	Number(24,4):=0;
+V_R167_WEIGHT	Number(24,4):=1.00;
+V_R167_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R168_PRODUCT	varchar2(100 BYTE):='with embedded options in financing arrangements';
+V_R168_AMOUNT	Number(24,4):=0;
+V_R168_WEIGHT	Number(24,4):=1.00;
+V_R168_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R169_PRODUCT	varchar2(100 BYTE):='other potential loss of such funding';
+V_R169_AMOUNT	Number(24,4):=0;
+V_R169_WEIGHT	Number(24,4):=1.00;
+V_R169_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R170_PRODUCT	varchar2(100 BYTE):='Undrawn committed credit and liquidity facilities to retail and small business customers';
+V_R170_AMOUNT	Number(24,4):=0;
+V_R170_WEIGHT	Number(24,4):=0.05;
+V_R170_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R171_PRODUCT	varchar2(100 BYTE):='Undrawn committed credit facilities to';
+V_R171_AMOUNT	Number(24,4):=0;
+
+V_R171_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R172_PRODUCT	varchar2(100 BYTE):='non-financial corporates';
+V_R172_AMOUNT	Number(24,4):=0;
+V_R172_WEIGHT	Number(24,4):=0.10;
+V_R172_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R173_PRODUCT	varchar2(100 BYTE):='sovereigns, central banks, PSEs and MDBs';
+V_R173_AMOUNT	Number(24,4):=0;
+V_R173_WEIGHT	Number(24,4):=0.10;
+V_R173_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R174_PRODUCT	varchar2(100 BYTE):='banks';
+V_R174_AMOUNT	Number(24,4):=0;
+V_R174_WEIGHT	Number(24,4):=0.40;
+V_R174_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R175_PRODUCT	varchar2(100 BYTE):='other financial institutions';
+V_R175_AMOUNT	Number(24,4):=0;
+V_R175_WEIGHT	Number(24,4):=0.40;
+V_R175_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R176_PRODUCT	varchar2(100 BYTE):='other legal entities	';
+V_R176_AMOUNT	Number(24,4):=0;
+V_R176_WEIGHT	Number(24,4):=1.00;
+V_R176_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R177_PRODUCT	varchar2(100 BYTE):='Undrawn committed liquidity facilities to';
+V_R177_AMOUNT	Number(24,4):=0;
+
+V_R177_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R178_PRODUCT	varchar2(100 BYTE):='non-financial corporates';
+V_R178_AMOUNT	Number(24,4):=0;
+V_R178_WEIGHT	Number(24,4):=0.30;
+V_R178_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R179_PRODUCT	varchar2(100 BYTE):='sovereigns, central banks, PSEs and MDBs';
+V_R179_AMOUNT	Number(24,4):=0;
+V_R179_WEIGHT	Number(24,4):=0.30;
+V_R179_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R180_PRODUCT	varchar2(100 BYTE):='banks';
+V_R180_AMOUNT	Number(24,4):=0;
+V_R180_WEIGHT	Number(24,4):=0.40;
+V_R180_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R181_PRODUCT	varchar2(100 BYTE):='other financial institutions';
+V_R181_AMOUNT	Number(24,4):=0;
+V_R181_WEIGHT	Number(24,4):=1.00;
+V_R181_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R182_PRODUCT	varchar2(200 BYTE):='other legal entities  declared dividends (<31 days before payout date) + other items not captured elsewhere';
+V_R182_AMOUNT	Number(24,4):=0;
+V_R182_WEIGHT	Number(24,4):=1.00;
+V_R182_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R184_PRODUCT	varchar2(100 BYTE):='financial institutions';
+V_R184_AMOUNT	Number(24,4):=0;
+V_R184_WEIGHT	Number(24,4):=1.00;
+V_R184_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R185_PRODUCT	varchar2(100 BYTE):='retail clients';
+V_R185_AMOUNT	Number(24,4):=0;
+V_R185_ROLL_OVER	Number(24,4):=0;
+V_R186_PRODUCT	varchar2(100 BYTE):='small business customers';
+V_R186_AMOUNT	Number(24,4):=0;
+V_R186_ROLL_OVER	Number(24,4):=0;
+V_R187_PRODUCT	varchar2(100 BYTE):='non-financial corporates';
+V_R187_AMOUNT	Number(24,4):=0;
+V_R187_ROLL_OVER	Number(24,4):=0;
+V_R188_PRODUCT	varchar2(100 BYTE):='other clients';
+V_R188_AMOUNT	Number(24,4):=0;
+V_R188_ROLL_OVER	Number(24,4):=0;
+V_R189_PRODUCT	varchar2(100 BYTE):='Total of: retail, small business customers, non-financials and other clients';
+V_R189_AMOUNT	Number(24,4):=0;
+V_R189_ROLL_OVER	Number(24,4):=0;
+V_R189_EXCESS	Number(24,4):=0;
+V_R189_WEIGHT	Number(24,4):=1.00;
+V_R189_WEIGHT_AMOUNT	Number(24,4):=0;
+
+V_R190_PRODUCT	varchar2(100 BYTE):='Total contractual obligations to extend funds in excess of 50% roll-over assumption';
+V_R190_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R192_PRODUCT	varchar2(100 BYTE):='Total additional requirements run-off';
+V_R192_AMOUNT	Number(24,4):=0;
+V_R195_PRODUCT	varchar2(100 BYTE):='Letter of credit and Trade Finance facilities';
+V_R195_AMOUNT	Number(24,4):=0;
+V_R196_PRODUCT	varchar2(100 BYTE):='LC part of trade finance';
+V_R196_AMOUNT	Number(24,4):=0;
+V_R196_WEIGHT	Number(24,4):=0.05;
+V_R196_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R197_PRODUCT	varchar2(100 BYTE):='Other trade finance instruments (e.g. shipping guarantees)';
+V_R197_AMOUNT	Number(24,4):=0;
+V_R197_WEIGHT	Number(24,4):=0.05;
+V_R197_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R198_PRODUCT	varchar2(100 BYTE):='Total run-off on other contingent funding obligations';
+V_R198_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R200_PRODUCT	varchar2(100 BYTE):='Total cash outflows';
+V_R200_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R204_PRODUCT	varchar2(100 BYTE):='Reverse repo and other secured lending or securities borrowing transactions maturing ≤ 30 days';
+V_R204_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R204_MARKET_VALUE	Number(24,4):=0;
+
+V_R204_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R205_PRODUCT	varchar2(100 BYTE):='Of which collateral is not re-used to cover the reporting institutions outright short positions:';
+V_R205_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R205_MARKET_VALUE	Number(24,4):=0;
+
+V_R205_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R206_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 1 assets; of which:';
+V_R206_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R206_MARKET_VALUE	Number(24,4):=0;
+
+V_R206_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R207_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R207_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R207_MARKET_VALUE	Number(24,4):=0;
+V_R207_WEIGHT	Number(24,4):=0.00;
+V_R207_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R208_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R208_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R208_MARKET_VALUE	Number(24,4):=0;
+V_R208_WEIGHT	Number(24,4):=0.00;
+V_R208_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R209_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 2A assets; of which:';
+V_R209_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R209_MARKET_VALUE	Number(24,4):=0;
+
+V_R209_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R210_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R210_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R210_MARKET_VALUE	Number(24,4):=0;
+V_R210_WEIGHT	Number(24,4):=0.15;
+V_R210_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R211_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R211_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R211_MARKET_VALUE	Number(24,4):=0;
+V_R211_WEIGHT	Number(24,4):=0.15;
+V_R211_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R212_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 2B RMBS assets; of which:';
+V_R212_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R212_MARKET_VALUE	Number(24,4):=0;
+
+V_R212_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R213_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R213_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R213_MARKET_VALUE	Number(24,4):=0;
+V_R213_WEIGHT	Number(24,4):=0.25;
+V_R213_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R214_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R214_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R214_MARKET_VALUE	Number(24,4):=0;
+V_R214_WEIGHT	Number(24,4):=0.25;
+V_R214_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R215_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 2B non-RMBS assets; of which:';
+V_R215_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R215_MARKET_VALUE	Number(24,4):=0;
+
+V_R215_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R216_PRODUCT	varchar2(100 BYTE):='Transactions involving eligible liquid assets';
+V_R216_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R216_MARKET_VALUE	Number(24,4):=0;
+V_R216_WEIGHT	Number(24,4):=0.50;
+V_R216_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R217_PRODUCT	varchar2(100 BYTE):='Transactions not involving eligible liquid assets';
+V_R217_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R217_MARKET_VALUE	Number(24,4):=0;
+V_R217_WEIGHT	Number(24,4):=0.50;
+V_R217_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R218_PRODUCT	varchar2(100 BYTE):='Margin lending backed by non-Level 1 or non-Level 2 collateral';
+V_R218_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R218_MARKET_VALUE	Number(24,4):=0;
+V_R218_WEIGHT	Number(24,4):=0.50;
+V_R218_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R219_PRODUCT	varchar2(100 BYTE):='Transactions backed by other collateral	';
+V_R219_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R219_MARKET_VALUE	Number(24,4):=0;
+V_R219_WEIGHT	Number(24,4):=1.00;
+V_R219_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R220_PRODUCT	varchar2(200 BYTE):='Of which collateral is re-used (ie is rehypothecated) in transactions to cover the reporting institutions outright short positions: ';
+V_R220_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R220_MARKET_VALUE	Number(24,4):=0;
+
+V_R220_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R221_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 1 assets';
+V_R221_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R221_MARKET_VALUE	Number(24,4):=0;
+V_R221_WEIGHT	Number(24,4):=0.00;
+V_R221_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R222_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 2A assets';
+V_R222_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R222_MARKET_VALUE	Number(24,4):=0;
+V_R222_WEIGHT	Number(24,4):=0.00;
+V_R222_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R223_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 2B RMBS assets';
+V_R223_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R223_MARKET_VALUE	Number(24,4):=0;
+V_R223_WEIGHT	Number(24,4):=0.00;
+V_R223_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R224_PRODUCT	varchar2(100 BYTE):='Transactions backed by Level 
+2B non-RMBS assets';
+V_R224_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R224_MARKET_VALUE	Number(24,4):=0;
+V_R224_WEIGHT	Number(24,4):=0.00;
+V_R224_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R225_PRODUCT	varchar2(100 BYTE):='Margin lending backed by non-Level 1 or non-Level 2 collateral';
+V_R225_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R225_MARKET_VALUE	Number(24,4):=0;
+V_R225_WEIGHT	Number(24,4):=0.00;
+V_R225_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R226_PRODUCT	varchar2(100 BYTE):='Transactions backed by other collateral';
+V_R226_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R226_MARKET_VALUE	Number(24,4):=0;
+V_R226_WEIGHT	Number(24,4):=0.00;
+V_R226_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R227_PRODUCT	varchar2(100 BYTE):='Total inflows on reverse repo and securities borrowing transactions';
+V_R227_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R227_MARKET_VALUE	Number(24,4):=0;
+
+V_R227_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R230_PRODUCT	varchar2(200 BYTE):='Contractual inflows due in ≤ 30 days from fully performing loans, not reported as secured lending, from:';
+V_R230_AMOUNT_EXTENDED	Number(24,4):=0;
+
+
+V_R230_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R231_PRODUCT	varchar2(100 BYTE):='Retail customers';
+V_R231_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R231_WEIGHT	Number(24,4):=0.50;
+V_R231_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R232_PRODUCT	varchar2(100 BYTE):='SME';
+V_R232_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R232_WEIGHT	Number(24,4):=0.50;
+V_R232_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R233_PRODUCT	varchar2(100 BYTE):='Non-financial corporates';
+V_R233_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R233_WEIGHT	Number(24,4):=0.50;
+V_R233_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R234_PRODUCT	varchar2(100 BYTE):='Financial institutions, including central banks';
+V_R234_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R234_WEIGHT	Number(24,4):=1.00;
+V_R234_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R235_PRODUCT	varchar2(100 BYTE):='Federal governments and local governments';
+V_R235_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R235_WEIGHT	Number(24,4):=0.50;
+V_R235_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R236_PRODUCT	varchar2(100 BYTE):='Public Sector Entities';
+V_R236_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R236_WEIGHT	Number(24,4):=0.50;
+V_R236_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R237_PRODUCT	varchar2(100 BYTE):='Other entities';
+V_R237_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R237_WEIGHT	Number(24,4):=0.50;
+V_R237_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R238_PRODUCT	varchar2(100 BYTE):='Total of other inflows by counterparty';
+V_R238_AMOUNT_EXTENDED	Number(24,4):=0;
+
+
+V_R238_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R241_PRODUCT	varchar2(100 BYTE):='Other cash inflows	';
+V_R241_AMOUNT_EXTENDED	Number(24,4):=0;
+
+
+V_R241_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R242_PRODUCT	varchar2(100 BYTE):='Derivatives cash inflow';
+V_R242_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R242_WEIGHT	Number(24,4):=1.00;
+V_R242_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R243_PRODUCT	varchar2(100 BYTE):='Contractual inflows from securities maturing ≤ 30 days, not included anywhere above';
+V_R243_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R243_WEIGHT	Number(24,4):=1.00;
+V_R243_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R244_PRODUCT	varchar2(100 BYTE):='Other contractual cash inflows';
+V_R244_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R244_WEIGHT	Number(24,4):=1.00;
+V_R244_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R245_PRODUCT	varchar2(100 BYTE):='Total of other cash inflows';
+V_R245_AMOUNT_EXTENDED	Number(24,4):=0;
+
+
+V_R245_WEIGHT_AMOUNT	Number(24,4):=0;
+
+V_R248_PRODUCT	varchar2(100 BYTE):='Total cash inflows before applying the cap ';
+V_R248_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R248_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R249_PRODUCT	varchar2(100 BYTE):='Cap on cash inflows';
+V_R249_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R249_WEIGHT	Number(24,4):=0.75;
+V_R249_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R250_PRODUCT	varchar2(100 BYTE):='Total cash inflows after applying the cap';
+V_R250_AMOUNT_EXTENDED	Number(24,4):=0;
+
+V_R250_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R252_PRODUCT	varchar2(100 BYTE):='Total stock of high quality liquid assets';
+V_R252_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R253_PRODUCT	varchar2(100 BYTE):='Net cash outflows';
+V_R253_WEIGHT_AMOUNT	Number(24,4):=0;
+V_R254_PRODUCT1	varchar2(100 BYTE):='Liquidity Coverage Ratio';
+V_R254_WEIGHT_AMOUNT1	Number(24,4):=0;
+
+
+V_R40_PRODUCT Number(24,4):=0;
+V_R40_MARKET_VALUE Number(24,4):=0;
+V_R40_WEIGHT_AMOUNT Number(24,4):=0;
+V_R41_PRODUCT Number(24,4):=0;
+V_R41_MARKET_VALUE Number(24,4):=0;
+V_R41_WEIGHT_AMOUNT Number(24,4):=0;
+
+V_R55_MARKET_VALUE	Number(24,4):=0;
+V_R56_MARKET_VALUE	Number(24,4):=0;
+V_R57_MARKET_VALUE	Number(24,4):=0;
+V_R59_MARKET_VALUE	Number(24,4):=0;
+V_R104_MARKET_VALUE	Number(24,4):=0;
+V_R105_MARKET_VALUE	Number(24,4):=0;
+
+V_R58_MARKET_VALUE	Number(24,4):=0;
+V_R106_MARKET_VALUE	Number(24,4):=0;
+V_R107_MARKET_VALUE	Number(24,4):=0;
+V_R108_MARKET_VALUE	Number(24,4):=0;
+V_R109_MARKET_VALUE	Number(24,4):=0;
+V_R110_MARKET_VALUE	Number(24,4):=0;
+V_R111_MARKET_VALUE	Number(24,4):=0;
+
+V_R112_MARKET_VALUE	Number(24,4):=0;
+V_R113_MARKET_VALUE	Number(24,4):=0;
+V_R114_MARKET_VALUE	Number(24,4):=0;
+V_R115_MARKET_VALUE	Number(24,4):=0;
+V_R116_MARKET_VALUE	Number(24,4):=0;
+V_R117_MARKET_VALUE	Number(24,4):=0;
+V_R118_MARKET_VALUE	Number(24,4):=0;
+
+V_R179_MARKET_VALUE	Number(24,4):=0;
+V_R180_MARKET_VALUE	Number(24,4):=0;
+V_R181_MARKET_VALUE	Number(24,4):=0;
+V_R182_MARKET_VALUE	Number(24,4):=0;
+V_R183_MARKET_VALUE	Number(24,4):=0;
+V_R184_MARKET_VALUE	Number(24,4):=0;
+
+V_R178_MARKET_VALUE	Number(24,4):=0;
+V_R185_MARKET_VALUE	Number(24,4):=0;
+V_R186_MARKET_VALUE	Number(24,4):=0;
+V_R187_MARKET_VALUE	Number(24,4):=0;
+V_R188_MARKET_VALUE	Number(24,4):=0;
+V_R189_MARKET_VALUE	Number(24,4):=0;
+V_R190_MARKET_VALUE	Number(24,4):=0;
+
+V_R191_MARKET_VALUE	Number(24,4):=0;
+V_R192_MARKET_VALUE	Number(24,4):=0;
+V_R193_MARKET_VALUE	Number(24,4):=0;
+V_R194_MARKET_VALUE	Number(24,4):=0;
+V_R195_MARKET_VALUE	Number(24,4):=0;
+V_R196_MARKET_VALUE	Number(24,4):=0;
+V_R197_MARKET_VALUE	Number(24,4):=0;
+V_R198_MARKET_VALUE	Number(24,4):=0;
+V_R199_MARKET_VALUE	Number(24,4):=0;
+V_R200_MARKET_VALUE	Number(24,4):=0;
+V_R201_MARKET_VALUE	Number(24,4):=0;
+V_R202_MARKET_VALUE	Number(24,4):=0;
+
+V_R142_AMOUNT Number(24,4):=0;
+V_R143_AMOUNT Number(24,4):=0;
+V_R144_AMOUNT Number(24,4):=0;
+V_R145_AMOUNT Number(24,4):=0;
+V_R146_AMOUNT Number(24,4):=0;
+V_R147_AMOUNT Number(24,4):=0;
+V_R148_AMOUNT Number(24,4):=0;
+V_R149_AMOUNT Number(24,4):=0;
+V_R150_AMOUNT Number(24,4):=0;
+V_R151_AMOUNT Number(24,4):=0;
+V_R152_AMOUNT Number(24,4):=0;
+V_R153_AMOUNT Number(24,4):=0;
+V_R154_AMOUNT Number(24,4):=0;
+
+V_R64_AMOUNT Number(24,4):=0;
+V_R65_AMOUNT Number(24,4):=0;
+V_R66_AMOUNT Number(24,4):=0;
+V_R67_AMOUNT Number(24,4):=0;
+V_R68_AMOUNT Number(24,4):=0;
+V_R69_AMOUNT Number(24,4):=0;
+V_R70_AMOUNT Number(24,4):=0;
+
+
+V_R85_AMOUNT Number(24,4):=0;
+
+
+V_R202_AMOUNT Number(24,4):=0;
+V_R203_AMOUNT Number(24,4):=0;
+V_R204_AMOUNT Number(24,4):=0;
+V_R205_AMOUNT Number(24,4):=0;
+V_R206_AMOUNT Number(24,4):=0;
+V_R207_AMOUNT Number(24,4):=0;
+V_R208_AMOUNT Number(24,4):=0;
+V_R209_AMOUNT Number(24,4):=0;
+V_R210_AMOUNT Number(24,4):=0;
+V_R211_AMOUNT Number(24,4):=0;
+V_R212_AMOUNT Number(24,4):=0;
+V_R213_AMOUNT Number(24,4):=0;
+V_R214_AMOUNT Number(24,4):=0;
+V_R62_AMOUNT Number(24,4):=0;
+V_R63_AMOUNT Number(24,4):=0;
+V_R71_AMOUNT Number(24,4):=0;
+V_R84_AMOUNT Number(24,4):=0;
+V_R139_AMOUNT Number(24,4):=0;
+V_R140_AMOUNT Number(24,4):=0;
+V_R141_AMOUNT Number(24,4):=0;
+
+V_R228_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R229_AMOUNT_EXTENDED	Number(24,4):=0;
+V_R256_WEIGHT_AMOUNT	Number(24,4):=0;
+
+
+
+
+BEGIN
+
+delete from BRF14_SUMMARYTABLE where report_date = V_REPORT_DATE;
+Commit;
+
+select count(*) into V_R10_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW101A';
+select count(*) into V_R11_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW102A';
+select count(*) into V_R12_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW103A';
+select count(*) into V_R13_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW104A';
+select count(*) into V_R14_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW105A';
+select count(*) into V_R15_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW106A';
+select count(*) into V_R16_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW107A';
+select count(*) into V_R17_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW108A';
+select count(*) into V_R18_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW109A';
+select count(*) into V_R19_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW110A';
+select count(*) into V_R20_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW111A';
+select count(*) into V_R21_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW112A';
+select count(*) into V_R22_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW113A';
+select count(*) into V_R23_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW114A';
+select count(*) into V_R24_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW115A';
+
+select count(*) into V_R28_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW120A';
+select count(*) into V_R29_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW121A';
+select count(*) into V_R30_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW122A';
+select count(*) into V_R31_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW123A';
+select count(*) into V_R32_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW124A';
+select count(*) into V_R33_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW125A';
+select count(*) into V_R34_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW126A';
+select count(*) into V_R35_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW127A';
+select count(*) into V_R36_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW128A';
+select count(*) into V_R37_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW129A';
+select count(*) into V_R38_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW130A';
+select count(*) into V_R39_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW131A';
+
+select count(*) into V_R40_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW133A';
+select count(*) into V_R41_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW134A';
+select count(*) into V_R42_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW135A';
+select count(*) into V_R43_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW136A';
+select count(*) into V_R44_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW137A';
+select count(*) into V_R45_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW138A';
+select count(*) into V_R46_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW139A';
+select count(*) into V_R47_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW140A';
+select count(*) into V_R48_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW141A';
+select count(*) into V_R49_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW142A';
+select count(*) into V_R50_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW143A';
+select count(*) into V_R51_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW144A';
+select count(*) into V_R52_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW145A';
+
+select count(*) into V_R53_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW148A';
+
+select count(*) into V_R54_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW151A';
+select count(*) into V_R55_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW152A';
+select count(*) into V_R56_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW153A';
+select count(*) into V_R57_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW154A';
+select count(*) into V_R58_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW155A';
+select count(*) into V_R59_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW156A';
+select count(*) into V_R60_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW157A';
+select count(*) into V_R61_MARKET_VALUE  from BRF14_DETAILTABLE WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW158A';
+
+select count(*) into V_R107_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW213A';
+select count(*) into V_R108_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW214A';
+
+
+select count(*) into V_R110_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW216A';
+select count(*) into V_R111_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW217A';
+
+select count(*) into V_R113_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW219A';
+select count(*) into V_R114_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW220A';
+
+select count(*) into V_R116_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW222A';
+select count(*) into V_R117_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW223A';
+select count(*) into V_R118_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW224A';
+
+
+select count(*) into V_R120_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW226A';
+select count(*) into V_R121_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW227A';
+
+select count(*) into V_R122_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW229A';
+select count(*) into V_R123_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW230A';
+
+select count(*) into V_R124_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW231A';
+select count(*) into V_R125_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW232A';
+
+select count(*) into V_R126_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW232A';
+select count(*) into V_R127_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW233A';
+
+select count(*) into V_R130_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW236A';
+select count(*) into V_R131_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW237A';
+
+select count(*) into V_R133_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW239A';
+select count(*) into V_R134_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW240A';
+
+select count(*) into V_R136_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW242A';
+select count(*) into V_R137_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW243A';
+
+select count(*) into V_R183_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW299A';
+select count(*) into V_R184_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW300A';
+
+select count(*) into V_R186_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW302A';
+select count(*) into V_R187_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW303A';
+
+select count(*) into V_R189_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW305A';
+select count(*) into V_R190_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW306A';
+
+select count(*) into V_R192_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW308A';
+select count(*) into V_R193_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW309A';
+select count(*) into V_R194_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW310A';
+select count(*) into V_R195_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW311A';
+
+select count(*) into V_R197_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW313A';
+select count(*) into V_R198_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW314A';
+select count(*) into V_R199_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW317A';
+select count(*) into V_R200_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW315A';
+select count(*) into V_R201_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW316A';
+select count(*) into V_R202_MARKET_VALUE  from BRF14_DETAILTABLE  WHERE REPORT_DATE = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW317A';
+
+select count(*) into V_R11_WEIGHT_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW102A';
+
+
+select count(*) into V_R62_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE  AND REPORT_ADDL_CRITERIA_1= 'ROW164D';
+select count(*) into V_R63_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE  AND REPORT_ADDL_CRITERIA_1= 'ROW165D';
+select count(*) into V_R64_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE  AND REPORT_ADDL_CRITERIA_1= 'ROW166D';
+select count(*) into V_R65_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE  AND REPORT_ADDL_CRITERIA_1= 'ROW167D';
+select count(*) into V_R66_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE  AND REPORT_ADDL_CRITERIA_1= 'ROW168D';
+select count(*) into V_R67_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE  AND REPORT_ADDL_CRITERIA_1= 'ROW169D';
+select count(*) into V_R68_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW170D';
+select count(*) into V_R69_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW171D';
+select count(*) into V_R70_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW172D';
+select count(*) into V_R71_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW173D';
+
+select count(*) into V_R74_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW178D';
+select count(*) into V_R75_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW179D';
+select count(*) into V_R76_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW180D';
+select count(*) into V_R77_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW181D';
+select count(*) into V_R78_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW182D';
+select count(*) into V_R79_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW183D';
+select count(*) into V_R80_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW184D';
+select count(*) into V_R81_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW185D';
+
+select count(*) into V_R82_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW186D';
+select count(*) into V_R83_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW187D';
+select count(*) into V_R84_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW188D';
+select count(*) into V_R85_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW189D';
+select count(*) into V_R86_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW190D';
+select count(*) into V_R87_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW191D';
+select count(*) into V_R88_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW192D';
+
+select count(*) into V_R89_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW193D';
+select count(*) into V_R90_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW194D';
+select count(*) into V_R91_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW195D';
+select count(*) into V_R92_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW196D';
+select count(*) into V_R93_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW197D';
+select count(*) into V_R94_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW198D';
+select count(*) into V_R95_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW199D';
+select count(*) into V_R96_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW200D';
+select count(*) into V_R97_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW201D';
+select count(*) into V_R98_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW202D';
+select count(*) into V_R99_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW203D';
+select count(*) into V_R100_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW204D';
+
+select count(*) into V_R139_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW247D';
+select count(*) into V_R140_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW248D';
+select count(*) into V_R141_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW249D';
+select count(*) into V_R142_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW250D';
+select count(*) into V_R143_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW251D';
+select count(*) into V_R144_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW252D';
+select count(*) into V_R145_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW253D';
+select count(*) into V_R146_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW254D';
+select count(*) into V_R147_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW255D';
+select count(*) into V_R148_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW256D';
+select count(*) into V_R149_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW257D';
+select count(*) into V_R150_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW258D';
+select count(*) into V_R151_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW259D';
+select count(*) into V_R152_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW260D';
+select count(*) into V_R153_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW261D';
+select count(*) into V_R154_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW262D';
+select count(*) into V_R155_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW263D';
+select count(*) into V_R156_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW264D';
+select count(*) into V_R157_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW265D';
+select count(*) into V_R158_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW266D';
+select count(*) into V_R159_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW267D';
+select count(*) into V_R160_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW268D';
+select count(*) into V_R161_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW269D';
+select count(*) into V_R162_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW270D';
+select count(*) into V_R163_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW271D';
+select count(*) into V_R164_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW272D';
+select count(*) into V_R165_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW273D';
+select count(*) into V_R166_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW274D';
+
+
+select count(*) into V_R176_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW288D';
+select count(*) into V_R177_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW289D';
+
+select count(*) into V_R204_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW323D';
+select count(*) into V_R205_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW324D';
+select count(*) into V_R206_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW325D';
+select count(*) into V_R207_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW326D';
+select count(*) into V_R208_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW327D';
+select count(*) into V_R209_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW328D';
+select count(*) into V_R210_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW329D';
+
+select count(*) into V_R212_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW334D';
+select count(*) into V_R213_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW335D';
+select count(*) into V_R214_AMOUNT  from BRF14_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_ADDL_CRITERIA_1= 'ROW336D';
+
+
+
+
+
+V_R11_MARKET_VALUE:=V_R12_MARKET_VALUE;
+
+V_R13_MARKET_VALUE:=V_R14_MARKET_VALUE+
+V_R15_MARKET_VALUE+
+V_R16_MARKET_VALUE+
+V_R17_MARKET_VALUE+
+V_R18_MARKET_VALUE;
+
+
+V_R19_MARKET_VALUE:=V_R20_MARKET_VALUE+V_R21_MARKET_VALUE;
+
+
+V_R22_MARKET_VALUE:=V_R10_MARKET_VALUE+
+V_R12_MARKET_VALUE+
+V_R13_MARKET_VALUE+
+V_R19_MARKET_VALUE;
+
+V_R28_MARKET_VALUE:=V_R29_MARKET_VALUE+V_R30_MARKET_VALUE+
+V_R31_MARKET_VALUE+V_R32_MARKET_VALUE+V_R33_MARKET_VALUE+
+V_R34_MARKET_VALUE+V_R35_MARKET_VALUE+V_R36_MARKET_VALUE;
+
+V_R37_MARKET_VALUE:=V_R29_MARKET_VALUE+V_R30_MARKET_VALUE+
+V_R31_MARKET_VALUE+V_R32_MARKET_VALUE+V_R33_MARKET_VALUE+
+V_R34_MARKET_VALUE+V_R35_MARKET_VALUE+V_R36_MARKET_VALUE;
+
+V_R39_MARKET_VALUE:=V_R37_MARKET_VALUE+V_R38_MARKET_VALUE;
+
+
+V_R10_WEIGHT_AMOUNT:=V_R10_MARKET_VALUE*V_R10_WEIGHT;
+V_R12_WEIGHT_AMOUNT:=V_R12_MARKET_VALUE*V_R12_WEIGHT;
+V_R14_WEIGHT_AMOUNT:=V_R14_MARKET_VALUE*V_R14_WEIGHT;
+V_R15_WEIGHT_AMOUNT:=V_R15_MARKET_VALUE*V_R15_WEIGHT;
+V_R16_WEIGHT_AMOUNT:=V_R16_MARKET_VALUE*V_R16_WEIGHT;
+V_R17_WEIGHT_AMOUNT:=V_R17_MARKET_VALUE*V_R17_WEIGHT;
+V_R18_WEIGHT_AMOUNT:=V_R18_MARKET_VALUE*V_R18_WEIGHT;
+V_R20_WEIGHT_AMOUNT:=V_R20_MARKET_VALUE*V_R20_WEIGHT;
+V_R21_WEIGHT_AMOUNT:=V_R21_MARKET_VALUE*V_R21_WEIGHT;
+
+V_R29_WEIGHT_AMOUNT:=V_R29_MARKET_VALUE*V_R29_WEIGHT;
+V_R30_WEIGHT_AMOUNT:=V_R30_MARKET_VALUE*V_R30_WEIGHT;
+V_R31_WEIGHT_AMOUNT:=V_R31_MARKET_VALUE*V_R31_WEIGHT;
+V_R32_WEIGHT_AMOUNT:=V_R32_MARKET_VALUE*V_R32_WEIGHT;
+V_R33_WEIGHT_AMOUNT:=V_R33_MARKET_VALUE*V_R33_WEIGHT;
+V_R34_WEIGHT_AMOUNT:=V_R34_MARKET_VALUE*V_R34_WEIGHT;
+V_R35_WEIGHT_AMOUNT:=V_R35_MARKET_VALUE*V_R35_WEIGHT;
+V_R36_WEIGHT_AMOUNT:=V_R36_MARKET_VALUE*V_R36_WEIGHT;
+
+
+V_R11_WEIGHT_AMOUNT:=V_R11_MARKET_VALUE;
+
+
+V_R13_WEIGHT_AMOUNT:=V_R14_WEIGHT_AMOUNT+
+V_R15_WEIGHT_AMOUNT+
+V_R16_WEIGHT_AMOUNT+
+V_R17_WEIGHT_AMOUNT+
+V_R18_WEIGHT_AMOUNT;
+
+
+
+V_R19_WEIGHT_AMOUNT:=V_R20_WEIGHT_AMOUNT+V_R21_WEIGHT_AMOUNT;
+
+
+V_R22_WEIGHT_AMOUNT:=V_R10_WEIGHT_AMOUNT+
+V_R12_WEIGHT_AMOUNT+
+V_R13_WEIGHT_AMOUNT+
+V_R19_WEIGHT_AMOUNT;
+
+
+V_R23_WEIGHT_AMOUNT:=V_R23_MARKET_VALUE;
+
+
+V_R25_WEIGHT_AMOUNT:= V_R22_WEIGHT_AMOUNT+V_R24_MARKET_VALUE+V_R23_WEIGHT_AMOUNT;
+
+V_R37_WEIGHT_AMOUNT:=V_R29_WEIGHT_AMOUNT+
+V_R30_WEIGHT_AMOUNT+
+V_R31_WEIGHT_AMOUNT+
+V_R32_WEIGHT_AMOUNT+
+V_R33_WEIGHT_AMOUNT+
+V_R34_WEIGHT_AMOUNT+
+V_R35_WEIGHT_AMOUNT+
+V_R36_WEIGHT_AMOUNT;
+
+V_R39_WEIGHT_AMOUNT:=V_R37_WEIGHT_AMOUNT+V_R38_MARKET_VALUE;
+
+
+V_R46_MARKET_VALUE:=V_R42_MARKET_VALUE;
+
+
+
+V_R47_MARKET_VALUE:=(V_R127_MARKET_VALUE+V_R140_MARKET_VALUE)-V_R213_MARKET_VALUE;
+
+V_R48_MARKET_VALUE:=V_R46_MARKET_VALUE+V_R47_MARKET_VALUE;
+V_R49_MARKET_VALUE:=V_R43_MARKET_VALUE+V_R44_MARKET_VALUE+V_R45_MARKET_VALUE;
+
+V_R50_MARKET_VALUE:=(V_R130_MARKET_VALUE+V_R144_MARKET_VALUE+V_R147_MARKET_VALUE)-V_R216_MARKET_VALUE;
+
+V_R51_MARKET_VALUE:=V_R49_MARKET_VALUE+V_R50_MARKET_VALUE;
+
+V_R52_MARKET_VALUE:=V_R48_MARKET_VALUE+V_R51_MARKET_VALUE;
+
+
+V_R42_WEIGHT_AMOUNT:=V_R42_MARKET_VALUE*V_R42_WEIGHT;
+V_R43_WEIGHT_AMOUNT:=V_R43_MARKET_VALUE*V_R43_WEIGHT;
+V_R44_WEIGHT_AMOUNT:=V_R44_MARKET_VALUE*V_R44_WEIGHT;
+V_R45_WEIGHT_AMOUNT:=V_R45_MARKET_VALUE*V_R45_WEIGHT;
+
+V_R46_WEIGHT_AMOUNT:=V_R42_WEIGHT_AMOUNT;
+
+
+V_R48_WEIGHT_AMOUNT:=V_R48_MARKET_VALUE*V_R48_WEIGHT;
+
+V_R49_WEIGHT_AMOUNT:=V_R43_WEIGHT_AMOUNT+V_R44_WEIGHT_AMOUNT+V_R45_WEIGHT_AMOUNT;
+
+V_R51_WEIGHT_AMOUNT:=V_R51_MARKET_VALUE*V_R51_WEIGHT;
+
+V_R52_WEIGHT_AMOUNT:=V_R48_WEIGHT_AMOUNT+V_R51_WEIGHT_AMOUNT;
+
+V_R53_WEIGHT_AMOUNT:=V_R52_WEIGHT_AMOUNT-(15/60)*V_R25_WEIGHT_AMOUNT;
+
+V_R54_WEIGHT_AMOUNT:=(V_R39_WEIGHT_AMOUNT+V_R52_WEIGHT_AMOUNT)-V_R53_WEIGHT_AMOUNT-(2/3)*V_R25_WEIGHT_AMOUNT;
+
+V_R57_WEIGHT_AMOUNT:=(V_R22_WEIGHT_AMOUNT+V_R37_WEIGHT_AMOUNT+V_R46_WEIGHT_AMOUNT+V_R49_WEIGHT_AMOUNT)-(V_R53_WEIGHT_AMOUNT+V_R54_WEIGHT_AMOUNT);
+
+V_R73_AMOUNT:=V_R74_AMOUNT+V_R75_AMOUNT;
+
+V_R76_AMOUNT:=V_R77_AMOUNT+V_R78_AMOUNT+V_R79_AMOUNT+V_R80_AMOUNT+V_R81_AMOUNT;
+
+V_R72_AMOUNT:=V_R73_AMOUNT+V_R76_AMOUNT;
+
+V_R74_WEIGHT_AMOUNT:=V_R74_AMOUNT*V_R74_WEIGHT;
+V_R75_WEIGHT_AMOUNT:=V_R75_AMOUNT*V_R75_WEIGHT;
+V_R77_WEIGHT_AMOUNT:=V_R77_AMOUNT*V_R77_WEIGHT;
+V_R78_WEIGHT_AMOUNT:=V_R78_AMOUNT*V_R78_WEIGHT;
+V_R79_WEIGHT_AMOUNT:=V_R79_AMOUNT*V_R79_WEIGHT;
+V_R80_WEIGHT_AMOUNT:=V_R80_AMOUNT*V_R80_WEIGHT;
+V_R81_WEIGHT_AMOUNT:=V_R81_AMOUNT*V_R81_WEIGHT;
+
+V_R82_WEIGHT_AMOUNT:=V_R74_WEIGHT_AMOUNT+V_R77_WEIGHT_AMOUNT+
+V_R78_WEIGHT_AMOUNT+V_R80_WEIGHT_AMOUNT+
+V_R81_WEIGHT_AMOUNT+V_R79_WEIGHT_AMOUNT+
+V_R75_WEIGHT_AMOUNT;
+
+V_R83_WEIGHT_AMOUNT:=V_R82_WEIGHT_AMOUNT;
+
+
+V_R101_AMOUNT:=V_R102_AMOUNT+V_R103_AMOUNT+V_R104_AMOUNT;
+V_R87_AMOUNT:=V_R88_AMOUNT+V_R93_AMOUNT+V_R97_AMOUNT+V_R101_AMOUNT;
+V_R106_AMOUNT:=V_R107_AMOUNT+V_R108_AMOUNT;
+V_R105_AMOUNT:=V_R106_AMOUNT+V_R109_AMOUNT+V_R110_AMOUNT+V_R111_AMOUNT+V_R112_AMOUNT;
+V_R86_AMOUNT:=V_R87_AMOUNT+V_R105_AMOUNT;
+V_R88_AMOUNT:=V_R89_AMOUNT+V_R90_AMOUNT+V_R91_AMOUNT+V_R92_AMOUNT;
+V_R93_AMOUNT:=V_R94_AMOUNT+V_R95_AMOUNT+V_R96_AMOUNT;
+V_R97_AMOUNT:=V_R98_AMOUNT+V_R99_AMOUNT+V_R100_AMOUNT;
+
+
+V_R89_WEIGHT_AMOUNT:=V_R89_AMOUNT*V_R89_WEIGHT;
+V_R90_WEIGHT_AMOUNT:=V_R90_AMOUNT*V_R90_WEIGHT;
+V_R91_WEIGHT_AMOUNT:=V_R91_AMOUNT*V_R91_WEIGHT;
+V_R92_WEIGHT_AMOUNT:=V_R92_AMOUNT*V_R92_WEIGHT;
+V_R94_WEIGHT_AMOUNT:=V_R94_AMOUNT*V_R94_WEIGHT;
+V_R95_WEIGHT_AMOUNT:=V_R95_AMOUNT*V_R95_WEIGHT;
+V_R96_WEIGHT_AMOUNT:=V_R96_AMOUNT*V_R96_WEIGHT;
+V_R98_WEIGHT_AMOUNT:=V_R98_AMOUNT*V_R98_WEIGHT;
+V_R99_WEIGHT_AMOUNT:=V_R99_AMOUNT*V_R99_WEIGHT;
+V_R100_WEIGHT_AMOUNT:=V_R100_AMOUNT*V_R100_WEIGHT;
+V_R102_WEIGHT_AMOUNT:=V_R102_AMOUNT*V_R102_WEIGHT;
+V_R103_WEIGHT_AMOUNT:=V_R103_AMOUNT*V_R103_WEIGHT;
+V_R104_WEIGHT_AMOUNT:=V_R104_AMOUNT*V_R104_WEIGHT;
+V_R107_WEIGHT_AMOUNT:=V_R107_AMOUNT*V_R107_WEIGHT;
+V_R108_WEIGHT_AMOUNT:=V_R108_AMOUNT*V_R108_WEIGHT;
+V_R109_WEIGHT_AMOUNT:=V_R109_AMOUNT*V_R109_WEIGHT;
+V_R110_WEIGHT_AMOUNT:=V_R110_AMOUNT*V_R110_WEIGHT;
+V_R111_WEIGHT_AMOUNT:=V_R111_AMOUNT*V_R111_WEIGHT;
+V_R112_WEIGHT_AMOUNT:=V_R112_AMOUNT*V_R112_WEIGHT;
+
+V_R113_WEIGHT_AMOUNT:=V_R89_WEIGHT_AMOUNT+V_R90_WEIGHT_AMOUNT+V_R91_WEIGHT_AMOUNT+V_R92_WEIGHT_AMOUNT+
+V_R94_WEIGHT_AMOUNT+V_R95_WEIGHT_AMOUNT+V_R96_WEIGHT_AMOUNT+V_R98_WEIGHT_AMOUNT+
+V_R99_WEIGHT_AMOUNT+V_R100_WEIGHT_AMOUNT+V_R102_WEIGHT_AMOUNT+V_R103_WEIGHT_AMOUNT+
+V_R104_WEIGHT_AMOUNT+V_R107_WEIGHT_AMOUNT+V_R108_WEIGHT_AMOUNT+V_R109_WEIGHT_AMOUNT+
+V_R110_WEIGHT_AMOUNT+V_R111_WEIGHT_AMOUNT+V_R112_WEIGHT_AMOUNT;
+
+V_R115_WEIGHT_AMOUNT:=V_R107_WEIGHT_AMOUNT+V_R108_WEIGHT_AMOUNT+V_R109_WEIGHT_AMOUNT+V_R110_WEIGHT_AMOUNT+V_R111_WEIGHT_AMOUNT+V_R112_WEIGHT_AMOUNT;
+
+V_R116_WEIGHT_AMOUNT:=V_R114_WEIGHT_AMOUNT+V_R115_WEIGHT_AMOUNT;
+
+V_R120_AMOUNT_RECEVIED:=V_R121_AMOUNT_RECEVIED+V_R122_AMOUNT_RECEVIED;
+
+V_R123_AMOUNT_RECEVIED:=V_R124_AMOUNT_RECEVIED+V_R125_AMOUNT_RECEVIED;
+
+V_R126_AMOUNT_RECEVIED:=V_R127_AMOUNT_RECEVIED+V_R128_AMOUNT_RECEVIED;
+
+V_R129_AMOUNT_RECEVIED:=V_R130_AMOUNT_RECEVIED+V_R131_AMOUNT_RECEVIED+V_R132_AMOUNT_RECEVIED;
+
+V_R119_AMOUNT_RECEVIED:=V_R120_AMOUNT_RECEVIED+V_R123_AMOUNT_RECEVIED+V_R126_AMOUNT_RECEVIED+V_R129_AMOUNT_RECEVIED;
+
+V_R133_AMOUNT_RECEVIED:=V_R134_AMOUNT_RECEVIED+V_R135_AMOUNT_RECEVIED;
+
+V_R136_AMOUNT_RECEVIED:=V_R137_AMOUNT_RECEVIED+V_R138_AMOUNT_RECEVIED;
+
+V_R139_AMOUNT_RECEVIED:=V_R140_AMOUNT_RECEVIED+V_R141_AMOUNT_RECEVIED;
+
+V_R143_AMOUNT_RECEVIED:=V_R144_AMOUNT_RECEVIED+V_R145_AMOUNT_RECEVIED;
+
+V_R146_AMOUNT_RECEVIED:=V_R147_AMOUNT_RECEVIED+V_R148_AMOUNT_RECEVIED;
+
+V_R142_AMOUNT_RECEVIED:=V_R143_AMOUNT_RECEVIED+V_R146_AMOUNT_RECEVIED+V_R149_AMOUNT_RECEVIED;
+
+
+V_R149_AMOUNT_RECEVIED:=V_R150_AMOUNT_RECEVIED+V_R151_AMOUNT_RECEVIED;
+
+
+V_R152_AMOUNT_RECEVIED:=V_R119_AMOUNT_RECEVIED+V_R133_AMOUNT_RECEVIED+V_R136_AMOUNT_RECEVIED+V_R139_AMOUNT_RECEVIED+V_R142_AMOUNT_RECEVIED;
+
+
+V_R121_WEIGHT_AMOUNT:=V_R121_AMOUNT_RECEVIED+V_R121_WEIGHT;
+V_R122_WEIGHT_AMOUNT:=V_R122_AMOUNT_RECEVIED+V_R122_WEIGHT;
+V_R124_WEIGHT_AMOUNT:=V_R124_AMOUNT_RECEVIED+V_R124_WEIGHT;
+V_R125_WEIGHT_AMOUNT:=V_R125_AMOUNT_RECEVIED+V_R125_WEIGHT;
+V_R127_WEIGHT_AMOUNT:=V_R127_AMOUNT_RECEVIED+V_R127_WEIGHT;
+V_R128_WEIGHT_AMOUNT:=V_R128_AMOUNT_RECEVIED+V_R128_WEIGHT;
+V_R130_WEIGHT_AMOUNT:=V_R130_AMOUNT_RECEVIED+V_R130_WEIGHT;
+V_R131_WEIGHT_AMOUNT:=V_R131_AMOUNT_RECEVIED+V_R131_WEIGHT;
+V_R132_WEIGHT_AMOUNT:=V_R132_AMOUNT_RECEVIED+V_R132_WEIGHT;
+V_R134_WEIGHT_AMOUNT:=V_R134_AMOUNT_RECEVIED+V_R134_WEIGHT;
+V_R135_WEIGHT_AMOUNT:=V_R135_AMOUNT_RECEVIED+V_R135_WEIGHT;
+V_R137_WEIGHT_AMOUNT:=V_R137_AMOUNT_RECEVIED+V_R137_WEIGHT;
+V_R138_WEIGHT_AMOUNT:=V_R138_AMOUNT_RECEVIED+V_R138_WEIGHT;
+V_R140_WEIGHT_AMOUNT:=V_R140_AMOUNT_RECEVIED+V_R140_WEIGHT;
+V_R141_WEIGHT_AMOUNT:=V_R141_AMOUNT_RECEVIED+V_R141_WEIGHT;
+V_R144_WEIGHT_AMOUNT:=V_R144_AMOUNT_RECEVIED+V_R144_WEIGHT;
+V_R145_WEIGHT_AMOUNT:=V_R145_AMOUNT_RECEVIED+V_R145_WEIGHT;
+V_R147_WEIGHT_AMOUNT:=V_R147_AMOUNT_RECEVIED+V_R147_WEIGHT;
+V_R148_WEIGHT_AMOUNT:=V_R148_AMOUNT_RECEVIED+V_R148_WEIGHT;
+V_R150_WEIGHT_AMOUNT:=V_R150_AMOUNT_RECEVIED+V_R150_WEIGHT;
+V_R151_WEIGHT_AMOUNT:=V_R151_AMOUNT_RECEVIED+V_R151_WEIGHT;
+
+V_R152_WEIGHT_AMOUNT:=V_R121_WEIGHT_AMOUNT+V_R122_WEIGHT_AMOUNT+
+V_R124_WEIGHT_AMOUNT+V_R125_WEIGHT_AMOUNT+
+V_R127_WEIGHT_AMOUNT+V_R128_WEIGHT_AMOUNT+
+V_R130_WEIGHT_AMOUNT+V_R131_WEIGHT_AMOUNT+
+V_R132_WEIGHT_AMOUNT+V_R134_WEIGHT_AMOUNT+
+V_R135_WEIGHT_AMOUNT+V_R137_WEIGHT_AMOUNT+
+V_R138_WEIGHT_AMOUNT+V_R140_WEIGHT_AMOUNT+
+V_R141_WEIGHT_AMOUNT+V_R144_WEIGHT_AMOUNT+
+V_R145_WEIGHT_AMOUNT+V_R147_WEIGHT_AMOUNT+
+V_R148_WEIGHT_AMOUNT+V_R150_WEIGHT_AMOUNT+
+V_R151_WEIGHT_AMOUNT;
+
+V_R157_AMOUNT:=V_R158_AMOUNT+V_R159_AMOUNT;
+
+V_R166_AMOUNT:=V_R167_AMOUNT+V_R168_AMOUNT+V_R169_AMOUNT;
+
+
+V_R171_AMOUNT:=V_R172_AMOUNT+V_R173_AMOUNT+V_R174_AMOUNT+V_R175_AMOUNT+V_R176_AMOUNT;
+V_R177_AMOUNT:=V_R178_AMOUNT+V_R179_AMOUNT+V_R180_AMOUNT+V_R181_AMOUNT+V_R182_AMOUNT;
+
+V_R155_WEIGHT_AMOUNT:=V_R155_AMOUNT*V_R155_WEIGHT;
+V_R156_WEIGHT_AMOUNT:=V_R156_AMOUNT*V_R156_WEIGHT;
+V_R158_WEIGHT_AMOUNT:=V_R158_AMOUNT*V_R158_WEIGHT;
+V_R159_WEIGHT_AMOUNT:=V_R159_AMOUNT*V_R159_WEIGHT;
+V_R160_WEIGHT_AMOUNT:=V_R160_AMOUNT*V_R160_WEIGHT;
+V_R161_WEIGHT_AMOUNT:=V_R161_AMOUNT*V_R161_WEIGHT;
+V_R162_WEIGHT_AMOUNT:=V_R162_AMOUNT*V_R162_WEIGHT;
+V_R163_WEIGHT_AMOUNT:=V_R163_AMOUNT*V_R163_WEIGHT;
+V_R164_WEIGHT_AMOUNT:=V_R164_AMOUNT*V_R164_WEIGHT;
+V_R165_WEIGHT_AMOUNT:=V_R165_AMOUNT*V_R165_WEIGHT;
+V_R167_WEIGHT_AMOUNT:=V_R167_AMOUNT*V_R167_WEIGHT;
+V_R168_WEIGHT_AMOUNT:=V_R168_AMOUNT*V_R168_WEIGHT;
+V_R169_WEIGHT_AMOUNT:=V_R169_AMOUNT*V_R169_WEIGHT;
+V_R170_WEIGHT_AMOUNT:=V_R170_AMOUNT*V_R170_WEIGHT;
+V_R172_WEIGHT_AMOUNT:=V_R172_AMOUNT*V_R172_WEIGHT;
+V_R173_WEIGHT_AMOUNT:=V_R173_AMOUNT*V_R173_WEIGHT;
+V_R174_WEIGHT_AMOUNT:=V_R174_AMOUNT*V_R174_WEIGHT;
+V_R175_WEIGHT_AMOUNT:=V_R175_AMOUNT*V_R175_WEIGHT;
+V_R176_WEIGHT_AMOUNT:=V_R176_AMOUNT*V_R176_WEIGHT;
+V_R178_WEIGHT_AMOUNT:=V_R178_AMOUNT*V_R178_WEIGHT;
+V_R179_WEIGHT_AMOUNT:=V_R179_AMOUNT*V_R179_WEIGHT;
+V_R180_WEIGHT_AMOUNT:=V_R180_AMOUNT*V_R180_WEIGHT;
+V_R181_WEIGHT_AMOUNT:=V_R181_AMOUNT*V_R181_WEIGHT;
+V_R182_WEIGHT_AMOUNT:=V_R182_AMOUNT*V_R182_WEIGHT;
+
+V_R185_ROLL_OVER:=V_R231_AMOUNT_EXTENDED-V_R231_WEIGHT_AMOUNT;
+V_R186_ROLL_OVER:=V_R232_AMOUNT_EXTENDED-V_R232_WEIGHT_AMOUNT;
+V_R187_ROLL_OVER:=V_R233_AMOUNT_EXTENDED-V_R233_WEIGHT_AMOUNT;
+V_R188_ROLL_OVER:=V_R237_AMOUNT_EXTENDED-V_R237_WEIGHT_AMOUNT;
+V_R189_ROLL_OVER:=V_R185_ROLL_OVER+V_R186_ROLL_OVER+V_R187_ROLL_OVER+V_R188_ROLL_OVER;
+
+V_R189_EXCESS:=V_R189_AMOUNT-V_R189_ROLL_OVER;
+
+V_R184_WEIGHT_AMOUNT:=V_R184_AMOUNT*V_R184_WEIGHT;
+
+
+V_R189_WEIGHT_AMOUNT:=V_R189_EXCESS*V_R189_WEIGHT;
+
+
+V_R190_WEIGHT_AMOUNT:=V_R184_WEIGHT_AMOUNT+V_R189_WEIGHT_AMOUNT;
+
+
+V_R192_AMOUNT:=V_R155_WEIGHT_AMOUNT+V_R156_WEIGHT_AMOUNT+
+V_R158_WEIGHT_AMOUNT+V_R159_WEIGHT_AMOUNT+
+V_R160_WEIGHT_AMOUNT+V_R161_WEIGHT_AMOUNT+
+V_R162_WEIGHT_AMOUNT+V_R163_WEIGHT_AMOUNT+
+V_R164_WEIGHT_AMOUNT+V_R165_WEIGHT_AMOUNT+
+V_R167_WEIGHT_AMOUNT+V_R168_WEIGHT_AMOUNT+
+V_R169_WEIGHT_AMOUNT+V_R170_WEIGHT_AMOUNT+
+V_R172_WEIGHT_AMOUNT+V_R173_WEIGHT_AMOUNT+
+V_R174_WEIGHT_AMOUNT+V_R175_WEIGHT_AMOUNT+
+V_R176_WEIGHT_AMOUNT+V_R178_WEIGHT_AMOUNT+
+V_R179_WEIGHT_AMOUNT+V_R180_WEIGHT_AMOUNT+
+V_R181_WEIGHT_AMOUNT+V_R182_WEIGHT_AMOUNT+
+V_R190_WEIGHT_AMOUNT;
+
+V_R200_WEIGHT_AMOUNT:=V_R83_WEIGHT_AMOUNT+V_R116_WEIGHT_AMOUNT+
+V_R152_WEIGHT_AMOUNT+V_R192_AMOUNT+V_R198_WEIGHT_AMOUNT;
+
+
+
+
+V_R209_AMOUNT_EXTENDED:=V_R210_AMOUNT_EXTENDED+V_R213_AMOUNT_EXTENDED+V_R216_AMOUNT_EXTENDED+V_R219_AMOUNT_EXTENDED;
+
+V_R210_AMOUNT_EXTENDED:=V_R211_AMOUNT_EXTENDED+V_R212_AMOUNT_EXTENDED;
+V_R213_AMOUNT_EXTENDED:=V_R214_AMOUNT_EXTENDED+V_R215_AMOUNT_EXTENDED;
+
+V_R216_AMOUNT_EXTENDED:=V_R217_AMOUNT_EXTENDED+V_R218_AMOUNT_EXTENDED;
+
+V_R219_AMOUNT_EXTENDED:=V_R220_AMOUNT_EXTENDED+V_R221_AMOUNT_EXTENDED+
+V_R222_AMOUNT_EXTENDED+V_R223_AMOUNT_EXTENDED;
+
+V_R224_AMOUNT_EXTENDED:=V_R225_AMOUNT_EXTENDED+V_R226_AMOUNT_EXTENDED+
+V_R227_AMOUNT_EXTENDED+V_R228_AMOUNT_EXTENDED+
+V_R229_AMOUNT_EXTENDED+V_R230_AMOUNT_EXTENDED;
+
+
+
+V_R231_AMOUNT_EXTENDED:=V_R209_AMOUNT_EXTENDED+V_R224_AMOUNT_EXTENDED;
+
+V_R208_AMOUNT_EXTENDED :=V_R231_AMOUNT_EXTENDED;
+
+
+
+V_R207_WEIGHT_AMOUNT:=V_R207_AMOUNT_EXTENDED*V_R207_WEIGHT;
+V_R208_WEIGHT_AMOUNT:=V_R208_AMOUNT_EXTENDED*V_R208_WEIGHT;
+V_R210_WEIGHT_AMOUNT:=V_R210_AMOUNT_EXTENDED*V_R210_WEIGHT;
+V_R211_WEIGHT_AMOUNT:=V_R211_AMOUNT_EXTENDED*V_R211_WEIGHT;
+V_R213_WEIGHT_AMOUNT:=V_R213_AMOUNT_EXTENDED*V_R213_WEIGHT;
+V_R214_WEIGHT_AMOUNT:=V_R214_AMOUNT_EXTENDED*V_R214_WEIGHT;
+V_R216_WEIGHT_AMOUNT:=V_R216_AMOUNT_EXTENDED*V_R216_WEIGHT;
+V_R217_WEIGHT_AMOUNT:=V_R217_AMOUNT_EXTENDED*V_R217_WEIGHT;
+V_R218_WEIGHT_AMOUNT:=V_R218_AMOUNT_EXTENDED*V_R218_WEIGHT;
+V_R219_WEIGHT_AMOUNT:=V_R219_AMOUNT_EXTENDED*V_R219_WEIGHT;
+V_R221_WEIGHT_AMOUNT:=V_R221_AMOUNT_EXTENDED*V_R221_WEIGHT;
+V_R222_WEIGHT_AMOUNT:=V_R222_AMOUNT_EXTENDED*V_R222_WEIGHT;
+V_R223_WEIGHT_AMOUNT:=V_R223_AMOUNT_EXTENDED*V_R223_WEIGHT;
+V_R224_WEIGHT_AMOUNT:=V_R224_AMOUNT_EXTENDED*V_R224_WEIGHT;
+V_R225_WEIGHT_AMOUNT:=V_R225_AMOUNT_EXTENDED*V_R225_WEIGHT;
+V_R226_WEIGHT_AMOUNT:=V_R226_AMOUNT_EXTENDED*V_R226_WEIGHT;
+
+
+V_R227_WEIGHT_AMOUNT:=V_R207_WEIGHT_AMOUNT+V_R208_WEIGHT_AMOUNT+
+V_R210_WEIGHT_AMOUNT+V_R211_WEIGHT_AMOUNT+
+V_R213_WEIGHT_AMOUNT+V_R214_WEIGHT_AMOUNT+
+V_R216_WEIGHT_AMOUNT+V_R217_WEIGHT_AMOUNT+
+V_R218_WEIGHT_AMOUNT+V_R219_WEIGHT_AMOUNT+
+V_R221_WEIGHT_AMOUNT+V_R222_WEIGHT_AMOUNT+
+V_R223_WEIGHT_AMOUNT+V_R224_WEIGHT_AMOUNT+
+V_R225_WEIGHT_AMOUNT+V_R226_WEIGHT_AMOUNT;
+
+
+
+
+V_R231_WEIGHT_AMOUNT:=V_R231_AMOUNT_EXTENDED*V_R231_WEIGHT;
+V_R232_WEIGHT_AMOUNT:=V_R232_AMOUNT_EXTENDED*V_R232_WEIGHT;
+V_R233_WEIGHT_AMOUNT:=V_R233_AMOUNT_EXTENDED*V_R233_WEIGHT;
+V_R234_WEIGHT_AMOUNT:=V_R234_AMOUNT_EXTENDED*V_R234_WEIGHT;
+V_R235_WEIGHT_AMOUNT:=V_R235_AMOUNT_EXTENDED*V_R235_WEIGHT;
+V_R236_WEIGHT_AMOUNT:=V_R236_AMOUNT_EXTENDED*V_R236_WEIGHT;
+V_R237_WEIGHT_AMOUNT:=V_R237_AMOUNT_EXTENDED*V_R237_WEIGHT;
+
+V_R238_WEIGHT_AMOUNT:=V_R231_WEIGHT_AMOUNT+V_R232_WEIGHT_AMOUNT+
+V_R233_WEIGHT_AMOUNT+V_R234_WEIGHT_AMOUNT+
+V_R235_WEIGHT_AMOUNT+V_R236_WEIGHT_AMOUNT+
+V_R237_WEIGHT_AMOUNT;
+
+V_R238_AMOUNT_EXTENDED:=V_R231_AMOUNT_EXTENDED+V_R232_AMOUNT_EXTENDED+
+V_R233_AMOUNT_EXTENDED+V_R234_AMOUNT_EXTENDED+
+V_R235_AMOUNT_EXTENDED+V_R236_AMOUNT_EXTENDED+
+V_R237_AMOUNT_EXTENDED;
+
+V_R230_AMOUNT_EXTENDED:=V_R238_AMOUNT_EXTENDED;
+
+V_R242_WEIGHT_AMOUNT:=V_R242_AMOUNT_EXTENDED*V_R242_WEIGHT;
+V_R243_WEIGHT_AMOUNT:=V_R243_AMOUNT_EXTENDED*V_R243_WEIGHT;
+V_R244_WEIGHT_AMOUNT:=V_R244_AMOUNT_EXTENDED*V_R244_WEIGHT;
+
+V_R245_WEIGHT_AMOUNT:=V_R242_WEIGHT_AMOUNT+V_R243_WEIGHT_AMOUNT+
+V_R244_WEIGHT_AMOUNT;
+
+V_R245_AMOUNT_EXTENDED:=V_R242_AMOUNT_EXTENDED+V_R243_AMOUNT_EXTENDED+V_R244_AMOUNT_EXTENDED;
+
+V_R241_AMOUNT_EXTENDED:=V_R245_AMOUNT_EXTENDED;
+
+V_R248_AMOUNT_EXTENDED:=V_R227_WEIGHT_AMOUNT+V_R238_WEIGHT_AMOUNT+V_R245_WEIGHT_AMOUNT;
+
+V_R249_AMOUNT_EXTENDED:=V_R220_WEIGHT_AMOUNT;
+
+
+V_R248_WEIGHT_AMOUNT:=V_R227_WEIGHT_AMOUNT+V_R238_WEIGHT_AMOUNT+V_R245_WEIGHT_AMOUNT;
+
+V_R249_WEIGHT_AMOUNT:=V_R249_AMOUNT_EXTENDED*V_R249_WEIGHT;
+
+V_R250_WEIGHT_AMOUNT:=V_R249_WEIGHT_AMOUNT;
+
+V_R252_WEIGHT_AMOUNT:=V_R231_WEIGHT_AMOUNT+V_R242_WEIGHT_AMOUNT+V_R249_WEIGHT_AMOUNT;
+
+
+V_R253_WEIGHT_AMOUNT:=V_R200_WEIGHT_AMOUNT-V_R250_WEIGHT_AMOUNT;
+
+V_R254_WEIGHT_AMOUNT1:=V_R252_WEIGHT_AMOUNT/V_R253_WEIGHT_AMOUNT;
+
+V_R256_WEIGHT_AMOUNT:=V_R57_WEIGHT_AMOUNT;
+
+ select IS_num(V_R10_MARKET_VALUE) into V_variable1 from dual;
+
+if (V_variable1 = 'T')
+  THEN
+V_R10_WEIGHT_AMOUNT:=(V_R10_MARKET_VALUE*V_R10_WEIGHT);
+end if;
+
+
+
+
+insert into BRF14_SUMMARYTABLE(
+R10_PRODUCT,
+R10_MARKET_VALUE,
+R10_WEIGHT,
+R10_WEIGHT_AMOUNT,
+R11_PRODUCT,
+R11_MARKET_VALUE,
+R11_WEIGHT,
+R11_WEIGHT_AMOUNT,
+R12_PRODUCT,
+R12_MARKET_VALUE,
+R12_WEIGHT,
+R12_WEIGHT_AMOUNT,
+R13_PRODUCT,
+R13_MARKET_VALUE,
+R13_WEIGHT_AMOUNT,
+R14_PRODUCT,
+R14_MARKET_VALUE,
+R14_WEIGHT,
+R14_WEIGHT_AMOUNT,
+R15_PRODUCT,
+R15_MARKET_VALUE,
+R15_WEIGHT,
+R15_WEIGHT_AMOUNT,
+R16_PRODUCT,
+R16_MARKET_VALUE,
+R16_WEIGHT,
+R16_WEIGHT_AMOUNT,
+R17_PRODUCT,
+R17_MARKET_VALUE,
+R17_WEIGHT,
+R17_WEIGHT_AMOUNT,
+R18_PRODUCT,
+R18_MARKET_VALUE,
+R18_WEIGHT,
+R18_WEIGHT_AMOUNT,
+R19_PRODUCT,
+R19_MARKET_VALUE,
+R19_WEIGHT_AMOUNT,
+R20_PRODUCT,
+R20_MARKET_VALUE,
+R20_WEIGHT,
+R20_WEIGHT_AMOUNT,
+R21_PRODUCT,
+R21_MARKET_VALUE,
+R21_WEIGHT,
+R21_WEIGHT_AMOUNT,
+R22_PRODUCT,
+R22_MARKET_VALUE,
+R22_WEIGHT_AMOUNT,
+R23_PRODUCT,
+R23_MARKET_VALUE,
+R23_WEIGHT_AMOUNT,
+R24_PRODUCT,
+R24_MARKET_VALUE,
+R24_WEIGHT_AMOUNT,
+R25_PRODUCT,
+R25_MARKET_VALUE,
+R25_WEIGHT_AMOUNT,
+R28_PRODUCT,
+R28_MARKET_VALUE,
+R28_WEIGHT_AMOUNT,
+R29_PRODUCT,
+R29_MARKET_VALUE,
+R29_WEIGHT,
+R29_WEIGHT_AMOUNT,
+R30_PRODUCT,
+R30_MARKET_VALUE,
+R30_WEIGHT,
+R30_WEIGHT_AMOUNT,
+R31_PRODUCT,
+R31_MARKET_VALUE,
+R31_WEIGHT,
+R31_WEIGHT_AMOUNT,
+R32_PRODUCT,
+R32_MARKET_VALUE,
+R32_WEIGHT,
+R32_WEIGHT_AMOUNT,
+R33_PRODUCT,
+R33_MARKET_VALUE,
+R33_WEIGHT,
+R33_WEIGHT_AMOUNT,
+R34_PRODUCT,
+R34_MARKET_VALUE,
+R34_WEIGHT,
+R34_WEIGHT_AMOUNT,
+R35_PRODUCT,
+R35_MARKET_VALUE,
+R35_WEIGHT,
+R35_WEIGHT_AMOUNT,
+R36_PRODUCT,
+R36_MARKET_VALUE,
+R36_WEIGHT,
+R36_WEIGHT_AMOUNT,
+R37_PRODUCT,
+R37_MARKET_VALUE,
+R37_WEIGHT_AMOUNT,
+R38_PRODUCT,
+R38_MARKET_VALUE,
+R38_WEIGHT_AMOUNT,
+R39_PRODUCT,
+R39_MARKET_VALUE,
+R39_WEIGHT_AMOUNT,
+R40_PRODUCT,
+R40_MARKET_VALUE,
+R40_WEIGHT_AMOUNT,
+R41_PRODUCT,
+R41_MARKET_VALUE,
+R41_WEIGHT_AMOUNT,
+R42_PRODUCT,
+R42_MARKET_VALUE,
+R42_WEIGHT,
+R42_WEIGHT_AMOUNT,
+R43_PRODUCT,
+R43_MARKET_VALUE,
+R43_WEIGHT,
+R43_WEIGHT_AMOUNT,
+R44_PRODUCT,
+R44_MARKET_VALUE,
+R44_WEIGHT,
+R44_WEIGHT_AMOUNT,
+R45_PRODUCT,
+R45_MARKET_VALUE,
+R45_WEIGHT,
+R45_WEIGHT_AMOUNT,
+R46_PRODUCT,
+R46_MARKET_VALUE,
+R46_WEIGHT_AMOUNT,
+R47_PRODUCT,
+R47_MARKET_VALUE,
+R47_WEIGHT_AMOUNT,
+R48_PRODUCT,
+R48_MARKET_VALUE,
+R48_WEIGHT,
+R48_WEIGHT_AMOUNT,
+R49_PRODUCT,
+R49_MARKET_VALUE,
+R49_WEIGHT_AMOUNT,
+R50_PRODUCT,
+R50_MARKET_VALUE,
+R50_WEIGHT_AMOUNT,
+R51_PRODUCT,
+R51_MARKET_VALUE,
+R51_WEIGHT,
+R51_WEIGHT_AMOUNT,
+R52_PRODUCT,
+R52_MARKET_VALUE,
+R52_WEIGHT_AMOUNT,
+R53_PRODUCT,
+R53_MARKET_VALUE,
+R53_WEIGHT_AMOUNT,
+R54_PRODUCT,
+R54_MARKET_VALUE,
+R54_WEIGHT_AMOUNT,
+R55_MARKET_VALUE,
+R56_MARKET_VALUE,
+R57_MARKET_VALUE,
+R58_MARKET_VALUE,
+R56_WEIGHT_AMOUNT,
+R60_PRODUCT,
+R60_MARKET_VALUE,
+R61_PRODUCT,
+R61_MARKET_VALUE,
+R62_PRODUCT,
+R62_MARKET_VALUE,
+R63_PRODUCT,
+R63_MARKET_VALUE,
+R64_PRODUCT,
+R64_MARKET_VALUE,
+R65_PRODUCT,
+R65_MARKET_VALUE,
+R66_PRODUCT,
+R66_MARKET_VALUE,
+R67_PRODUCT,
+R67_MARKET_VALUE,
+R72_PRODUCT,
+R72_AMOUNT,
+R72_WEIGHT_AMOUNT,
+R73_PRODUCT,
+R73_AMOUNT,
+R73_WEIGHT_AMOUNT,
+R74_PRODUCT,
+R74_AMOUNT,
+R74_WEIGHT,
+R74_WEIGHT_AMOUNT,
+R75_PRODUCT,
+R75_AMOUNT,
+R75_WEIGHT,
+R75_WEIGHT_AMOUNT,
+R76_PRODUCT,
+R76_AMOUNT,
+R76_WEIGHT_AMOUNT,
+R77_PRODUCT,
+R77_AMOUNT,
+R77_WEIGHT,
+R77_WEIGHT_AMOUNT,
+R78_PRODUCT,
+R78_AMOUNT,
+R78_WEIGHT,
+R78_WEIGHT_AMOUNT,
+R79_PRODUCT,
+R79_AMOUNT,
+R79_WEIGHT,
+R79_WEIGHT_AMOUNT,
+R80_PRODUCT,
+R80_AMOUNT,
+R80_WEIGHT,
+R80_WEIGHT_AMOUNT,
+R81_PRODUCT,
+R81_AMOUNT,
+R81_WEIGHT,
+R81_WEIGHT_AMOUNT,
+R82_PRODUCT,
+R82_AMOUNT,
+R82_WEIGHT_AMOUNT,
+R83_PRODUCT,
+R83_AMOUNT,
+R83_WEIGHT_AMOUNT,
+R86_PRODUCT,
+R86_AMOUNT,
+R86_WEIGHT_AMOUNT,
+R87_PRODUCT,
+R87_AMOUNT,
+R87_WEIGHT_AMOUNT,
+R88_PRODUCT,
+R88_AMOUNT,
+R88_WEIGHT_AMOUNT,
+R89_PRODUCT,
+R89_AMOUNT,
+R89_WEIGHT,
+R89_WEIGHT_AMOUNT,
+R90_PRODUCT,
+R90_AMOUNT,
+R90_WEIGHT,
+R90_WEIGHT_AMOUNT,
+R91_PRODUCT,
+R91_AMOUNT,
+R91_WEIGHT,
+R91_WEIGHT_AMOUNT,
+R92_PRODUCT,
+R92_AMOUNT,
+R92_WEIGHT,
+R92_WEIGHT_AMOUNT,
+R93_PRODUCT,
+R93_AMOUNT,
+R93_WEIGHT_AMOUNT,
+R94_PRODUCT,
+R94_AMOUNT,
+R94_WEIGHT,
+R94_WEIGHT_AMOUNT,
+R95_PRODUCT,
+R95_AMOUNT,
+R95_WEIGHT,
+R95_WEIGHT_AMOUNT,
+R96_PRODUCT,
+R96_AMOUNT,
+R96_WEIGHT,
+R96_WEIGHT_AMOUNT,
+R97_PRODUCT,
+R97_AMOUNT,
+R97_WEIGHT_AMOUNT,
+R98_PRODUCT,
+R98_AMOUNT,
+R98_WEIGHT,
+R98_WEIGHT_AMOUNT,
+R99_PRODUCT,
+R99_AMOUNT,
+R99_WEIGHT,
+R99_WEIGHT_AMOUNT,
+R100_PRODUCT,
+R100_AMOUNT,
+R100_WEIGHT,
+R100_WEIGHT_AMOUNT,
+R101_PRODUCT,
+R101_AMOUNT,
+R101_WEIGHT_AMOUNT,
+R102_PRODUCT,
+R102_AMOUNT,
+R102_WEIGHT,
+R102_WEIGHT_AMOUNT,
+R103_PRODUCT,
+R103_AMOUNT,
+R103_WEIGHT,
+R103_WEIGHT_AMOUNT,
+R104_PRODUCT,
+R104_AMOUNT,
+R104_WEIGHT,
+R104_WEIGHT_AMOUNT,
+R105_PRODUCT,
+R105_AMOUNT,
+R105_WEIGHT_AMOUNT,
+R106_PRODUCT,
+R106_AMOUNT,
+R106_WEIGHT_AMOUNT,
+R107_PRODUCT,
+R107_AMOUNT,
+R107_WEIGHT,
+R107_WEIGHT_AMOUNT,
+R108_PRODUCT,
+R108_AMOUNT,
+R108_WEIGHT,
+R108_WEIGHT_AMOUNT,
+R109_PRODUCT,
+R109_AMOUNT,
+R109_WEIGHT,
+R109_WEIGHT_AMOUNT,
+R110_PRODUCT,
+R110_AMOUNT,
+R110_WEIGHT,
+R110_WEIGHT_AMOUNT,
+R111_PRODUCT,
+R111_AMOUNT,
+R111_WEIGHT,
+R111_WEIGHT_AMOUNT,
+R112_PRODUCT,
+R112_AMOUNT,
+R112_WEIGHT,
+R112_WEIGHT_AMOUNT,
+R113_PRODUCT,
+R113_AMOUNT,
+R113_WEIGHT_AMOUNT,
+R114_PRODUCT,
+R114_AMOUNT,
+R114_WEIGHT_AMOUNT,
+R115_PRODUCT,
+R115_AMOUNT,
+R115_WEIGHT_AMOUNT,
+R116_PRODUCT,
+R116_AMOUNT,
+R116_WEIGHT_AMOUNT,
+R119_PRODUCT,
+R119_AMOUNT_RECEVIED,
+R119_MARKET_VALUE,
+R119_WEIGHT_AMOUNT,
+R120_PRODUCT,
+R120_AMOUNT_RECEVIED,
+R120_MARKET_VALUE,
+R120_WEIGHT_AMOUNT,
+R121_PRODUCT,
+R121_AMOUNT_RECEVIED,
+R121_MARKET_VALUE,
+R121_WEIGHT,
+R121_WEIGHT_AMOUNT,
+R122_PRODUCT,
+R122_AMOUNT_RECEVIED,
+R122_MARKET_VALUE,
+R122_WEIGHT,
+R122_WEIGHT_AMOUNT,
+R123_PRODUCT,
+R123_AMOUNT_RECEVIED,
+R123_MARKET_VALUE,
+R123_WEIGHT_AMOUNT,
+R124_PRODUCT,
+R124_AMOUNT_RECEVIED,
+R124_MARKET_VALUE,
+R124_WEIGHT,
+R124_WEIGHT_AMOUNT,
+R125_PRODUCT,
+R125_AMOUNT_RECEVIED,
+R125_MARKET_VALUE,
+R125_WEIGHT,
+R125_WEIGHT_AMOUNT,
+R126_PRODUCT,
+R126_AMOUNT_RECEVIED,
+R126_MARKET_VALUE,
+R126_WEIGHT_AMOUNT,
+R127_PRODUCT,
+R127_AMOUNT_RECEVIED,
+R127_MARKET_VALUE,
+R127_WEIGHT,
+R127_WEIGHT_AMOUNT,
+R128_PRODUCT,
+R128_AMOUNT_RECEVIED,
+R128_MARKET_VALUE,
+R128_WEIGHT,
+R128_WEIGHT_AMOUNT,
+R129_PRODUCT,
+R129_AMOUNT_RECEVIED,
+R129_MARKET_VALUE,
+R129_WEIGHT_AMOUNT,
+R130_PRODUCT,
+R130_AMOUNT_RECEVIED,
+R130_MARKET_VALUE,
+R130_WEIGHT,
+R130_WEIGHT_AMOUNT,
+R131_PRODUCT,
+R131_AMOUNT_RECEVIED,
+R131_MARKET_VALUE,
+R131_WEIGHT,
+R131_WEIGHT_AMOUNT,
+R132_PRODUCT,
+R132_AMOUNT_RECEVIED,
+R132_MARKET_VALUE,
+R132_WEIGHT,
+R132_WEIGHT_AMOUNT,
+R133_PRODUCT,
+R133_AMOUNT_RECEVIED,
+R133_MARKET_VALUE,
+R133_WEIGHT_AMOUNT,
+R134_PRODUCT,
+R134_AMOUNT_RECEVIED,
+R134_MARKET_VALUE,
+R134_WEIGHT,
+R134_WEIGHT_AMOUNT,
+R135_PRODUCT,
+R135_AMOUNT_RECEVIED,
+R135_MARKET_VALUE,
+R135_WEIGHT,
+R135_WEIGHT_AMOUNT,
+R136_PRODUCT,
+R136_AMOUNT_RECEVIED,
+R136_MARKET_VALUE,
+R136_WEIGHT_AMOUNT,
+R137_PRODUCT,
+R137_AMOUNT_RECEVIED,
+R137_MARKET_VALUE,
+R137_WEIGHT,
+R137_WEIGHT_AMOUNT,
+R138_PRODUCT,
+R138_AMOUNT_RECEVIED,
+R138_MARKET_VALUE,
+R138_WEIGHT,
+R138_WEIGHT_AMOUNT,
+R139_PRODUCT,
+R139_AMOUNT_RECEVIED,
+R139_MARKET_VALUE,
+R139_WEIGHT_AMOUNT,
+R140_PRODUCT,
+R140_AMOUNT_RECEVIED,
+R140_MARKET_VALUE,
+R140_WEIGHT,
+R140_WEIGHT_AMOUNT,
+R141_PRODUCT,
+R141_AMOUNT_RECEVIED,
+R141_MARKET_VALUE,
+R141_WEIGHT,
+R141_WEIGHT_AMOUNT,
+R142_PRODUCT,
+R142_AMOUNT_RECEVIED,
+R142_MARKET_VALUE,
+R142_WEIGHT_AMOUNT,
+R143_PRODUCT,
+R143_AMOUNT_RECEVIED,
+R143_MARKET_VALUE,
+R143_WEIGHT_AMOUNT,
+R144_PRODUCT,
+R144_AMOUNT_RECEVIED,
+R144_MARKET_VALUE,
+R144_WEIGHT,
+R144_WEIGHT_AMOUNT,
+R145_PRODUCT,
+R145_AMOUNT_RECEVIED,
+R145_MARKET_VALUE,
+R145_WEIGHT,
+R145_WEIGHT_AMOUNT,
+R146_PRODUCT,
+R146_AMOUNT_RECEVIED,
+R146_MARKET_VALUE,
+R146_WEIGHT_AMOUNT,
+R147_PRODUCT,
+R147_AMOUNT_RECEVIED,
+R147_MARKET_VALUE,
+R147_WEIGHT,
+R147_WEIGHT_AMOUNT,
+R148_PRODUCT,
+R148_AMOUNT_RECEVIED,
+R148_MARKET_VALUE,
+R148_WEIGHT,
+R148_WEIGHT_AMOUNT,
+R149_PRODUCT,
+R149_AMOUNT_RECEVIED,
+R149_MARKET_VALUE,
+R149_WEIGHT_AMOUNT,
+R150_PRODUCT,
+R150_AMOUNT_RECEVIED,
+R150_MARKET_VALUE,
+R150_WEIGHT,
+R150_WEIGHT_AMOUNT,
+R151_PRODUCT,
+R151_AMOUNT_RECEVIED,
+R151_MARKET_VALUE,
+R151_WEIGHT,
+R151_WEIGHT_AMOUNT,
+R152_PRODUCT,
+R152_AMOUNT_RECEVIED,
+R152_MARKET_VALUE,
+R152_WEIGHT_AMOUNT,
+R155_PRODUCT,
+R155_AMOUNT,
+R155_WEIGHT,
+R155_WEIGHT_AMOUNT,
+R156_PRODUCT,
+R156_AMOUNT,
+R156_WEIGHT,
+R156_WEIGHT_AMOUNT,
+R157_PRODUCT,
+R157_AMOUNT,
+R157_WEIGHT_AMOUNT,
+R158_PRODUCT,
+R158_AMOUNT,
+R158_WEIGHT,
+R158_WEIGHT_AMOUNT,
+R159_PRODUCT,
+R159_AMOUNT,
+R159_WEIGHT,
+R159_WEIGHT_AMOUNT,
+R160_PRODUCT,
+R160_AMOUNT,
+R160_WEIGHT,
+R160_WEIGHT_AMOUNT,
+R161_PRODUCT,
+R161_AMOUNT,
+R161_WEIGHT,
+R161_WEIGHT_AMOUNT,
+R162_PRODUCT,
+R162_AMOUNT,
+R162_WEIGHT,
+R162_WEIGHT_AMOUNT,
+R163_PRODUCT,
+R163_AMOUNT,
+R163_WEIGHT,
+R163_WEIGHT_AMOUNT,
+R164_PRODUCT,
+R164_AMOUNT,
+R164_WEIGHT,
+R164_WEIGHT_AMOUNT,
+R165_PRODUCT,
+R165_AMOUNT,
+R165_WEIGHT,
+R165_WEIGHT_AMOUNT,
+R166_PRODUCT,
+R166_AMOUNT,
+R166_WEIGHT_AMOUNT,
+R167_PRODUCT,
+R167_AMOUNT,
+R167_WEIGHT,
+R167_WEIGHT_AMOUNT,
+R168_PRODUCT,
+R168_AMOUNT,
+R168_WEIGHT,
+R168_WEIGHT_AMOUNT,
+R169_PRODUCT,
+R169_AMOUNT,
+R169_WEIGHT,
+R169_WEIGHT_AMOUNT,
+R170_PRODUCT,
+R170_AMOUNT,
+R170_WEIGHT,
+R170_WEIGHT_AMOUNT,
+R171_PRODUCT,
+R171_AMOUNT,
+R171_WEIGHT_AMOUNT,
+R172_PRODUCT,
+R172_AMOUNT,
+R172_WEIGHT,
+R172_WEIGHT_AMOUNT,
+R173_PRODUCT,
+R173_AMOUNT,
+R173_WEIGHT,
+R173_WEIGHT_AMOUNT,
+R174_PRODUCT,
+R174_AMOUNT,
+R174_WEIGHT,
+R174_WEIGHT_AMOUNT,
+R175_PRODUCT,
+R175_AMOUNT,
+R175_WEIGHT,
+R175_WEIGHT_AMOUNT,
+R176_PRODUCT,
+R176_AMOUNT,
+R176_WEIGHT,
+R176_WEIGHT_AMOUNT,
+R177_PRODUCT,
+R177_AMOUNT,
+R177_WEIGHT_AMOUNT,
+R178_PRODUCT,
+R178_AMOUNT,
+R178_WEIGHT,
+R178_WEIGHT_AMOUNT,
+R179_PRODUCT,
+R179_AMOUNT,
+R179_WEIGHT,
+R179_WEIGHT_AMOUNT,
+R180_PRODUCT,
+R180_AMOUNT,
+R180_WEIGHT,
+R180_WEIGHT_AMOUNT,
+R181_PRODUCT,
+R181_AMOUNT,
+R181_WEIGHT,
+R181_WEIGHT_AMOUNT,
+R182_PRODUCT,
+R182_AMOUNT,
+R182_WEIGHT,
+R182_WEIGHT_AMOUNT,
+R184_PRODUCT,
+R184_AMOUNT,
+R184_WEIGHT,
+R184_WEIGHT_AMOUNT,
+R185_PRODUCT,
+R185_AMOUNT,
+R185_ROLL_OVER,
+R186_PRODUCT,
+R186_AMOUNT,
+R186_ROLL_OVER,
+R187_PRODUCT,
+R187_AMOUNT,
+R187_ROLL_OVER,
+R188_PRODUCT,
+R188_AMOUNT,
+R188_ROLL_OVER,
+R189_PRODUCT,
+R189_AMOUNT,
+R189_ROLL_OVER,
+R189_EXCESS,
+R189_WEIGHT,
+R189_WEIGHT_AMOUNT,
+R190_PRODUCT,
+R190_WEIGHT_AMOUNT,
+R192_PRODUCT,
+R192_AMOUNT,
+R195_PRODUCT,
+R195_AMOUNT,
+R196_PRODUCT,
+R196_AMOUNT,
+R196_WEIGHT,
+R196_WEIGHT_AMOUNT,
+R197_PRODUCT,
+R197_AMOUNT,
+R197_WEIGHT,
+R197_WEIGHT_AMOUNT,
+R198_PRODUCT,
+R198_WEIGHT_AMOUNT,
+R200_PRODUCT,
+R200_WEIGHT_AMOUNT,
+R204_PRODUCT,
+R204_AMOUNT_EXTENDED,
+R204_MARKET_VALUE,
+R204_WEIGHT_AMOUNT,
+R205_PRODUCT,
+R205_AMOUNT_EXTENDED,
+R205_MARKET_VALUE,
+R205_WEIGHT_AMOUNT,
+R206_PRODUCT,
+R206_AMOUNT_EXTENDED,
+R206_MARKET_VALUE,
+R206_WEIGHT_AMOUNT,
+R207_PRODUCT,
+R207_AMOUNT_EXTENDED,
+R207_MARKET_VALUE,
+R207_WEIGHT,
+R207_WEIGHT_AMOUNT,
+R208_PRODUCT,
+R208_AMOUNT_EXTENDED,
+R208_MARKET_VALUE,
+R208_WEIGHT,
+R208_WEIGHT_AMOUNT,
+R209_PRODUCT,
+R209_AMOUNT_EXTENDED,
+R209_MARKET_VALUE,
+R209_WEIGHT_AMOUNT,
+R210_PRODUCT,
+R210_AMOUNT_EXTENDED,
+R210_MARKET_VALUE,
+R210_WEIGHT,
+R210_WEIGHT_AMOUNT,
+R211_PRODUCT,
+R211_AMOUNT_EXTENDED,
+R211_MARKET_VALUE,
+R211_WEIGHT,
+R211_WEIGHT_AMOUNT,
+R212_PRODUCT,
+R212_AMOUNT_EXTENDED,
+R212_MARKET_VALUE,
+R212_WEIGHT_AMOUNT,
+R213_PRODUCT,
+R213_AMOUNT_EXTENDED,
+R213_MARKET_VALUE,
+R213_WEIGHT,
+R213_WEIGHT_AMOUNT,
+R214_PRODUCT,
+R214_AMOUNT_EXTENDED,
+R214_MARKET_VALUE,
+R214_WEIGHT,
+R214_WEIGHT_AMOUNT,
+R215_PRODUCT,
+R215_AMOUNT_EXTENDED,
+R215_MARKET_VALUE,
+R215_WEIGHT_AMOUNT,
+R216_PRODUCT,
+R216_AMOUNT_EXTENDED,
+R216_MARKET_VALUE,
+R216_WEIGHT,
+R216_WEIGHT_AMOUNT,
+R217_PRODUCT,
+R217_AMOUNT_EXTENDED,
+R217_MARKET_VALUE,
+R217_WEIGHT,
+R217_WEIGHT_AMOUNT,
+R218_PRODUCT,
+R218_AMOUNT_EXTENDED,
+R218_MARKET_VALUE,
+R218_WEIGHT,
+R218_WEIGHT_AMOUNT,
+R219_PRODUCT,
+R219_AMOUNT_EXTENDED,
+R219_MARKET_VALUE,
+R219_WEIGHT,
+R219_WEIGHT_AMOUNT,
+R220_PRODUCT,
+R220_AMOUNT_EXTENDED,
+R220_MARKET_VALUE,
+R220_WEIGHT_AMOUNT,
+R221_PRODUCT,
+R221_AMOUNT_EXTENDED,
+R221_MARKET_VALUE,
+R221_WEIGHT,
+R221_WEIGHT_AMOUNT,
+R222_PRODUCT,
+R222_AMOUNT_EXTENDED,
+R222_MARKET_VALUE,
+R222_WEIGHT,
+R222_WEIGHT_AMOUNT,
+R223_PRODUCT,
+R223_AMOUNT_EXTENDED,
+R223_MARKET_VALUE,
+R223_WEIGHT,
+R223_WEIGHT_AMOUNT,
+R224_PRODUCT,
+R224_AMOUNT_EXTENDED,
+R224_MARKET_VALUE,
+R224_WEIGHT,
+R224_WEIGHT_AMOUNT,
+R225_PRODUCT,
+R225_AMOUNT_EXTENDED,
+R225_MARKET_VALUE,
+R225_WEIGHT,
+R225_WEIGHT_AMOUNT,
+R226_PRODUCT,
+R226_AMOUNT_EXTENDED,
+R226_MARKET_VALUE,
+R226_WEIGHT,
+R226_WEIGHT_AMOUNT,
+R227_PRODUCT,
+R227_AMOUNT_EXTENDED,
+R227_MARKET_VALUE,
+R227_WEIGHT_AMOUNT,
+
+R230_PRODUCT,
+R230_AMOUNT_EXTENDED,
+
+R230_WEIGHT_AMOUNT,
+R231_PRODUCT,
+R231_AMOUNT_EXTENDED,
+
+R231_WEIGHT,
+R231_WEIGHT_AMOUNT,
+R232_PRODUCT,
+R232_AMOUNT_EXTENDED,
+
+R232_WEIGHT,
+R232_WEIGHT_AMOUNT,
+R233_PRODUCT,
+R233_AMOUNT_EXTENDED,
+
+R233_WEIGHT,
+R233_WEIGHT_AMOUNT,
+R234_PRODUCT,
+R234_AMOUNT_EXTENDED,
+
+R234_WEIGHT,
+R234_WEIGHT_AMOUNT,
+R235_PRODUCT,
+R235_AMOUNT_EXTENDED,
+
+R235_WEIGHT,
+R235_WEIGHT_AMOUNT,
+R236_PRODUCT,
+R236_AMOUNT_EXTENDED,
+
+R236_WEIGHT,
+R236_WEIGHT_AMOUNT,
+R237_PRODUCT,
+R237_AMOUNT_EXTENDED,
+
+R237_WEIGHT,
+R237_WEIGHT_AMOUNT,
+R238_PRODUCT,
+R238_AMOUNT_EXTENDED,
+
+R238_WEIGHT_AMOUNT,
+R241_PRODUCT,
+R241_AMOUNT_EXTENDED,
+
+R241_WEIGHT_AMOUNT,
+R242_PRODUCT,
+R242_AMOUNT_EXTENDED,
+
+R242_WEIGHT,
+R242_WEIGHT_AMOUNT,
+R243_PRODUCT,
+R243_AMOUNT_EXTENDED,
+
+R243_WEIGHT,
+R243_WEIGHT_AMOUNT,
+R244_PRODUCT,
+R244_AMOUNT_EXTENDED,
+
+R244_WEIGHT,
+R244_WEIGHT_AMOUNT,
+R245_PRODUCT,
+R245_AMOUNT_EXTENDED,
+
+R245_WEIGHT_AMOUNT,
+R248_PRODUCT,
+R248_AMOUNT_EXTENDED,
+R248_WEIGHT_AMOUNT,
+R249_PRODUCT,
+R249_AMOUNT_EXTENDED,
+
+R249_WEIGHT,
+R249_WEIGHT_AMOUNT,
+R250_PRODUCT,
+R250_AMOUNT_EXTENDED,
+
+R250_WEIGHT_AMOUNT,
+R252_PRODUCT,
+R252_WEIGHT_AMOUNT,
+R253_PRODUCT,
+R253_WEIGHT_AMOUNT,
+R254_PRODUCT1,
+R254_WEIGHT_AMOUNT1,
+REPORT_DATE)
+VALUES(
+V_R10_PRODUCT,
+V_R10_MARKET_VALUE,
+V_R10_WEIGHT,
+V_R10_WEIGHT_AMOUNT,
+V_R11_PRODUCT,
+V_R11_MARKET_VALUE,
+V_R11_WEIGHT,
+V_R11_WEIGHT_AMOUNT,
+V_R12_PRODUCT,
+V_R12_MARKET_VALUE,
+V_R12_WEIGHT,
+V_R12_WEIGHT_AMOUNT,
+V_R13_PRODUCT,
+V_R13_MARKET_VALUE,
+V_R13_WEIGHT_AMOUNT,
+V_R14_PRODUCT,
+V_R14_MARKET_VALUE,
+V_R14_WEIGHT,
+V_R14_WEIGHT_AMOUNT,
+V_R15_PRODUCT,
+V_R15_MARKET_VALUE,
+V_R15_WEIGHT,
+V_R15_WEIGHT_AMOUNT,
+V_R16_PRODUCT,
+V_R16_MARKET_VALUE,
+V_R16_WEIGHT,
+V_R16_WEIGHT_AMOUNT,
+V_R17_PRODUCT,
+V_R17_MARKET_VALUE,
+V_R17_WEIGHT,
+V_R17_WEIGHT_AMOUNT,
+V_R18_PRODUCT,
+V_R18_MARKET_VALUE,
+V_R18_WEIGHT,
+V_R18_WEIGHT_AMOUNT,
+V_R19_PRODUCT,
+V_R19_MARKET_VALUE,
+V_R19_WEIGHT_AMOUNT,
+V_R20_PRODUCT,
+V_R20_MARKET_VALUE,
+V_R20_WEIGHT,
+V_R20_WEIGHT_AMOUNT,
+V_R21_PRODUCT,
+V_R21_MARKET_VALUE,
+V_R21_WEIGHT,
+V_R21_WEIGHT_AMOUNT,
+V_R22_PRODUCT,
+V_R22_MARKET_VALUE,
+V_R22_WEIGHT_AMOUNT,
+V_R23_PRODUCT,
+V_R23_MARKET_VALUE,
+V_R23_WEIGHT_AMOUNT,
+V_R24_PRODUCT,
+V_R24_MARKET_VALUE,
+V_R24_WEIGHT_AMOUNT,
+V_R25_PRODUCT,
+V_R25_MARKET_VALUE,
+V_R25_WEIGHT_AMOUNT,
+V_R28_PRODUCT,
+V_R28_MARKET_VALUE,
+V_R28_WEIGHT_AMOUNT,
+V_R29_PRODUCT,
+V_R29_MARKET_VALUE,
+V_R29_WEIGHT,
+V_R29_WEIGHT_AMOUNT,
+V_R30_PRODUCT,
+V_R30_MARKET_VALUE,
+V_R30_WEIGHT,
+V_R30_WEIGHT_AMOUNT,
+V_R31_PRODUCT,
+V_R31_MARKET_VALUE,
+V_R31_WEIGHT,
+V_R31_WEIGHT_AMOUNT,
+V_R32_PRODUCT,
+V_R32_MARKET_VALUE,
+V_R32_WEIGHT,
+V_R32_WEIGHT_AMOUNT,
+V_R33_PRODUCT,
+V_R33_MARKET_VALUE,
+V_R33_WEIGHT,
+V_R33_WEIGHT_AMOUNT,
+V_R34_PRODUCT,
+V_R34_MARKET_VALUE,
+V_R34_WEIGHT,
+V_R34_WEIGHT_AMOUNT,
+V_R35_PRODUCT,
+V_R35_MARKET_VALUE,
+V_R35_WEIGHT,
+V_R35_WEIGHT_AMOUNT,
+V_R36_PRODUCT,
+V_R36_MARKET_VALUE,
+V_R36_WEIGHT,
+V_R36_WEIGHT_AMOUNT,
+V_R37_PRODUCT,
+V_R37_MARKET_VALUE,
+V_R37_WEIGHT_AMOUNT,
+V_R38_PRODUCT,
+V_R38_MARKET_VALUE,
+V_R38_WEIGHT_AMOUNT,
+V_R39_PRODUCT,
+V_R39_MARKET_VALUE,
+V_R39_WEIGHT_AMOUNT,
+V_R40_PRODUCT,
+V_R40_MARKET_VALUE,
+V_R40_WEIGHT_AMOUNT,
+V_R41_PRODUCT,
+V_R41_MARKET_VALUE,
+V_R41_WEIGHT_AMOUNT,
+V_R42_PRODUCT,
+V_R42_MARKET_VALUE,
+V_R42_WEIGHT,
+V_R42_WEIGHT_AMOUNT,
+V_R43_PRODUCT,
+V_R43_MARKET_VALUE,
+V_R43_WEIGHT,
+V_R43_WEIGHT_AMOUNT,
+V_R44_PRODUCT,
+V_R44_MARKET_VALUE,
+V_R44_WEIGHT,
+V_R44_WEIGHT_AMOUNT,
+V_R45_PRODUCT,
+V_R45_MARKET_VALUE,
+V_R45_WEIGHT,
+V_R45_WEIGHT_AMOUNT,
+V_R46_PRODUCT,
+V_R46_MARKET_VALUE,
+V_R46_WEIGHT_AMOUNT,
+V_R47_PRODUCT,
+V_R47_MARKET_VALUE,
+V_R47_WEIGHT_AMOUNT,
+V_R48_PRODUCT,
+V_R48_MARKET_VALUE,
+V_R48_WEIGHT,
+V_R48_WEIGHT_AMOUNT,
+V_R49_PRODUCT,
+V_R49_MARKET_VALUE,
+V_R49_WEIGHT_AMOUNT,
+V_R50_PRODUCT,
+V_R50_MARKET_VALUE,
+V_R50_WEIGHT_AMOUNT,
+V_R51_PRODUCT,
+V_R51_MARKET_VALUE,
+V_R51_WEIGHT,
+V_R51_WEIGHT_AMOUNT,
+V_R52_PRODUCT,
+V_R52_MARKET_VALUE,
+V_R52_WEIGHT_AMOUNT,
+V_R53_PRODUCT,
+V_R53_MARKET_VALUE,
+V_R53_WEIGHT_AMOUNT,
+V_R54_PRODUCT,
+V_R54_MARKET_VALUE,
+V_R54_WEIGHT_AMOUNT,
+V_R55_MARKET_VALUE,
+V_R56_MARKET_VALUE,
+V_R57_MARKET_VALUE,
+V_R58_MARKET_VALUE,
+V_R57_WEIGHT_AMOUNT,
+V_R60_PRODUCT,
+V_R60_MARKET_VALUE,
+V_R61_PRODUCT,
+V_R61_MARKET_VALUE,
+V_R62_PRODUCT,
+V_R62_MARKET_VALUE,
+V_R63_PRODUCT,
+V_R63_MARKET_VALUE,
+V_R64_PRODUCT,
+V_R64_MARKET_VALUE,
+V_R65_PRODUCT,
+V_R65_MARKET_VALUE,
+V_R66_PRODUCT,
+V_R66_MARKET_VALUE,
+V_R67_PRODUCT,
+V_R67_MARKET_VALUE,
+V_R72_PRODUCT,
+V_R72_AMOUNT,
+V_R72_WEIGHT_AMOUNT,
+V_R73_PRODUCT,
+V_R73_AMOUNT,
+V_R73_WEIGHT_AMOUNT,
+V_R74_PRODUCT,
+V_R74_AMOUNT,
+V_R74_WEIGHT,
+V_R74_WEIGHT_AMOUNT,
+V_R75_PRODUCT,
+V_R75_AMOUNT,
+V_R75_WEIGHT,
+V_R75_WEIGHT_AMOUNT,
+V_R76_PRODUCT,
+V_R76_AMOUNT,
+V_R76_WEIGHT_AMOUNT,
+V_R77_PRODUCT,
+V_R77_AMOUNT,
+V_R77_WEIGHT,
+V_R77_WEIGHT_AMOUNT,
+V_R78_PRODUCT,
+V_R78_AMOUNT,
+V_R78_WEIGHT,
+V_R78_WEIGHT_AMOUNT,
+V_R79_PRODUCT,
+V_R79_AMOUNT,
+V_R79_WEIGHT,
+V_R79_WEIGHT_AMOUNT,
+V_R80_PRODUCT,
+V_R80_AMOUNT,
+V_R80_WEIGHT,
+V_R80_WEIGHT_AMOUNT,
+V_R81_PRODUCT,
+V_R81_AMOUNT,
+V_R81_WEIGHT,
+V_R81_WEIGHT_AMOUNT,
+V_R82_PRODUCT,
+V_R82_AMOUNT,
+V_R82_WEIGHT_AMOUNT,
+V_R83_PRODUCT,
+V_R83_AMOUNT,
+V_R83_WEIGHT_AMOUNT,
+V_R86_PRODUCT,
+V_R86_AMOUNT,
+V_R86_WEIGHT_AMOUNT,
+V_R87_PRODUCT,
+V_R87_AMOUNT,
+V_R87_WEIGHT_AMOUNT,
+V_R88_PRODUCT,
+V_R88_AMOUNT,
+V_R88_WEIGHT_AMOUNT,
+V_R89_PRODUCT,
+V_R89_AMOUNT,
+V_R89_WEIGHT,
+V_R89_WEIGHT_AMOUNT,
+V_R90_PRODUCT,
+V_R90_AMOUNT,
+V_R90_WEIGHT,
+V_R90_WEIGHT_AMOUNT,
+V_R91_PRODUCT,
+V_R91_AMOUNT,
+V_R91_WEIGHT,
+V_R91_WEIGHT_AMOUNT,
+V_R92_PRODUCT,
+V_R92_AMOUNT,
+V_R92_WEIGHT,
+V_R92_WEIGHT_AMOUNT,
+V_R93_PRODUCT,
+V_R93_AMOUNT,
+V_R93_WEIGHT_AMOUNT,
+V_R94_PRODUCT,
+V_R94_AMOUNT,
+V_R94_WEIGHT,
+V_R94_WEIGHT_AMOUNT,
+V_R95_PRODUCT,
+V_R95_AMOUNT,
+V_R95_WEIGHT,
+V_R95_WEIGHT_AMOUNT,
+V_R96_PRODUCT,
+V_R96_AMOUNT,
+V_R96_WEIGHT,
+V_R96_WEIGHT_AMOUNT,
+V_R97_PRODUCT,
+V_R97_AMOUNT,
+V_R97_WEIGHT_AMOUNT,
+V_R98_PRODUCT,
+V_R98_AMOUNT,
+V_R98_WEIGHT,
+V_R98_WEIGHT_AMOUNT,
+V_R99_PRODUCT,
+V_R99_AMOUNT,
+V_R99_WEIGHT,
+V_R99_WEIGHT_AMOUNT,
+V_R100_PRODUCT,
+V_R100_AMOUNT,
+V_R100_WEIGHT,
+V_R100_WEIGHT_AMOUNT,
+V_R101_PRODUCT,
+V_R101_AMOUNT,
+V_R101_WEIGHT_AMOUNT,
+V_R102_PRODUCT,
+V_R102_AMOUNT,
+V_R102_WEIGHT,
+V_R102_WEIGHT_AMOUNT,
+V_R103_PRODUCT,
+V_R103_AMOUNT,
+V_R103_WEIGHT,
+V_R103_WEIGHT_AMOUNT,
+V_R104_PRODUCT,
+V_R104_AMOUNT,
+V_R104_WEIGHT,
+V_R104_WEIGHT_AMOUNT,
+V_R105_PRODUCT,
+V_R105_AMOUNT,
+V_R105_WEIGHT_AMOUNT,
+V_R106_PRODUCT,
+V_R106_AMOUNT,
+V_R106_WEIGHT_AMOUNT,
+V_R107_PRODUCT,
+V_R107_AMOUNT,
+V_R107_WEIGHT,
+V_R107_WEIGHT_AMOUNT,
+V_R108_PRODUCT,
+V_R108_AMOUNT,
+V_R108_WEIGHT,
+V_R108_WEIGHT_AMOUNT,
+V_R109_PRODUCT,
+V_R109_AMOUNT,
+V_R109_WEIGHT,
+V_R109_WEIGHT_AMOUNT,
+V_R110_PRODUCT,
+V_R110_AMOUNT,
+V_R110_WEIGHT,
+V_R110_WEIGHT_AMOUNT,
+V_R111_PRODUCT,
+V_R111_AMOUNT,
+V_R111_WEIGHT,
+V_R111_WEIGHT_AMOUNT,
+V_R112_PRODUCT,
+V_R112_AMOUNT,
+V_R112_WEIGHT,
+V_R112_WEIGHT_AMOUNT,
+V_R113_PRODUCT,
+V_R113_AMOUNT,
+V_R113_WEIGHT_AMOUNT,
+V_R114_PRODUCT,
+V_R114_AMOUNT,
+V_R114_WEIGHT_AMOUNT,
+V_R115_PRODUCT,
+V_R115_AMOUNT,
+V_R115_WEIGHT_AMOUNT,
+V_R116_PRODUCT,
+V_R116_AMOUNT,
+V_R116_WEIGHT_AMOUNT,
+V_R119_PRODUCT,
+V_R119_AMOUNT_RECEVIED,
+V_R119_MARKET_VALUE,
+V_R119_WEIGHT_AMOUNT,
+V_R120_PRODUCT,
+V_R120_AMOUNT_RECEVIED,
+V_R120_MARKET_VALUE,
+V_R120_WEIGHT_AMOUNT,
+V_R121_PRODUCT,
+V_R121_AMOUNT_RECEVIED,
+V_R121_MARKET_VALUE,
+V_R121_WEIGHT,
+V_R121_WEIGHT_AMOUNT,
+V_R122_PRODUCT,
+V_R122_AMOUNT_RECEVIED,
+V_R122_MARKET_VALUE,
+V_R122_WEIGHT,
+V_R122_WEIGHT_AMOUNT,
+V_R123_PRODUCT,
+V_R123_AMOUNT_RECEVIED,
+V_R123_MARKET_VALUE,
+V_R123_WEIGHT_AMOUNT,
+V_R124_PRODUCT,
+V_R124_AMOUNT_RECEVIED,
+V_R124_MARKET_VALUE,
+V_R124_WEIGHT,
+V_R124_WEIGHT_AMOUNT,
+V_R125_PRODUCT,
+V_R125_AMOUNT_RECEVIED,
+V_R125_MARKET_VALUE,
+V_R125_WEIGHT,
+V_R125_WEIGHT_AMOUNT,
+V_R126_PRODUCT,
+V_R126_AMOUNT_RECEVIED,
+V_R126_MARKET_VALUE,
+V_R126_WEIGHT_AMOUNT,
+V_R127_PRODUCT,
+V_R127_AMOUNT_RECEVIED,
+V_R127_MARKET_VALUE,
+V_R127_WEIGHT,
+V_R127_WEIGHT_AMOUNT,
+V_R128_PRODUCT,
+V_R128_AMOUNT_RECEVIED,
+V_R128_MARKET_VALUE,
+V_R128_WEIGHT,
+V_R128_WEIGHT_AMOUNT,
+V_R129_PRODUCT,
+V_R129_AMOUNT_RECEVIED,
+V_R129_MARKET_VALUE,
+V_R129_WEIGHT_AMOUNT,
+V_R130_PRODUCT,
+V_R130_AMOUNT_RECEVIED,
+V_R130_MARKET_VALUE,
+V_R130_WEIGHT,
+V_R130_WEIGHT_AMOUNT,
+V_R131_PRODUCT,
+V_R131_AMOUNT_RECEVIED,
+V_R131_MARKET_VALUE,
+V_R131_WEIGHT,
+V_R131_WEIGHT_AMOUNT,
+V_R132_PRODUCT,
+V_R132_AMOUNT_RECEVIED,
+V_R132_MARKET_VALUE,
+V_R132_WEIGHT,
+V_R132_WEIGHT_AMOUNT,
+V_R133_PRODUCT,
+V_R133_AMOUNT_RECEVIED,
+V_R133_MARKET_VALUE,
+V_R133_WEIGHT_AMOUNT,
+V_R134_PRODUCT,
+V_R134_AMOUNT_RECEVIED,
+V_R134_MARKET_VALUE,
+V_R134_WEIGHT,
+V_R134_WEIGHT_AMOUNT,
+V_R135_PRODUCT,
+V_R135_AMOUNT_RECEVIED,
+V_R135_MARKET_VALUE,
+V_R135_WEIGHT,
+V_R135_WEIGHT_AMOUNT,
+V_R136_PRODUCT,
+V_R136_AMOUNT_RECEVIED,
+V_R136_MARKET_VALUE,
+V_R136_WEIGHT_AMOUNT,
+V_R137_PRODUCT,
+V_R137_AMOUNT_RECEVIED,
+V_R137_MARKET_VALUE,
+V_R137_WEIGHT,
+V_R137_WEIGHT_AMOUNT,
+V_R138_PRODUCT,
+V_R138_AMOUNT_RECEVIED,
+V_R138_MARKET_VALUE,
+V_R138_WEIGHT,
+V_R138_WEIGHT_AMOUNT,
+V_R139_PRODUCT,
+V_R139_AMOUNT_RECEVIED,
+V_R139_MARKET_VALUE,
+V_R139_WEIGHT_AMOUNT,
+V_R140_PRODUCT,
+V_R140_AMOUNT_RECEVIED,
+V_R140_MARKET_VALUE,
+V_R140_WEIGHT,
+V_R140_WEIGHT_AMOUNT,
+V_R141_PRODUCT,
+V_R141_AMOUNT_RECEVIED,
+V_R141_MARKET_VALUE,
+V_R141_WEIGHT,
+V_R141_WEIGHT_AMOUNT,
+V_R142_PRODUCT,
+V_R142_AMOUNT_RECEVIED,
+V_R142_MARKET_VALUE,
+V_R142_WEIGHT_AMOUNT,
+V_R143_PRODUCT,
+V_R143_AMOUNT_RECEVIED,
+V_R143_MARKET_VALUE,
+V_R143_WEIGHT_AMOUNT,
+V_R144_PRODUCT,
+V_R144_AMOUNT_RECEVIED,
+V_R144_MARKET_VALUE,
+V_R144_WEIGHT,
+V_R144_WEIGHT_AMOUNT,
+V_R145_PRODUCT,
+V_R145_AMOUNT_RECEVIED,
+V_R145_MARKET_VALUE,
+V_R145_WEIGHT,
+V_R145_WEIGHT_AMOUNT,
+V_R146_PRODUCT,
+V_R146_AMOUNT_RECEVIED,
+V_R146_MARKET_VALUE,
+V_R146_WEIGHT_AMOUNT,
+V_R147_PRODUCT,
+V_R147_AMOUNT_RECEVIED,
+V_R147_MARKET_VALUE,
+V_R147_WEIGHT,
+V_R147_WEIGHT_AMOUNT,
+V_R148_PRODUCT,
+V_R148_AMOUNT_RECEVIED,
+V_R148_MARKET_VALUE,
+V_R148_WEIGHT,
+V_R148_WEIGHT_AMOUNT,
+V_R149_PRODUCT,
+V_R149_AMOUNT_RECEVIED,
+V_R149_MARKET_VALUE,
+V_R149_WEIGHT_AMOUNT,
+V_R150_PRODUCT,
+V_R150_AMOUNT_RECEVIED,
+V_R150_MARKET_VALUE,
+V_R150_WEIGHT,
+V_R150_WEIGHT_AMOUNT,
+V_R151_PRODUCT,
+V_R151_AMOUNT_RECEVIED,
+V_R151_MARKET_VALUE,
+V_R151_WEIGHT,
+V_R151_WEIGHT_AMOUNT,
+V_R152_PRODUCT,
+V_R152_AMOUNT_RECEVIED,
+V_R152_MARKET_VALUE,
+V_R152_WEIGHT_AMOUNT,
+V_R155_PRODUCT,
+V_R155_AMOUNT,
+V_R155_WEIGHT,
+V_R155_WEIGHT_AMOUNT,
+V_R156_PRODUCT,
+V_R156_AMOUNT,
+V_R156_WEIGHT,
+V_R156_WEIGHT_AMOUNT,
+V_R157_PRODUCT,
+V_R157_AMOUNT,
+V_R157_WEIGHT_AMOUNT,
+V_R158_PRODUCT,
+V_R158_AMOUNT,
+V_R158_WEIGHT,
+V_R158_WEIGHT_AMOUNT,
+V_R159_PRODUCT,
+V_R159_AMOUNT,
+V_R159_WEIGHT,
+V_R159_WEIGHT_AMOUNT,
+V_R160_PRODUCT,
+V_R160_AMOUNT,
+V_R160_WEIGHT,
+V_R160_WEIGHT_AMOUNT,
+V_R161_PRODUCT,
+V_R161_AMOUNT,
+V_R161_WEIGHT,
+V_R161_WEIGHT_AMOUNT,
+V_R162_PRODUCT,
+V_R162_AMOUNT,
+V_R162_WEIGHT,
+V_R162_WEIGHT_AMOUNT,
+V_R163_PRODUCT,
+V_R163_AMOUNT,
+V_R163_WEIGHT,
+V_R163_WEIGHT_AMOUNT,
+V_R164_PRODUCT,
+V_R164_AMOUNT,
+V_R164_WEIGHT,
+V_R164_WEIGHT_AMOUNT,
+V_R165_PRODUCT,
+V_R165_AMOUNT,
+V_R165_WEIGHT,
+V_R165_WEIGHT_AMOUNT,
+V_R166_PRODUCT,
+V_R166_AMOUNT,
+V_R166_WEIGHT_AMOUNT,
+V_R167_PRODUCT,
+V_R167_AMOUNT,
+V_R167_WEIGHT,
+V_R167_WEIGHT_AMOUNT,
+V_R168_PRODUCT,
+V_R168_AMOUNT,
+V_R168_WEIGHT,
+V_R168_WEIGHT_AMOUNT,
+V_R169_PRODUCT,
+V_R169_AMOUNT,
+V_R169_WEIGHT,
+V_R169_WEIGHT_AMOUNT,
+V_R170_PRODUCT,
+V_R170_AMOUNT,
+V_R170_WEIGHT,
+V_R170_WEIGHT_AMOUNT,
+V_R171_PRODUCT,
+V_R171_AMOUNT,
+V_R171_WEIGHT_AMOUNT,
+V_R172_PRODUCT,
+V_R172_AMOUNT,
+V_R172_WEIGHT,
+V_R172_WEIGHT_AMOUNT,
+V_R173_PRODUCT,
+V_R173_AMOUNT,
+V_R173_WEIGHT,
+V_R173_WEIGHT_AMOUNT,
+V_R174_PRODUCT,
+V_R174_AMOUNT,
+V_R174_WEIGHT,
+V_R174_WEIGHT_AMOUNT,
+V_R175_PRODUCT,
+V_R175_AMOUNT,
+V_R175_WEIGHT,
+V_R175_WEIGHT_AMOUNT,
+V_R176_PRODUCT,
+V_R176_AMOUNT,
+V_R176_WEIGHT,
+V_R176_WEIGHT_AMOUNT,
+V_R177_PRODUCT,
+V_R177_AMOUNT,
+V_R177_WEIGHT_AMOUNT,
+V_R178_PRODUCT,
+V_R178_AMOUNT,
+V_R178_WEIGHT,
+V_R178_WEIGHT_AMOUNT,
+V_R179_PRODUCT,
+V_R179_AMOUNT,
+V_R179_WEIGHT,
+V_R179_WEIGHT_AMOUNT,
+V_R180_PRODUCT,
+V_R180_AMOUNT,
+V_R180_WEIGHT,
+V_R180_WEIGHT_AMOUNT,
+V_R181_PRODUCT,
+V_R181_AMOUNT,
+V_R181_WEIGHT,
+V_R181_WEIGHT_AMOUNT,
+V_R182_PRODUCT,
+V_R182_AMOUNT,
+V_R182_WEIGHT,
+V_R182_WEIGHT_AMOUNT,
+V_R184_PRODUCT,
+V_R184_AMOUNT,
+V_R184_WEIGHT,
+V_R184_WEIGHT_AMOUNT,
+V_R185_PRODUCT,
+V_R185_AMOUNT,
+V_R185_ROLL_OVER,
+V_R186_PRODUCT,
+V_R186_AMOUNT,
+V_R186_ROLL_OVER,
+V_R187_PRODUCT,
+V_R187_AMOUNT,
+V_R187_ROLL_OVER,
+V_R188_PRODUCT,
+V_R188_AMOUNT,
+V_R188_ROLL_OVER,
+V_R189_PRODUCT,
+V_R189_AMOUNT,
+V_R189_ROLL_OVER,
+V_R189_EXCESS,
+V_R189_WEIGHT,
+V_R189_WEIGHT_AMOUNT,
+V_R190_PRODUCT,
+V_R190_WEIGHT_AMOUNT,
+V_R192_PRODUCT,
+V_R192_AMOUNT,
+V_R195_PRODUCT,
+V_R195_AMOUNT,
+V_R196_PRODUCT,
+V_R196_AMOUNT,
+V_R196_WEIGHT,
+V_R196_WEIGHT_AMOUNT,
+V_R197_PRODUCT,
+V_R197_AMOUNT,
+V_R197_WEIGHT,
+V_R197_WEIGHT_AMOUNT,
+V_R198_PRODUCT,
+V_R198_WEIGHT_AMOUNT,
+V_R200_PRODUCT,
+V_R200_WEIGHT_AMOUNT,
+V_R204_PRODUCT,
+V_R204_AMOUNT_EXTENDED,
+V_R204_MARKET_VALUE,
+V_R204_WEIGHT_AMOUNT,
+V_R205_PRODUCT,
+V_R205_AMOUNT_EXTENDED,
+V_R205_MARKET_VALUE,
+V_R205_WEIGHT_AMOUNT,
+V_R206_PRODUCT,
+V_R206_AMOUNT_EXTENDED,
+V_R206_MARKET_VALUE,
+V_R206_WEIGHT_AMOUNT,
+V_R207_PRODUCT,
+V_R207_AMOUNT_EXTENDED,
+V_R207_MARKET_VALUE,
+V_R207_WEIGHT,
+V_R207_WEIGHT_AMOUNT,
+V_R208_PRODUCT,
+V_R208_AMOUNT_EXTENDED,
+V_R208_MARKET_VALUE,
+V_R208_WEIGHT,
+V_R208_WEIGHT_AMOUNT,
+V_R209_PRODUCT,
+V_R209_AMOUNT_EXTENDED,
+V_R209_MARKET_VALUE,
+V_R209_WEIGHT_AMOUNT,
+V_R210_PRODUCT,
+V_R210_AMOUNT_EXTENDED,
+V_R210_MARKET_VALUE,
+V_R210_WEIGHT,
+V_R210_WEIGHT_AMOUNT,
+V_R211_PRODUCT,
+V_R211_AMOUNT_EXTENDED,
+V_R211_MARKET_VALUE,
+V_R211_WEIGHT,
+V_R211_WEIGHT_AMOUNT,
+V_R212_PRODUCT,
+V_R212_AMOUNT_EXTENDED,
+V_R212_MARKET_VALUE,
+V_R212_WEIGHT_AMOUNT,
+V_R213_PRODUCT,
+V_R213_AMOUNT_EXTENDED,
+V_R213_MARKET_VALUE,
+V_R213_WEIGHT,
+V_R213_WEIGHT_AMOUNT,
+V_R214_PRODUCT,
+V_R214_AMOUNT_EXTENDED,
+V_R214_MARKET_VALUE,
+V_R214_WEIGHT,
+V_R214_WEIGHT_AMOUNT,
+V_R215_PRODUCT,
+V_R215_AMOUNT_EXTENDED,
+V_R215_MARKET_VALUE,
+V_R215_WEIGHT_AMOUNT,
+V_R216_PRODUCT,
+V_R216_AMOUNT_EXTENDED,
+V_R216_MARKET_VALUE,
+V_R216_WEIGHT,
+V_R216_WEIGHT_AMOUNT,
+V_R217_PRODUCT,
+V_R217_AMOUNT_EXTENDED,
+V_R217_MARKET_VALUE,
+V_R217_WEIGHT,
+V_R217_WEIGHT_AMOUNT,
+V_R218_PRODUCT,
+V_R218_AMOUNT_EXTENDED,
+V_R218_MARKET_VALUE,
+V_R218_WEIGHT,
+V_R218_WEIGHT_AMOUNT,
+V_R219_PRODUCT,
+V_R219_AMOUNT_EXTENDED,
+V_R219_MARKET_VALUE,
+V_R219_WEIGHT,
+V_R219_WEIGHT_AMOUNT,
+V_R220_PRODUCT,
+V_R220_AMOUNT_EXTENDED,
+V_R220_MARKET_VALUE,
+V_R220_WEIGHT_AMOUNT,
+V_R221_PRODUCT,
+V_R221_AMOUNT_EXTENDED,
+V_R221_MARKET_VALUE,
+V_R221_WEIGHT,
+V_R221_WEIGHT_AMOUNT,
+V_R222_PRODUCT,
+V_R222_AMOUNT_EXTENDED,
+V_R222_MARKET_VALUE,
+V_R222_WEIGHT,
+V_R222_WEIGHT_AMOUNT,
+V_R223_PRODUCT,
+V_R223_AMOUNT_EXTENDED,
+V_R223_MARKET_VALUE,
+V_R223_WEIGHT,
+V_R223_WEIGHT_AMOUNT,
+V_R224_PRODUCT,
+V_R224_AMOUNT_EXTENDED,
+V_R224_MARKET_VALUE,
+V_R224_WEIGHT,
+V_R224_WEIGHT_AMOUNT,
+V_R225_PRODUCT,
+V_R225_AMOUNT_EXTENDED,
+V_R225_MARKET_VALUE,
+V_R225_WEIGHT,
+V_R225_WEIGHT_AMOUNT,
+V_R226_PRODUCT,
+V_R226_AMOUNT_EXTENDED,
+V_R226_MARKET_VALUE,
+V_R226_WEIGHT,
+V_R226_WEIGHT_AMOUNT,
+V_R227_PRODUCT,
+V_R227_AMOUNT_EXTENDED,
+V_R227_MARKET_VALUE,
+V_R227_WEIGHT_AMOUNT,
+
+
+
+V_R230_PRODUCT,
+V_R230_AMOUNT_EXTENDED,
+
+V_R230_WEIGHT_AMOUNT,
+V_R231_PRODUCT,
+V_R231_AMOUNT_EXTENDED,
+
+V_R231_WEIGHT,
+V_R231_WEIGHT_AMOUNT,
+V_R232_PRODUCT,
+V_R232_AMOUNT_EXTENDED,
+
+V_R232_WEIGHT,
+V_R232_WEIGHT_AMOUNT,
+V_R233_PRODUCT,
+V_R233_AMOUNT_EXTENDED,
+
+V_R233_WEIGHT,
+V_R233_WEIGHT_AMOUNT,
+V_R234_PRODUCT,
+V_R234_AMOUNT_EXTENDED,
+
+V_R234_WEIGHT,
+V_R234_WEIGHT_AMOUNT,
+V_R235_PRODUCT,
+V_R235_AMOUNT_EXTENDED,
+
+V_R235_WEIGHT,
+V_R235_WEIGHT_AMOUNT,
+V_R236_PRODUCT,
+V_R236_AMOUNT_EXTENDED,
+
+V_R236_WEIGHT,
+V_R236_WEIGHT_AMOUNT,
+V_R237_PRODUCT,
+V_R237_AMOUNT_EXTENDED,
+
+V_R237_WEIGHT,
+V_R237_WEIGHT_AMOUNT,
+V_R238_PRODUCT,
+V_R238_AMOUNT_EXTENDED,
+
+V_R238_WEIGHT_AMOUNT,
+V_R241_PRODUCT,
+V_R241_AMOUNT_EXTENDED,
+
+V_R241_WEIGHT_AMOUNT,
+V_R242_PRODUCT,
+V_R242_AMOUNT_EXTENDED,
+
+V_R242_WEIGHT,
+V_R242_WEIGHT_AMOUNT,
+V_R243_PRODUCT,
+V_R243_AMOUNT_EXTENDED,
+
+V_R243_WEIGHT,
+V_R243_WEIGHT_AMOUNT,
+V_R244_PRODUCT,
+V_R244_AMOUNT_EXTENDED,
+
+V_R244_WEIGHT,
+V_R244_WEIGHT_AMOUNT,
+V_R245_PRODUCT,
+V_R245_AMOUNT_EXTENDED,
+
+V_R245_WEIGHT_AMOUNT,
+
+V_R248_PRODUCT,
+V_R248_AMOUNT_EXTENDED,
+V_R248_WEIGHT_AMOUNT,
+V_R249_PRODUCT,
+V_R249_AMOUNT_EXTENDED,
+
+V_R249_WEIGHT,
+V_R249_WEIGHT_AMOUNT,
+V_R250_PRODUCT,
+V_R250_AMOUNT_EXTENDED,
+
+V_R250_WEIGHT_AMOUNT,
+V_R252_PRODUCT,
+V_R252_WEIGHT_AMOUNT,
+V_R253_PRODUCT,
+V_R253_WEIGHT_AMOUNT,
+V_R254_PRODUCT1,
+V_R254_WEIGHT_AMOUNT1,
+V_REPORT_DATE);
+
+COMMIT;
+END;
+==============================
+create or replace PROCEDURE  "BRF14_MAPPING_PROCEDURE" ( REPORT_DATE VARCHAR2) 
+IS 
+
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+
+
+BEGIN 
+
+--NBFI
+INSERT INTO BRF14_MAPPING_TABLE
+(foracid, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_STATUS, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type)
+SELECT ACCT_NUMBER, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_FLG, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type
+FROM GENERAL_MASTER_TABLE
+WHERE report_date = '30-jun-2023'
+AND SCHM_CODE IN ('CA101', 'CA102', 'CA103', 'CA106', 'CA107', 'CA108', 'CA109', 'CA110', 'CA111', 'CA112', 'LA101', 'LA106', 'OD001', 'OD002',
+'OD003', 'OD028', 'OD651', 'SB105', 'SB107', 'TD115','SB101', 'SB102', 'SB103', 'SB106', 'SB110', 'SB201', 'SB203',
+'SB303', 'TD101', 'TD102', 'TD103', 'TD105', 'TD106', 'TD108', 'TD109', 'TD112', 'TD301');
+COMMIT;
+
+
+--102A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW101' , report_addl_criteria_1 ='ROW101A'
+WHERE  SCHM_CODE IN  ( 'LA106','CA102');
+COMMIT;
+
+--102B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102A'
+WHERE  SCHM_CODE IN  ('TD106', 'CA102');
+COMMIT;
+
+
+--102C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW103' , report_addl_criteria_1 ='ROW103A'
+WHERE  SCHM_CODE IN  ('TD108', 'CA103');
+COMMIT;
+
+--102D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW104' , report_addl_criteria_1 ='ROW104A'
+WHERE  SCHM_CODE IN  ( 'SB303','CA106');
+COMMIT;
+
+--102E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW105' , report_addl_criteria_1 ='ROW105A'
+WHERE  SCHM_CODE IN  ('SB203' ,'CA107');
+COMMIT;
+
+--102F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW106' , report_addl_criteria_1 ='ROW106A'
+WHERE  SCHM_CODE IN  ('SB103', 'CA108');
+COMMIT;
+
+--102G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW107' , report_addl_criteria_1 ='ROW107A'
+WHERE  SCHM_CODE IN  ('SB102', 'CA109');
+COMMIT;
+
+--102H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW108' , report_addl_criteria_1 ='ROW108A'
+WHERE  SCHM_CODE IN  ( 'CA110', 'TD301');
+COMMIT;
+
+--102I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW109' , report_addl_criteria_1 ='ROW109A'
+WHERE  SCHM_CODE IN  ( 'CA111','TD112');
+COMMIT;
+
+--102J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW110' , report_addl_criteria_1 ='ROW110A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'TD109');
+COMMIT;
+
+--102K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW111' , report_addl_criteria_1 ='ROW111A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'TD108');
+COMMIT;
+
+--102L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW112' , report_addl_criteria_1 ='ROW112A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'TD106');
+COMMIT;
+
+
+--ROW105A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW113' , report_addl_criteria_1 ='ROW113A'
+WHERE  SCHM_CODE IN  ( 'CA101', 'TD105');
+COMMIT;
+
+--ROW105B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW114' , report_addl_criteria_1 ='ROW114A'
+WHERE  SCHM_CODE IN  ( 'CA102', 'TD103');
+COMMIT;
+
+
+--ROW105C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW115' , report_addl_criteria_1 ='ROW115A'
+WHERE  SCHM_CODE IN  ( 'CA103', 'TD102');
+COMMIT;
+
+--ROW105D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW119' , report_addl_criteria_1 ='ROW119A'
+WHERE  SCHM_CODE IN  ( 'TD101','CA106');
+COMMIT;
+
+--ROW105E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW120' , report_addl_criteria_1 ='ROW120A'
+WHERE  SCHM_CODE IN  ( 'SB107','CA107');
+COMMIT;
+
+--ROW105F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW121' , report_addl_criteria_1 ='ROW121A'
+WHERE  SCHM_CODE IN  ('SB105', 'CA108');
+COMMIT;
+
+--ROW105G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW122' , report_addl_criteria_1 ='ROW122A'
+WHERE  SCHM_CODE IN  ('OD651',  'CA109');
+COMMIT;
+
+--ROW105H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW123' , report_addl_criteria_1 ='ROW123A'
+WHERE  SCHM_CODE IN  (  'OD028','CA110');
+COMMIT;
+
+--ROW105I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW124' , report_addl_criteria_1 ='ROW124A'
+WHERE  SCHM_CODE IN  ( 'OD003','CA111');
+COMMIT;
+
+--ROW105J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW125' , report_addl_criteria_1 ='ROW125A'
+WHERE  SCHM_CODE IN  ( 'OD002','CA112');
+COMMIT;
+
+--ROW105K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW126' , report_addl_criteria_1 ='ROW126A'
+WHERE  SCHM_CODE IN  ( 'OD001','LA101');
+COMMIT;
+
+--ROW105L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW127' , report_addl_criteria_1 ='ROW127A'
+WHERE  SCHM_CODE IN  ( 'LA106','LA106');
+COMMIT;
+
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW128' , report_addl_criteria_1 ='ROW128A'
+WHERE  SCHM_CODE IN  ( 'CA101');COMMIT;
+
+--ROW107B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW129' , report_addl_criteria_1 ='ROW129A'
+WHERE  SCHM_CODE IN  ( 'LA101','CA102');COMMIT;
+
+
+--ROW107C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW130' , report_addl_criteria_1 ='ROW130A'
+WHERE  SCHM_CODE IN  ('CA112',  'CA103');COMMIT;
+
+--ROW107D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW133' , report_addl_criteria_1 ='ROW133A'
+WHERE  SCHM_CODE IN  ( 'CA106', 'TD301');COMMIT;
+
+--ROW107E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW134' , report_addl_criteria_1 ='ROW134A'
+WHERE  SCHM_CODE IN  ( 'CA107','TD112');COMMIT;
+
+--ROW107F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW135' , report_addl_criteria_1 ='ROW135A'
+WHERE  SCHM_CODE IN  ( 'CA108', 'TD109');COMMIT;
+
+--ROW107G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW136' , report_addl_criteria_1 ='ROW136A'
+WHERE  SCHM_CODE IN  ( 'CA109', 'TD108');COMMIT;
+
+--ROW107H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW137' , report_addl_criteria_1 ='ROW137A'
+WHERE  SCHM_CODE IN  ( 'CA110', 'TD106');COMMIT;
+
+--ROW107I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW138' , report_addl_criteria_1 ='ROW138A'
+WHERE  SCHM_CODE IN  ( 'CA111', 'TD105');COMMIT;
+
+--ROW107J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW139' , report_addl_criteria_1 ='ROW139A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'TD103');COMMIT;
+
+--ROW107K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW140' , report_addl_criteria_1 ='ROW140A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'TD102');COMMIT;
+
+--ROW107L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW141' , report_addl_criteria_1 ='ROW141A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'TD101');COMMIT;
+
+
+--ROW109A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW142' , report_addl_criteria_1 ='ROW142A'
+WHERE  SCHM_CODE IN  ( 'CA101', 'SB303');COMMIT;
+
+--ROW109B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW151' , report_addl_criteria_1 ='ROW151A'
+WHERE  SCHM_CODE IN  ( 'CA102','TD115');
+COMMIT;
+
+
+--ROW109C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW152' , report_addl_criteria_1 ='ROW152A'
+WHERE  SCHM_CODE IN  ( 'CA103','SB101');
+COMMIT;
+
+--ROW109D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW153' , report_addl_criteria_1 ='ROW153A'
+WHERE  SCHM_CODE IN  ( 'CA106','SB203');
+COMMIT;
+
+--ROW109E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW154' , report_addl_criteria_1 ='ROW154A'
+WHERE  SCHM_CODE IN  ( 'CA107','SB203');
+COMMIT;
+
+--ROW109F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW155' , report_addl_criteria_1 ='ROW155A'
+WHERE  SCHM_CODE IN  ( 'CA108', 'SB201');
+COMMIT;
+
+--ROW109G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW156' , report_addl_criteria_1 ='ROW156A'
+WHERE  SCHM_CODE IN  ( 'CA109','SB110');
+COMMIT;
+
+--ROW109H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW157' , report_addl_criteria_1 ='ROW157A'
+WHERE  SCHM_CODE IN  ( 'CA110','SB106');
+COMMIT;
+
+--ROW109I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW158' , report_addl_criteria_1 ='ROW158A'
+WHERE  SCHM_CODE IN  ( 'CA111','SB103');
+COMMIT;
+
+--ROW109J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW159' , report_addl_criteria_1 ='ROW159A'
+WHERE  SCHM_CODE IN  ( 'CA112''SB102');
+COMMIT;
+
+--ROW109K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW211' , report_addl_criteria_1 ='ROW211A'
+WHERE  SCHM_CODE IN  ( 'TD106','LA101');
+COMMIT;
+
+--ROW109L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW212' , report_addl_criteria_1 ='ROW212A'
+WHERE  SCHM_CODE IN  ('TD108',  'LA106');
+COMMIT;
+
+
+
+--ROW111A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW213' , report_addl_criteria_1 ='ROW213A'
+WHERE  SCHM_CODE IN  ( 'TD109','CA101');
+COMMIT;
+
+--ROW111B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW214' , report_addl_criteria_1 ='ROW214A'
+WHERE  SCHM_CODE IN  ( 'TD112','CA102');
+COMMIT;
+
+--ROW111C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW215' , report_addl_criteria_1 ='ROW215A'
+WHERE  SCHM_CODE IN  ( 'TD105',  'CA103');
+COMMIT;
+
+--ROW111D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW216' , report_addl_criteria_1 ='ROW216A'
+WHERE  SCHM_CODE IN  ( 'CA106','TD103');
+COMMIT;
+
+--ROW111E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW217' , report_addl_criteria_1 ='ROW217A'
+WHERE  SCHM_CODE IN  ( 'TD102','CA107');
+COMMIT;
+
+--ROW111F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW218' , report_addl_criteria_1 ='ROW218A'
+WHERE  SCHM_CODE IN  ('TD101', 'CA108');
+COMMIT;
+
+--ROW111G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW219' , report_addl_criteria_1 ='ROW219A'
+WHERE  SCHM_CODE IN  ( 'SB303','CA109');
+COMMIT;
+
+--ROW111H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW220' , report_addl_criteria_1 ='ROW220A'
+WHERE  SCHM_CODE IN  ( 'SB203', 'CA110');
+COMMIT;
+
+--ROW111I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW221' , report_addl_criteria_1 ='ROW221A'
+WHERE  SCHM_CODE IN  ( 'SB201','CA111');
+COMMIT;
+
+--ROW111J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW222' , report_addl_criteria_1 ='ROW222A'
+WHERE  SCHM_CODE IN  ( 'SB110','CA112');
+COMMIT;
+
+--ROW111K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW223' , report_addl_criteria_1 ='ROW223A'
+WHERE  SCHM_CODE IN  ( 'SB106','LA101');
+COMMIT;
+
+--ROW111L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW224' , report_addl_criteria_1 ='ROW224A'
+WHERE  SCHM_CODE IN  (  'SB103','LA106');
+COMMIT;
+
+
+--ROW113A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW225' , report_addl_criteria_1 ='ROW225A'
+WHERE  SCHM_CODE IN  ( 'SB102','CA101');
+COMMIT;
+
+--ROW113B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW226' , report_addl_criteria_1 ='ROW226A'
+WHERE  SCHM_CODE IN  ( 'SB101', 'CA102');
+COMMIT;
+
+
+--ROW113C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW227' , report_addl_criteria_1 ='ROW227A'
+WHERE  SCHM_CODE IN  ('TD115',  'CA103');
+COMMIT;
+
+--ROW113D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW228' , report_addl_criteria_1 ='ROW228A'
+WHERE  SCHM_CODE IN  ( 'SB207','CA106');
+COMMIT;
+
+--ROW113E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW229' , report_addl_criteria_1 ='ROW229A'
+WHERE  SCHM_CODE IN  ( 'SB105',  'CA107');
+COMMIT;
+
+--ROW113F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW230' , report_addl_criteria_1 ='ROW230A'
+WHERE  SCHM_CODE IN  ( 'OD651','CA108');
+COMMIT;
+
+
+
+--ROW113G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW231' , report_addl_criteria_1 ='ROW230A'
+WHERE  SCHM_CODE IN  (  'OD028','CA109');
+COMMIT;
+
+--ROW113H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW231' , report_addl_criteria_1 ='ROW231A'
+WHERE  SCHM_CODE IN  (  'OD003','CA110');
+COMMIT;
+
+--ROW113I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW232' , report_addl_criteria_1 ='ROW232A'
+WHERE  SCHM_CODE IN  (  'OD002', 'CA111');
+COMMIT;
+
+--ROW113J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW233' , report_addl_criteria_1 ='ROW233A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'LA106');
+COMMIT;
+
+--ROW113K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW234' , report_addl_criteria_1 ='ROW234A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'LA101');
+COMMIT;
+
+--ROW113L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW235' , report_addl_criteria_1 ='ROW235A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'CA112');
+COMMIT;
+
+
+
+--ROW111B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW236' , report_addl_criteria_1 ='ROW236A'
+WHERE  SCHM_CODE IN  ( 'TD112','CA102');
+COMMIT;
+
+--ROW111C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW237' , report_addl_criteria_1 ='ROW237A'
+WHERE  SCHM_CODE IN  ( 'TD105',  'CA103');
+COMMIT;
+
+--ROW111D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW238' , report_addl_criteria_1 ='ROW238A'
+WHERE  SCHM_CODE IN  ( 'CA106','TD103');
+COMMIT;
+
+--ROW111E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW239' , report_addl_criteria_1 ='ROW239A'
+WHERE  SCHM_CODE IN  ( 'TD102','CA107');
+COMMIT;
+
+--ROW111F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW240' , report_addl_criteria_1 ='ROW240A'
+WHERE  SCHM_CODE IN  ('TD101', 'CA108');
+COMMIT;
+
+--ROW111G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW241' , report_addl_criteria_1 ='ROW241A'
+WHERE  SCHM_CODE IN  ( 'SB303','CA109');
+COMMIT;
+
+--ROW111H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW242' , report_addl_criteria_1 ='ROW242A'
+WHERE  SCHM_CODE IN  ( 'SB203', 'CA110');
+COMMIT;
+
+--ROW111I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW243' , report_addl_criteria_1 ='ROW243A'
+WHERE  SCHM_CODE IN  ( 'SB201','CA111');
+COMMIT;
+
+--ROW111J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW244' , report_addl_criteria_1 ='ROW244A'
+WHERE  SCHM_CODE IN  ( 'SB110','CA112');
+COMMIT;
+
+--ROW111K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW296' , report_addl_criteria_1 ='ROW296A'
+WHERE  SCHM_CODE IN  ( 'SB106','LA101');
+COMMIT;
+
+--ROW111L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW297' , report_addl_criteria_1 ='ROW297A'
+WHERE  SCHM_CODE IN  (  'SB103','LA106');
+COMMIT;
+
+
+--ROW113A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW298' , report_addl_criteria_1 ='ROW298A'
+WHERE  SCHM_CODE IN  ( 'SB102','CA101');
+COMMIT;
+
+--ROW113B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW299' , report_addl_criteria_1 ='ROW299A'
+WHERE  SCHM_CODE IN  ( 'SB101', 'CA102');
+COMMIT;
+
+
+--ROW113C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW300' , report_addl_criteria_1 ='ROW300A'
+WHERE  SCHM_CODE IN  ('TD115',  'CA103');
+COMMIT;
+
+--ROW113D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW301' , report_addl_criteria_1 ='ROW301A'
+WHERE  SCHM_CODE IN  ( 'SB207','CA106');
+COMMIT;
+
+--ROW113E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW302' , report_addl_criteria_1 ='ROW302A'
+WHERE  SCHM_CODE IN  ( 'SB105',  'CA107');
+COMMIT;
+
+--ROW113F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW303' , report_addl_criteria_1 ='ROW303A'
+WHERE  SCHM_CODE IN  ( 'OD651','CA108');
+COMMIT;
+
+
+
+--ROW113G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW304' , report_addl_criteria_1 ='ROW304A'
+WHERE  SCHM_CODE IN  (  'OD028','CA109');
+COMMIT;
+
+--ROW113H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW305' , report_addl_criteria_1 ='ROW305A'
+WHERE  SCHM_CODE IN  (  'OD003','CA110');
+COMMIT;
+
+--ROW113I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW306' , report_addl_criteria_1 ='ROW306A'
+WHERE  SCHM_CODE IN  (  'OD002', 'CA111');
+COMMIT;
+
+--ROW113J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW307' , report_addl_criteria_1 ='ROW307A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'LA106');
+COMMIT;
+
+--ROW113K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW308' , report_addl_criteria_1 ='ROW308A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'LA101');
+COMMIT;
+
+--ROW113L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW309' , report_addl_criteria_1 ='ROW309A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'CA112');
+COMMIT;
+
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW310' , report_addl_criteria_1 ='ROW310A'
+WHERE  SCHM_CODE IN  ( 'SB207','CA106');
+COMMIT;
+
+--ROW113E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW311' , report_addl_criteria_1 ='ROW311A'
+WHERE  SCHM_CODE IN  ( 'SB105',  'CA107');
+COMMIT;
+
+--ROW113F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW312' , report_addl_criteria_1 ='ROW312A'
+WHERE  SCHM_CODE IN  ( 'OD651','CA108');
+COMMIT;
+
+
+
+--ROW113G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW313' , report_addl_criteria_1 ='ROW313A'
+WHERE  SCHM_CODE IN  (  'OD028','CA109');
+COMMIT;
+
+--ROW113H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW314' , report_addl_criteria_1 ='ROW314A'
+WHERE  SCHM_CODE IN  (  'OD003','CA110');
+COMMIT;
+
+--ROW113I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW315' , report_addl_criteria_1 ='ROW315A'
+WHERE  SCHM_CODE IN  (  'OD002', 'CA111');
+COMMIT;
+
+--ROW113J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW316' , report_addl_criteria_1 ='ROW316A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'LA106');
+COMMIT;
+
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW317' , report_addl_criteria_1 ='ROW317A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'LA106');
+COMMIT;
+--ROW113K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW318' , report_addl_criteria_1 ='ROW318A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'LA101');
+COMMIT;
+
+--ROW113L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW319' , report_addl_criteria_1 ='ROW319A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'CA112');
+COMMIT;
+--------------
+
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102C'
+WHERE  SCHM_CODE IN  ( 'CA101', 'TD105');
+COMMIT;
+
+--ROW105B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW166' , report_addl_criteria_1 ='ROW166D'
+WHERE  SCHM_CODE IN  ( 'CA102', 'TD103');
+COMMIT;
+
+
+--ROW105C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW167' , report_addl_criteria_1 ='ROW167D'
+WHERE  SCHM_CODE IN  ( 'CA103', 'TD102');
+COMMIT;
+
+
+--ROW105E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW169' , report_addl_criteria_1 ='ROW169D'
+WHERE  SCHM_CODE IN  ( 'SB107','CA107');
+COMMIT;
+
+--ROW105F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW170' , report_addl_criteria_1 ='ROW170D'
+WHERE  SCHM_CODE IN  ('SB105', 'CA108');
+COMMIT;
+
+--ROW105G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW171' , report_addl_criteria_1 ='ROW171D'
+WHERE  SCHM_CODE IN  ('OD651',  'CA109');
+COMMIT;
+
+--ROW105H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW172' , report_addl_criteria_1 ='ROW172D'
+WHERE  SCHM_CODE IN  (  'OD028','CA110');
+COMMIT;
+
+--ROW105I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW173' , report_addl_criteria_1 ='ROW173D'
+WHERE  SCHM_CODE IN  ( 'OD003','CA111');
+COMMIT;
+
+--ROW105J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW174' , report_addl_criteria_1 ='ROW174D'
+WHERE  SCHM_CODE IN  ( 'OD002','CA112');
+COMMIT;
+
+--ROW105K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW181' , report_addl_criteria_1 ='ROW181D'
+WHERE  SCHM_CODE IN  ( 'OD001','LA101');
+COMMIT;
+
+--ROW105L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW182' , report_addl_criteria_1 ='ROW182D'
+WHERE  SCHM_CODE IN  ( 'LA106','LA106');
+COMMIT;
+
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW183' , report_addl_criteria_1 ='ROW183D'
+WHERE  SCHM_CODE IN  ( 'CA101');COMMIT;
+
+--ROW107B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW184' , report_addl_criteria_1 ='ROW184D'
+WHERE  SCHM_CODE IN  ( 'LA101','CA102');COMMIT;
+
+
+--ROW107C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW185' , report_addl_criteria_1 ='ROW185D'
+WHERE  SCHM_CODE IN  ('CA112',  'CA103');COMMIT;
+
+--ROW107D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW186' , report_addl_criteria_1 ='ROW186D'
+WHERE  SCHM_CODE IN  ( 'CA106', 'TD301');COMMIT;
+
+--ROW107E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW187' , report_addl_criteria_1 ='ROW187D'
+WHERE  SCHM_CODE IN  ( 'CA107','TD112');COMMIT;
+
+--ROW107F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW188' , report_addl_criteria_1 ='ROW188D'
+WHERE  SCHM_CODE IN  ( 'CA108', 'TD109');COMMIT;
+
+--ROW107G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW189' , report_addl_criteria_1 ='ROW189D'
+WHERE  SCHM_CODE IN  ( 'CA109', 'TD108');COMMIT;
+
+--ROW107H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW190' , report_addl_criteria_1 ='ROW190D'
+WHERE  SCHM_CODE IN  ( 'CA110', 'TD106');COMMIT;
+
+--ROW107I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW191' , report_addl_criteria_1 ='ROW191D'
+WHERE  SCHM_CODE IN  ( 'CA111', 'TD105');COMMIT;
+
+--ROW107J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW192' , report_addl_criteria_1 ='ROW192D'
+WHERE  SCHM_CODE IN  ( 'CA112', 'TD103');COMMIT;
+
+--ROW107K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW193' , report_addl_criteria_1 ='ROW193D'
+WHERE  SCHM_CODE IN  ( 'LA101', 'TD102');COMMIT;
+
+--ROW107L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW194' , report_addl_criteria_1 ='ROW194D'
+WHERE  SCHM_CODE IN  ( 'LA106', 'TD101');COMMIT;
+
+
+--ROW109A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW195' , report_addl_criteria_1 ='ROW195D'
+WHERE  SCHM_CODE IN  ( 'CA101', 'SB303');COMMIT;
+
+--ROW109B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW196' , report_addl_criteria_1 ='ROW196D'
+WHERE  SCHM_CODE IN  ( 'CA102','TD115');
+COMMIT;
+
+
+--ROW109C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW197' , report_addl_criteria_1 ='ROW197D'
+WHERE  SCHM_CODE IN  ( 'CA103','SB101');
+COMMIT;
+
+--ROW109D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW198' , report_addl_criteria_1 ='ROW198D'
+WHERE  SCHM_CODE IN  ( 'CA106','SB203');
+COMMIT;
+
+--ROW109E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW199' , report_addl_criteria_1 ='ROW199D'
+WHERE  SCHM_CODE IN  ( 'CA107','SB203');
+COMMIT;
+
+--ROW109F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW200' , report_addl_criteria_1 ='ROW200D'
+WHERE  SCHM_CODE IN  ( 'CA108', 'SB201');
+COMMIT;
+
+--ROW109G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW201' , report_addl_criteria_1 ='ROW201D'
+WHERE  SCHM_CODE IN  ( 'CA109','SB110');
+COMMIT;
+
+--ROW109H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW202' , report_addl_criteria_1 ='ROW202D'
+WHERE  SCHM_CODE IN  ( 'CA110','SB106');
+COMMIT;
+
+--ROW109I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW203' , report_addl_criteria_1 ='ROW203D'
+WHERE  SCHM_CODE IN  ( 'CA111','SB103');
+COMMIT;
+
+--ROW109J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW204' , report_addl_criteria_1 ='ROW204D'
+WHERE  SCHM_CODE IN  ( 'CA112''SB102');
+COMMIT;
+
+--ROW109K
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW288' , report_addl_criteria_1 ='ROW288D'
+WHERE  SCHM_CODE IN  ( 'TD106','LA101');
+COMMIT;
+
+--ROW109L
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW289' , report_addl_criteria_1 ='ROW289D'
+WHERE  SCHM_CODE IN  ('TD108',  'LA106');
+COMMIT;
+
+
+
+--ROW111A
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW323' , report_addl_criteria_1 ='ROW323D'
+WHERE  SCHM_CODE IN  ( 'TD109','CA101');
+COMMIT;
+
+--ROW111B
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW324' , report_addl_criteria_1 ='ROW324D'
+WHERE  SCHM_CODE IN  ( 'TD112','CA102');
+COMMIT;
+
+--ROW111C
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW325' , report_addl_criteria_1 ='ROW325D'
+WHERE  SCHM_CODE IN  ( 'TD105',  'CA103');
+COMMIT;
+
+--ROW111D
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW326' , report_addl_criteria_1 ='ROW326D'
+WHERE  SCHM_CODE IN  ( 'CA106','TD103');
+COMMIT;
+
+--ROW111E
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW327' , report_addl_criteria_1 ='ROW327D'
+WHERE  SCHM_CODE IN  ( 'TD102','CA107');
+COMMIT;
+
+--ROW111F
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW328' , report_addl_criteria_1 ='ROW328D'
+WHERE  SCHM_CODE IN  ('TD101', 'CA108');
+COMMIT;
+
+--ROW111G
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW329' , report_addl_criteria_1 ='ROW329D'
+WHERE  SCHM_CODE IN  ( 'SB303','CA109');
+COMMIT;
+
+--ROW111H
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW334' , report_addl_criteria_1 ='ROW334D'
+WHERE  SCHM_CODE IN  ( 'SB203', 'CA110');
+COMMIT;
+
+--ROW111I
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW335' , report_addl_criteria_1 ='ROW335D'
+WHERE  SCHM_CODE IN  ( 'SB201','CA111');
+COMMIT;
+
+--ROW111J
+UPDATE brf14_mapping_table SET  REPORT_NAME_1 ='BRF14', REPORT_LABEL_1 = 'ROW336' , report_addl_criteria_1 ='ROW336D'
+WHERE  SCHM_CODE IN  ( 'SB110','CA112');
+COMMIT;
+COMMIT;
+END;
+=============================
+create or replace PROCEDURE BRF14_DETAIL_PROCEDURE (REPORT_DATE DATE)
+IS
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+   V_FROM_DATE dATE :=  ADD_MONTHS (LAST_DAY (REPORT_DATE), -1) + 1;
+BEGIN
+
+delete from BRF14_DETAILTABLE where report_date = '30-JUN-2023';
+Commit;
+
+INSERT INTO BRF14_DETAILTABLE
+(foracid, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_STATUS, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type,ACT_BALANCE_AMT_LC)
+SELECT ACCT_NUMBER, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_FLG, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type,ACT_BALANCE_AMT_LC
+FROM GENERAL_MASTER_TABLE
+WHERE report_date = '30-jun-2023'
+AND SCHM_CODE IN ('CA101', 'CA102', 'CA103', 'CA106', 'CA107', 'CA108', 'CA109', 'CA110', 'CA111', 'CA112', 'LA101', 'LA106', 'OD001', 'OD002',
+'OD003', 'OD028', 'OD651', 'SB105', 'SB107', 'TD115','SB101', 'SB102', 'SB103', 'SB106', 'SB110', 'SB201', 'SB203',
+'SB303', 'TD101', 'TD102', 'TD103', 'TD105', 'TD106', 'TD108', 'TD109', 'TD112', 'TD301');
+
+COMMIT;
+
+MERGE INTO BRF14_DETAILTABLE M
+USING (
+    SELECT distinct   b.REPORT_LABEL_1,b.cust_id,b.foracid,B.REPORT_ADDL_CRITERIA_1,B.REPORT_NAME_1
+    FROM BRF14_MAPPING_TABLE b
+    JOIN BRF14_DETAILTABLE a ON a.foracid = b.foracid
+    WHERE a.report_date = '30-JUN-2023'
+) S
+ON (M.foracid = S.foracid)
+WHEN MATCHED THEN UPDATE
+SET M.REPORT_LABEL_1 = S.REPORT_LABEL_1,
+M.REPORT_ADDL_CRITERIA_1 = S.REPORT_ADDL_CRITERIA_1,
+M.REPORT_NAME_1 = S.REPORT_NAME_1
+WHERE M.report_date =  '30-JUN-2023';
+COMMIT;
+
+DELETE FROM BRF14_DETAILTABLE WHERE REPORT_NAME_1 IS NULL;
+COMMIT;
+
+
+COMMIT;
+END;

@@ -1,0 +1,3102 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<style>
+
+  .space_div {
+    padding-top: 70px;
+  }
+  
+  .mytask
+  {
+  height:500px;
+  width:750px;
+  
+  }
+.btns {
+	float: right;
+	margin: 5px;
+}
+
+.col-sm-5 {
+	padding-bottom: 15px;
+}
+
+.list-body {
+	padding: 0px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.formline {
+	padding-bottom: 15px;
+}
+
+.btn-primary {
+	background-color: blue border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+#finusertb {
+	width: 460px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
+
+.container {
+	text-align: center;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	$(function() {
+
+		var finusers = /*[[${FinUserProfiles}]]*/null;
+
+		console.log(finusers);
+
+		$("#usertable,#finusertb").DataTable({
+			"info" : false,
+			"lengthChange" : false,
+			"pageLength" : 17
+
+		});
+
+		$("#expiryDate,#disableDate,#disableTilDate,#passExDate,#effectiveTill")
+				.datepicker({
+					minDate : new Date(),
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "dd-mm-yy"
+				});
+
+	});
+
+	function getUserlist(mode, num, maxpage) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = 'UserProfile?formmode=list';
+
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		location.href = Callurl;
+	}
+
+	function finuser(a) {
+
+		$
+				.ajax({
+					type : 'get',
+					url : '/XBRL/Finuserdata?userid=' + a.id,
+
+					success : function(data) {
+
+						/*<![CDATA[*/
+
+						$('.finuserapply').html(data);
+
+						$(
+								"#expiryDate,#disableDate,#disableTilDate,#passExDate,#effectiveTill")
+								.datepicker({
+									changeMonth : true,
+									changeYear : true,
+									dateFormat : "dd-mm-yy"
+								});
+
+						/*]]>*/
+
+						$("#finusers").modal("hide");
+					}
+
+				})
+
+	}
+
+	function editRecord(a) {
+		alert("hi");
+
+		$("#sol_id").val(a.getAttribute("data-sol_id"));
+		$("#cust_id").val(a.getAttribute("data-cust_id"));
+		$("#map_key").val(a.getAttribute("data-map_key"));
+		$("#company_name").val(a.getAttribute("data-company_name"));
+		$("#status").val(a.getAttribute("data-status"));
+		$("#status_date").val(a.getAttribute("data-status_date"));
+		$("#year_2011").val(a.getAttribute("data-year_2011"));
+		$("#year_2012").val(a.getAttribute("data-year_2012"));
+		$("#year_2013").val(a.getAttribute("data-year_2013"));
+		$("#year_2014").val(a.getAttribute("data-year_2014"));
+		$("#year_2015").val(a.getAttribute("data-year_2015"));
+		$("#year_2016").val(a.getAttribute("data-year_2016"));
+		$("#year_2017").val(a.getAttribute("data-year_2017"));
+		$("#year_2018").val(a.getAttribute("data-year_2018"));
+		$("#year_2019").val(a.getAttribute("data-year_2019"));
+		$("#year_2020").val(a.getAttribute("data-year_2020"));
+		$("#year_2021").val(a.getAttribute("data-year_2021"));
+		$("#year_2022").val(a.getAttribute("data-year_2022"));
+		$("#year_2023").val(a.getAttribute("data-year_2023"));
+		$("#year_2024").val(a.getAttribute("data-year_2024"));
+		$("#year_2025").val(a.getAttribute("data-year_2025"));
+		$("#year_2026").val(a.getAttribute("data-year_2026"));
+		$("#year_2027").val(a.getAttribute("data-year_2027"));
+		$("#year_2028").val(a.getAttribute("data-year_2028"));
+		$("#year_2029").val(a.getAttribute("data-year_2029"));
+		$("#year_2030").val(a.getAttribute("data-year_2030"));
+		$("#remarks_1").val(a.getAttribute("data-remarks_1"));
+		$("#remarks_2").val(a.getAttribute("data-remarks_2"));
+		$("#del_flg").val(a.getAttribute("data-del_flg"));
+		$("#upload_flg").val(a.getAttribute("data-upload_flg"));
+		$("#upload_date").val(a.getAttribute("data-upload_date"));
+		$("#entity_flg").val(a.getAttribute("data-entity_flg"));
+		$("#entry_time").val(a.getAttribute("data-entry_time"));
+
+		alert($("#company_name").val());
+		$("#addedit").modal("show");
+		console
+				.log($("#company_name")
+						.val(a.getAttribute("data-company_name")));
+
+	}
+
+	function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+		window.history.back();
+	}
+
+	function eclhome() {
+		location.href = 'Dashboard'
+	}
+
+	function backecl() {
+
+		window.history.back();
+	}
+
+	function fnClicklist(a) {
+
+		var custid = a.getAttribute("data-cust_id")
+		location.href = 'eclsts?formmode=edit&cust_id=' + custid
+	}
+
+	function fnClickvlist(a) {
+		var custid = a.getAttribute("data-cust_id")
+		location.href = 'eclsts?formmode=verify1&cust_id=' + custid
+	}
+
+	function adduser(a) {
+		location.href = 'UserProfile?formmode=add';
+	}
+
+	function list() {
+		location.href = 'UserProfile?formmode=list';
+	}
+
+	function verify(a) {
+
+		var entryuser = a.getAttribute("data-entry_user");
+		var modifyuser = a.getAttribute("data-modify_user");
+
+		var loginuser = /*[[${session.USERID}]]*/null;
+
+		if ((modifyuser != null && modifyuser == loginuser)
+				|| (modifyuser == null && entryuser == loginuser)) {
+
+			$("#alertmsg").text("Same user cannot verify");
+
+			$('#alert').modal("toggle");
+
+		} else {
+
+			if ($("#userProfile").valid()) {
+
+				var userid = a.getAttribute("data-userid");
+				var url = './verifyUser';
+				$("#userProfile").attr('action', url);
+
+				var options = {
+					success : showResponse
+				// post-submit callback 
+				};
+
+				$('#userProfile').ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+
+			}
+
+		}
+
+	};
+
+	function passwordReset() {
+
+		var url = './passwordReset';
+		$("#userProfile").attr('action', url);
+
+		var options = {
+			success : showResponse
+		// post-submit callback 
+		};
+
+		$('#userProfile').ajaxSubmit(options);
+
+		function showResponse(responseText, statusText, xhr, $form) {
+
+			$("#alertmsg").text(responseText);
+
+			$('#alert').modal("toggle");
+
+		}
+		;
+	};
+
+	function roledesc() {
+
+		var roleid = $("#roleId").find(':selected').val();
+
+		if (roleid == 'ADM') {
+			$("#roleDesc").val("Admin");
+		} else if (roleid == 'ADT') {
+			$("#roleDesc").val("Audit");
+		} else if (roleid == 'GEN') {
+			$("#roleDesc").val("General User");
+		} else if (roleid == 'RECONADM') {
+			$("#roleDesc").val("Admin");
+		} else if (roleid == 'RECONGEN') {
+			$("#roleDesc").val("General User");
+		}
+		$(this).find(':selected').text();
+
+	}
+
+	function submitform() {
+
+		//Creating Validating Rules
+		$('#userProfile').validate({
+			messages : {
+				userid : "Please Provide User Id"
+			}
+		});
+
+		if ($("#userProfile").valid()) {
+
+			var formmode = /*[[${formmode}]]*/null;
+
+			var url = "./createUser?formmode=" + formmode;
+
+			$("#userProfile").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#userProfile").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+
+		}
+
+	};
+
+	/*]]>*/
+</script>
+<script>
+	function submitdata() {
+		var domainids = [];
+		$.each($("input[name='dom']:checked"), function() {
+			domainids.push($(this).val());
+		});
+		$("#getDomain").modal('hide');
+		$("#domainId").val(domainids.join(","));
+	}
+</script>
+<script>
+	function deleteuser() {
+
+		var userid = document.getElementById("userId").value;
+		$.ajax({
+			type : 'get',
+			url : './deleteuser?userid=' + userid,
+			success : function(response) {
+				alert(response);
+				window.history.back();
+			}
+		});
+	}
+</script>
+<script>
+	function roledesc1() {
+
+		var roleid = $("#roleId").find(':selected').val();
+
+		if (roleid == 'VISAP1') {
+			$("#roleDesc1").val("VISAP1");
+		} else if (roleid == 'VISAR2') {
+			$("#roleDesc1").val("VISAR2");
+		} else if (roleid == 'RFI3') {
+			$("#roleDesc1").val("RFI3");
+		} else if (roleid == 'RFI3') {
+			$("#roleDesc1").val("RFI3");
+		} else if (roleid == 'CURINT4') {
+			$("#roleDesc1").val("CURINT4");
+		}
+		$(this).find(':selected').text();
+
+	}
+
+	function addnew() {
+		location.href = 'eclsts?formmode=add';
+	}
+
+	function eclsubmit() {
+		alert("Do you want add record******");
+
+		$.ajax({
+
+			url : './Ecladdrecord',
+
+			data : $("#EclAddsts").serialize(),
+
+			type : 'POST',
+
+			success : function(data) {
+				
+            alert("Record Added Successfully");
+			}
+
+		});
+		window.location.reload();
+
+	}
+
+	function eclEDIT() {
+		alert("Do you want Modify record******");
+
+		$.ajax({
+
+			url : './EclEditrecord',
+
+			data : $("#ecleditsts1").serialize(),
+
+			type : 'POST',
+
+			success : function(data) {
+
+				alert("Modified successfully");
+				
+				
+			}
+
+		});
+		
+	
+
+
+
+	}
+</script>
+
+
+<script>
+	
+	
+
+
+	
+
+	
+	
+	
+	
+	function insidepopup1() {
+	    alert("Do you want to see Scaled rate******");
+	    
+	    $("#scaled_rate").modal("show");
+	   
+	}
+
+
+	function ECLverify() {
+
+		location.href = 'eclsts?formmode=verify';
+	}
+
+	function Rtmchange() {
+
+		var curval = document.getElementById("change").value;
+		alert(curval);
+		
+
+	  $('#bobrating').empty();
+    $.ajax({
+      url: '/BRBS/RATNGS?' + 'parameters=' + curval,
+      type: 'GET',
+      dataType: 'json', // Change to 'json' as you are expecting JSON response
+      // Your other settings...
+
+      success: function (response) {
+        const b = response; // Store the parsed JSON response in variable b
+
+        var trHTML = '';
+     $.each(b, function (key, value) {
+    trHTML += '<tr>'
+		+'<td style="background-color: #d3d3d3;	"></td>'
+        + '<td style="text-align:left;width:120px;background-color: #ffc404;">' + value.status_start+ '</td>'
+        + '<td style="text-align:right;">' + value.bob1+ '</td>'
+        + '<td style="text-align:right;">' + value.bob2+ '</td>'
+        + '<td style="text-align:right;">' + value.bob3+ '</td>'
+        + '<td style="text-align:right;">' + value.bob4+ '</td>'
+        + '<td style="text-align:right;">' + value.bob5+ '</td>'
+        + '<td style="text-align:right;">' + value.bob6+ '</td>'
+        + '<td style="text-align:right;">' + value.bob7+ '</td>'
+        + '<td style="text-align:right;">' + value.bob10+ '</td>'
+		+'</tr>';
+		
+});
+        $('#bobrating').empty().append(trHTML); // Use $('#placelist') to update the table
+
+        // Show the parsed object as a string in the alert
+        alert(objectToString(b[0])); // Assuming you want to show the first object in the array
+
+        // Rest of your code
+      }
+    });
+
+    modal.style.display = "block";
+
+	}
+	
+	
+
+	function download(a) {
+		var filetype = "excel";
+
+		// $('#downloadProcessingModal').modal('show');
+		//var filetype = a.getAttribute("data-filetype");
+
+		location.href = './Eclstatuslist?' + '&filetype=' + filetype;
+		
+		 // $('#downloadProcessingModal').modal('hide');
+
+	}
+	</script>
+	<!-- ****popup*** -->
+	<script>
+	
+function Ctrpopup() 
+	
+	{
+		alert("ENTERING THE CENTRAL TENDENCY SUMMARY")
+		
+		$("#POPUPCTS").modal("show");
+	}
+	
+function Rtmpopup() {
+
+	$("#POPUPRTM").modal("show");
+}
+
+function stsverify()
+{
+	alert("sanjeev");
+	
+	$.ajax({
+
+		url : './ECLstsverifysanjeev',
+
+		data : $("#ecleditsts").serialize(),
+
+		type : 'POST',
+
+		success : function(data) {
+
+			alert("this page verified by user");
+			
+			
+		}
+
+	});
+	
+}
+	
+	
+	</script>
+
+<script>
+
+//When the user clicks the button, open the modal 
+btn.onclick = function() {
+//alert("hiii");
+		$('#attendance_today').empty();
+		var userdate = $( "#currentDate" ).datepicker({ dateFormat: 'dd-mm-yy' }).val();
+		//alert(userdate)
+		var userdate1 = userdate.split('-');
+		var date1 = userdate1[0];
+		var month1 = userdate1[1];
+		var year = userdate1[2];
+	    var fulldate = month1+"-"+date1+"-"+year;
+
+		var today = new Date(fulldate);
+		var todayy = today.toDateString(); 
+		
+		//var today = new Date('09-20-2022');
+		var dd = today.getDate();
+		const day = today.getDay();
+		var year = today.getFullYear();
+		var mm = today.getMonth() + 1;			
+		const daylist = [ "Sunday", "Monday", "Tuesday", "Wednesday ",
+			"Thursday", "Friday", "Saturday" ];
+
+		$('#dataTables').empty();
+		 $.ajax({
+				url : './gettotalcount?dtt='+todayy+'&day='+date1+'&year='+year+'&month='+month1,
+				type : 'get',
+				/* dataType : 'html',
+				processData : false, //prevent jQuery from automatically transforming the data into a query string
+				contentType : false,
+				cache : false,
+				timeout : 600000, */
+					
+				success : function(response) {
+//alert("hii");
+
+					var selectedRefCode = response;
+					var trHTML = '';
+
+					
+					$.each(response, function(key, value) {
+						
+						trHTML += '<tr id=' + value.resource_id
+								+ ' onclick="finuser1(this)">'
+								+'<td style="text-align:left;">'
+								+ value.resource_id + '</td><td style="text-align:left;">'
+								+ value.resource_name + '</td></tr>';
+					});
+					$('#dataTables').append(trHTML);
+
+				
+				}
+					});
+
+modal.style.display = "block";
+}
+
+//When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+modal.style.display = "none";
+location.reload();
+}
+
+//When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+if (event.target == modal) {
+ modal.style.display = "none";
+ 
+ location.reload();
+}
+}
+
+ 
+</script>
+<script>
+
+google.charts.load('current', {'packages':['corechart']});
+function insidepopup() {
+	alert("Hi");
+    var data = google.visualization.arrayToDataTable([
+        ['BOB Rating', 'BASE', 'BEST', 'WORST'],
+        ['BOB 1', 0.03, 0.03, 0.0962],
+        ['BOB 2', 0.0419, 0.03, 0.2605],
+        ['BOB 3', 0.1411, 0.03, 0.6937],
+        ['BOB 4', 0.4828, 0.1055, 1.7801],
+        ['BOB 5', 1.5854, 0.5004, 4.2665],
+        ['BOB 6', 4.5818, 1.9364, 9.5676],
+        ['BOB 7', 11.6873, 5.9346, 20.5755],
+        ['BOB 10', 55.2066, 40.5788, 69.1517]
+    ]);
+
+    var options = {
+        title: 'Life Time - PIT PD CURVE',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        hAxis: {
+            title: 'BOB Ratings'
+        },
+        vAxis: {
+            title: 'Probability of Default (%)',
+            format: 'percent'
+        },
+        colors: ['blue', 'green', 'red'],
+        
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+    chart.draw(data, options);
+alert(chart);
+    // Corrected line to show the modal
+    $('#scaled_rate').modal('show');
+}
+
+</script>
+
+</head>
+<title>XBRL</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('UserProfile')" id="ques"></i>
+	
+	<div th:if="${formmode}=='list' OR ${formmode}=='verify'"
+		class="container content" >
+		<div class="row">
+			<div class="col-sm-12" style="font-size:12px; ">
+				<div class="card" style="width:1400px;">
+					<div class="card-header">
+						<div class="float-left">
+							<h4>ECL Status List</h4>
+						</div>
+						<div style="float: right">
+							<button type="button" class="btn btn-primary"
+								onclick="Ctrpopup(this);" id="detailsbtn">Central
+								Tendency Report</button>
+							<button type="button" class="btn btn-primary"
+								onclick="Rtmpopup();" id="detailsbtn">Rating
+								Transaction Matrix</button>
+							<button type="button" class="btn btn-primary"
+								onclick="download(this);" th:attr="data-filetype='excel'"
+								id="down-btn">Download</button>
+						</div>
+
+					</div>
+
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
+						role="dialog" aria-labelledby="downloadProcessingModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="card-body" >
+						<table class="table  table-bordered  table-hover table-sm"
+							style="margin-bottom: 0px;width:100%;" id="usertable">
+							<thead class="thead-light">
+								<tr style="text-align: left; font-size:large;">
+									<!-- <th></th> -->
+									<th style="width: 10%;">Branch Name</th>
+									<th >CBSID</th>
+
+
+									<th style="width: 100%;"><b>Company Name Id</b></th>
+									<th style="width: 10%;">2013</th>
+									<th style="width: 10%;">2014</th>
+									<th style="width: 10%;">2015</th>
+									<th style="width: 10%;">2016</th>
+									<th style="width: 10%;">2017</th>
+									<th style="width: 10%;">2018</th>
+									<th style="width: 10%;">2019</th>
+									<th style="width: 10%;">2020</th>
+									<th style="width: 10%;">2021</th>
+									<th style="width: 10%;">2022</th>
+									<th th:if="${formmode}=='verify'">Verify status</th>
+
+									<th>select</th>
+								</tr>
+							</thead>
+							<tbody id="down_list">
+
+								<!-- 
+										<td class="first_left"><a data-toggle="tooltip"
+											class="editrec" title="Click to Edit this Record"><i
+												class="fas fa-edit" onclick="editRecord1(this)"
+												
+												th:attr="data-cust_id=${Ecl_status.cust_id},
+												data-sol_id=${Ecl_status.sol_id},
+												data-company_name=${Ecl_status.company_name},
+												data-year_2013=${Ecl_status.year_2013},
+												data-year_2014=${Ecl_status.year_2014},
+												data-year_2015=${Ecl_status.year_2015},
+												
+												data-year_2016=${Ecl_status.year_2016},
+												data-year_2017=${Ecl_status.year_2017},
+												data-year_2018=${Ecl_status.year_2018},
+												data-year_2019=${Ecl_status.year_2019},
+												data-year_2020=${Ecl_status.year_2020},
+												data-year_2021=${Ecl_status.year_2021},
+												data-year_2022=${Ecl_status.year_2022},
+												data-year_2023=${Ecl_status.year_2023},
+												data-year_2024=${Ecl_status.year_2024},
+												data-year_2025=${Ecl_status.year_2025},
+												
+											
+												data-year_2026=${Ecl_status.year_2026},
+												data-year_2027=${Ecl_status.year_2027},
+												data-year_2028=${Ecl_status.year_2028},
+												data-year_2029=${Ecl_status.year_2029},
+												data-year_2030=${Ecl_status.year_2030},
+												data-remarks_1=${Ecl_status.remarks_1},
+												data-remarks_2=${Ecl_status.remarks_2},
+												data-del_flg=${Ecl_status.del_flg},
+												data-upload_flg=${Ecl_status.upload_flg},
+												data-upload_date=${Ecl_status.upload_date},
+												data-entity_flg=${Ecl_status.entity_flg},
+												data-entry_user=${Ecl_status.entry_user},
+												data-entry_time=${Ecl_status.entry_time}"></i></a></td>
+								
+								 -->
+								<tr th:each="Ecl_status:${eclsts}">
+									<td style="text-align: left;"  th:text="${Ecl_status?. sol_id}">san</td>
+									<td style="text-align: right;" th:text="${Ecl_status?. cust_id}">san</td>
+									<td style="text-align: left;" th:text="${Ecl_status?. company_name}">san</td>
+									<td style="text-align: left;" th:text="${Ecl_status?.year_2013}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2014}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2015}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2016}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2017}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2018}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2019}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2020}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2021}">san</td>
+									<td style="text-align: left;"
+										th:text="${Ecl_status?.year_2022}">san</td>
+									<td th:if="${formmode == 'verify'}" 
+    th:style="${Ecl_status.entity_flg == 'Y' ? 'color: green;' : 'color: red;'}" 
+    th:text="${Ecl_status.entity_flg == 'Y' ? 'Verified' : 'Not Verified'}">san</td>
+
+
+
+									<!-- <td> <input type="radio" onclick="eclclick();"> san</td> -->
+									<td class="text-center"><input
+										onclick="fnClicklist(this);"
+										th:attr="data-cust_id=${Ecl_status?.cust_id}"
+										th:if="${formmode}=='list'" type="radio" /> <input
+										onclick="fnClickvlist(this);"
+										th:attr="data-cust_id=${Ecl_status?.cust_id}"
+										th:if="${formmode}=='verify'" type="radio" /></td>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="card-footer text-center ">
+						<button type="button" class="btn btn-primary" id="btnHome"
+							style="width: 120px" onclick="home();">Home</button>
+						<button type="button" class="btn btn-primary" id="btnBack"
+							style="width: 120px" onclick="back();">Back</button>
+						<button type="button" class="btn btn-primary" id="btnBack"
+							style="width: 120px" onclick="addnew();"
+							th:if="${formmode}=='list'">Add New</button>
+						<button type="button" class="btn btn-primary" id="btnBack"
+							style="width: 120px" onclick="ECLverify();"
+							th:if="${formmode}=='list'">Verify</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!---------------------User List Ends--------------------------------------------------------->
+	<!---------------------User Edit form Starts-------------------------------------------------->
+	<div th:if="${formmode}=='add'" class="container content">
+		<div class="row">
+			<div class="col-sm-12 finuserapply">
+				<form action="#" th:object="${eclsts}" method="post"
+					autocomplete="off" id="EclAddsts" th:fragment="finuserapply">
+					<div class="card">
+						<div class="card-header">
+						<thead class="thead-light">
+							<div class="float-left">
+								<h3>ECL Add Status</h3>
+							</div>
+							<!-- <div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn btn-xs btn-primary btns active"
+									id="btnAdd" onclick="adduser();">Create User</button>
+								<button type="button" class="btn btn-xs btn-primary btns"
+									id="btnInq" onclick="list();">List</button>
+							</div>
+ -->
+                        </thead>
+						</div>
+						<div class="card-body">
+
+							<input autocomplete="false" name="hidden" type="text"
+								style="display: none;">
+							<div class="form-group">
+								<div class="row formline">
+
+									<label class="col-sm-2" for="userId">Branch Code </label>
+
+									<div class="col-sm-3">
+										<input type="text" id="sol_id"
+											class="form-control form-control-sm" name="sol_id"
+											autocomplete="off" required />
+									</div>
+									<div class="col-sm-1">
+										<!-- <a th:if="${formmode}=='add'" href="#"><i
+											class="fas fa-search searchico" data-toggle="modal"
+											data-target="#finusers" id="iconacc"></i></a> -->
+									</div>
+
+									<label class="col-sm-2" for="userName">Map Key</label>
+
+									<div class="col-sm-3">
+										<input type="text" id="map_key" name="map_key"
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+								</div>
+
+
+								<div class="row formline">
+
+									<label class="col-sm-2">Customer Id</label>
+									<div class="col-sm-3">
+										<input type="text" name="cust_id" id="cust_id" value=""
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Company Name</label>
+									<div class="col-sm-3">
+										<input type="text" name="company_name" id="company_name"
+											value="" class="form-control form-control-sm"
+											autocomplete="false" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+
+								<div class="row formline">
+
+									<label class="col-sm-2">Status</label>
+									<div class="col-sm-3">
+										<input type="text" id="status" value="" name="status"
+											class="form-control form-control-sm" autocomplete="off"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Status Date</label>
+									<div class="col-sm-3">
+										<input type="text" id="status_date" value=""
+											name="status_date" class="form-control form-control-sm"
+											autocomplete="off" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+								<div class="row formline">
+
+									<label class="col-sm-2">2011</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2011" id="year_2011" value=""
+											class="form-control form-control-sm" autocomplete="off"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">2021</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2021" id="year_2021" value=""
+											class="form-control form-control-sm" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+
+								<div class="row formline">
+
+
+									<label class="col-sm-2">2012</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2012" id="year_2012" value=""
+											class="form-control form-control-sm" autocomplete="off"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">2022</label>
+									<div class="col-sm-3">
+										<input type="email" name="year_2022" id="year_2022" value=""
+											class="form-control form-control-sm" autocomplete="off"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+
+								<div class="row formline">
+
+
+									<label class="col-sm-2">2013</label>
+									<div class="col-sm-3">
+										<input name="year_2013" id="year_2013" value=""
+											class="form-control form-control-sm" autocomplete="off"
+											required />
+									</div>
+
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">2023</label>
+									<div class="col-sm-3">
+										<input name="year_2023" id="year_2023" value=""
+											class="form-control form-control-sm" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+								<div class="row formline">
+
+
+									<label class="col-sm-2">2014</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2014" id="year_2014" value=""
+											class="form-control form-control-sm" autocomplete="off"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">2024</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2024" id="year_2024" value=""
+											class="form-control form-control-sm" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+								<div class="row formline">
+
+
+									<label class="col-sm-2">2015</label>
+									<div class="col-sm-3">
+										<input type="text" id="year_2015" name="year_2015"
+											class="form-control form-control-sm" autocomplete="off" />
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">2025</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2025" id="year_2025" value=""
+											class="form-control form-control-sm" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+								<div class="row formline">
+
+
+									<label class="col-sm-2">2016</label>
+									<div class="col-sm-3">
+
+										<input type="text" name="year_2016" id="year_2016"
+											class="form-control form-control-sm" required />
+									</div>
+
+
+
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">2026</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2026" id="year_2026"
+											class="form-control form-control-sm" required />
+
+
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+								<div class="row formline">
+
+									<label class="col-sm-2">2017</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2017" id="year_2017" value=""
+											class="form-control form-control-sm" required />
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">2027</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2027" id="year_2027" value=""
+											class="form-control form-control-sm" />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+
+
+								<div class="row formline">
+
+
+									<label class="col-sm-2">2018</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2018" id="year_2018"
+											class="form-control form-control-sm" required />
+
+
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">2028</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2028" id="year_2028" value=""
+											class="form-control form-control-sm" />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+
+								<div class="row formline">
+
+									<label class="col-sm-2">2019</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2019" id="year_2019"
+											class="form-control form-control-sm" required /> </select>
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">2029</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2029" id="year_2029"
+											class="form-control form-control-sm" required />
+
+									</div>
+
+								</div>
+								<div class="row formline">
+
+									<label class="col-sm-2">2020</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2020" id="year_2020"
+											class="form-control form-control-sm" required />
+
+
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">2030</label>
+									<div class="col-sm-3">
+										<input type="text" name="year_2030" id="year_2030"
+											class="form-control form-control-sm" />
+
+
+									</div>
+
+
+								</div>
+
+							</div>
+
+
+							<div class="card-footer text-center ">
+								<input type="button" onclick="eclhome();"
+									class="btn btn-primary" id="Eclhome" value="home"
+									align="center" /> <input type="button" onclick="eclsubmit();"
+									class="btn btn-primary" id="EclADDsub" value="Submit"
+									align="center" /> <input type="button" onclick="backecl();"
+									class="btn btn-primary" id="Eclhome" value="Back"
+									align="center" />
+
+
+							</div>
+
+						</div>
+
+
+						<!-- <div class="card-footer text-center">
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},data-modify_user=${userProfile.modify_user}"
+								onclick="verify(this);" id="btnModify">Verify</button>
+
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								onclick="deleteuser();" id="delete">Delete</button>
+							<button
+								th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
+								type="button" class="btn btn-xs btn-primary" id="btnpassrst"
+								onclick="passwordReset();">PasswordReset</button>
+							<button
+								th:if="${userProfile.entity_flg}!='N' OR ${userProfile.entity_flg}==null"
+								type="button" class="btn btn-xs btn-primary" form="userProfile"
+								id="btnSubmit" onclick="submitform();"
+								th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
+
+						</div> -->
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+
+	<div th:if="${formmode}=='edit' " class="container content">
+		<div class="row">
+			<div class="col-sm-12 finuserapply">
+				<form action="#" th:object="${eclsts}" method="post"
+					autocomplete="off" id="ecleditsts1" th:fragment="finuserapply">
+					<div class="card">
+						<div class="card-header">
+							<div class="row formline">
+						
+								<div class="float-left">
+									<h3>ECL Status edit</h3>
+
+								</div>
+								</div>
+							</div>
+							<div class="card-body">
+
+
+								<div class="form-group">
+									<div class="row formline">
+
+										<label class="col-sm-2" for="userId">Branch Code </label>
+
+										<div class="col-sm-3">
+											<input type="text" id="sol_id" th:value="${sol_id}"
+												th:field="*{sol_id}" class="form-control form-control-sm"
+												name="sol_id" autocomplete="off" required />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2" for="userName">Map Key</label>
+
+										<div class="col-sm-3">
+											<input type="text" th:value="${map_key}"
+												th:field="*{map_key}" id="map_key" name="map_key"
+												class="form-control form-control-sm" autocomplete="false"
+												required />
+										</div>
+									</div>
+
+
+									<div class="row formline">
+
+										<label class="col-sm-2">Customer Id</label>
+										<div class="col-sm-3">
+											<input type="text" name="cust_id" th:value="${cust_id}"
+												th:field="*{cust_id}" id="cust_id" value=""
+												class="form-control form-control-sm" autocomplete="false"
+												readonly />
+										</div>
+
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">Company Name</label>
+										<div class="col-sm-3">
+											<input type="text" name="company_name"
+												th:value="${company_name}" th:field="*{company_name}"
+												id="company_name" value=""
+												class="form-control form-control-sm" autocomplete="false"
+												required />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+										<label class="col-sm-2">Status</label>
+										<div class="col-sm-3">
+											<input type="text" th:value="${status}" th:field="*{status}"
+												id="status" value="" name="status"
+												class="form-control form-control-sm" autocomplete="off"
+												required />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">Status Date</label>
+										<div class="col-sm-3">
+											<input type="text" th:value="${status_date}"
+												th:field="*{status_date}" id="status_date" value=""
+												name="status_date" class="form-control form-control-sm"
+												autocomplete="off" required />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+									<div class="row formline">
+
+										<label class="col-sm-2">2011</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2011" th:value="${year_2011}"
+												th:field="*{year_2011}" id="year_2011" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												required />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">2021</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2021" th:value="${year_2021}"
+												th:field="*{year_2021}" id="year_2021" value=""
+												class="form-control form-control-sm" required />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2012</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2012" th:value="${year_2012}"
+												th:field="*{year_2012}" id="year_2012" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												required />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">2022</label>
+										<div class="col-sm-3">
+											<input type="email" name="year_2022" th:value="${year_2022}"
+												th:field="*{year_2022}" id="year_2022" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												required />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2013</label>
+										<div class="col-sm-3">
+											<input name="year_2013" th:value="${year_2013}"
+												th:field="*{year_2013}" id="year_2013" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												required />
+										</div>
+
+										<div class="col-sm-1"></div>
+
+										<label class="col-sm-2">2023</label>
+										<div class="col-sm-3">
+											<input name="year_2023" th:value="${year_2023}"
+												th:field="*{year_2023}" id="year_2023" value=""
+												class="form-control form-control-sm" required />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2014</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2014" th:value="${year_2014}"
+												th:field="*{year_2014}" id="year_2014" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												required />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">2024</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2024" th:value="${year_2024}"
+												th:field="*{year_2024}" id="year_2024" value=""
+												class="form-control form-control-sm" required />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2015</label>
+										<div class="col-sm-3">
+											<input type="text" th:value="${year_2015}"
+												th:field="*{year_2015}" id="year_2015" name="year_2015"
+												class="form-control form-control-sm" autocomplete="off" />
+										</div>
+										<div class="col-sm-1"></div>
+
+										<label class="col-sm-2">2025</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2025" th:value="${year_2025}"
+												th:field="*{year_2025}" id="year_2025" value=""
+												class="form-control form-control-sm" required />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2016</label>
+										<div class="col-sm-3">
+
+											<input type="text" name="year_2016" th:value="${year_2016}"
+												th:field="*{year_2016}" id="year_2016"
+												class="form-control form-control-sm" required />
+										</div>
+
+
+
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2026</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2026" th:value="${year_2026}"
+												th:field="*{year_2026}" id="year_2026"
+												class="form-control form-control-sm" required />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+									<div class="row formline">
+
+										<label class="col-sm-2">2017</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2017" th:value="${year_2017}"
+												th:field="*{year_2017}" id="year_2017" value=""
+												class="form-control form-control-sm" required />
+										</div>
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2027</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2027" th:value="${year_2027}"
+												th:field="*{year_2027}" id="year_2027" value=""
+												class="form-control form-control-sm" />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2018</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2018" th:value="${year_2018}"
+												th:field="*{year_2018}" id="year_2018"
+												class="form-control form-control-sm" required />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2028</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2028" th:value="${year_2028}"
+												th:field="*{year_2028}" id="year_2028" value=""
+												class="form-control form-control-sm" />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+										<label class="col-sm-2">2019</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2019" th:value="${year_2019}"
+												th:field="*{year_2019}" id="year_2019"
+												class="form-control form-control-sm" required /> </select>
+										</div>
+										<div class="col-sm-1"></div>
+
+										<label class="col-sm-2">2029</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2029" th:value="${year_2029}"
+												th:field="*{year_2029}" id="year_2029"
+												class="form-control form-control-sm" required />
+
+										</div>
+
+									</div>
+									<div class="row formline">
+
+										<label class="col-sm-2">2020</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2020" th:value="${year_2020}"
+												th:field="*{year_2020}" id="year_2020"
+												class="form-control form-control-sm" required />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2030</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2030" th:value="${year_2030}"
+												th:field="*{year_2030}" id="year_2030"
+												class="form-control form-control-sm" />
+
+
+										</div>
+
+
+									</div>
+
+								</div>
+
+
+								<div class="card-footer text-center ">
+
+									<input type="button" onclick="eclhome();"
+										class="btn btn-primary" id="Eclhome" value="home"
+										align="center" /> <input type="button" onclick="eclEDIT();"
+										class="btn btn-primary" id="Eclhome" value="Submit"
+										align="center" /> <input type="button" onclick="backecl();"
+										class="btn btn-primary" id="Eclhome" value="Back"
+										align="center" />
+
+								</div>
+
+							</div>
+
+
+							<!-- <div class="card-footer text-center">
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},data-modify_user=${userProfile.modify_user}"
+								onclick="verify(this);" id="btnModify">Verify</button>
+
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								onclick="deleteuser();" id="delete">Delete</button>
+							<button
+								th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
+								type="button" class="btn btn-xs btn-primary" id="btnpassrst"
+								onclick="passwordReset();">PasswordReset</button>
+							<button
+								th:if="${userProfile.entity_flg}!='N' OR ${userProfile.entity_flg}==null"
+								type="button" class="btn btn-xs btn-primary" form="userProfile"
+								id="btnSubmit" onclick="submitform();"
+								th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
+
+						</div> -->
+						
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+	<!---------------------User Edit form Ends-------------------------------------------------->
+	<div th:if="${formmode}=='verify1' " class="container content">
+		<div class="row">
+			<div class="col-sm-12 finuserapply">
+				<form action="#" th:object="${eclsts}" method="post"
+					autocomplete="off" id="ecleditsts" th:fragment="finuserapply">
+					<div class="card">
+						<div class="card-header">
+							<div class="row formline">
+								<div class="float-left">
+									<h3>ECL Verify Status</h3>
+
+								</div>
+							</div>
+							</div>
+							
+							<div class="card-body">
+
+
+								<div class="form-group">
+									<div class="row formline">
+
+										<label class="col-sm-2" for="userId">Branch Code </label>
+
+										<div class="col-sm-3">
+											<input type="text" id="sol_id" th:value="${sol_id}"
+												th:field="*{sol_id}" class="form-control form-control-sm"
+												name="sol_id" autocomplete="off" readonly />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2" for="userName">Map Key</label>
+
+										<div class="col-sm-3">
+											<input type="text" th:value="${map_key}"
+												th:field="*{map_key}" id="map_key" name="map_key"
+												class="form-control form-control-sm" autocomplete="false"
+												readonly />
+										</div>
+									</div>
+
+
+									<div class="row formline">
+
+										<label class="col-sm-2">Customer Id</label>
+										<div class="col-sm-3">
+											<input type="text" name="cust_id" th:value="${cust_id}"
+												th:field="*{cust_id}" id="cust_id" value=""
+												class="form-control form-control-sm" autocomplete="false"
+												readonly />
+										</div>
+
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">Company Name</label>
+										<div class="col-sm-3">
+											<input type="text" name="company_name"
+												th:value="${company_name}" th:field="*{company_name}"
+												id="company_name" value=""
+												class="form-control form-control-sm" autocomplete="false"
+												readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+										<label class="col-sm-2">Status</label>
+										<div class="col-sm-3">
+											<input type="text" th:value="${status}" th:field="*{status}"
+												id="status" value="" name="status"
+												class="form-control form-control-sm" autocomplete="off"
+												readonly />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">Status Date</label>
+										<div class="col-sm-3">
+											<input type="text" th:value="${status_date}"
+												th:field="*{status_date}" id="status_date" value=""
+												name="status_date" class="form-control form-control-sm"
+												autocomplete="off" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+									<div class="row formline">
+
+										<label class="col-sm-2">2011</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2011" th:value="${year_2011}"
+												th:field="*{year_2011}" id="year_2011" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												readonly />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">2021</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2021" th:value="${year_2021}"
+												th:field="*{year_2021}" id="year_2021" value=""
+												class="form-control form-control-sm" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2012</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2012" th:value="${year_2012}"
+												th:field="*{year_2012}" id="year_2012" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												readonly />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">2022</label>
+										<div class="col-sm-3">
+											<input type="email" name="year_2022" th:value="${year_2022}"
+												th:field="*{year_2022}" id="year_2022" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2013</label>
+										<div class="col-sm-3">
+											<input name="year_2013" th:value="${year_2013}"
+												th:field="*{year_2013}" id="year_2013" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												readonly />
+										</div>
+
+										<div class="col-sm-1"></div>
+
+										<label class="col-sm-2">2023</label>
+										<div class="col-sm-3">
+											<input name="year_2023" th:value="${year_2023}"
+												th:field="*{year_2023}" id="year_2023" value=""
+												class="form-control form-control-sm" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2014</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2014" th:value="${year_2014}"
+												th:field="*{year_2014}" id="year_2014" value=""
+												class="form-control form-control-sm" autocomplete="off"
+												readonly />
+										</div>
+										<div class="col-sm-1"></div>
+
+
+										<label class="col-sm-2">2024</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2024" th:value="${year_2024}"
+												th:field="*{year_2024}" id="year_2024" value=""
+												class="form-control form-control-sm" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2015</label>
+										<div class="col-sm-3">
+											<input type="text" th:value="${year_2015}"
+												th:field="*{year_2015}" id="year_2015" name="year_2015"
+												class="form-control form-control-sm" autocomplete="off"
+												readonly />
+										</div>
+										<div class="col-sm-1"></div>
+
+										<label class="col-sm-2">2025</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2025" th:value="${year_2025}"
+												th:field="*{year_2025}" id="year_2025" value=""
+												class="form-control form-control-sm" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2016</label>
+										<div class="col-sm-3">
+
+											<input type="text" name="year_2016" th:value="${year_2016}"
+												th:field="*{year_2016}" id="year_2016"
+												class="form-control form-control-sm" readonly />
+										</div>
+
+
+
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2026</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2026" th:value="${year_2026}"
+												th:field="*{year_2026}" id="year_2026"
+												class="form-control form-control-sm" readonly />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+									<div class="row formline">
+
+										<label class="col-sm-2">2017</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2017" th:value="${year_2017}"
+												th:field="*{year_2017}" id="year_2017" value=""
+												class="form-control form-control-sm" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2027</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2027" th:value="${year_2027}"
+												th:field="*{year_2027}" id="year_2027" value=""
+												class="form-control form-control-sm" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+
+									<div class="row formline">
+
+
+										<label class="col-sm-2">2018</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2018" th:value="${year_2018}"
+												th:field="*{year_2018}" id="year_2018"
+												class="form-control form-control-sm" readonly />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2028</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2028" th:value="${year_2028}"
+												th:field="*{year_2028}" id="year_2028" value=""
+												class="form-control form-control-sm" readonly />
+										</div>
+										<div class="col-sm-1"></div>
+									</div>
+
+
+
+									<div class="row formline">
+
+										<label class="col-sm-2">2019</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2019" th:value="${year_2019}"
+												th:field="*{year_2019}" id="year_2019"
+												class="form-control form-control-sm" readonly /> </select>
+										</div>
+										<div class="col-sm-1"></div>
+
+										<label class="col-sm-2">2029</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2029" th:value="${year_2029}"
+												th:field="*{year_2029}" id="year_2029"
+												class="form-control form-control-sm" readonly />
+
+										</div>
+
+									</div>
+									<div class="row formline">
+
+										<label class="col-sm-2">2020</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2020" th:value="${year_2020}"
+												th:field="*{year_2020}" id="year_2020"
+												class="form-control form-control-sm" readonly />
+
+
+										</div>
+										<div class="col-sm-1"></div>
+										<label class="col-sm-2">2030</label>
+										<div class="col-sm-3">
+											<input type="text" name="year_2030" th:value="${year_2030}"
+												th:field="*{year_2030}" id="year_2030"
+												class="form-control form-control-sm" readonly />
+
+
+										</div>
+
+
+									</div>
+
+								</div>
+
+
+								<div class="card-footer text-center ">
+
+									<input type="button" onclick="eclhome();"
+										class="btn btn-primary" id="Eclhome" value="home"
+										align="center" />
+										
+										 <input type="button" onclick="stsverify();"
+										 	 th:if="${ formmode == 'verify1' and (eclsts?.entity_flg == null or eclsts?.entity_flg == 'N' or eclsts?.entity_flg == '')}"
+
+										
+										class="btn btn-primary" id="Eclhome" value="Verify"
+										align="center" /> 
+										
+										<input type="button" onclick="backecl();"
+										class="btn btn-primary" id="Eclhome" value="Back" 
+										align="center" /> 
+
+								</div>
+
+							</div>
+
+
+							<!-- <div class="card-footer text-center">
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},data-modify_user=${userProfile.modify_user}"
+								onclick="verify(this);" id="btnModify">Verify</button>
+
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								onclick="deleteuser();" id="delete">Delete</button>
+							<button
+								th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
+								type="button" class="btn btn-xs btn-primary" id="btnpassrst"
+								onclick="passwordReset();">PasswordReset</button>
+							<button
+								th:if="${userProfile.entity_flg}!='N' OR ${userProfile.entity_flg}==null"
+								type="button" class="btn btn-xs btn-primary" form="userProfile"
+								id="btnSubmit" onclick="submitform();"
+								th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
+
+						</div> -->
+						
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- ---------------------Pop window - fin user list starts--------------------------------->
+
+	<div class="modal fade" id="finusers">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Finacle Users</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<table class="table table-hover" id="finusertb">
+						<thead class="thead-light">
+							<tr>
+								<th>Branch code</th>
+								<th>Employee Id</th>
+								<th>User Id</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="userProfile : ${FinUserProfiles}"
+								th:id="${userProfile.userid}" class="userlist"
+								th:onclick="finuser(this)">
+								<td th:text="${userProfile.finSolTb.sol_id}">123</td>
+								<td th:text="${userProfile.finGenEmpTb.emp_id}">123</td>
+								<td th:text="${userProfile.userid}">456</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!------------------------Pop window - fin user list Ends--------------------------------->
+	<!-- ---------------------Pop window - Domain list starts--------------------------------->
+
+	<div class="modal fade" id="getDomain">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Domain Id</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<ul class="list-group">
+						<li class="list-group-item" th:each="domainlist : ${domains}">
+							<input type="checkbox" name="dom" th:value="${domainlist}" /> <label
+							th:text="${domainlist}"></label>
+
+						</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitdata();">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!------------------------Pop window - Domain  list Ends--------------------------------->
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" onclick="list()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+
+
+	<div class="modal fade" id="addedit" th:fragment="dataedit">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="width: 1500px; height: 1000px;">
+
+				<div class="modal-header" style="margin-bottom: 50px; padding: 10px">
+					<h4 class="modal-title">ECL Status</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+
+				<div class="modal-body"
+					style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 90vh;">
+					<div class="row">
+						<div class="col-sm-12 finuserapply">
+							<form action="#" th:object="${eclsts}" method="post"
+								autocomplete="off" id="eclsts" th:fragment="finuserapply">
+								<div class="card">
+									<div class="card-header">
+										<div class="float-left">
+											<h3>ECL Status edit popup</h3>
+										</div>
+										<!-- <div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn btn-xs btn-primary btns active"
+									id="btnAdd" onclick="adduser();">Create User</button>
+								<button type="button" class="btn btn-xs btn-primary btns"
+									id="btnInq" onclick="list();">List</button>
+							</div>
+ -->
+									</div>
+									<div class="card-body">
+
+										<input autocomplete="false" name="hidden" type="text"
+											style="display: none;">
+										<div class="form-group">
+											<div class="row formline">
+
+												<label class="col-sm-2" for="userId">Branch Code </label>
+
+												<div class="col-sm-3">
+													<input type="text" id="sol_id" th:value="${sol_id}"
+														class="form-control form-control-sm" name="sol_id"
+														autocomplete="off" required />
+
+												</div>
+												<div class="col-sm-1">
+													<!-- <a th:if="${formmode}=='add'" href="#"><i
+											class="fas fa-search searchico" data-toggle="modal"
+											data-target="#finusers" id="iconacc"></i></a> -->
+												</div>
+
+												<label class="col-sm-2" for="userName">Map Key</label>
+
+												<div class="col-sm-3">
+													<input type="text" th:value="${map_key}" id="map_key"
+														name="map_key" class="form-control form-control-sm"
+														autocomplete="false" required />
+												</div>
+											</div>
+
+
+											<div class="row formline">
+
+												<label class="col-sm-2">Customer Id</label>
+												<div class="col-sm-3">
+													<input type="text" name="cust_id" th:value="${cust_id}"
+														id="cust_id" value="" class="form-control form-control-sm"
+														autocomplete="false" required />
+												</div>
+
+												<div class="col-sm-1"></div>
+
+
+												<label class="col-sm-2">Company Name</label>
+												<div class="col-sm-3">
+													<input type="text" name="company_name"
+														th:value="${company_name}" id="company_name" value=""
+														class="form-control form-control-sm" autocomplete="false"
+														required />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+
+											<div class="row formline">
+
+												<label class="col-sm-2">Status</label>
+												<div class="col-sm-3">
+													<input type="text" th:value="${status}" id="status"
+														value="" name="status"
+														class="form-control form-control-sm" autocomplete="off"
+														required />
+												</div>
+												<div class="col-sm-1"></div>
+
+
+												<label class="col-sm-2">Status Date</label>
+												<div class="col-sm-3">
+													<input type="text" th:value="${status_date}"
+														id="status_date" value="" name="status_date"
+														class="form-control form-control-sm" autocomplete="off"
+														required />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+											<div class="row formline">
+
+												<label class="col-sm-2">2011</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2011" th:value="${year_2011}"
+														id="year_2011" value=""
+														class="form-control form-control-sm" autocomplete="off"
+														required />
+												</div>
+												<div class="col-sm-1"></div>
+
+
+												<label class="col-sm-2">2021</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2021" th:value="${year_2021}"
+														id="year_2021" value=""
+														class="form-control form-control-sm" required />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+
+											<div class="row formline">
+
+
+												<label class="col-sm-2">2012</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2012" th:value="${year_2012}"
+														id="year_2012" value=""
+														class="form-control form-control-sm" autocomplete="off"
+														required />
+												</div>
+												<div class="col-sm-1"></div>
+
+
+												<label class="col-sm-2">2022</label>
+												<div class="col-sm-3">
+													<input type="email" name="year_2022"
+														th:value="${year_2022}" id="year_2022" value=""
+														class="form-control form-control-sm" autocomplete="off"
+														required />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+
+											<div class="row formline">
+
+
+												<label class="col-sm-2">2013</label>
+												<div class="col-sm-3">
+													<input name="year_2013" th:value="${year_2013}"
+														id="year_2013" value=""
+														class="form-control form-control-sm" autocomplete="off"
+														required />
+												</div>
+
+												<div class="col-sm-1"></div>
+
+												<label class="col-sm-2">2023</label>
+												<div class="col-sm-3">
+													<input name="year_2023" th:value="${year_2023}"
+														id="year_2023" value=""
+														class="form-control form-control-sm" required />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+											<div class="row formline">
+
+
+												<label class="col-sm-2">2014</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2014" th:value="${year_2014}"
+														id="year_2014" value=""
+														class="form-control form-control-sm" autocomplete="off"
+														required />
+												</div>
+												<div class="col-sm-1"></div>
+
+
+												<label class="col-sm-2">2024</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2024" th:value="${year_2024}"
+														id="year_2024" value=""
+														class="form-control form-control-sm" required />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+											<div class="row formline">
+
+
+												<label class="col-sm-2">2015</label>
+												<div class="col-sm-3">
+													<input type="text" th:value="${year_2015}" id="year_2015"
+														name="year_2015" class="form-control form-control-sm"
+														autocomplete="off" />
+												</div>
+												<div class="col-sm-1"></div>
+
+												<label class="col-sm-2">2025</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2025" th:value="${year_2025}"
+														id="year_2025" value=""
+														class="form-control form-control-sm" required />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+											<div class="row formline">
+
+
+												<label class="col-sm-2">2016</label>
+												<div class="col-sm-3">
+
+													<input type="text" name="year_2016" th:value="${year_2016}"
+														id="year_2016" class="form-control form-control-sm"
+														required />
+												</div>
+
+
+
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">2026</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2026" th:value="${year_2026}"
+														id="year_2026" class="form-control form-control-sm"
+														required />
+
+
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+											<div class="row formline">
+
+												<label class="col-sm-2">2017</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2017" th:value="${year_2017}"
+														id="year_2017" value=""
+														class="form-control form-control-sm" required />
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">2027</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2027" th:value="${year_2027}"
+														id="year_2027" value=""
+														class="form-control form-control-sm" />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+
+
+											<div class="row formline">
+
+
+												<label class="col-sm-2">2018</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2018" th:value="${year_2018}"
+														id="year_2018" class="form-control form-control-sm"
+														required />
+
+
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">2028</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2028" th:value="${year_2028}"
+														id="year_2028" value=""
+														class="form-control form-control-sm" />
+												</div>
+												<div class="col-sm-1"></div>
+											</div>
+
+
+
+											<div class="row formline">
+
+												<label class="col-sm-2">2019</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2019" th:value="${year_2019}"
+														id="year_2019" class="form-control form-control-sm"
+														required /> </select>
+												</div>
+												<div class="col-sm-1"></div>
+
+												<label class="col-sm-2">2029</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2029" th:value="${year_2029}"
+														id="year_2029" class="form-control form-control-sm"
+														required />
+
+												</div>
+
+											</div>
+											<div class="row formline">
+
+												<label class="col-sm-2">2020</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2020" th:value="${year_2020}"
+														id="year_2020" class="form-control form-control-sm"
+														required />
+
+
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">2030</label>
+												<div class="col-sm-3">
+													<input type="text" name="year_2030" th:value="${year_2030}"
+														id="year_2030" class="form-control form-control-sm" />
+
+
+												</div>
+
+
+											</div>
+
+										</div>
+
+
+										<div class="card-footer text-center ">
+
+											<input type="button" onclick="eclhome();"
+												class="btn btn-primary" id="Eclhome" value="home"
+												align="center" /> <input type="button"
+												onclick="eclsubmit();" class="btn btn-primary" id="Ecledit"
+												value="Add" align="center" /> <input type="button"
+												onclick="eclhome();" class="btn btn-primary" id="Eclhome"
+												value="Modify" align="center" /> <input type="button"
+												onclick="eclhome();" class="btn btn-primary" id="Eclhome"
+												value="Submit" align="center" /> <input type="button"
+												onclick="eclhome();" class="btn btn-primary" id="Eclhome"
+												value="Inquiry" align="center" /> <input type="button"
+												onclick="backecl();" class="btn btn-primary" id="Eclhome"
+												value="Back" align="center" />
+
+										</div>
+
+									</div>
+
+
+									<!-- <div class="card-footer text-center">
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								th:attr="data-userid=${userProfile.userid},data-entry_user=${userProfile.entry_user},data-modify_user=${userProfile.modify_user}"
+								onclick="verify(this);" id="btnModify">Verify</button>
+
+							<button th:if="${userProfile.entity_flg}=='N'" type="button"
+								class="btn btn-xs btn-primary"
+								onclick="deleteuser();" id="delete">Delete</button>
+							<button
+								th:if="${formmode}=='edit' AND ${userProfile.entity_flg}=='Y'"
+								type="button" class="btn btn-xs btn-primary" id="btnpassrst"
+								onclick="passwordReset();">PasswordReset</button>
+							<button
+								th:if="${userProfile.entity_flg}!='N' OR ${userProfile.entity_flg}==null"
+								type="button" class="btn btn-xs btn-primary" form="userProfile"
+								id="btnSubmit" onclick="submitform();"
+								th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
+
+						</div> -->
+								</div>
+							</form>
+
+						</div>
+					</div>
+
+				</div>
+
+				<div class="modal-footer"></div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- ********popup_CTS*** -->
+
+
+	<div class="modal fade" id="POPUPCTS">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+			<div class="modal-content"
+				style="width: 1000px; height: 750px; margin-bottom: 100px; margin-left: 75px;">
+
+				<!-- Modal Header -->
+				<div>
+					<h4
+						style="text-align: center; padding: 25px; background-color: lightblue;">
+						CENTRAL TENDENCY SUMMARY
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</h4>
+				</div>
+				<div style="text-align: center; background-color: #ffc404;">
+					<h4>CENTRAL TENDENCY</h4>
+				</div>
+				<div style="text-align: center; background-color: #ffc404;">
+					<h4>SUMMARY</h4>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<table class="table table-hover" border="1" id="dataTable">
+						<thead>
+							<tr style="text-align: left;">
+								<th colspan="2">Year</th>
+
+								<th style="width: 22%;">No. of Borrowers STD</th>
+								<th>Defaults</th>
+								<th>DR</th>
+							</tr>
+						</thead>
+						<tbody onload="divideval();">
+                       <tr style="text-align: right;">
+        <td>2013</td>
+        <td>2014</td>
+        <td id="1notnull" th:text="${c2013}">san395</td>
+        <td id="2count" th:text="${c2014}">san3</td>
+        <td id="1divide"  >0.76%</td>
+    </tr>
+
+
+							<tr style="text-align: right;">
+								<td>2014</td>
+								<td>2015</td>
+								<td th:text="${cNotn2014}">san393</td>
+								<td th:text="${c2015}">san24</td>
+								<td>6.11%</td>
+							</tr>
+							<tr style="text-align: right;">
+								<td>2015</td>
+								<td>2016</td>
+								<td th:text="${cNotn2015}">san377</td>
+								<td th:text="${c2016}">san32</td>
+								<td>8.49%</td>
+							</tr>
+							<tr style="text-align: right;">
+								<td>2016</td>
+								<td>2017</td>
+								<td th:text="${cNotn2016}">san382</td>
+								<td th:text="${c2017}">san17</td>
+								<td>4.45%</td>
+							</tr>
+							<tr style="text-align: right;">
+								<td>2017</td>
+								<td>2018</td>
+								<td th:text="${cNotn2017}">san359</td>
+								<td  th:text="${c2018}">15</td>
+								<td>4.18%</td>
+							</tr>
+							<tr style="text-align: right;">
+								<td>2018</td>
+								<td>2019</td>
+								<td th:text="${cNotn2018}">san356</td>
+								<td th:text="${c2019}">san21</td>
+								<td>5.90%</td>
+							</tr>
+
+							<tr style="text-align: right;">
+								<td>2019</td>
+								<td>2020</td>
+								<td th:text="${cNotn2019}">san322</td>
+								<td th:text="${c2020}">18</td>
+								<td>5.59%</td>
+							</tr>
+
+							<tr style="text-align: right;">
+								<td>2020</td>
+								<td>2021</td>
+								<td th:text="${cNotn2020}">298</td>
+								<td th:text="${c2021}">19</td>
+								<td>6.38%</td>
+							</tr>
+
+							<tr style="text-align: right;">
+								<td>2021</td>
+								<td>2022</td>
+								<td th:text="${cNotn2021}">277</td>
+								<td th:text="${c2022}">5</td>
+								<td>1.81%</td>
+							</tr>
+							<tr style="font-weight: bold; text-align: right;">
+								<td>Total</td>
+								<td></td>
+
+								<td>3159</td>
+								<td>154</td>
+								<td>4.48%</td>
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- *******popupRTMstart**** -->
+
+	<div class="modal fade"  id="POPUPRTM">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+			<div class="modal-content"
+				style="width: 1700px; height: 12000px; margin-bottom: 80px; margin-left: 75px;">
+
+				<!-- Modal Header -->
+				<div>
+					<h4
+						style="text-align: center; padding: 25px; background-color: lightblue;">
+						RATING TRANSACTION MATRIX
+
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</h4>
+				</div>
+
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<table class="table table-hover" border="1">
+						<thead>
+							<tr style="background-color: #d3d3d3;">
+								<th colspan=2><label for="dropdown">Rating
+										Transition Matrix:</label> <select id="change" onchange="Rtmchange()"
+									name="dropdown">
+										<option value="2013-2014">2013-2014</option>
+										<option value="2014-2015">2014-2015</option>
+										<option value="2014-2015">2015-2016</option>
+										<option value="2015-2016">2015-2016</option>
+										<option value="2016-2017">2016-2017</option>
+										<option value="2017-2018">2017-2018</option>
+										<option value="2018-2019">2018-2019</option>
+										<option value="2019-2020">2019-2020</option>
+										<option value="2020-2021">2020-2021</option>
+										<option value="2021-2022">2021-2022</option>
+
+
+
+								</select></th>
+
+								<th>New Ratings</th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+							</tr>
+
+							<tr>
+								<th  style="background-color: #d3d3d3;text-align: center;">Old Ratings</th>
+								<th style="background-color: #d3d3d3;"> </th>
+								<th style="background-color: #ffc404;">BOB1</th>
+								<th style="background-color: #ffc404;">BOB2</th>
+								<th style="background-color: #ffc404;">BOB3</th>
+								<th style="background-color: #ffc404;">BOB4</th>
+								<th style="background-color: #ffc404;">BOB5</th>
+								<th style="background-color: #ffc404;">BOB6</th>
+								<th style="background-color: #ffc404;">BOB7</th>
+								<th style="background-color: #ffc404;">BOB10</th>
+							</tr>
+
+
+						</thead>
+						<tbody id="bobrating">
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB1</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+							</tr>
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB2</td>
+								<td style="text-align: right;">o</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+							</tr>
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB3</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">2</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+							</tr>
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB4</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">79</td>
+								<td style="text-align: right;">2</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+							</tr>
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB5</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">278</td>
+								<td style="text-align: right;">2</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">1</td>
+							</tr>
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB6</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">28</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">2</td>
+							</tr>
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB7</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">1</td>
+								<td style="text-align: right;">0</td>
+							</tr>
+
+							<tr>
+								<td style="background-color: #d3d3d3;"></td>
+								<td style="background-color: #ffc404;">BOB10</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+							</tr>
+
+							
+							<!-- <tr th:each="userProfile : ${FinUserProfiles}"
+								th:id="${userProfile.userid}" class="userlist"
+								th:onclick="finuser(this)">
+								<td th:text="${userProfile.finSolTb.sol_id}">123</td>
+								<td th:text="${userProfile.finGenEmpTb.emp_id}">123</td>
+								<td th:text="${userProfile.userid}">456</td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+				
+				
+				<!-- ****second popup*** -->
+				<div class="modal-body space_div" >
+					<table class="table table-hover" border="1">
+						<thead>
+							<tr >
+								<th colspan=2 rowspan=2>Rating
+										Transition Matrix: </th>
+
+								<th colspan="9" style="text-align:center;">New Ratings</th>
+							
+							</tr>
+
+							<tr>
+							
+								<th style="font-weight:bold;">BOB1</th>
+								<th style="font-weight:bold;">BOB2</th>
+								<th style="font-weight:bold;">BOB3</th>
+								<th style="font-weight:bold;">BOB4</th>
+								<th style="font-weight:bold;">BOB5</th>
+								<th style="font-weight:bold;">BOB6</th>
+								<th style="font-weight:bold;">BOB7</th>
+								<th style="font-weight:bold;">BOB10</th>
+								<th style="font-weight:bold;">Total</th>
+							</tr>
+
+
+						</thead>
+						<tbody id="placelist">
+
+							<tr>
+								<td  rowspan=8>Old Ratings</td>
+								<td style="font-weight:bold;" >BOB1</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="font-weight: bold; text-align: right;">0%</td>
+							</tr>
+
+							<tr>
+								<!-- <td style="background-color: #d3d3d3;"></td> -->
+								<td style="font-weight:bold;" >BOB2</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="font-weight: bold; text-align: right;">0%</td>
+							</tr>
+
+							<tr>
+								<!-- <td style="background-color: #d3d3d3;"></td> -->
+								<td  style="font-weight:bold;">BOB3</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">8%</td>
+								<td style="text-align: right;">70%</td>
+								<td style="text-align: right;">16%</td>
+								<td style="text-align: right;">5%</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="font-weight: bold; text-align: right;">100%</td>
+							</tr>
+
+							<tr>
+								<!-- <td style="background-color: #d3d3d3;"></td> -->
+								<td  style="font-weight:bold;">BOB4</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">3%</td>
+								<td style="text-align: right;">72%</td>
+								<td style="text-align: right;">22%</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">2%</td>
+								<td style="font-weight: bold; text-align: right;">100%</td>
+							</tr>
+
+							<tr>
+							<!-- 	<td style="background-color: #d3d3d3;"></td> -->
+								<td style="font-weight:bold;" >BOB5</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="text-align: right;">4%</td>
+								<td style="text-align: right;">87%</td>
+								<td style="text-align: right;">4%</td>
+								<td style="text-align: right;">1%</td>
+								<td style="text-align: right;">4%</td>
+								<td style="font-weight: bold; text-align: right;">100%</td>
+							</tr>
+
+							<tr>
+							<!-- 	<td style="background-color: #d3d3d3;"></td> -->
+								<td  style="font-weight:bold;">BOB6</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">1%</td>
+								<td style="text-align: right;">19%</td>
+								<td style="text-align: right;">63%</td>
+								<td style="text-align: right;">4%</td>
+								<td style="text-align: right;">13%</td>
+								<td style="font-weight: bold; text-align: right;">100%</td>
+							</tr>
+
+							<tr>
+							<!-- 	<td style="background-color: #d3d3d3;"></td> -->
+								<td style="font-weight:bold;" >BOB7</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">5%</td>
+								<td style="text-align: right;">10%</td>
+								<td style="text-align: right;">39%</td>
+								<td style="text-align: right;">46%</td>
+								<td style="font-weight: bold; text-align: right;">100%</td>
+							</tr>
+
+							<tr>
+							<!-- 	<td style="background-color: #d3d3d3;"></td> -->
+								<td style="font-weight:bold;"
+								 >BOB10</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">0</td>
+								<td style="text-align: right;">8%</td>
+								<td style="text-align: right;">25%</td>
+								<td style="text-align: right;">33%</td>
+								<td style="text-align: right;">33%</td>
+								<td style="text-align: right;">0%</td>
+								<td style="font-weight: bold; text-align: right;">100%</td>
+							</tr>
+
+
+						
+							
+							
+							<!-- <tr th:each="userProfile : ${FinUserProfiles}"
+								th:id="${userProfile.userid}" class="userlist"
+								th:onclick="finuser(this)">
+								<td th:text="${userProfile.finSolTb.sol_id}">123</td>
+								<td th:text="${userProfile.finGenEmpTb.emp_id}">123</td>
+								<td th:text="${userProfile.userid}">456</td>
+							</tr> -->
+						</tbody>
+					</table>
+					<button  style="float:right;" onclick="insidepopup();" id="popup2" class="btn btn-primary"  > scaled Rate</button>
+				</div>
+	</div>
+</div>
+</div>
+
+
+<div class="modal fade" id="scaled_rate" >
+
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+			<div class="modal-content"
+				style="width: 1000px; height:750px; margin-bottom: 100px; margin-left: 75px;">
+
+				<!-- Modal Header -->
+				<div>
+					<h4
+						style="text-align: center; padding: 25px; background-color: lightblue;">
+					Scaled PD Vs Observed Default Rate
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					</h4>
+				</div>
+				
+
+				<!-- Modal body -->
+				<div class="modal-body">
+				
+				<div id="curve_chart" style="width: 750px; height: 700px;" ></div>
+					
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+<div class="modal fade" id="" th:fragment="dataedit">
+		<!-- <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="width: 1500px; height:100vh;">
+
+            <div class="modal-header" style="margin-bottom: 50px; padding: 10px;background-color:lightblue;">
+         
+                <h4 class="modal-title">ECL STATUS</h4>
+               
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            
+            <div class="modal-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 90vh;">-->
+		<div class="row"
+			style="width: 1500px; height: 100px; flex-direction: column; align-items: center;">
+			<div class="col-sm-12 finuserapply">
+				<form action="#" th:object="${eclsts}" method="post"
+					autocomplete="off" id="eclsts" th:fragment="finuserapply">
+					<div class="card">
+
+						<div class="card-header">
+							<div style="text-align: center;">
+								<h3>CENTRAL TENDENCY SUMMARY</h3>
+							</div>
+						</div>
+						<div class="card-body">
+							<table class="table  table-bordered  table-hover table-sm"
+								style="margin-bottom: 0px">
+								<thead class="thead-light">
+
+									<th>Central Tendency</th>
+									<th>SUMMARY</th>
+									<th>User Id</th>
+									</tr>
+								</thead>
+							</table>
+
+
+
+
+
+
+
+
+
+							<div class="card-footer text-center ">
+
+								<input type="button" onclick="eclhome();"
+									class="btn btn-primary" id="Eclhome" value="home"
+									align="center" /> <input type="button" onclick="eclsubmit();"
+									class="btn btn-primary" id="Ecledit" value="Add" align="center" />
+								<input type="button" onclick="eclhome();"
+									class="btn btn-primary" id="Eclhome" value="Modify"
+									align="center" /> <input type="button" onclick="eclhome();"
+									class="btn btn-primary" id="Eclhome" value="Submit"
+									align="center" /> <input type="button" onclick="eclhome();"
+									class="btn btn-primary" id="Eclhome" value="Inquiry"
+									align="center" /> <input type="button" onclick="backecl();"
+									class="btn btn-primary" id="Eclhome" value="Back"
+									align="center" />
+
+							</div>
+
+						</div>
+
+
+
+					</div>
+				</form>
+
+			</div>
+		</div>
+
+	</div>
+	
+	
+
+	
+	
+	
+	
+	
+	<!-- *****testing***** -->
+	
+<div class="modal fade" id="model_test">
+    <div class="modal-dialog modal-dialog-centered" style="width: 500px;">
+        <div class="modal-content" style="width: 100%; height: 100%;">
+
+            <!-- Modal Header -->
+            <div>
+                <h4 style="text-align: center; padding: 25px; background-color: lightblue;">
+                    Scaled PD Vs Observed Default Rate
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div id="curve_chart" style="width: 100%; height: 100%;"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

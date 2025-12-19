@@ -1,0 +1,2228 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: ARUN.R  
+CREATED ON	: 8.1.24
+PURPOSE		: BRF5 Reports-development
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					tablepagination();
+				},
+				error: function () {
+					alert("Failed to load details.");
+				}
+			});
+		}
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+				},
+				error: function () {
+					alert("Failed to load summary.");
+				}
+			});
+		}
+
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+			location.href = "/BRBS/monthly1";
+		}
+		function back() {
+			window.history.back();
+		}
+
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+
+		/*]]>*/
+	</script>
+
+
+
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0.00') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+
+		/*]]>*/
+
+	</script>
+	<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#acct_balance_amt_lc").val(a.getAttribute("data-acct_balance_amt_lc"));
+				$("#acct_balance_amt_ac").val(a.getAttribute("data-acct_balance_amt_ac"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_addl_criteria_2").val(a.getAttribute("data-report_addl_criteria_2"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+
+		function submitdataformedit() {
+
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var acct_balance_amt_lc = document.getElementById('acct_balance_amt_lc').value;
+			var acct_balance_amt_ac = document.getElementById('acct_balance_amt_ac').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+			var report_addl_criteria_2 = document.getElementById('report_addl_criteria_2').value;
+			alert(report_addl_criteria_2);
+			alert(foracid);
+			alert(acct_balance_amt_lc);
+			alert(acct_balance_amt_ac);
+			alert(report_name_1);
+			alert(report_addl_criteria_1);
+
+			$.ajax({
+				url: './CustomerDetailEditBrf005',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					acct_balance_amt_lc: acct_balance_amt_lc,
+					acct_balance_amt_ac: acct_balance_amt_ac,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1,
+					report_addl_criteria_2: report_addl_criteria_2
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+	</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-5 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 5000);
+		}
+	</script>
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: './' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-005-A' + ".xlsx";
+					}
+					else if (filetype == "BRF") {
+						a.download = '011-BRF-005-A' + ".xls";
+					}
+					else {
+						a.download = '011-BRF-005-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					if (filetype == "excel" || filetype == "detailexcel") {
+						$('#customAlertBody').text('011-BRF-005-A ' + ".xlsx");
+					}
+					else if (filetype == "BRF") {
+						$('#customAlertBody').text('011-BRF-005-A ' + ".xls"); // assuming .pdf extension for PDF files
+					}
+					else {
+						$('#customAlertBody').text('011-BRF-005-A ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+		function verifyscreen(a) {
+			var modFlag = a.getAttribute("data-mofifyFlag");
+			var modUser = a.getAttribute("data-mofifyUser");
+			var loginUser = a.getAttribute("data-loginUser");
+			if (modFlag == "" || modFlag == "N") {
+				$('#alert_Modify').modal("toggle");
+			} else if (modUser == "" || loginUser == "" || modUser == loginUser) {
+				$('#alert_verify_mod').modal("toggle");
+			} else {
+				$("#verify_btn").show();
+				$('#cancelRecord').removeAttr("disabled");
+			}
+		}
+
+		function verifySubmit(a) {
+			var asondate = a.getAttribute("data-fromDate");
+			$.ajax({
+				url: './verifyBRF05Report?asondate=' + asondate,
+				type: 'POST',
+				success: function (responseText, statusText, xhr, $form) {
+					alert("Success");
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+				},
+				error: function (error) {
+					console.log("Error fetching data: ", error);
+				}
+			});
+		}
+	</script>
+	<script>
+		//Function to display the modal
+		function editRecord1(button) {
+			alert('value')
+			// Get the data attributes from the button
+			var security_identifier = button.getAttribute("data-security_identifier");
+			alert(security_identifier)
+			var investment_types = button.getAttribute("data-investment_types");
+			var rating = button.getAttribute("data-rating");
+			var rating_type = button.getAttribute("data-rating_type");
+
+			// Populate the modal fields with the data
+			// For example:
+			document.getElementById("security_identifier").value = security_identifier;
+			document.getElementById("investment_types").value = investment_types;
+			document.getElementById("rating").value = rating;
+			document.getElementById("rating_type").value = rating_type;
+
+			// Show the modal
+			var modal = document.getElementById("editModal");
+			modal.style.display = "block";
+		}
+
+		// Function to close the modal
+		function closeModal() {
+			var modal = document.getElementById("editModal");
+			modal.style.display = "none";
+		}
+
+		function submitbrf5(a) {
+			var ason = a.getAttribute("data-asondate");
+			var security_identifier = document.getElementById("security_identifier").value;
+			var rating = document.getElementById("rating").value;
+			var rating_type = document.getElementById("rating_type").value;
+			var modal = document.getElementById("editModal");
+			modal.style.display = "none";
+			const url = './modifyRecord05?asondate=' + encodeURIComponent(ason) +
+				'&fromdate=' + encodeURIComponent(ason) +
+				'&todate=' + encodeURIComponent(ason) +
+				'&security_identifier=' + encodeURIComponent(security_identifier) +
+				'&rating=' + encodeURIComponent(rating) +
+				'&rating_type=' + encodeURIComponent(rating_type)
+				;
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			})
+				.then(response => {
+					if (response.ok) {
+
+						alert('Data saved successfully');
+						window.location.reload();
+					} else {
+						alert('Failed to save data');
+					}
+				})
+				.catch(error => {
+					alert('Error saving data: ' + error);
+				});
+
+
+
+
+
+		}
+
+	</script>
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+	<style>
+		/* Your existing CSS - this is the correct approach */
+		.scrollable-table-container {
+			/* This is the key: it creates the scroll context */
+			max-height: 620px;
+			/* Or a suitable height like 80vh for responsive design */
+			overflow-y: auto;
+			border: 1px solid #ccc;
+		}
+
+		/* Your existing sticky header CSS, targeting the tr elements within the thead */
+		.scrollable-table-container thead tr:nth-child(1) {
+			position: sticky;
+			top: 0;
+			background-color: #b3b6b9;
+			z-index: 4;
+		}
+
+		.scrollable-table-container thead tr:nth-child(2) {
+			position: sticky;
+			top: 36px;
+			/* adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 3;
+		}
+
+
+
+		.scrollable-table-container thead tr:nth-child(3) {
+			position: sticky;
+			top: 72px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 2;
+		}
+
+		.scrollable-table-container thead tr:nth-child(4) {
+			position: sticky;
+			top: 108px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 1;
+		}
+	</style>
+	<script>
+		$(document).ready(function () {
+
+		});
+		function tablepagination() {
+			$('#detailtable').DataTable({
+				"pageLength": 100,
+				"lengthChange": false,
+				"ordering": false,
+				"info": true,
+				"autoWidth": false,
+				"searching": true,
+				"language": {
+					"emptyTable": "No records available"
+				},
+				// --- ADD THIS LINE BELOW ---
+				"dom": '<"top"f>rt<"bottom"ip>'
+				// --- ADD THIS LINE ABOVE ---
+			});
+		}
+	</script>
+	<style>
+		/* Styles for the search box (from previous answer) */
+		.dataTables_filter {
+			float: right;
+			text-align: right;
+			/* Ensures the label and input align well within the floated div */
+		}
+
+		/* Clearfix to prevent layout issues from floating elements above the table */
+		.dataTables_wrapper:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+
+		/* Styles for the info and pagination controls */
+		.dataTables_info {
+			float: left;
+			/* Keep info text on the left */
+		}
+
+		.dataTables_paginate {
+			float: right;
+			/* Move pagination to the right */
+		}
+
+		/* Clearfix for the bottom section (info and pagination) */
+		.dataTables_wrapper .dataTables_info,
+		.dataTables_wrapper .dataTables_paginate {
+			/* Ensures they are on the same line if space allows */
+			display: inline-block;
+		}
+
+		/* You might want a clear div if your bottom section also has other elements */
+		.clear {
+			clear: both;
+		}
+	</style>
+	<title>BCDRS</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;">BRF-5 BANKING AND MONETARY STATISTICS-
+					LIST OF SECURITIES & FINANCIAL ASSETS</b>
+				<th><b style="color: white; margin-left: 20%;">Report Date
+						- <span th:text="${todate}"></span>
+					</b></th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showdetails('firstpage','1','0');"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'" onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol" style="background-color: #dadddf;">
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="editRecord1(this);"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="reportsum2">Modify</button>
+					<button type="button" class="btn btn-primary text-white" onclick="verifyscreen(this);"
+						title="Click to EDIT Records"
+						th:attr="data-mofifyFlag = ${modify_flg == null ? '' : modify_flg},data-mofifyUser = ${modify_user == null ? '' : modify_user},data-loginUser = ${UserId}"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit"
+						id="verifyBtn">Verify</button>
+
+					<button type="button" class="btn btn-primary text-white" title="Click to EDIT Records"
+						id="cancelRecord" data-toggle="modal" data-target="#alert_cancel" disabled>Cancel</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive scrollable-table-container"
+							style="border-right: 1px solid #dee2e6">
+							<!-- <div style="margin: 0 auto; width: 656px; text-align: center;">
+								<button type="button" class="btn btn-xs btn-primary"
+									id="btnInsert" onclick="Macros(this); ">Insert</button>
+								<button type="button" class="btn btn-xs btn-primary"
+									id="btnDelete" onclick="delete();">Delete</button>
+							</div> -->
+							<table style="width: 1500px;"
+								class="sticky-header-table table  table-bordered table-hover table-sm table-condensed"
+								id="table">
+								<thead>
+									<tr style="background-color: #c7c5c5;">
+										<th colspan="14" style="text-align: center">LIST OF
+											INVESTMENT IN EACH CATEGORY</th>
+										<th style="border: none;"></th>
+										<th style="border: none;"></th>
+										<th style="border: none;"></th>
+										<th style="border: none;"></th>
+										<th></th>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<th></th>
+										<th></th>
+										<th></th>
+										<th colspan="6" style="text-align: center">Total
+											securities</th>
+										<th colspan="5" style="text-align: center">AED Equivalent
+											-Counter Party wise distribution</th>
+										<th style="border: none;"></th>
+										<th style="border: none;"></th>
+										<th style="border: none;"></th>
+										<th style="border: none;"></th>
+										<th></th>
+
+
+									</tr>
+									<tr style="background-color: #c7c5c5; text-align: center">
+										<th></th>
+										<th></th>
+										<th>INVESTMENT TYPES</th>
+										<th>Security identifier (BBGID)</th>
+										<th>Nominal value held</th>
+										<th>Units held</th>
+										<th>Country*</th>
+										<th>CCY</th>
+										<th>Amount (000 actual Cy)</th>
+										<th>AED 000 equivalent</th>
+
+
+										<th>Rating*</th>
+										<th>Rating Type*</th>
+										<th>Market value (AED 000) Equiv.</th>
+
+										<th>Counterparty Type*</th>
+										<th>Validation formula: Security Identifier</th>
+										<th>Validation formula: Country</th>
+										<th>Validation formula: Rating</th>
+										<th>Validation formula: Counterparty</th>
+										<th>ROW VALID</th>
+
+
+									</tr>
+
+								</thead>
+								<tbody th:each="report: ${reportsummary1}" id="tableBody">
+									<tr style="background-color: #c7c5c5" align="left">
+										<th colspan="14">A. INVESTMENT AND FINANCIAL ASSETS</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td>1</td>
+										<th colspan="3">TRADING BOOK SECURITIES (market value )</th>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r1_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r1_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr style="background-color: #c7c5c5" class="none">
+										<td></td>
+										<td>1.1</td>
+										<td colspan="12">DEBT SECURITIES</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td style="background-color: #c7c5c5" class="one">1</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td onclick="resident(this)" id="ROW103" th:text="${report.r3_investment}"></td>
+										<td onclick="resident(this)" id="ROW103" th:text="${report.r3_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r3_nominal,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW3">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_units,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW3">CHENNAI</td>
+
+
+										<td th:text="${report.r3_country}"></td>
+										<td th:text="${report.r3_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r3_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW3">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW3">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r3_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td onclick="resident(this)" id="ROW103" th:text="${report.r3_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r3_market_value,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW3">CHENNAI</td>
+										<td th:text="${report.r3_counterpartytype}"></td>
+										<td th:text="${report.r3_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r3_validationformulacountry}"></td>
+										<td th:text="${report.r3_validationformularating}"></td>
+										<td th:text="${report.r3_validationformulacounterparty}"></td>
+										<td th:text="${report.r3_rowvalid}"></td>
+									</tr>
+
+
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r4_investment}"></td>
+										<td th:text="${report.r4_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r4_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r4_country}"></td>
+										<td th:text="${report.r4_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r4_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r4_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r4_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r4_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r4_counterpartytype}"></td>
+										<td th:text="${report.r4_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r4_validationformulacountry}"></td>
+										<td th:text="${report.r4_validationformularating}"></td>
+										<td th:text="${report.r4_validationformulacounterparty}"></td>
+										<td th:text="${report.r4_rowvalid}"></td>
+									</tr>
+
+
+									<tr style="background-color: #c7c5c5">
+										<td></td>
+										<td>1.2</td>
+										<td colspan="12">EQUITIES</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td style="background-color: #c7c5c5" class="one">1</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r6_investment}"></td>
+										<td onclick="resident(this)" id="ROW6" th:text="${report.r6_security}"></td>
+										<td onclick="resident(this)" id="ROW6"
+											th:text="${#numbers.formatDecimal(report.r6_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td onclick="resident(this)" id="ROW6"
+											th:text="${#numbers.formatDecimal(report.r6_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r6_country}"></td>
+										<td th:text="${report.r6_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r6_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW6">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW6">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r6_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r6_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r6_market_value,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW6">CHENNAI</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${report.r6_counterpartytype}"></td>
+										<td th:text="${report.r6_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r6_validationformulacountry}"></td>
+										<td th:text="${report.r6_validationformularating}"></td>
+										<td th:text="${report.r6_validationformulacounterparty}"></td>
+										<td th:text="${report.r6_rowvalid}"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r7_investment}"></td>
+										<td th:text="${report.r7_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r7_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r7_country}"></td>
+										<td th:text="${report.r7_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r7_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r7_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r7_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r7_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r7_counterpartytype}"></td>
+										<td th:text="${report.r7_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r7_validationformulacountry}"></td>
+										<td th:text="${report.r7_validationformularating}"></td>
+										<td th:text="${report.r7_validationformulacounterparty}"></td>
+										<td th:text="${report.r7_rowvalid}"></td>
+									</tr>
+
+									<tr style="background-color: #c7c5c5">
+										<td></td>
+										<td>1.3</td>
+										<td colspan="12">COMMODITIES</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+
+									<tr>
+										<td style="background-color: #c7c5c5" class="one">1</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td onclick="resident(this)" id="ROW109" th:text="${report.r9_investment}"></td>
+										<td onclick="resident(this)" id="ROW109" th:text="${report.r9_security}"></td>
+										<td onclick="resident(this)" id="ROW9"
+											th:text="${#numbers.formatDecimal(report.r9_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td onclick="resident(this)" id="ROW9"
+											th:text="${#numbers.formatDecimal(report.r9_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r9_country}"></td>
+										<td th:text="${report.r9_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r9_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW9">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r9_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r9_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r9_market_value,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW9">CHENNAI</td>
+										<td th:text="${report.r9_counterpartytype}"></td>
+										<td th:text="${report.r9_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r9_validationformulacountry}"></td>
+										<td th:text="${report.r9_validationformularating}"></td>
+										<td th:text="${report.r9_validationformulacounterparty}"></td>
+										<td th:text="${report.r9_rowvalid}"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r10_investment}"></td>
+										<td th:text="${report.r10_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r10_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r10_country}"></td>
+										<td th:text="${report.r10_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r10_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r10_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r10_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r10_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r10_counterpartytype}"></td>
+										<td th:text="${report.r10_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r10_validationformulacountry}"></td>
+										<td th:text="${report.r10_validationformularating}"></td>
+										<td th:text="${report.r10_validationformulacounterparty}"></td>
+										<td th:text="${report.r10_rowvalid}"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one">2</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r11_investment}"></td>
+										<td th:text="${report.r11_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r11_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r11_country}"></td>
+										<td th:text="${report.r11_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r11_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r11_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r11_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r11_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r11_counterpartytype}"></td>
+										<td th:text="${report.r11_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r11_validationformulacountry}"></td>
+										<td th:text="${report.r11_validationformularating}"></td>
+										<td th:text="${report.r11_validationformulacounterparty}"></td>
+										<td th:text="${report.r11_rowvalid}"></td>
+									</tr>
+
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5">2.1</td>
+										<td th:text="${report.r12_investment}"></td>
+										<td th:text="${report.r12_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r12_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r12_country}"></td>
+										<td th:text="${report.r12_ccy}">2.1</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r12_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r12_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r12_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r12_counterpartytype}"></td>
+										<td th:text="${report.r12_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r12_validationformulacountry}"></td>
+										<td th:text="${report.r12_validationformularating}"></td>
+										<td th:text="${report.r12_validationformulacounterparty}"></td>
+										<td th:text="${report.r12_rowvalid}"></td>
+									</tr>
+
+									<tr style="background-color: #c7c5c5">
+										<td></td>
+										<td>2.1.1</td>
+										<td colspan="12">DEBT SECURITIES:</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								</tbody>
+								<tbody th:each="report,iterator: ${reportsummary2}" id='reportsum2' readonly>
+									<tr>
+										<td style="background-color: #c7c5c5" th:text="${iterator.index + 1}"></td>
+										<td style="background-color: #c7c5c5"><a data-toggle="tooltip" class="editrec"
+												title="Click to Edit this Record"> <i
+													th:classappend="${session.PERMISSIONS == 'W'} ? addedit1 "
+													class="fas fa-edit" th:attr="data-security_identifier=${report.security_identifier},
+																			                 data-investment_types=${report.investment_types},
+																			                 data-rating=${report.rating},
+																			                 data-rating_type=${report.rating_type}" onclick="editRecord1(this)"></i>
+											</a>
+										<td th:text="${report.investment_types	}">CHENNAI</td>
+										<td th:text="${report.security_identifier	}">CHENNAI</td>
+										<td th:text="${report.nominal}">></td>
+										<td th:text="${report.units_held	}">CHENNAI</td>
+										<td th:text="${report.country	}">CHENNAI</td>
+										<td th:text="${report.ccy	}">CHENNAI</td>
+										<td th:text="${report.amount	}" align="right">CHENNAI</td>
+										<td th:text="${report.aed_equivalent	}" align="right">CHENNAI</td>
+										<td th:text="${report.rating	}" id='r1'>CHENNAI</td>
+										<td th:text="${report.rating_type}" id='r2'>CHENNAI</td>
+										<td th:text="${report.market_value	}">CHENNAI</td>
+										<td th:text="${report.counterparty_type	}">CHENNAI</td>
+										<td th:text="${report.security_identifier_validation}"
+											style="background-color: #c7c5c5">CHENNAI</td>
+										<td th:text="${report.country_validation}" style="background-color: #c7c5c5">
+											CHENNAI</td>
+										<td th:text="${report.rating_validation}" style="background-color: #c7c5c5">
+											CHENNAI</td>
+										<td th:text="${report.counterparty_type_validation}"
+											style="background-color: #c7c5c5">CHENNAI</td>
+										<td th:text="${report.row_valid	}" style="background-color: #c7c5c5">CHENNAI
+										</td>
+
+									</tr>
+								</tbody>
+
+								<tbody th:each="report: ${reportsummary1}">
+									<tr style="background-color: #c7c5c5">
+										<td></td>
+										<td></td>
+										<td>Sub Total</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td th:text="${report.r26_amt_total_security}" align="right">CHENNAI</td>
+										<td th:text="${report.r26_aed_equivalent}" align="right">>CHENNAI</td>
+										<td></td>
+										<td></td>
+
+										<td th:text="${report.r26_market_value}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td></td>
+										<td>2.1.2</td>
+										<td colspan="12">EQUITIES</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								</tbody>
+
+
+								<tbody th:each="report: ${reportsummary3}">
+
+									<tr>
+										<td style="background-color: #c7c5c5" class="one">72</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.investment_types1	}">CHENNAI</td>
+										<td th:text="${report.security_identifier1	}">CHENNAI</td>
+										<td th:text="${report.nominal1}">></td>
+										<td th:text="${report.units_held1	}">CHENNAI</td>
+										<td th:text="${report.country1	}">CHENNAI</td>
+
+										<td th:text="${report.ccy1	}">CHENNAI</td>
+										<td th:text="${report.amount1	}" align="right">>CHENNAI</td>
+										<td th:text="${report.aed_equivalent1	}" align="right">>CHENNAI</td>
+										<td th:text="${report.rating1	}">CHENNAI</td>
+										<td th:text="${report.rating_type1	}">CHENNAI</td>
+										<td th:text="${report.market_value1	}">CHENNAI</td>
+										<td th:text="${report.counterparty_type1	}">CHENNAI</td>
+										<td th:text="${report.security_identifier_validation1	}"
+											style="background-color: #c7c5c5">CHENNAI</td>
+										<td th:text="${report.country_validation1}" style="background-color: #c7c5c5">
+											CHENNAI</td>
+										<td th:text="${report.rating_validation1}" style="background-color: #c7c5c5">
+											CHENNAI</td>
+										<td th:text="${report.counterparty_type_validation1	}"
+											style="background-color: #c7c5c5">CHENNAI</td>
+										<td th:text="${report.row_valid1}" style="background-color: #c7c5c5">CHENNAI
+										</td>
+
+
+									</tr>
+								</tbody>
+								<tbody th:each="report: ${reportsummary1}">
+									<tr style="background-color: #c7c5c5">
+										<td></td>
+										<td></td>
+										<td>Sub Total</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td th:text="${report.r37_amt_total_security	}" align="right">>CHENNAI</td>
+										<td th:text="${report.r37_aed_equivalent	}" align="right">>CHENNAI</td>
+										<td></td>
+										<td></td>
+
+										<td th:text="${report.r37_market_value	}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r38_investment}"></td>
+										<td th:text="${report.r38_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r38_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r38_country}"></td>
+										<td th:text="${report.r38_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r38_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r38_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r38_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r38_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r38_counterpartytype}"></td>
+										<td th:text="${report.r38_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r38_validationformulacountry}"></td>
+										<td th:text="${report.r38_validationformularating}"></td>
+										<td th:text="${report.r38_validationformulacounterparty}"></td>
+										<td th:text="${report.r38_rowvalid}"></td>
+									</tr>
+									<tr>
+										<td style="background-color: #c7c5c5" class="one">1</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r39_investment}"></td>
+										<td onclick="resident(this)" id="ROW39" th:text="${report.r39_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r39_nominal,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW39">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_units,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW39">CHENNAI</td>
+
+
+										<td th:text="${report.r39_country}"></td>
+										<td th:text="${report.r39_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r39_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW39">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW39">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r39_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r39_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r39_market_value,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW39">CHENNAI</td>
+										<td th:text="${report.r39_counterpartytype}"></td>
+										<td th:text="${report.r39_validationformulasecurityidentifier}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r39_validationformulacountry}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r39_validationformularating}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r39_validationformulacounterparty}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r39_rowvalid}" style="background-color: #c7c5c5"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r40_investment}"></td>
+										<td th:text="${report.r40_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r40_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r40_country}"></td>
+										<td th:text="${report.r40_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r40_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r40_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r40_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r40_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r40_counterpartytype}"></td>
+										<td th:text="${report.r40_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r40_validationformulacountry}"></td>
+										<td th:text="${report.r40_validationformularating}"></td>
+										<td th:text="${report.r40_validationformulacounterparty}"></td>
+										<td th:text="${report.r40_rowvalid}"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<th colspan="14">B. OTHER INVESTMENTS</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td>3</td>
+										<th colspan="2">INVESTMENT IN SUBSIDIARIES (cost or value
+											in use)</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td>Market value</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td style="background-color: #c7c5c5" class="one">1</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r43_investment}"></td>
+										<td th:text="${report.r43_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r43_nominal,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW43">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_units,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW43">CHENNAI</td>
+
+
+										<td th:text="${report.r43_country}"></td>
+										<td th:text="${report.r43_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r43_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW43">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW43">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r43_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r43_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r43_market_value,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW43">CHENNAI</td>
+										<td th:text="${report.r43_counterpartytype}"></td>
+										<td th:text="${report.r43_validationformulasecurityidentifier}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r43_validationformulacountry}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r43_validationformularating}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r43_validationformulacounterparty}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r43_rowvalid}" style="background-color: #c7c5c5"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r44_investment}"></td>
+										<td th:text="${report.r44_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r44_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r44_country}"></td>
+										<td th:text="${report.r44_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r44_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r44_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r44_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r44_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r44_counterpartytype}"></td>
+										<td th:text="${report.r44_validationformulasecurityidentifier}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r44_validationformulacountry}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r44_validationformularating}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r44_validationformulacounterparty}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r44_rowvalid}" style="background-color: #c7c5c5"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td>4</td>
+										<th colspan="2">INVESTMENT IN ASSOCIATES/ AFFILIATES
+											(cost or value in use)</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td>Market value</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td style="background-color: #c7c5c5" class="one">1</td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r46_investment}"></td>
+										<td th:text="${report.r46_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r46_nominal,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW46">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_units,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW46">CHENNAI</td>
+
+
+										<td th:text="${report.r46_country}"></td>
+										<td th:text="${report.r46_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r46_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW46">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW46">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r46_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r46_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r46_market_value,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW46">CHENNAI</td>
+										<td th:text="${report.r46_counterpartytype}"></td>
+										<td th:text="${report.r46_validationformulasecurityidentifier}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r46_validationformulacountry}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r46_validationformularating}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r46_validationformulacounterparty}"
+											style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r46_rowvalid}" style="background-color: #c7c5c5"></td>
+									</tr>
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r47_investment}"></td>
+										<td th:text="${report.r47_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r47_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r47_country}"></td>
+										<td th:text="${report.r47_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r47_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r47_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r47_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r47_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r47_counterpartytype}"></td>
+										<td th:text="${report.r47_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r47_validationformulacountry}"></td>
+										<td th:text="${report.r47_validationformularating}"></td>
+										<td th:text="${report.r47_validationformulacounterparty}"></td>
+										<td th:text="${report.r47_rowvalid}"></td>
+									</tr>
+
+									<tr style="background-color: #878383">
+										<td></td>
+										<th colspan="2"></th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr style="background-color: #878383">
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr style="background-color: #878383">
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+
+									<tr style="background-color: #c7c5c5">
+										<td style="background-color: #c7c5c5" class="one"></td>
+										<td style="background-color: #c7c5c5"></td>
+										<td th:text="${report.r51_investment}"></td>
+										<td th:text="${report.r51_security}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r51_nominal,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_units,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+										<td th:text="${report.r51_country}"></td>
+										<td th:text="${report.r51_ccy}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r51_amt_total_security,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_aed_equivalent,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r51_rating,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r51_ratingtype}"></td>
+										<td th:text="${#numbers.formatDecimal(report.r51_market_value,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${report.r51_counterpartytype}"></td>
+										<td th:text="${report.r51_validationformulasecurityidentifier}"></td>
+										<td th:text="${report.r51_validationformulacountry}"></td>
+										<td th:text="${report.r51_validationformularating}"></td>
+										<td th:text="${report.r51_validationformulacounterparty}"></td>
+										<td th:text="${report.r51_rowvalid}"></td>
+									</tr>
+									<tr>
+										<td colspan="20">NOTES</td>
+									</tr>
+									<tr>
+										<td colspan="20">1. Rows to be expanded under various
+											categories in order to incorporate details of each
+											investment/ security.</td>
+									</tr>
+									<tr>
+										<td colspan="20">2. Report the country of residence of
+											the obligor; disregard the country of issuance of the
+											instruments.</td>
+									</tr>
+									<tr>
+										<td colspan="20">3. Report totals of individual
+											investments below AED 10 Mln under respective catgories under
+											the name "others". Only amount needs to be entered.</td>
+									</tr>
+									<tr>
+										<td colspan="20">4. For Investments Held to Maturity,
+											Investment in Subsidiaries and Investment in Associates/
+											Affiliates, report market value when available</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<th colspan="20">FORM NO: BSD/BRF 5- INVEST/ NOV14</th>
+									</tr>
+
+
+
+
+
+								</tbody>
+
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal"
+								th:attr="data-asondate=${asondate}" onclick="submitbrf5(this)">Save</button>
+							<button type="button" class="btn btn-xs btn-primary" id="verify_btn" style="display: none;"
+								th:attr="data-fromDate =${asondate}" onclick="verifySubmit(this);">Verify</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: auto; border-right: 1px solid #dee2e6" th:class="${searchmsg == null}?'inner'">
+
+					<table id="detailtable" class="table table-bordered table-sm" style="width: 1498px">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<th>ACT BALANCE AMT AC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT NAME_1</th>
+								<th>REPORT LABEL_1</th>
+								<th>REPORT ADDL CRITERIA 1</th>
+								<th>REPORT ADDL CRITERIA 2</th>
+								<th>REPORT DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody>
+							<tr th:each="report,iterator : ${reportdetails}">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-acct_balance_amt_lc=${report.acct_balance_amt_lc},	
+										data-acct_balance_amt_ac=${report.acct_balance_amt_ac},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_addl_criteria_2=${report.report_addl_criteria_2},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.acct_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.acct_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${report.report_addl_criteria_2}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCT BALANCE LC</label> <input
+												class="form-control col-sm-5" id="acct_balance_amt_lc" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCT BALANCE AC</label> <input
+												class="form-control col-sm-5" id="acct_balance_amt_ac" />
+										</div>
+
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA_2</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_2" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal" id="editModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header" style="background-color: orange;">
+					<h4 class="modal-title">BANK OF BARODA</h4>
+					<button type="button" class="close" data-dismiss="modal">BRF
+						5</button>
+				</div>
+
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<div class="row">
+						<label class="col-sm-5">SECURITY IDENTIFIER</label> <input class="form-control col-sm-5"
+							id="security_identifier" readonly />
+					</div>
+					<div class="row">
+						<label class="col-sm-5">INVESTMENT TYPE</label> <input class="form-control col-sm-5"
+							id="investment_types" readonly />
+					</div>
+					<div class="row">
+						<label class="col-sm-5">RATING </label> <input class="form-control col-sm-5" id="rating" />
+					</div>
+					<div class="row">
+						<label class="col-sm-5">RATING TYPE</label> <input class="form-control col-sm-5"
+							id="rating_type" />
+					</div>
+				</div>
+
+				<!-- Modal Footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal"
+						onclick="closeModal()">Close</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal"
+						th:attr="data-asondate=${asondate}" onclick="submitbrf5(this)">Save</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+	<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="background: transparent;">
+				<div class="modal-body" style="text-align: center">
+					<div>
+						<img th:src=@{/images/loader.gif} id="bfirelogo"
+							style="width: 153px; margin-left: 18px; background-color: transparent;" alt="Bornfire">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_cancel">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Do you want to cancel the process?</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Yes</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_Modify">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Modified records can be verified.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_verify_mod">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Same user can not verify.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="background: transparent;">
+				<div class="modal-body" style="text-align: center">
+					<div>
+						<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;" alt="Bornfire">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<style>
+	.pagination {
+		margin: 0;
+	}
+
+	.page-item.active .page-link {
+		background-color: #386276;
+		border-color: #386276;
+	}
+
+	.page-link {
+		color: #386276;
+	}
+
+	.page-link:hover {
+		color: #2a4a5c;
+	}
+
+	.form-select {
+		display: inline-block;
+		width: auto;
+	}
+</style>
+
+</html>

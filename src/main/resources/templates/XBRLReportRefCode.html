@@ -1,0 +1,314 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script>
+
+var select_Report = '';
+
+	function getddl1() {
+		
+		var select = document.getElementById('report_code').value;
+		alert(select);
+		alert(this.select_Report);
+		document.getElementById('refcodeviewdesc').value = select;
+		clickthis(); // Call the clickthis function
+		report(); // Call the report function
+	}
+
+	function report() {
+		var select = document.getElementById('report_code').value;
+		
+		location.href = './ReportReferencecode?report_code=' + select;
+		document.getElementById('refcodeviewdesc').value = select;
+
+	}
+
+	function report(a) {
+		var select = document.getElementById('report_code').value;
+		
+		location.href = './ReportReferencecode?report_code=' + select;
+
+	}
+
+	function getddl11() {
+		var select = document.getElementById('report_code').value;
+		alert(select)
+		document.getElementById('refcodeviewdesc').value = select;
+		clickthis();
+	}
+	function home() {		 
+		location.href = 'Dashboard'
+	}
+ 
+	function back() {
+		window.history.back();
+	}
+</script>
+
+
+
+
+</head>
+<title>BCDRS</title>
+<style>
+.custom-input {
+	border: none;
+	background-color: transparent;
+	border-bottom: 0px solid black;
+	/* Show only the bottom border as the input line */
+	outline: none; /* Remove the focus outline */
+	width: 200px; /* Adjust the width as needed */
+	color: blue;
+}
+
+.table .thead-light th {
+	border-color: #b3b6b9;
+	text-align:left;
+}
+
+th{
+text-align:left;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+</style>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<!-- <i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i> -->
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<div class="card" style="width: 1431px; margin-left: -36px;">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4>REPORT REFERENCE CODE MASTER </h4>
+						</div>
+
+					</div>
+					<div class="card-body">
+						<div class="row">
+						
+							<div >
+								<label style="font-size: 20px">Report Code:</label> <select
+									th:object="${refCodeTypeList}" name="report_code"
+									id="report_code" onchange="report();">
+									<option value="Select" style="font-size: 20px;">Select</option>
+									<option th:each="refcode : ${refCodeTypeList}"
+										th:text="${refcode?.report_code}"
+										th:value="${refcode?.report_code}"
+										th:selected="${(rf_code!=undefined) ? refcode?.report_code == rf_code : false}"></option>
+								</select> <label style="font-size: 20px">Report Name:</label> <input
+									class="custom-input" th:each="refcode : ${refCodeTypeList1}"
+									th:value="${refcode?.report_desc}"
+									style="width: 670px; font-size: 20px" />
+
+							</div>
+
+						</div>
+	<div th:text="${rf_code}" hidden>qweqw</div>
+						<br>
+						<div class="refdesc">
+							<div class="row" th:fragment="viewlist"></div>
+						</div>
+						<br>
+						<div>
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: left;">Level 1</th>
+										<th style="text-align: left;">Level 2</th>
+										<th style="text-align: left;">FIELD DESCRIPTION</th>
+										<th style="text-align: left;">Report Label</th>
+										<th style="text-align: left;">Header</th>
+										<th style="text-align: left;">Remarks</th>
+									</tr>
+								</thead>
+								
+								
+								<tbody th:each="report : ${refCodeTypeList1}" class="repCodes"
+									id="placelist">
+								<tr th:each="row, rowStat : ${#numbers.sequence(101,189)}"
+										th:if="${((#strings.listSplit(report['row_'+row],','))) !=null }">
+										<td style="text-align: right;"
+											th:text="${#strings.listSplit(report['row_' + row], ',')[0]}">Level
+											1</td>
+										<td style="text-align: right;"
+											th:text="${#strings.listSplit(report['row_' + row], ',')[1]}">Level
+											2</td>
+										<td
+											th:text="${#strings.listSplit(report['row_' + row], ',')[2]}">Field
+											Description</td>
+
+
+
+										<!-- Handle varying number of values -->
+										<td
+											th:if="${#strings.listSplit(report['row_' + row], ',').size() >= 4}"
+											th:text="${#strings.listSplit(report['row_' + row], ',')[3]}">Additional
+											Value</td>
+										<td
+											th:if="${#strings.listSplit(report['row_' + row], ',').size() >= 5}"
+											th:text="${#strings.listSplit(report['row_' + row], ',')[4]}">Another
+											Value</td>
+										<td></td>
+										
+
+
+
+
+									</tr>
+								</tbody>
+
+							</table>
+						</div>
+					</div>
+
+<div class="card-footer text-center"
+						style="background-color: #376275;">
+						<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+							onclick="goHome();">Home</button>
+						<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+							onclick="goBack();">Back</button>
+					</div>
+				</div>
+			</div>
+
+
+
+		</div>
+	</div>
+	<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+	<div class="modal fade" id="addedit">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Add/Edit Records</h4>
+					<button type="button" class="close" data-dismiss="modal">脳</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${referdetail} id="dataedit" method="post">
+						<input type="hidden" id="trClass" />
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6" for="refcode">Reference Code</label> <input
+									class="form-control col-sm-5" type="text" id="refcode" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="refCodeDesc">Ref Code Type</label>
+								<input class="form-control col-sm-5" type="text"
+									id="refCodeDesc" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="sourceSysCode">Source
+									System Code</label> <input class="form-control col-sm-5" type="text"
+									id="sourceSysCode" required />
+							</div>
+
+
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<span id="errorMsg" style="display: none;"></span>
+					<button type="button" class="btn btn-primary" id="btnSubmit"
+						onclick="submitdataform();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details edit modal form----------------------------------------------------->
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+	<div class="modal fade" id="datadelete">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Are you Sure want to delete?</h4>
+					<button type="button" class="close" data-dismiss="modal">脳</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${referdetail} id="dataeditdelete" method="post">
+						<input type="hidden" id="trClassd" />
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6" for="refcode">Reference Code</label> <input
+									class="form-control col-sm-5" type="text" disabled
+									id="delrefcode" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="refCodeDesc">Ref Code Type</label>
+								<input class="form-control col-sm-5" type="text" disabled
+									id="delrefCodeDesc" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="sourceSysCode">Source
+									System Code</label> <input class="form-control col-sm-5" type="text"
+									disabled id="delsourceSysCode" />
+							</div>
+
+
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitdeleteform();">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details delete modal dialog------------------------------------------------------>
+
+</body>
+</html>

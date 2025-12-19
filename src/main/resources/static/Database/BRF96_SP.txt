@@ -1,0 +1,880 @@
+create or replace PROCEDURE BRF96_DETAIL_PROCEDURE (REPORT_DATE DATE)
+IS
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+   V_FROM_DATE dATE :=  ADD_MONTHS (LAST_DAY (REPORT_DATE), -1) + 1;
+BEGIN
+
+delete from BRF96_DETAILTABLE where report_date = V_REPORT_DATE;
+Commit;
+
+INSERT INTO BRF96_DETAILTABLE
+(
+    foracid,
+    cust_id,
+    ACCT_NAME,
+    REPORT_DATE,
+    REPORT_LABEL_1,
+    REPORT_NAME_1,
+    report_addl_criteria_1
+)
+
+SELECT
+    foracid,
+    cust_id,
+    ACCT_NAME,
+    REPORT_DATE,
+    REPORT_LABEL_1,
+    REPORT_NAME_1,
+    report_addl_criteria_1
+FROM
+   BRF96_MAPPING_TABLE
+WHERE
+    REPORT_DATE = TO_DATE('30-JUN-2023', 'DD-MON-YYYY')
+    AND REPORT_LABEL_1 IS NOT NULL;
+
+MERGE INTO BRF96_DETAILTABLE A
+USING ( SELECT ACCT_NUMBER, ACT_BALANCE_AMT_LC FROM GENERAL_MASTER_TABLE) B
+ON (A.foracid = B.ACCT_NUMBER)
+WHEN MATCHED THEN
+  UPDATE SET A.ACT_BALANCE_AMT_LC = B.ACT_BALANCE_AMT_LC;
+  COMMIT;
+
+
+COMMIT;
+END;
+
+************************************************************************************************************************************************************************************************************
+
+create or replace PROCEDURE  "BRF96_MAPPING_PROCEDURE" ( REPORT_DATE VARCHAR2) 
+IS 
+
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+
+
+BEGIN 
+
+--NBFI
+insert into BRF96_mapping_table
+( foracid, cust_id, ACCT_NAME,GL_SUB_HEAD_CODE,GL_CODE,ACCT_CRNCY_CODE,REPORT_DATE,SOL_ID,SCHM_CODE,CONSTITUTION_CODE,COUNTRY_OF_INCORP,COUNTRY)
+SELECT  ACCT_NUMBER,cust_id, ACCT_NAME,GL_SUB_HEAD_CODE,GL_CODE,ACCT_CRNCY_CODE,REPORT_DATE,SOL_ID,SCHM_CODE,CONSTITUTION_CODE,COUNTRY_OF_INCORP,COUNTRY
+FROM GENERAL_MASTER_TABLE  where report_date = v_report_date 
+and SCHM_CODE IN  ( 'CA101', 'CA102', 'CA103', 'CA106','CA107',
+'CA108', 'CA109', 'CA110', 'CA111', 'CA112', 'LA101', 'LA106', 'OD001', 'OD002', 'OD003', 'OD028', 'OD651', 'SB105', 'SB107',
+'TD115','SB101', 'SB102', 'SB103', 'SB106', 'SB110', 'SB201',
+'SB203', 'SB303', 'TD101', 'TD102', 'TD103', 'TD105', 'TD106', 'TD108', 'TD109','TD112', 'TD301') ;
+commit;
+
+
+--ROW103A
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW101' , report_addl_criteria_1 ='ROW101A'
+WHERE  SCHM_CODE IN  ( 'LA101','CA101');
+COMMIT;
+
+--ROW118 TO ROW171--
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102A'
+WHERE  SCHM_CODE IN  ( 'LA106','CA102');
+COMMIT;
+
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW103' , report_addl_criteria_1 ='ROW103A'
+WHERE  SCHM_CODE IN  ( 'OD001','CA103');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW105' , report_addl_criteria_1 ='ROW105A'
+WHERE  SCHM_CODE IN  ( 'OD002','CA106');
+COMMIT; 
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW106' , report_addl_criteria_1 ='ROW106A'
+WHERE  SCHM_CODE IN  ('OD028', 'CA107');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW107' , report_addl_criteria_1 ='ROW107A'
+WHERE  SCHM_CODE IN  ( 'OD003','CA108');
+COMMIT;
+
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW108' , report_addl_criteria_1 ='ROW108A'
+WHERE  SCHM_CODE IN  ('OD651', 'CA101');
+COMMIT;
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW109' , report_addl_criteria_1 ='ROW109A'
+WHERE  SCHM_CODE IN  ( 'SB105','CA102');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW110' , report_addl_criteria_1 ='ROW110A'
+WHERE  SCHM_CODE IN  ('SB107', 'CA103');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW111' , report_addl_criteria_1 ='ROW111A'
+WHERE  SCHM_CODE IN  ('TD115', 'CA106');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW112' , report_addl_criteria_1 ='ROW112A'
+WHERE  SCHM_CODE IN  ('SB101', 'CA107');
+COMMIT;
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW113' , report_addl_criteria_1 ='ROW113A'
+WHERE  SCHM_CODE IN  ( 'SB102','CA108');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW114' , report_addl_criteria_1 ='ROW114A'
+WHERE  SCHM_CODE IN  ('SB103', 'CA101');
+COMMIT;
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW115' , report_addl_criteria_1 ='ROW115A'
+WHERE  SCHM_CODE IN  ( 'SB106', 'CA102');
+COMMIT;
+
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW116' , report_addl_criteria_1 ='ROW116A'
+WHERE  SCHM_CODE IN  ('SB110', 'CA103');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW125' , report_addl_criteria_1 ='ROW118B'
+WHERE  SCHM_CODE IN  ( 'SB201','CA106');
+COMMIT;
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW119' , report_addl_criteria_1 ='ROW119A'
+WHERE  SCHM_CODE IN  ('SB203', 'CA107');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW121' , report_addl_criteria_1 ='ROW121A'
+WHERE  SCHM_CODE IN  ( 'SB303', 'CA108');
+COMMIT;
+
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW122' , report_addl_criteria_1 ='ROW122A'
+WHERE  SCHM_CODE IN  ( 'TD101','CA101');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW123' , report_addl_criteria_1 ='ROW123B'
+WHERE  SCHM_CODE IN  ('TD102', 'CA102');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW125' , report_addl_criteria_1 ='ROW125A'
+WHERE  SCHM_CODE IN  ( 'TD103','CA103');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW126' , report_addl_criteria_1 ='ROW126B'
+WHERE  SCHM_CODE IN  ( 'TD105','CA106');
+COMMIT;
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW132' , report_addl_criteria_1 ='ROW133A'
+WHERE  SCHM_CODE IN  ( 'OD028','CA101');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW134' , report_addl_criteria_1 ='ROW134A'
+WHERE  SCHM_CODE IN  ( 'CA101', 'CA102');
+COMMIT;
+
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW135' , report_addl_criteria_1 ='ROW135A'
+WHERE  SCHM_CODE IN  ( 'CA102','CA103');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW137' , report_addl_criteria_1 ='ROW137A'
+WHERE  SCHM_CODE IN  ( 'CA103','CA106');
+COMMIT;
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW138' , report_addl_criteria_1 ='ROW138A'
+WHERE  SCHM_CODE IN  ( 'CA106','CA107');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW140' , report_addl_criteria_1 ='ROW140A'
+WHERE  SCHM_CODE IN  ( 'CA107','CA108');
+COMMIT;
+
+
+--ROW112A 
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW143' , report_addl_criteria_1 ='ROW143A'
+WHERE  SCHM_CODE IN  ( 'CA108','CA101');
+COMMIT;
+
+--ROW112B
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW145' , report_addl_criteria_1 ='ROW145A'
+WHERE  SCHM_CODE IN  ('CA109', 'CA102');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW151' , report_addl_criteria_1 ='ROW151A'
+WHERE  SCHM_CODE IN  ( 'CA110','CA103');
+COMMIT;
+
+--ROW112D
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW152' , report_addl_criteria_1 ='ROW152A'
+WHERE  SCHM_CODE IN  (  'CA111''CA106');
+COMMIT;
+
+--ROW112E
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW153' , report_addl_criteria_1 ='ROW153A'
+WHERE  SCHM_CODE IN  ( 'LA106','CA107');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW154' , report_addl_criteria_1 ='ROW154A'
+WHERE  SCHM_CODE IN  ( 'TD102','CA108');
+COMMIT;
+
+
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW155' , report_addl_criteria_1 ='ROW155A'
+WHERE  SCHM_CODE IN  ('CA112', 'CA101');
+COMMIT;
+
+
+UPDATE BRF96_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF96', REPORT_LABEL_1 = 'ROW157' , report_addl_criteria_1 ='ROW157A'
+WHERE  SCHM_CODE IN  ( 'SB102','CA102');
+COMMIT;
+COMMIT;
+END;
+
+**************************************************************************************************************************************************************************************************************
+
+create or replace procedure BRF_096_PROCEDURE (REPORT_DATE VARCHAR2)
+IS
+----30-SEP-2020--
+---VARARIBLE DECLARE
+V_REPORT_DATE DATE := TO_DATE(Report_date,'DD-MM-YYYY');
+V_REPORT_DUE_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), +3);
+V_REPORT_DUE_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), -3)+1;
+
+V_R1_S_No	NUMBER(24,4):=1;
+V_R1_Product 	VARCHAR2(100 BYTE):='On-balance sheet items (excluding derivatives and SFTs, but including collateral)';
+V_R1_Total	NUMBER(24,4):=0;
+V_R2_S_No	NUMBER(24,4):=2;
+V_R2_Product 	VARCHAR2(100 BYTE):='Asset amounts deducted in determining Basel III Tier 1 capital';
+V_R2_Total	NUMBER(24,4):=0;
+V_R3_S_No	NUMBER(24,4):=3;
+V_R3_Product 	VARCHAR2(100 BYTE):='Total on-balance sheet exposures, excluding derivatives and SFTs';
+V_R3_Total	NUMBER(24,4):=0;
+V_R4_S_No	NUMBER(24,4):=4;
+V_R4_Product 	VARCHAR2(200 BYTE):='Replacement  cost  associated with all  derivatives  transactions (where applicable net of eligible cash variation margin and/or with bilateral netting)';
+V_R4_Total	NUMBER(24,4):=0;
+V_R5_S_No	NUMBER(24,4):=5;
+V_R5_Product 	VARCHAR2(100 BYTE):='Add-on amounts for PFE associated with all derivatives transactions';
+V_R5_Total	NUMBER(24,4):=0;
+V_R6_S_No	NUMBER(24,4):=6;
+V_R6_Product 	VARCHAR2(100 BYTE):='CCR exposure for derivatives transactions (calculated as 1.4 x (Row 4+5))';
+V_R6_Total	NUMBER(24,4):=0;
+V_R7_S_No	NUMBER(24,4):=7;
+V_R7_Product 	VARCHAR2(200 BYTE):='Gross-up for derivatives collateral provided where deducted from the balance sheet assets pursuant to the operative accounting framework';
+V_R7_Total	NUMBER(24,4):=0;
+V_R8_S_No	NUMBER(24,4):=8;
+V_R8_Product 	VARCHAR2(100 BYTE):='Adjusted effective notional amount of written credit derivatives';
+V_R8_Total	NUMBER(24,4):=0;
+V_R9_S_No	NUMBER(24,4):=9;
+V_R9_Product 	VARCHAR2(100 BYTE):='Deductions of receivables assets for cash variation margin provided in derivatives transactions';
+V_R9_Total	NUMBER(24,4):=0;
+V_R10_S_No	NUMBER(24,4):=10;
+V_R10_Product 	VARCHAR2(100 BYTE):='Exempted CCP leg of client-cleared trade exposures';
+V_R10_Total	NUMBER(24,4):=0;
+V_R11_S_No	NUMBER(24,4):=11;
+V_R11_Product 	VARCHAR2(100 BYTE):='Adjusted effective notional offsets and add-on deductions for written credit derivatives';
+V_R11_Total	NUMBER(24,4):=0;
+V_R12_S_No	NUMBER(24,4):=12;
+V_R12_Product 	VARCHAR2(100 BYTE):='Total derivative exposures ';
+V_R12_Total	NUMBER(24,4):=0;
+V_R13_S_No	NUMBER(24,4):=13;
+V_R13_Product 	VARCHAR2(100 BYTE):='Gross SFT assets (with no recognition of netting), after adjusting for sale accounting transactions';
+V_R13_Total	NUMBER(24,4):=0;
+V_R14_S_No	NUMBER(24,4):=14;
+V_R14_Product 	VARCHAR2(100 BYTE):='CCR exposure for SFT assets';
+V_R14_Total	NUMBER(24,4):=0;
+V_R15_S_No	NUMBER(24,4):=15;
+V_R15_Product 	VARCHAR2(100 BYTE):='Agent transaction exposures';
+V_R15_Total	NUMBER(24,4):=0;
+V_R16_S_No	NUMBER(24,4):=16;
+V_R16_Product 	VARCHAR2(100 BYTE):='Netted amounts of cash payables and cash receivables of gross SFT assets';
+V_R16_Total	NUMBER(24,4):=0;
+V_R17_S_No	NUMBER(24,4):=17;
+V_R17_Product 	VARCHAR2(100 BYTE):='Total securities financing transaction exposures ';
+V_R17_Total	NUMBER(24,4):=0;
+V_R18_S_No	NUMBER(24,4):=18;
+V_R18_Product 	VARCHAR2(100 BYTE):='Other off-balance sheet exposure at gross notional amount';
+V_R18_Total	NUMBER(24,4):=0;
+V_R19_S_No	NUMBER(24,4):=19;
+V_R19_Product 	VARCHAR2(100 BYTE):='Reduction in exposure due to conversion to credit equivalent amounts';
+V_R19_Total	NUMBER(24,4):=0;
+V_R20_S_No	NUMBER(24,4):=20;
+V_R20_Product 	VARCHAR2(100 BYTE):='Other off-balance sheet expsoures ';
+V_R20_Total	NUMBER(24,4):=0;
+V_R21_S_No	NUMBER(24,4):=21;
+V_R21_Product 	VARCHAR2(100 BYTE):='Tier 1 capital';
+V_R21_Total	NUMBER(24,4):=0;
+V_R22_S_No	NUMBER(24,4):=22;
+V_R22_Product 	VARCHAR2(100 BYTE):='Total exposures ';
+V_R22_Total	NUMBER(24,4):=0;
+V_R23_S_No	NUMBER(24,4):=23;
+V_R23_Product 	VARCHAR2(100 BYTE):='Leverage ratio ';
+V_R23_Total	NUMBER(24,4):=0;
+V_R24_S_No	NUMBER(24,4):=1;
+V_R24_Product 	VARCHAR2(100 BYTE):='Direct credit substitutes';
+V_R24_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R24_Credit_Conversion_Factor	NUMBER(24,4):= '100' ;
+V_R24_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R25_S_No	NUMBER(24,4):=2;
+V_R25_Product	VARCHAR2(200 BYTE):='Forward asset purchases, forward forward deposits and partly paid shares and securities, which represent commitments with certain drawdown';
+V_R25_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R25_Credit_Conversion_Factor NUMBER(24,4) :='100';
+V_R25_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R26_S_No	NUMBER(24,4):=3;
+V_R26_Product	VARCHAR2(200 BYTE):='The exposure amount associated with unsettled financial asset purchases (i.e. the commitment to pay) where regular-way unsettled trades are accounted for at settlement date';
+V_R26_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R26_Credit_Conversion_Factor	NUMBER(24,4):='100';
+V_R26_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R27_S_No	NUMBER(24,4):=4;
+V_R27_Product	VARCHAR2(100 BYTE):='Off-balance sheet items that are credit substitutes not explicitly included in any other category';
+V_R27_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R27_Credit_Conversion_Factor	NUMBER(24,4):='100';
+V_R27_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R28_S_No	NUMBER(24,4):=5;
+V_R28_Product	VARCHAR2(100 BYTE):='Sub-total CCF at 100%';
+V_R28_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R28_Credit_Conversion_Factor	NUMBER(24,4):=0;
+V_R28_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R29_S_No	NUMBER(24,4):=6;
+V_R29_Product	VARCHAR2(200 BYTE):='Note issuance facilities and revolving underwriting facilities regardless of the maturity of the underlying facility';
+V_R29_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R29_Credit_Conversion_Factor	VARCHAR2(100 BYTE):='50';
+V_R29_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R30_S_No	NUMBER(24,4):=7;
+V_R30_Product	VARCHAR2(200 BYTE):='Transaction-related contingent items (e.g. performance bonds, bid bonds, warranties and standby letters of credit related to particular transactions)';
+V_R30_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R30_Credit_Conversion_Factor	NUMBER(24,4) :='50';
+V_R30_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R31_S_No	NUMBER(24,4):=8;
+V_R31_Product	VARCHAR2(100 BYTE):='Sub-total CCF at 50%';
+V_R31_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R31_Credit_Conversion_Factor	NUMBER(24,4):=0;
+V_R31_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R32_S_No	NUMBER(24,4):=9;
+V_R32_Product	VARCHAR2(200 BYTE):='Commitments, regardless of the maturity of the underlying facility, unless they qualify for a lower CCF';
+V_R32_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R32_Credit_Conversion_Factor	NUMBER(24,4):='40';
+V_R32_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R33_S_No	NUMBER(24,4):=10;
+V_R33_Product	VARCHAR2(100 BYTE):='Sub-total CCF at 40%';
+V_R33_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R33_Credit_Conversion_Factor	NUMBER(24,4):=0;
+V_R33_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R34_S_No	NUMBER(24,4):=11;
+V_R34_Product	VARCHAR2(200 BYTE):='Both the issuing and confirming banks of short-term (i.e. with a maturity below one year) self-liquidating trade letters of credit arising from the movement of goods';
+V_R34_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R34_Credit_Conversion_Factor	NUMBER(24,4):='20';
+V_R34_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R35_S_No	NUMBER(24,4):=12;
+V_R35_Product	VARCHAR2(100 BYTE):='Sub-total CCF at 20%';
+V_R35_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R35_Credit_Conversion_Factor	NUMBER(24,4):=0;
+V_R35_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R36_S_No	NUMBER(24,4):=13;
+V_R36_Product	VARCHAR2(300 BYTE):='Commitments that are unconditionally cancellable at any time by the bank without prior notice, or that effectively provide for automatic cancellation due to deterioration in a borrower’s creditworthiness';
+V_R36_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R36_Credit_Conversion_Factor	NUMBER(24,4):='10';
+V_R36_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R37_S_No	NUMBER(24,4):=14;
+V_R37_Product	VARCHAR2(100 BYTE):='Sub-total CCF at 10%';
+V_R37_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R37_Credit_Conversion_Factor	NUMBER(24,4):=0;
+V_R37_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R38_S_No	NUMBER(24,4):=15;
+V_R38_Product	VARCHAR2(100 BYTE):='TOTALS';
+V_R38_Exposure_Before_CCF	NUMBER(24,4):=0;
+V_R38_Credit_Conversion_Factor	NUMBER(24,4):=0;
+V_R38_Exposure_After_CCF	NUMBER(24,4):=0;
+V_R39_S_No 	NUMBER(24,4):=1;
+V_R39_Product	VARCHAR2(100 BYTE):='Total consolidated assets as per published financial statements';
+V_R39_AED_000s	NUMBER(24,4):=0;
+V_R40_S_No 	NUMBER(24,4):=2;
+V_R40_Product	VARCHAR2(200 BYTE):='Adjustment for investments in banking, financial, insurance or commercial entities that are consolidated for accounting purposes but outside the scope of regulatory consolidation';
+V_R40_AED_000s	NUMBER(24,4):=0;
+V_R41_S_No 	NUMBER(24,4):=3;
+V_R41_Product	VARCHAR2(200 BYTE):='Adjustment for fiduciary assets recognised on the balance sheet pursuant to the operative accounting framework but excluded from the leverage ratio exposure measure';
+V_R41_AED_000s	NUMBER(24,4):=0;
+V_R42_S_No 	NUMBER(24,4):=4;
+V_R42_Product	VARCHAR2(100 BYTE):='Adjustments for derivative financial instruments';
+V_R42_AED_000s	NUMBER(24,4):=0;
+V_R43_S_No 	NUMBER(24,4):=5;
+V_R43_Product	VARCHAR2(100 BYTE):='Adjustment for securities financing transactions (ie repos and similar secured lending)';
+V_R43_AED_000s	NUMBER(24,4):=0;
+V_R44_S_No 	NUMBER(24,4):=6;
+V_R44_Product	VARCHAR2(200 BYTE):='Adjustment for off-balance sheet items (ie conversion to credit equivalent amounts of off-balance sheet exposures)';
+V_R44_AED_000s	NUMBER(24,4):=0;
+V_R45_S_No 	NUMBER(24,4):=7;
+V_R45_Product	VARCHAR2(100 BYTE):='Other adjustments';
+V_R45_AED_000s	NUMBER(24,4):=0;
+V_R46_S_No 	NUMBER(24,4):=8;
+V_R46_Product	VARCHAR2(100 BYTE):='Leverage ratio exposure measure';
+V_R46_AED_000s	NUMBER(24,4):=0;
+
+BEGIN 
+DELETE FROM  BRF96_SUMMARYTABLE WHERE REPORT_DATE = V_REPORT_DATE;
+commit;
+
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R1_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW101' AND REPORT_ADDL_CRITERIA_1 = 'ROW101A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R2_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW102A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R3_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW103' AND REPORT_ADDL_CRITERIA_1 = 'ROW103A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R4_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW105' AND REPORT_ADDL_CRITERIA_1 = 'ROW105A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R5_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW106' AND REPORT_ADDL_CRITERIA_1 = 'ROW106A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R6_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW107' AND REPORT_ADDL_CRITERIA_1 = 'ROW107A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R7_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW108' AND REPORT_ADDL_CRITERIA_1 = 'ROW108A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R8_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW109' AND REPORT_ADDL_CRITERIA_1 = 'ROW109A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R9_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW110' AND REPORT_ADDL_CRITERIA_1 = 'ROW110A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R10_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW111' AND REPORT_ADDL_CRITERIA_1 = 'ROW111A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R11_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW112' AND REPORT_ADDL_CRITERIA_1 = 'ROW112A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R12_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW113' AND REPORT_ADDL_CRITERIA_1 = 'ROW113A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R13_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW115' AND REPORT_ADDL_CRITERIA_1 = 'ROW115A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R14_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW116' AND REPORT_ADDL_CRITERIA_1 = 'ROW116A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R15_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW117' AND REPORT_ADDL_CRITERIA_1 = 'ROW117A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R16_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW118' AND REPORT_ADDL_CRITERIA_1 = 'ROW118A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R17_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW119' AND REPORT_ADDL_CRITERIA_1 = 'ROW119A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R18_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW121' AND REPORT_ADDL_CRITERIA_1 = 'ROW121A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R19_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW122' AND REPORT_ADDL_CRITERIA_1 = 'ROW122A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R20_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW123' AND REPORT_ADDL_CRITERIA_1 = 'ROW123A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R21_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW125' AND REPORT_ADDL_CRITERIA_1 = 'ROW125A' ;
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R22_Total FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW126' AND REPORT_ADDL_CRITERIA_1 = 'ROW126A' ;
+
+
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R24_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW132' AND REPORT_ADDL_CRITERIA_1 = 'ROW132A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R25_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW133' AND REPORT_ADDL_CRITERIA_1 = 'ROW133A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R26_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW134' AND REPORT_ADDL_CRITERIA_1 = 'ROW134A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R27_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R29_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW137' AND REPORT_ADDL_CRITERIA_1 = 'ROW137A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R30_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW138' AND REPORT_ADDL_CRITERIA_1 = 'ROW138A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R32_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW140' AND REPORT_ADDL_CRITERIA_1 = 'ROW140A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R34_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW143' AND REPORT_ADDL_CRITERIA_1 = 'ROW143A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R36_Exposure_Before_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW145' AND REPORT_ADDL_CRITERIA_1 = 'ROW145A';
+
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R24_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW132' AND REPORT_ADDL_CRITERIA_1 = 'ROW132A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R25_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW133' AND REPORT_ADDL_CRITERIA_1 = 'ROW133A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R26_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW134' AND REPORT_ADDL_CRITERIA_1 = 'ROW134A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R27_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R29_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW137' AND REPORT_ADDL_CRITERIA_1 = 'ROW137A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R30_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW138' AND REPORT_ADDL_CRITERIA_1 = 'ROW138A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R32_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW140' AND REPORT_ADDL_CRITERIA_1 = 'ROW140A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R34_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW143' AND REPORT_ADDL_CRITERIA_1 = 'ROW143A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R36_Exposure_After_CCF FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW145' AND REPORT_ADDL_CRITERIA_1 = 'ROW145A';
+
+
+
+
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R39_AED_000s FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW151' AND REPORT_ADDL_CRITERIA_1 = 'ROW151A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R40_AED_000s FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW152' AND REPORT_ADDL_CRITERIA_1 = 'ROW152A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R41_AED_000s FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW153' AND REPORT_ADDL_CRITERIA_1 = 'ROW153A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R42_AED_000s FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW154' AND REPORT_ADDL_CRITERIA_1 = 'ROW154A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R43_AED_000s FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW155' AND REPORT_ADDL_CRITERIA_1 = 'ROW155A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R44_AED_000s FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW156' AND REPORT_ADDL_CRITERIA_1 = 'ROW156A';
+SELECT round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) INTO V_R45_AED_000s FROM BRF96_DETAILTABLE WHERE  REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW157' AND REPORT_ADDL_CRITERIA_1 = 'ROW157A';
+
+
+V_R24_Credit_Conversion_Factor := 100/100;
+V_R25_Credit_Conversion_Factor := 100/100;
+V_R26_Credit_Conversion_Factor := 100/100;
+V_R27_Credit_Conversion_Factor := 100/100;
+V_R29_Credit_Conversion_Factor := 50/100;
+V_R30_Credit_Conversion_Factor := 50/100;
+V_R32_Credit_Conversion_Factor := 40/100;
+V_R34_Credit_Conversion_Factor := 20/100;
+V_R36_Credit_Conversion_Factor := 10/100;
+V_R3_Total := V_R1_Total - V_R2_Total;
+V_R6_Total := (V_R4_Total + V_R5_Total) * 1.4;
+V_R12_Total := (V_R6_Total + V_R7_Total + V_R8_Total) -  (V_R9_Total + V_R10_Total + V_R11_Total);
+V_R17_Total := (V_R13_Total + V_R14_Total + V_R15_Total) -  (V_R16_Total);
+V_R20_Total := V_R18_Total - V_R19_Total;
+V_R22_Total := (V_R3_Total + V_R12_Total + V_R17_Total + V_R20_Total);
+
+V_R24_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R25_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R26_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R27_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R29_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R30_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R32_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R34_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R36_Exposure_after_CCF :=  V_R24_Exposure_Before_CCF  * (V_R24_Credit_Conversion_Factor/100);
+V_R37_Exposure_after_CCF :=
+V_R36_Credit_Conversion_Factor ;
+
+V_R28_Exposure_Before_CCF := (V_R24_Exposure_Before_CCF + V_R25_Exposure_Before_CCF + V_R26_Exposure_Before_CCF + V_R27_Exposure_Before_CCF);
+V_R31_Exposure_Before_CCF := V_R29_Exposure_Before_CCF + V_R30_Exposure_Before_CCF;
+V_R33_Exposure_Before_CCF := V_R32_Exposure_Before_CCF;
+V_R35_Exposure_Before_CCF := V_R34_Exposure_Before_CCF;
+V_R37_Exposure_Before_CCF := V_R36_Exposure_Before_CCF;
+V_R38_Exposure_Before_CCF := (V_R28_Exposure_Before_CCF + V_R31_Exposure_Before_CCF + V_R33_Exposure_Before_CCF + V_R35_Exposure_Before_CCF  + V_R37_Exposure_Before_CCF );
+V_R28_Exposure_After_CCF := (V_R24_Exposure_After_CCF + V_R25_Exposure_After_CCF + V_R26_Exposure_After_CCF + V_R27_Exposure_After_CCF);
+V_R31_Exposure_After_CCF := V_R29_Exposure_After_CCF + V_R30_Exposure_After_CCF;
+V_R33_Exposure_After_CCF := V_R32_Exposure_After_CCF;
+V_R35_Exposure_After_CCF := V_R34_Exposure_After_CCF;
+V_R37_Exposure_After_CCF := V_R36_Exposure_After_CCF;
+V_R38_Exposure_After_CCF := (V_R28_Exposure_After_CCF + V_R31_Exposure_After_CCF + V_R33_Exposure_After_CCF + V_R35_Exposure_After_CCF  + V_R37_Exposure_After_CCF );
+V_R46_AED_000s := (V_R39_AED_000s + V_R40_AED_000s + V_R41_AED_000s + V_R42_AED_000s  + V_R43_AED_000s + V_R44_AED_000s  + V_R45_AED_000s );
+
+if 
+V_R22_Total = 0 then 
+V_R23_Total := 0 ;
+else 
+V_R23_Total := V_R21_Total/V_R22_Total;
+end if;
+
+INSERT INTO BRF96_SUMMARYTABLE
+(R1_S_No,
+R1_Product ,
+R1_Total,
+R2_S_No,
+R2_Product ,
+R2_Total,
+R3_S_No,
+R3_Product ,
+R3_Total,
+R4_S_No,
+R4_Product ,
+R4_Total,
+R5_S_No,
+R5_Product ,
+R5_Total,
+R6_S_No,
+R6_Product ,
+R6_Total,
+R7_S_No,
+R7_Product ,
+R7_Total,
+R8_S_No,
+R8_Product ,
+R8_Total,
+R9_S_No,
+R9_Product ,
+R9_Total,
+R10_S_No,
+R10_Product ,
+R10_Total,
+R11_S_No,
+R11_Product ,
+R11_Total,
+R12_S_No,
+R12_Product ,
+R12_Total,
+R13_S_No,
+R13_Product ,
+R13_Total,
+R14_S_No,
+R14_Product ,
+R14_Total,
+R15_S_No,
+R15_Product ,
+R15_Total,
+R16_S_No,
+R16_Product ,
+R16_Total,
+R17_S_No,
+R17_Product ,
+R17_Total,
+R18_S_No,
+R18_Product ,
+R18_Total,
+R19_S_No,
+R19_Product ,
+R19_Total,
+R20_S_No,
+R20_Product ,
+R20_Total,
+R21_S_No,
+R21_Product ,
+R21_Total,
+R22_S_No,
+R22_Product ,
+R22_Total,
+R23_S_No,
+R23_Product ,
+R23_Total,
+R24_S_No,
+R24_Product ,
+R24_Exposure_Before_CCF,
+R24_Credit_Conversion_Factor,
+R24_Exposure_After_CCF,
+R25_S_No,
+R25_Product ,
+R25_Exposure_Before_CCF,
+R25_Credit_Conversion_Factor,
+R25_Exposure_After_CCF,
+R26_S_No,
+R26_Product ,
+R26_Exposure_Before_CCF,
+R26_Credit_Conversion_Factor,
+R26_Exposure_After_CCF,
+R27_S_No,
+R27_Product ,
+R27_Exposure_Before_CCF,
+R27_Credit_Conversion_Factor,
+R27_Exposure_After_CCF,
+R28_S_No,
+R28_Product ,
+R28_Exposure_Before_CCF,
+R28_Credit_Conversion_Factor,
+R28_Exposure_After_CCF,
+R29_S_No,
+R29_Product ,
+R29_Exposure_Before_CCF,
+R29_Credit_Conversion_Factor,
+R29_Exposure_After_CCF,
+R30_S_No,
+R30_Product ,
+R30_Exposure_Before_CCF,
+R30_Credit_Conversion_Factor,
+R30_Exposure_After_CCF,
+R31_S_No,
+R31_Product ,
+R31_Exposure_Before_CCF,
+R31_Credit_Conversion_Factor,
+R31_Exposure_After_CCF,
+R32_S_No,
+R32_Product ,
+R32_Exposure_Before_CCF,
+R32_Credit_Conversion_Factor,
+R32_Exposure_After_CCF,
+R33_S_No,
+R33_Product ,
+R33_Exposure_Before_CCF,
+R33_Credit_Conversion_Factor,
+R33_Exposure_After_CCF,
+R34_S_No,
+R34_Product ,
+R34_Exposure_Before_CCF,
+R34_Credit_Conversion_Factor,
+R34_Exposure_After_CCF,
+R35_S_No,
+R35_Product ,
+R35_Exposure_Before_CCF,
+R35_Credit_Conversion_Factor,
+R35_Exposure_After_CCF,
+R36_S_No,
+R36_Product ,
+R36_Exposure_Before_CCF,
+R36_Credit_Conversion_Factor,
+R36_Exposure_After_CCF,
+R37_S_No,
+R37_Product ,
+R37_Exposure_Before_CCF,
+R37_Credit_Conversion_Factor,
+R37_Exposure_After_CCF,
+R38_S_No,
+R38_Product ,
+R38_Exposure_Before_CCF,
+R38_Credit_Conversion_Factor,
+R38_Exposure_After_CCF,
+R39_S_No ,
+R39_Product,
+R39_AED_000s,
+R40_S_No ,
+R40_Product,
+R40_AED_000s,
+R41_S_No ,
+R41_Product,
+R41_AED_000s,
+R42_S_No ,
+R42_Product,
+R42_AED_000s,
+R43_S_No ,
+R43_Product,
+R43_AED_000s,
+R44_S_No ,
+R44_Product,
+R44_AED_000s,
+R45_S_No ,
+R45_Product,
+R45_AED_000s,
+R46_S_No,
+R46_Product,
+R46_AED_000s,
+REPORT_DATE)
+values
+(V_R1_S_No,
+V_R1_Product ,
+V_R1_Total,
+V_R2_S_No,
+V_R2_Product ,
+V_R2_Total,
+V_R3_S_No,
+V_R3_Product ,
+V_R3_Total,
+V_R4_S_No,
+V_R4_Product ,
+V_R4_Total,
+V_R5_S_No,
+V_R5_Product ,
+V_R5_Total,
+V_R6_S_No,
+V_R6_Product ,
+V_R6_Total,
+V_R7_S_No,
+V_R7_Product ,
+V_R7_Total,
+V_R8_S_No,
+V_R8_Product ,
+V_R8_Total,
+V_R9_S_No,
+V_R9_Product ,
+V_R9_Total,
+V_R10_S_No,
+V_R10_Product ,
+V_R10_Total,
+V_R11_S_No,
+V_R11_Product ,
+V_R11_Total,
+V_R12_S_No,
+V_R12_Product ,
+V_R12_Total,
+V_R13_S_No,
+V_R13_Product ,
+V_R13_Total,
+V_R14_S_No,
+V_R14_Product ,
+V_R14_Total,
+V_R15_S_No,
+V_R15_Product ,
+V_R15_Total,
+V_R16_S_No,
+V_R16_Product ,
+V_R16_Total,
+V_R17_S_No,
+V_R17_Product ,
+V_R17_Total,
+V_R18_S_No,
+V_R18_Product ,
+V_R18_Total,
+V_R19_S_No,
+V_R19_Product ,
+V_R19_Total,
+V_R20_S_No,
+V_R20_Product ,
+V_R20_Total,
+V_R21_S_No,
+V_R21_Product ,
+V_R21_Total,
+V_R22_S_No,
+V_R22_Product ,
+V_R22_Total,
+V_R23_S_No,
+V_R23_Product ,
+V_R23_Total,
+V_R24_S_No,
+V_R24_Product ,
+V_R24_Exposure_Before_CCF,
+V_R24_Credit_Conversion_Factor,
+V_R24_Exposure_After_CCF,
+V_R25_S_No,
+V_R25_Product ,
+V_R25_Exposure_Before_CCF,
+V_R25_Credit_Conversion_Factor,
+V_R25_Exposure_After_CCF,
+V_R26_S_No,
+V_R26_Product ,
+V_R26_Exposure_Before_CCF,
+V_R26_Credit_Conversion_Factor,
+V_R26_Exposure_After_CCF,
+V_R27_S_No,
+V_R27_Product ,
+V_R27_Exposure_Before_CCF,
+V_R27_Credit_Conversion_Factor,
+V_R27_Exposure_After_CCF,
+V_R28_S_No,
+V_R28_Product ,
+V_R28_Exposure_Before_CCF,
+V_R28_Credit_Conversion_Factor,
+V_R28_Exposure_After_CCF,
+V_R29_S_No,
+V_R29_Product ,
+V_R29_Exposure_Before_CCF,
+V_R29_Credit_Conversion_Factor,
+V_R29_Exposure_After_CCF,
+V_R30_S_No,
+V_R30_Product ,
+V_R30_Exposure_Before_CCF,
+V_R30_Credit_Conversion_Factor,
+V_R30_Exposure_After_CCF,
+V_R31_S_No,
+V_R31_Product ,
+V_R31_Exposure_Before_CCF,
+V_R31_Credit_Conversion_Factor,
+V_R31_Exposure_After_CCF,
+V_R32_S_No,
+V_R32_Product ,
+V_R32_Exposure_Before_CCF,
+V_R32_Credit_Conversion_Factor,
+V_R32_Exposure_After_CCF,
+V_R33_S_No,
+V_R33_Product ,
+V_R33_Exposure_Before_CCF,
+V_R33_Credit_Conversion_Factor,
+V_R33_Exposure_After_CCF,
+V_R34_S_No,
+V_R34_Product ,
+V_R34_Exposure_Before_CCF,
+V_R34_Credit_Conversion_Factor,
+V_R34_Exposure_After_CCF,
+V_R35_S_No,
+V_R35_Product ,
+V_R35_Exposure_Before_CCF,
+V_R35_Credit_Conversion_Factor,
+V_R35_Exposure_After_CCF,
+V_R36_S_No,
+V_R36_Product ,
+V_R36_Exposure_Before_CCF,
+V_R36_Credit_Conversion_Factor,
+V_R36_Exposure_After_CCF,
+V_R37_S_No,
+V_R37_Product ,
+V_R37_Exposure_Before_CCF,
+V_R37_Credit_Conversion_Factor,
+V_R37_Exposure_After_CCF,
+V_R38_S_No,
+V_R38_Product ,
+V_R38_Exposure_Before_CCF,
+V_R38_Credit_Conversion_Factor,
+V_R38_Exposure_After_CCF,
+V_R39_S_No ,
+V_R39_Product,
+V_R39_AED_000s,
+V_R40_S_No ,
+V_R40_Product,
+V_R40_AED_000s,
+V_R41_S_No ,
+V_R41_Product,
+V_R41_AED_000s,
+V_R42_S_No ,
+V_R42_Product,
+V_R42_AED_000s,
+V_R43_S_No ,
+V_R43_Product,
+V_R43_AED_000s,
+V_R44_S_No ,
+V_R44_Product,
+V_R44_AED_000s,
+V_R45_S_No ,
+V_R45_Product,
+V_R45_AED_000s,
+V_R46_S_No ,
+V_R46_Product,
+V_R46_AED_000s,
+V_REPORT_DATE);
+COMMIT;
+END;

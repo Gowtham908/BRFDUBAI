@@ -1,0 +1,3375 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: GOWTHAM.
+CREATED ON	: 16-03-2024
+PURPOSE		: Development
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+			location.href = "/BRBS/BRFArchival";
+
+		}
+		function back() {
+			window.history.back();
+		}
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+		/*]]>*/
+	</script>
+	<style>
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+
+		/* Firefox */
+		input[type=number] {
+			-moz-appearance: textfield;
+		}
+
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+
+
+	</script>
+
+	<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf34',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+
+
+	</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-34 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 20000);
+		}
+	</script>
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-034-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+					} else if (filetype == "BRF") {
+						a.download = '011-BRF-034-A' + ".xls"; // assuming .pdf extension for PDF files
+					} else {
+						a.download = '011-BRF-034-A' + ".pdf";
+					}
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-34-ARCH ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text('Downloaded BRF-34 Detail Excel' + ".xlsx");
+					} else if (filetype == "BRF") {
+						$('#customAlertBody').text('Downloaded BRF 34-ARCH ' + ".xls"); // assuming .pdf extension for PDF files
+					} else {
+						$('#customAlertBody').text('Downloaded BRF-34-ARCH ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+	</script>
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+
+	<title>XBRL</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;">BRF 34-BANKING & MONETARY STATISTICS-
+					INTERBANK COUNTERPARTIES-DOMESTIC </b>
+				<th><b style="color: white; margin-left: 10%;">Report Date
+						- <span th:text="${todate}"></span>
+					</b></th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showdetails('firstpage','1','0');"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'" onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive" style="border-right: 1px solid #dee2e6">
+							<table style="width: 1500px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead style="background-color: #bdbec2">
+									<tr>
+										<th></th>
+										<th>Name of Banks</th>
+										<th style="text-align: center">Interbank placement</th>
+										<th style="text-align: center">Interbank borrowings</th>
+										<th style="text-align: center">Other Placements</th>
+										<th style="text-align: center">Other Borrowings</th>
+										<th colspan="2" style="text-align: center">Remaining
+											Balances</th>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Due From</th>
+										<th style="text-align: center">Due To</th>
+										<th style="text-align: center">Due From</th>
+										<th style="text-align: center">Due To</th>
+										<th style="text-align: center">Due From</th>
+										<th style="text-align: center">Due To</th>
+									</tr>
+
+									<tr style="background-color: #bdbec2">
+										<th></th>
+										<th></th>
+										<th style="text-align: center">BRF-1: Term Placements 3.2
+										</th>
+										<th style="text-align: center">BRF-2: interbank
+											borrowings 22.2</th>
+										<th style="text-align: center">BRF-1: Term Placements (
+											3.3) + Repos (3.6)</th>
+										<th style="text-align: center">BRF-2: Term Deposits (
+											22.3) + Repos (22.4)</th>
+										<th style="text-align: center">BRF-1: items 3.1+3.4+3.5</th>
+										<th style="text-align: center">BRF-2: item 22.1</th>
+									</tr>
+								</thead>
+								<tbody th:each="report: ${reportsummary}">
+									<tr>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9" th:text="${report.rh_product}">CHENNAI
+										</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh_other_placement,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.rh_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: yellow">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>1</td>
+										<td th:text="${report.r1_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r1_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r1_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r1_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r1_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r1_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r1_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>2</td>
+										<td th:text="${report.r2_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r2_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r2_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r2_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r2_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r2_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r2_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>3</td>
+										<td th:text="${report.r3_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r3_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r3_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r3_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r3_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r3_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r3_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>4</td>
+										<td th:text="${report.r4_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r4_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r4_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r4_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r4_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r4_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r4_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>5</td>
+										<td th:text="${report.r5_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r5_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r5_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r5_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r5_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r5_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r5_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106A">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>6</td>
+										<td th:text="${report.r6_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r6_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r6_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r6_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r6_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r6_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r6_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>7</td>
+										<td th:text="${report.r7_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r7_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r7_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r7_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r7_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r7_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108A">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r7_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108A">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>8</td>
+										<td th:text="${report.r8_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r8_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r8_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r8_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r8_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r8_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r8_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>9</td>
+										<td th:text="${report.r9_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r9_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r9_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r9_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r9_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r9_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r9_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>10</td>
+										<td th:text="${report.r10_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r10_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r10_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r10_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r10_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r10_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r10_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>11</td>
+										<td th:text="${report.r11_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r11_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r11_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r11_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r11_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r11_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r11_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>12</td>
+										<td th:text="${report.r12_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r12_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r12_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r12_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r12_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r12_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r12_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+									</tr>
+
+									<tr style="background-color: #b3b6b9">
+										<td>13</td>
+										<td th:text="${report.r13_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>14</td>
+										<td th:text="${report.r14_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r14_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r14_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r14_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r14_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r14_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r14_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>15</td>
+										<td th:text="${report.r15_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r15_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r15_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r15_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r15_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r15_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r15_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>16</td>
+										<td th:text="${report.r16_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r16_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r16_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r16_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r16_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r16_remani_balance_from,1,'COMMA',0,'POINT')}"
+											onclick="resident(this)" id="ROW117" align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r16_remani_balance_to,1,'COMMA',0,'POINT')}"
+											onclick="resident(this)" id="ROW117" align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>17</td>
+										<td th:text="${report.r17_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r17_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r17_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r17_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r17_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r17_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r17_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>18</td>
+										<td th:text="${report.r18_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r18_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r18_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r18_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r18_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r18_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r18_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>19</td>
+										<td th:text="${report.r19_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>20</td>
+										<td th:text="${report.r20_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r20_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r20_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r20_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r20_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r20_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r20_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>21</td>
+										<td th:text="${report.r21_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r21_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r21_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r21_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r21_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r21_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r21_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>22</td>
+										<td th:text="${report.r22_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r22_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r22_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r22_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r22_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r22_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r22_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>23</td>
+										<td th:text="${report.r23_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r23_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r23_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r23_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r23_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r23_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r23_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>24</td>
+										<td th:text="${report.r24_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r24_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r24_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r24_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r24_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r24_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r24_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+									</tr>
+									<tr style="background-color: yellow">
+										<td>25</td>
+										<td th:text="${report.r25_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r25_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r25_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r25_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r25_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r25_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r25_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+									</tr>
+									<tr style="background-color: yellow">
+										<td>26</td>
+										<td th:text="${report.r26_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r26_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r26_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r26_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r26_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r26_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r26_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>27</td>
+										<td th:text="${report.r27_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r27_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r27_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r27_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r27_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r27_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r27_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>28</td>
+										<td th:text="${report.r28_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r28_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r28_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r28_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r28_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r28_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r28_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>29</td>
+										<td th:text="${report.r29_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r29_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r29_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r29_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r29_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r29_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r29_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>30</td>
+										<td th:text="${report.r30_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r30_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r30_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r30_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r30_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r30_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r30_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>31</td>
+										<td th:text="${report.r31_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r31_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r31_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r31_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r31_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r31_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r31_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW132">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>32</td>
+										<td th:text="${report.r32_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r32_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r32_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r32_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r32_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r32_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r32_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>33</td>
+										<td th:text="${report.r33_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r33_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r33_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r33_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r33_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r33_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r33_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>34</td>
+										<td th:text="${report.r34_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r34_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r34_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r34_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r34_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r34_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r34_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>35</td>
+										<td th:text="${report.r35_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r35_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r35_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r35_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r35_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r35_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r35_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>36</td>
+										<td th:text="${report.r36_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r36_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r36_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r36_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r36_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r36_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r36_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+									</tr>
+
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td th:text="${report.rh2_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh2_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh2_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh2_other_placement,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh2_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh2_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh2_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>1</td>
+										<td th:text="${report.r37_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r37_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r37_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r37_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r37_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r37_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r37_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>2</td>
+										<td th:text="${report.r38_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r38_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r38_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r38_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r38_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r38_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r38_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>3</td>
+										<td th:text="${report.r39_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r39_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r39_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r39_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r39_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r39_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r39_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>4</td>
+										<td th:text="${report.r40_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r40_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r40_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r40_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r40_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r40_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r40_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>5</td>
+										<td th:text="${report.r41_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r41_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r41_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r41_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r41_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r41_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r41_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW143">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>6</td>
+										<td th:text="${report.r42_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r42_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r42_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r42_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r42_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r42_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r42_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>7</td>
+										<td th:text="${report.r43_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r43_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r43_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r43_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r43_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r43_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r43_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+									</tr>
+
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td th:text="${report.rh3_product}">CHENNAI</td>
+										<td style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh3_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh3_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh3_other_placement,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh3_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh3_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh3_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>1</td>
+										<td th:text="${report.r44_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r44_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r44_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r44_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r44_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r44_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r44_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td th:text="${report.r45_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r45_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r45_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r45_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r45_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r45_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r45_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>3</td>
+										<td th:text="${report.r46_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r46_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW149">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r46_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW149">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r46_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW149">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r46_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW149">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r46_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW149">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r46_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW149">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>4</td>
+										<td th:text="${report.r47_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r47_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r47_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r47_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r47_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r47_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r47_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>5</td>
+										<td th:text="${report.r48_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r48_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r48_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r48_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r48_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r48_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW15">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r48_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>6</td>
+										<td th:text="${report.r49_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r49_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r49_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r49_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r49_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r49_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r49_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>7</td>
+										<td th:text="${report.r50_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r50_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r50_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r50_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r50_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r50_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r50_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>8</td>
+										<td th:text="${report.r51_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r51_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r51_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r51_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r51_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r51_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r51_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>9</td>
+										<td th:text="${report.r52_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r52_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r52_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r52_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r52_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r52_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r52_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>10</td>
+										<td th:text="${report.r53_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>11</td>
+										<td th:text="${report.r54_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r54_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r54_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r54_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r54_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r54_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r54_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>12</td>
+										<td th:text="${report.r55_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r55_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r55_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r55_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r55_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r55_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r55_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>13</td>
+										<td th:text="${report.r56_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r56_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r56_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r56_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r56_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r56_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r56_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>14</td>
+										<td th:text="${report.r57_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r57_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r57_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r57_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r57_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r57_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r57_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>15</td>
+										<td th:text="${report.r58_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r58_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r58_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r58_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r58_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r58_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r58_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>16</td>
+										<td th:text="${report.r59_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r59_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r59_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r59_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r59_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r59_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r59_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>17</td>
+										<td th:text="${report.r60_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r60_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r60_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r60_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r60_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r60_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r60_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>18</td>
+										<td th:text="${report.r61_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r61_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r61_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r61_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r61_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r61_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r61_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>19</td>
+										<td th:text="${report.r62_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r62_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r62_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r62_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r62_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r62_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r62_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>20</td>
+										<td th:text="${report.r63_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r63_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r63_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r63_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r63_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r63_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r63_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>21</td>
+										<td th:text="${report.r64_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r64_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r64_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r64_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r64_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r64_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r64_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>22</td>
+										<td th:text="${report.r65_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r65_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW168">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r65_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW168">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r65_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW168">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r65_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW168">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r65_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW168">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r65_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW168">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>23</td>
+										<td th:text="${report.r66_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r66_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r66_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r66_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r66_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r66_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r66_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>24</td>
+										<td th:text="${report.r67_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r67_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r67_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r67_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r67_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r67_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r67_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>25</td>
+										<td th:text="${report.r68_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r68_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r68_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r68_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r68_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r68_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r68_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>26</td>
+										<td th:text="${report.r69_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r69_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r69_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r69_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r69_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r69_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r69_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>27</td>
+										<td th:text="${report.r70_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r70_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r70_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r70_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r70_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r70_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r70_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>28</td>
+										<td th:text="${report.r71_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r71_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r71_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r71_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r71_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r71_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r71_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+									</tr>
+									<tr style="background-color: yellow">
+										<td style="background-color: #b3b6b9">29</td>
+										<td th:text="${report.r72_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r72_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW175">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r72_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW175">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r72_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW175">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r72_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW175">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r72_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW175">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r72_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW175">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>30</td>
+										<td th:text="${report.r73_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r73_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r73_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r73_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r73_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r73_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r73_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>31</td>
+										<td th:text="${report.r74_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r74_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r74_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r74_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r74_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r74_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r74_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>32</td>
+										<td th:text="${report.r75_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r75_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW178">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r75_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW178">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r75_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW178">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r75_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW178">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r75_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW178">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r75_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW178">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>33</td>
+										<td th:text="${report.r76_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r76_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW179">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r76_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW179">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r76_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW179">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r76_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW179">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r76_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW179">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r76_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW179">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>34</td>
+										<td th:text="${report.r77_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r77_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW180">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r77_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW180">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r77_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW180">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r77_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW180">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r77_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW180">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r77_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW180">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>35</td>
+										<td th:text="${report.r78_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r78_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW181">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r78_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW181">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r78_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW181">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r78_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW181">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r78_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW181">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r78_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW181">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>36</td>
+										<td th:text="${report.r79_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r79_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW182">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r79_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW182">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r79_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW182">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r79_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW182">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r79_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW182">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r79_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW182">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>37</td>
+										<td th:text="${report.r80_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r80_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW183">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r80_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW183">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r80_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW183">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r80_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW183">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r80_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW183">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r80_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW183">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>28</td>
+										<td th:text="${report.r81_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r81_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW184">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r81_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW184">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r81_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW184">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r81_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW184">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r81_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW184">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r81_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW184">CHENNAI</td>
+									</tr>
+
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td th:text="${report.rh4_product}">CHENNAI</td>
+										<td style="background-color: yellow; text-align: right"
+											th:text="${#numbers.formatDecimal(report.rh4_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh4_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh4_other_placement,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh4_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh4_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right; background-color: yellow"
+											th:text="${#numbers.formatDecimal(report.rh4_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td>1</td>
+										<td th:text="${report.r82_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r82_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW186">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r82_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW186">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r82_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW186">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r82_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW186">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r82_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW186">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r82_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW186">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td th:text="${report.r83_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r83_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW187">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r83_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW187">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r83_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW187">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r83_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW187">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r83_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW187">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r83_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW187">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>3</td>
+										<td th:text="${report.r84_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r84_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW188">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r84_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW188">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r84_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW188">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r84_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW188">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r84_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW188">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r84_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW188">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>4</td>
+										<td th:text="${report.r85_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r85_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW189">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r85_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW189">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r85_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW189">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r85_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW189">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r85_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW189">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r85_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW189">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>5</td>
+										<td th:text="${report.r86_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r86_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW190">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r86_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW190">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r86_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW190">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r86_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW190">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r86_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW190">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r86_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW190">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>6</td>
+										<td th:text="${report.r87_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r87_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW191">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r87_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW191">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r87_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW191">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r87_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW191">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r87_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW191">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r87_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW191">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>7</td>
+										<td th:text="${report.r88_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r88_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW192">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r88_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW192">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r88_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW192">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r88_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW192">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r88_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW192">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r88_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW192">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>8</td>
+										<td th:text="${report.r89_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r89_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW193">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r89_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW193">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r89_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW193">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r89_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW193">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r89_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW193">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r89_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW193">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>9</td>
+										<td th:text="${report.r90_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r90_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW194">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r90_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW194">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r90_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW194">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r90_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW194">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r90_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW194">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r90_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW194">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>10</td>
+										<td th:text="${report.r91_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r91_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW195">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r91_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW195">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r91_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW195">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r91_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW195">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r91_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW195">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r91_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW195">CHENNAI</td>
+									</tr>
+									<tr>
+										<td>11</td>
+										<td th:text="${report.r92_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r92_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW196">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r92_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW196">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r92_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW196">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r92_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW196">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r92_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW196">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r92_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW196">CHENNAI</td>
+									</tr>
+									<tr style="background-color: yellow">
+										<td>12</td>
+										<td th:text="${report.r93_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r93_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW197">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r93_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW197">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r93_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW197">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r93_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW197">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r93_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW197">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r93_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW197">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>13</td>
+										<td th:text="${report.r94_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r94_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW198">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r94_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW198">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r94_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW198">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r94_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW198">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r94_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW198">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r94_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW198">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>14</td>
+										<td th:text="${report.r95_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r95_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW199">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r95_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW199">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r95_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW199">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r95_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW199">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r95_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW199">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r95_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW199">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>15</td>
+										<td th:text="${report.r96_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r96_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW200">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r96_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW200">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r96_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW200">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r96_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW200">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r96_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW200">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r96_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW200">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>16</td>
+										<td th:text="${report.r97_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r97_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW201">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r97_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW201">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r97_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW201">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r97_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW201">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r97_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW201">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r97_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW201">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>17</td>
+										<td th:text="${report.r98_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r98_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW202">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r98_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW202">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r98_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW202">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r98_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW202">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r98_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW202">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r98_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW202">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>18</td>
+										<td th:text="${report.r99_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r99_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW203">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r99_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW203">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r99_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW203">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r99_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW203">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r99_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW203">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r99_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW203">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>19</td>
+										<td th:text="${report.r100_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r100_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW204">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r100_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW204">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r100_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW204">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r100_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW204">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r100_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW204">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r100_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW204">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>20</td>
+										<td th:text="${report.r101_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r101_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW205">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r101_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW205">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r101_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW205">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r101_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW205">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r101_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW205">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r101_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW205">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>21</td>
+										<td th:text="${report.r102_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r102_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW206">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r102_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW206">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r102_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW206">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r102_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW206">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r102_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW206">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r102_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW206">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td>22</td>
+										<td th:text="${report.r103_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r103_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW207">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r103_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW207">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r103_other_placement,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW207">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r103_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW207">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r103_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW207">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r103_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW207">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td th:text="${report.rtot_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rtot_inter_bank_place,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rtot_inter_bank_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rtot_other_placement,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rtot_other_borrow,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rtot_remani_balance_from,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.rtot_remani_balance_to,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td colspan="5">FORM NO: BSD/ BRF 34- INTBANK
+											DOM/JULY2022</td>
+										<td colspan="5"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHom"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT NAME 1</th>
+								<th>REPORT LABEL 1</th>
+								<th>REPORT ADDL CRITERIA 1</th>
+								<th>REPORT DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center: font-weight: bold;">
+
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCT BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME 1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE 1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA 1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

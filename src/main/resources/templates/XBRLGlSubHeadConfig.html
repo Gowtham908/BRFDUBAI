@@ -1,0 +1,801 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BCDRS</title>
+
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<style>
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+table {
+	border-collapse: collapse;
+	border: 1px solid black;
+	border-color: #e9ecef;
+}
+
+.modal-backdrop {
+	background-color: +;
+	zoom: 1;
+}
+
+.addedit {
+	color: #007bff;
+}
+body {
+  overflow-y: hidden;
+}
+
+.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+</style>
+<style>
+		.table-container {
+			max-height: 580px;
+			overflow-y: auto;
+		}
+
+		table.fixed-header-table {
+			width: 100%;
+			border-collapse: collapse;
+			table-layout: fixed;
+		}
+
+		thead th {
+			position: sticky;
+			top: 0;
+			background: #f8f9fa;
+			/* or white */
+			z-index: 1;
+			border: 1px solid #dee2e6;
+			text-align: left;
+		}
+
+		table.fixed-header-table th,
+		table.fixed-header-table td {
+			padding: 8px;
+			border: 1px solid #dee2e6;
+			text-align: center;
+		}
+	</style>
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+		
+		var dtltype = /*[[${glsubhead}]]*/null;
+		console.log(dtltype);
+		function showdetails(mode,num,maxpage) {
+		
+		
+		var n=parseInt(num);
+		var max = parseInt(maxpage);
+		
+		var today = new Date();
+		var Callurl = /*[[@{'/GlSubHead'}]]*/
+		
+		switch(mode){
+		case "nextpage":
+			n=n+1;
+			if(n>max){
+				break;
+			}
+			Callurl = Callurl+"?page="+n;
+			console.log("Callurl "+Callurl);
+			break;
+		case "prevpage":
+			n=n-1;
+			if(n<0){
+				break;
+			}
+			Callurl = Callurl+"?page="+n;
+			break;
+		case "givenpage":
+			n=parseInt($("#pageno").val())-1;
+			if(n>max||n<0){
+			break;
+			}
+			Callurl = Callurl+"?page="+n;
+		}
+		
+		
+		
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+				
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				
+				
+				/*]]>*/
+
+			}
+		})
+	}
+	
+	
+		function searchRecord(){			
+			$("#search").modal("toggle");
+
+		};
+		
+		function submitSearchRecord(){
+		    if($("#searchdtl").valid()){
+		        var url = /*[[@{'/glsubheadsearch'}]]*/
+		        $("#searchdtl").attr('action', url);
+
+		        var options = { 
+		            success: showResponse  // post-submit callback 
+		        }; 
+
+		        $('#searchdtl').ajaxSubmit(options);
+
+		        function showResponse(responseText, statusText, xhr, $form) { 
+		            $(".modal").modal("hide");
+		            $('.content').html(responseText);
+		            $(".modal-backdrop").remove();
+		        }	
+		    } else {
+		        console.log("Form validation failed.");
+		    }
+		};
+
+		
+		function addRecord() {
+
+		
+				//Assign action url for the edit/add form
+				var url = /*[[@{'glsubheadadd'}]]*/
+				$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				//make readonly false to unique fields
+				//Make readonly fields
+				$("#glHead").attr("readonly", false);
+				$("#glSubHeadCode").attr("readonly", false);
+				$("#glDesc").attr("readonly", false);
+				$("#type").attr("readonly", false);
+				$("#schmType").attr("readonly", false);
+				$("#schmCode").attr("readonly", false);
+				$("#assets").attr("readonly", false);
+				$("#liabilities").attr("readonly", false);   
+				$("#assetsMemo").attr("readonly", false);
+				$("#liabMemo").attr("readonly", false);
+				$("#availableInMcbl").attr("readonly", false);
+				$("#netFlg").attr("readonly", false);		
+				$("#bls0110").attr("readonly", false);	
+				$("#sup0500").attr("readonly", false);	
+				$("#sup0700").attr("readonly", false);	
+				$("#fim0600").attr("readonly", false);	
+				
+				$("#addedit").modal("toggle");
+
+			
+		};
+		
+		
+		function submitdataform(){
+			
+			if($("#dataedit").valid()){
+				
+				var options = { 
+				        success: showResponse  // post-submit callback 
+				    }; 
+				
+				 $('#dataedit').ajaxSubmit(options);
+				 
+				 function showResponse(responseText, statusText, xhr, $form) { 
+					 
+					 $("#alertmsg").text(responseText);
+					 
+					 if($('#addedit').is(':visible')){
+						 $('#addedit').modal("hide");
+					 };
+					 if($('#datadelete').is(':visible')){
+						 $('#datadelete').modal("hide");
+					 };
+					 $('#alert').modal("toggle");
+		                
+				 }
+				
+			}
+			
+		}
+		
+		
+		function editRecord(a) {
+
+			
+
+				var url = /*[[@{'/glsubheadedit'}]]*/
+				$("#dataedit").attr('action', url);
+				//Assign selected values to the model box fields
+				$("#glHead").val(a.getAttribute("data-gl_head"));
+				$("#glSubHeadCode").val(a.getAttribute("data-gl_sub_head_code"));
+				$("#glDesc").val(a.getAttribute("data-gl_desc"));
+				$("#type").val(a.getAttribute("data-type"));
+				$("#schmType").val(a.getAttribute("data-schm_type"));
+				$("#schmCode").val(a.getAttribute("data-schm_code"));
+				$("#assets").val(a.getAttribute("data-assets"));
+				$("#liabilities").val(a.getAttribute("data-liabilities"));
+				$("#assetsMemo").val(a.getAttribute("data-assets_memo"));
+				$("#liabMemo").val(a.getAttribute("data-liab_memo"));
+				$("#availableInMcbl").val(a.getAttribute("data-available_in_mcbl"));
+				$("#netFlg").val(a.getAttribute("data-net_flg"));
+				$("#bls0110").val(a.getAttribute("data-bls0110"));
+				$("#sup0500").val(a.getAttribute("data-sup0500"));
+				$("#sup0700").val(a.getAttribute("data-sup0700"));
+				$("#fim0600").val(a.getAttribute("data-fim0600"));
+
+				$("#addedit").modal("toggle");
+
+				//Make readonly fields
+				$("#glHead").attr("readonly", true);
+				$("#glSubHeadCode").attr("readonly", true);
+				$("#schmType").attr("readonly", true);
+				$("#schmCode").attr("readonly", true);
+
+			
+
+		};
+		
+		function deleteRecord(a) {
+		console.log("deleteRecord");
+			
+
+				//Assign action url for the edit/add form
+				var url = /*[[@{'glsubheaddelete'}]]*/
+				$("#dataedit").attr('action', url);
+
+				//Assign selected values to the model box fields
+				$("#glHead").val(a.getAttribute("data-gl_head"));
+				$("#glSubHeadCode").val(a.getAttribute("data-gl_sub_head_code"));
+				$("#glDesc").val(a.getAttribute("data-gl_desc"));
+				$("#type").val(a.getAttribute("data-type"));
+				$("#schmType").val(a.getAttribute("data-schm_type"));
+				$("#schmCode").val(a.getAttribute("data-schm_code"));
+				$("#assets").val(a.getAttribute("data-assets"));
+				$("#liabilities").val(a.getAttribute("data-liabilities"));
+				$("#assetsMemo").val(a.getAttribute("data-assets_memo"));
+				$("#liabMemo").val(a.getAttribute("data-liab_memo"));
+				$("#availableInMcbl").val(a.getAttribute("data-available_in_mcbl"));
+				$("#netFlg").val(a.getAttribute("data-net_flg"));
+				$("#bls0110").val(a.getAttribute("data-bls0110"));
+				$("#sup0500").val(a.getAttribute("data-sup0500"));
+				$("#sup0700").val(a.getAttribute("data-sup0700"));
+				$("#fim0600").val(a.getAttribute("data-fim0600"));
+
+				$("#datadelete").modal("toggle");
+
+			
+
+		};
+		
+
+	/*]]>*/
+</script>
+<script>
+function home() {
+	location.href = 'Dashboard'
+}
+
+function back() {
+	window.history.back();
+}
+</script>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#glsubheadtb').DataTable({
+      "pageLength": 10,           // Show 10 rows per page
+      "lengthChange": false,      // Hide "Show X entries"
+      "ordering": false,          // Disable sorting on columns
+      "info": true,               // Show "Showing X to Y of Z entries"
+      "autoWidth": false,         // Disable automatic column sizing
+      "searching": true,
+      "language": {
+        "emptyTable": "No records available"
+      }
+    });
+  });
+  
+  
+  
+</script>
+
+
+
+</head>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!-- <i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+ -->
+	<div class="container content" th:fragment="reportcontent">
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'"
+				th:fragment="detail">
+				<div class="card custom-card" style="width: 1433px; margin-left: -26px;">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left">
+							<h4 style="font-family: verdana;color: white; font-size: 25px; font-weight: bold; padding-top: 10px;">GL Parameter</h4>
+
+
+						</div>
+
+						<div class="btn-group-vertical float-md-right">
+							<div class="btn-group" role="group">
+								<!-- <button id="btnGroupDrop1" type="button"
+									class="btn  btn-primary dropdown-toggle"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false">Download</button>
+								 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+									<a class="dropdown-item"
+										th:href="|@{'/glsubheaddownload'}?filetype=excel|">Excel</a>
+									<a class="dropdown-item"
+										th:href="|@{'/glsubheaddownload'}?filetype=pdf|">PDF</a>
+								</div>
+ -->							
+
+						</div></div>
+					</div>
+					
+					<div class="card-body">
+                 	<div class="table-container" style="overflow-y: auto; border-right: 1px solid #dee2e6">
+						
+							<table class="table  table-bordered  table-hover table-sm"
+								style="margin-bottom: 0px; width: 1360px;" id="glsubheadtb">
+							
+								<thead class="thead-light">
+									<tr>
+										<th STYLE="text-align: center;"><a data-toggle="tooltip" class="editrec"
+											title="Click to add new Records"><i
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												class="fa fa-plus-circle" onclick="addRecord();"
+												aria-hidden="true" style="color: green;"></i></a></th>
+										<th class="second_left"><!-- <a href="#" data-toggle="tooltip"
+											title="Click to Search Record"><i class="fa fa-search"
+												onclick="searchRecord();" aria-hidden="true"></i></a> --></th>
+										<th>Gl Head</th>
+										<th Style="">Gl Sub Head Code</th>
+										<th>Gl Desc</th>
+										<th>Acct No / BACID </th>
+										<th>Currency</th>
+										<th>Asset Mapping </th>
+										<th>Liability Mapping </th>
+										<th>Net Profit/Loss Mapping </th>
+										<!-- <th>Assets</th>
+										<th>Liab</th>
+										<th>Assests Memo</th>
+										<th>Liab Memo</th>
+										<th>Available in MCBL</th>
+										<th>Net Flag</th>
+										<th>BLS0110</th>
+										<th>SUP0500</th>
+										<th>SUP0700</th>
+										<th>FIM0600</th> -->
+									</tr>
+								</thead>
+
+								<tbody>
+									<tr th:each="glsub : ${glsubhead}" class="glsubhead">
+										<td class="first_left" style="text-align: center;">
+	<a data-toggle="tooltip" class="editrec" title="Click to Edit this Record">
+		<i class="fas fa-edit"
+		   th:classappend="${session.PERMISSIONS == 'W'} ? 'addedit' : ''"
+		   th:attr="
+				data-gl_head=${glsub.glSubHeadMetaId?.gl_head ?: ''},
+				data-gl_sub_head_code=${glsub.glSubHeadMetaId?.gl_sub_head_code ?: ''},
+				data-gl_desc=${glsub.gl_desc ?: ''},
+				data-type=${glsub.type ?: ''},
+				data-schm_type=${glsub.glSubHeadMetaId?.schm_type ?: ''},
+				data-schm_code=${glsub.glSubHeadMetaId?.schm_code ?: ''},
+				data-assets=${glsub.assets ?: ''},
+				data-liabilities=${glsub.liabilities ?: ''},
+				data-assets_memo=${glsub.assets_memo ?: ''},
+				data-liab_memo=${glsub.liab_memo ?: ''},
+				data-available_in_mcbl=${glsub.available_in_mcbl ?: ''},
+				data-net_flg=${glsub.net_flg ?: ''},
+				data-bls0110=${glsub.bls0110 ?: ''},
+				data-sup0500=${glsub.sup0500 ?: ''},
+				data-sup0700=${glsub.sup0700 ?: ''},
+				data-fim0600=${glsub.fim0600 ?: ''}
+		   "
+		   onclick="editRecord(this)"
+		   style="color: blue;">
+		</i>
+	</a>
+</td>
+
+<td class="second_left" style="text-align: center;">
+	<a data-toggle="tooltip" class="editrec" title="Click to delete this Record">
+		<i class="fas fa-minus-circle text-danger"
+		   th:classappend="${session.PERMISSIONS == 'W'} ? 'addedit' : ''"
+		   th:attr="
+				data-gl_head=${glsub.glSubHeadMetaId?.gl_head ?: ''},
+				data-gl_sub_head_code=${glsub.glSubHeadMetaId?.gl_sub_head_code ?: ''},
+				data-gl_desc=${glsub.gl_desc ?: ''},
+				data-type=${glsub.type ?: ''},
+				data-schm_type=${glsub.glSubHeadMetaId?.schm_type ?: ''},
+				data-schm_code=${glsub.glSubHeadMetaId?.schm_code ?: ''},
+				data-assets=${glsub.assets ?: ''},
+				data-liabilities=${glsub.liabilities ?: ''},
+				data-assets_memo=${glsub.assets_memo ?: ''},
+				data-liab_memo=${glsub.liab_memo ?: ''},
+				data-available_in_mcbl=${glsub.available_in_mcbl ?: ''},
+				data-net_flg=${glsub.net_flg ?: ''},
+				data-bls0110=${glsub.bls0110 ?: ''},
+				data-sup0500=${glsub.sup0500 ?: ''},
+				data-sup0700=${glsub.sup0700 ?: ''},
+				data-fim0600=${glsub.fim0600 ?: ''}
+		   "
+		   onclick="deleteRecord(this)">
+		</i>
+	</a>
+</td>
+
+										<td th:text="${glsub.glSubHeadMetaId?.gl_head != null ? glsub.glSubHeadMetaId.gl_head : 'N/A'}">CHENNAI</td>
+										
+										<td th:text="${glsub.glSubHeadMetaId.gl_sub_head_code}">CHENNAI</td>
+										<td th:text="${glsub.gl_desc}">CHENNAI</td>
+										<td th:text="${glsub.type}">CHENNAI</td>
+										<td th:text="${glsub.glSubHeadMetaId.schm_type}">CHENNAI</td>
+										<td style="text-align:right;" th:text="${glsub.assets}">CHENNAI</td>
+										<td style="text-align:right;" th:text="${glsub.liabilities}">CHENNAI</td>
+										<td style="text-align:right;" th:text="${glsub.glSubHeadMetaId.schm_code}">CHENNAI</td>
+										
+										<!-- <td th:text="${glsub.assets_memo}">CHENNAI</td>
+										<td th:text="${glsub.liab_memo}">CHENNAI</td>
+										<td th:text="${glsub.available_in_mcbl}">CHENNAI</td>
+										<td th:text="${glsub.net_flg}">CHENNAI</td>
+										<td th:text="${glsub.bls0110}">CHENNAI</td>
+										<td th:text="${glsub.sup0500}">CHENNAI</td>
+										<td th:text="${glsub.sup0700}">CHENNAI</td>
+										<td th:text="${glsub.fim0600}">CHENNAI</td> -->
+									</tr>
+
+
+								</tbody>
+							</table>
+							
+							
+							<!--  -->
+							<table th:if="${searchmsg} != null"
+							class="table  table-bordered  table-hover table-sm"
+								style="margin-bottom: 0px; width: 2000px" id="glsubheadtb"
+							>
+								<thead class="thead-light">
+									<tr>
+										<th><a data-toggle="tooltip" class="editrec"
+											title="Click to add new Records"><i
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												class="fa fa-plus-circle" onclick="addRecord();"
+												aria-hidden="true"></i></a></th>
+										<th class="second_left"><!--<a href="#" data-toggle="tooltip"
+											title="Click to Search Record"> <i class="fa fa-search"
+												onclick="searchRecord();" aria-hidden="true"></i> --></a></th>
+										<th>Gl Head</th>
+										<th>Gl Sub Head Code</th>
+										<th>Gl Desc</th>
+										<th>Type</th>
+										<th>Scheme Type</th>
+										<th>Scheme Code</th>
+										<!-- <th>Assets</th>
+										<th>Liab</th>
+										<th>Assests Memo</th>
+										<th>Liab Memo</th>
+										<th>Available in MCBL</th>
+										<th>Net Flag</th>
+										<th>BLS0110</th>
+										<th>SUP0500</th>
+										<th>SUP0700</th>
+										<th>FIM0600</th> -->
+									</tr>
+								</thead>
+						<tbody>
+							<tr>
+								<td colspan="10">No Data Available</td>
+							</tr>
+						</tbody>
+					</table>
+							
+						</div>
+						<div class="card-footer text-center" style="background-color: #376275;">
+						<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+							onclick="home();">Home</button>
+						<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+							onclick="back();">Back</button>
+					</div>
+					</div>
+
+
+
+
+				</div>
+			</div>
+		</div>
+		<div class="float-right" th:if="${glsubhead.totalPages} gt 1">
+			<a href="#"><i class="fas fa-caret-left fa-2x"
+				th:onclick="|showdetails('prevpage',${glsubhead.number},${glsubhead.totalPages});|"></i></a>
+			<input type="text" id="pageno" style="width: 30px"
+				th:value="${glsubhead.number+1}"
+				th:onchange="|showdetails('givenpage',${glsubhead.number},${glsubhead.totalPages});|"></input>
+			of <font th:text="${glsubhead.totalPages}"></font> <a href="#"><i
+				class="fas fa-caret-right fa-2x"
+				th:onclick="|showdetails('nextpage',${glsubhead.number},${glsubhead.totalPages});|"></i></a>
+		</div>
+	</div>
+
+	<!-- -----------------------------------Search modal form----------------------------------------------------->
+	<div class="modal fade" id="search" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Search
+						Record</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:object=${singledetail} id="searchdtl" method="post">
+						<div class="form-group">
+
+							<div class="row">
+								<label class="col-sm-5" for=gl_head>Gl Head</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.gl_head}" id="gl_head" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5" for=gl_sub_head_code>Gl Sub Head
+									Code</label> <input class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.gl_sub_head_code}"
+									id="gl_sub_head_code" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5" for=schm_type>Scheme Type</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.schm_type}" id="schm_type" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5" for=schm_code>Scheme Code</label> <input 
+									class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.schm_code}" id="schm_code" required />
+							</div> 
+
+						</div>
+
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary"
+						onclick="submitSearchRecord();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Search modal form----------------------------------------------------->
+	<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+	<div class="modal fade" id="addedit" th:fragment="dataedit">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Add/Edit Records</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${singledetail} id="dataedit" method="post">
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-5">Gl Head</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.gl_head}" id="glHead" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Gl Sub Head Code</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.gl_sub_head_code}"
+									id="glSubHeadCode"  required/>
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Gl Desc</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{gl_desc}"
+									id="glDesc" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Account No</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{type}"
+									id="type" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Currency</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.schm_type}" id="schmType" required/>
+							</div>
+
+							
+							<div class="row">
+								<label class="col-sm-5">Assets</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{assets}"
+									id="assets" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Liabilities</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{liabilities}" id="liabilities" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Net Profit/Loss</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{glSubHeadMetaId.schm_code}" id="schmCode" required/>
+							</div>
+							
+							<div class="row">
+								<label class="col-sm-5">Credit Bal</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{assets_memo}" id="assetsMemo" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Debit Bal</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{liab_memo}" id="liabMemo" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Remarks</label> <input
+									class="form-control col-sm-5" type="text"
+									th:field="*{available_in_mcbl}" id="availableInMcbl" />
+							</div>
+
+							<!-- <div class="row">
+								<label class="col-sm-5">Net Flag</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{net_flg}"
+									id="netFlg" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">BLS0110</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{bls0110}"
+									id="bls0110" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">SUP0500</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{sup0500}"
+									id="sup0500" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">SUP0700</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{sup0700}"
+									id="sup0700" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">FIM0600</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{fim0600}"
+									id="fim0600" />
+							</div> -->
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitdataform();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details edit modal form----------------------------------------------------->
+
+
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+	<div class="modal fade" id="datadelete">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					Are you Sure want to delete?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitdataform();">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+
+
+
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary"
+						onclick="location.reload();" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+
+</body>
+</html>

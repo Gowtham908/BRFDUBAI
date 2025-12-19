@@ -1,0 +1,1215 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+<style>
+
+
+.btns {
+	float: right;
+	margin: 5px;
+}
+
+.col-sm-5 {
+	padding-bottom: 15px;
+}
+
+.list-body {
+	padding: 0px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.formline {
+	padding-bottom: 15px;
+}
+
+.btn-primary {
+	background-color: #d77410b8;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+#finusertb {
+	width: 460px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
+
+.container {
+    max-width: 1400px !important;
+}
+
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+
+	function getUserlist(mode, num, maxpage) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = 'UserProfile?formmode=list';
+
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		location.href = Callurl;
+	}
+
+	function finuser(a) {
+
+		$
+				.ajax({
+					type : 'get',
+					url : '/XBRL/Finuserdata?userid=' + a.id,
+
+					success : function(data) {
+
+						/*<![CDATA[*/
+
+						$('.finuserapply').html(data);
+
+						$(
+								"#expiryDate,#disableDate,#disableTilDate,#passExDate,#effectiveTill")
+								.datepicker({
+									changeMonth : true,
+									changeYear : true,
+									dateFormat : "dd-mm-yy"
+								});
+
+						/*]]>*/
+
+						$("#finusers").modal("hide");
+					}
+
+				})
+
+	}
+
+	function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+		window.history.back();
+	}
+
+	function fnClick(a) {
+		var userid = a.getAttribute("data-userid")
+		location.href = 'UserProfile?formmode=edit&userid=' + userid
+	}
+
+	function adduser(a) {
+		location.href = 'UserProfile?formmode=add';
+	}
+
+	function list() {
+		location.href = 'UserProfile?formmode=list';
+	}
+
+	function verify(a) {
+
+		var entryuser = a.getAttribute("data-entry_user");
+		var modifyuser = a.getAttribute("data-modify_user");
+
+		var loginuser = /*[[${session.USERID}]]*/null;
+
+		if ((modifyuser != null && modifyuser == loginuser)
+				|| (modifyuser == null && entryuser == loginuser)) {
+
+			$("#alertmsg").text("Same user cannot verify");
+
+			$('#alert').modal("toggle");
+
+		} else {
+
+			if ($("#userProfile").valid()) {
+
+				var userid = a.getAttribute("data-userid");
+				var url = './verifyUser';
+				$("#userProfile").attr('action', url);
+
+				var options = {
+					success : showResponse
+				// post-submit callback 
+				};
+
+				$('#userProfile').ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+
+			}
+
+		}
+
+	};
+
+	function passwordReset() {
+
+		var url = './passwordReset';
+		$("#userProfile").attr('action', url);
+
+		var options = {
+			success : showResponse
+		// post-submit callback 
+		};
+
+		$('#userProfile').ajaxSubmit(options);
+
+		function showResponse(responseText, statusText, xhr, $form) {
+
+			$("#alertmsg").text(responseText);
+
+			$('#alert').modal("toggle");
+
+		}
+		;
+	};
+
+	function roledesc() {
+
+		var roleid = $("#roleId").find(':selected').val();
+
+		if (roleid == 'ADM') {
+			$("#roleDesc").val("Admin");
+		} else if (roleid == 'ADT') {
+			$("#roleDesc").val("Audit");
+		} else if (roleid == 'GEN') {
+			$("#roleDesc").val("General User");
+		}
+		$(this).find(':selected').text();
+
+	}
+
+
+	/*]]>*/
+</script>
+<script>
+	function submitdata() {
+		var domainids = [];
+		$.each($("input[name='dom']:checked"), function() {
+			domainids.push($(this).val());
+		});
+		$("#getDomain").modal('hide');
+		$("#domainId").val(domainids.join(","));
+	}
+</script>
+<script th:inline="javascript">
+	$(document).ready(function() {
+
+		var formode = $("#formmode1").val();
+		if (formode == "view") {
+			$('input').attr('readonly', true);
+			$('select').attr('readonly', true);
+		}
+		var formode = $("#formmode1").val();
+		if (formmode != null) {
+			if (formmode == "view") {
+				$('#AlertParameter').datetimepicker({
+					Readonly : true
+				});
+			}
+		}
+	});
+
+	$(function() {
+
+		$("#usertable").DataTable({
+			"paging" : false,
+		});
+	});
+
+	$(function() {
+		var formode = $("#formmode1").val();
+		if (formmode != null) {
+			if (formmode == "view") {
+				$('#AlertParameter').datetimepicker({
+					Readonly : true
+				});
+			}
+		}
+
+		$("#start_date").datepicker({
+			maxDate : 0,
+			dateFormat : "dd-mm-yy",
+			onSelect : function(selected) {
+				var dt = $(this).datepicker('getDate');
+				dt.setDate(dt.getDate());
+				$("#end_date").datepicker("option", "minDate", dt);
+
+			}
+		});
+		$("#end_date").datepicker({
+			minDate : 0,
+			dateFormat : "dd-mm-yy",
+			onSelect : function(selected) {
+				var dt = new Date(selected);
+				dt.setDate(dt.getDate() - 1);
+				//$("#start_date").datepicker("option", "maxDate", dt);
+			}
+		});
+
+		$("#suspended_date").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			minDate : 0,
+			maxDate : 0,
+			dateFormat : "mm-dd-yy"
+		});
+		$("#activated_date").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			minDate : 0,
+			dateFormat : "mm-dd-yy"
+		});
+
+	});
+
+	$(function() {
+		$("#rule_date").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate : new Date(),
+			dateFormat : "dd-mm-yy"
+		});
+
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth() + 1; //January is 0!
+
+		var yyyy = today.getFullYear();
+		if (dd < 10) {
+			dd = '0' + dd;
+		}
+		if (mm < 10) {
+			mm = '0' + mm;
+		}
+		var today = dd + '-' + mm + '-' + yyyy;
+		document.getElementById('rule_date').value = today;
+
+	});
+
+	function getUserlist(mode, num, maxpage) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+
+		var Callurl = 'BankBranchMaster?formmode=list';
+
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		location.href = Callurl;
+	}
+
+	function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+		window.history.back();
+	}
+
+	function contentLoad(a) {
+		/* var options = {};
+
+		$("#menu:visible").hide("slide", options, 250, function() {
+			location.href = "/XBRL/" + a.id;
+		})  */
+
+		
+		location.href = "/XBRL/" + a.id;
+	}
+	/*]]>*/
+</script>
+
+<script>
+	/*<![CDATA[*/
+
+	var deleteval;
+	function rule_add(a) {
+
+		var formmode = a.getAttribute("frmode");
+
+		location.href = "./AMLRuleEngine2?formmode=" + formmode;
+
+	}
+
+	function edit_btn_submit(a) {
+
+		var rpt_ref_no = a.getAttribute("data-ref_no");
+
+		location.href = 'CustomReports?formmode=edit&rpt_ref_no=' + rpt_ref_no;
+	}
+	function list(a) {
+		location.href = './BankBranchMaster?formmode=list';
+	}
+	function verify_btn_submit(a) {
+
+		var rpt_ref_no = a.getAttribute("data-ref_no");
+
+		location.href = 'CustomReports?formmode=verify&rpt_ref_no='
+				+ rpt_ref_no;
+	}
+
+	function view_btn_submit(a) {
+		var rpt_ref_no = a.getAttribute("data-ref_no");
+
+		location.href = 'CustomReports?formmode=view&rpt_ref_no=' + rpt_ref_no;
+
+	}
+	function submitform(a) {
+
+		if ($("#BankDetails").valid()) {
+			var formmode = a.getAttribute("data-formmode");
+			var url = "./createRepParam?formmode=" + formmode;
+			//alert(url);
+
+			$("#BankDetails").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#BankDetails").ajaxSubmit(options);
+			function showResponse(responseText, statusText, xhr, $form) {
+				$("#alertmsg").text(responseText);
+				$('#alert').modal("toggle");
+
+			}
+			;
+		}
+	};
+
+	function adduser() {
+		$("#loadermodal").modal("toggle");
+
+		location.href = 'CustomReports?formmode=add';
+	}
+	function list() {
+		$("#loadermodal").modal("toggle");
+
+		location.href = 'CustomReports?formmode=list';
+	}
+	function verifyform(a) {
+
+		if ($("#BankDetails").valid()) {
+
+			var entry = $("#entry_user").val();
+
+			var modify = $("#modify_user").val();
+
+			var verify = $("#verify_user").val();
+
+			if (modify != null) {
+
+				if (modify != verify) {
+
+					var formmode = a.getAttribute("data-formmode");
+
+					var url = "./createRepParam?formmode=" + formmode;
+
+					$("#BankDetails").attr('action', url);
+
+					var options = {
+
+						success : showResponse
+
+					// post-submit callback 
+
+					};
+
+					$("#BankDetails").ajaxSubmit(options);
+
+					function showResponse(responseText, statusText, xhr, $form) {
+
+						$("#alertmsg").text(responseText);
+
+						$('#alert').modal("toggle");
+
+					}
+
+					;
+
+				} else {
+
+					$("#verifyboxmsg").text("Same User Cannot Verify!");
+
+					$('#verifybox').modal("toggle");
+
+				}
+
+			} else if (modify == null) {
+
+				if (entry != verify) {
+
+					var formmode = a.getAttribute("data-formmode");
+
+					var url = "./createRepParam?formmode=" + formmode;
+
+					$("#BankDetails").attr('action', url);
+
+					var options = {
+
+						success : showResponse
+
+					// post-submit callback 
+
+					};
+
+					$("#BankDetails").ajaxSubmit(options);
+
+					function showResponse(responseText, statusText, xhr, $form) {
+
+						$("#alertmsg").text(responseText);
+
+						$('#alert').modal("toggle");
+
+					}
+
+					;
+
+				} else {
+
+					$("#verifyboxmsg").text("Same User Cannot Verify!");
+
+					$('#verifybox').modal("toggle");
+
+				}
+
+			}
+
+		}
+
+	};
+
+	$(function() {
+
+		$("#entry_date,verify_date,modify_date").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate : new Date(),
+			dateFormat : "dd/mm/yyyy"
+
+		});
+
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth() + 1; //January is 0!
+		var yyyy = today.getFullYear();
+		if (dd < 10) {
+			dd = '0' + dd;
+		}
+
+		if (mm < 10) {
+			mm = '0' + mm;
+		}
+
+		var today = dd + '/' + mm + '/' + yyyy;
+		document.getElementById('entry_date').value = today;
+		document.getElementById('verify_date').value = today;
+		document.getElementById('modify_date').value = today;
+
+	});
+
+	/*]]>*/
+</script>
+</head>
+<title>XBRL</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('UserProfile')" id="ques"></i>
+	<!---------------------User List Starts------------------------------------------------------->
+	<div th:if="${formmode}=='list'" class="container content">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="card">
+					<div class="card-header">
+						<div class="float-left">
+							<h4 th:text="${menuname}"></h4>
+						</div>
+							<div class="btn-group nav-buttons float-right">
+
+
+									<button type="button" class="btn btn-xs btn-primary btns"
+										id="btnInq" onclick="adduser()" style="border-color: #66dbe0;">Add</button>
+									<button type="button" class="btn btn-xs btn-primary btns"
+										id="btnInq" onclick="list()" style="border-color: #66dbe0;">List</button>
+								</div>
+					</div>
+					<div class="card-body">
+						 <table class="table table-bordered  table-hover table-sm"
+								style="width: 100%" id="usertable">
+								<thead class="thead-light">
+
+									<tr>
+										<!-- <th></th> -->
+										<th>Ref No</th>
+										<th>Report Code</th>
+										<th>Report Name</th>
+										<th>Script Name</th>
+										<th>Execution Type</th>
+										<th>Input-1</th>
+										<th>Input-2</th>
+										<th>Input-3</th>
+										<th>File Name</th>
+										<th>Path</th>
+										<th>Select</th>
+
+
+
+									</tr>
+								</thead>
+								<tbody id="CustomerInq">
+									<tr th:if="${COUNT} == '0'">
+										<td colspan="9" style="text-align: center; color: red">No
+											Data Found</td>
+									</tr>
+									<tr th:each="custInq : ${repParameter}"
+										th:attr="data-cust_id=${custInq.rpt_ref_no}"
+										th:id="${custInq.rpt_ref_no}" class="userlist">
+
+
+
+										<td th:text="${custInq.rpt_ref_no}"></td>
+
+										<td th:text="${custInq.rpt_code}"></td>
+										<td th:text="${custInq.rpt_name}"></td>
+										<td th:text="${custInq.scr_name}"></td>
+										<td th:text="${custInq.exe_type}"></td>
+										<td th:text="${custInq.input_1}"></td>
+										<td th:text="${custInq.input_2}"></td>
+										<td th:text="${custInq.input_3}"></td>
+										<td th:text="${custInq.output_file_name}"></td>
+										<td th:text="${custInq.location}"></td>
+
+										<td style="width: 10px;">
+											<div class="dropdown">
+												<button class="btn btn-secondary dropdown-toggle"
+													type="button" id="dropdownMenuButton"
+													style="line-height: 0.7; font-size: 11px; color: #3a4550; background: #e3e3e4;"
+													data-toggle="dropdown" aria-haspopup="true"
+													aria-expanded="false">Action</button>
+												<div class="dropdown-menu"
+													aria-labelledby="dropdownMenuButton"
+													style="background-color: #e3e3e4; color: #3a4550;">
+													<a th:attr="data-ref_no=${custInq?.rpt_ref_no}"
+														class="dropdown-item" title="Inquiry"
+														style="cursor: pointer; height: 20px; color: #12161b; background: #e3e3e4; height: 16px; border-radius: .20rem; padding: 2px 10px; top: 10px;"
+														onclick="view_btn_submit(this)" id="view_btn">Inquiry
+													</a>
+													<div class="dropdown-divider"></div>
+													<a th:attr="data-ref_no=${custInq?.rpt_ref_no}"
+														class="dropdown-item" title="Modify"
+														style="cursor: pointer; height: 20px; color: #12161b; background: #e3e3e4; height: 16px; border-radius: .20rem; padding: 2px 10px; top: 10px;"
+														id="edit_value" onclick="edit_btn_submit(this)">Modify</a>
+
+													<div class="dropdown-divider"
+														th:if="${custInq.entity_flg}=='N'"></div>
+													<a th:if="${custInq.entity_flg}=='N'"
+														th:attr="data-ref_no=${custInq?.rpt_ref_no}"
+														class="dropdown-item" title="Verify"
+														style="cursor: pointer; height: 20px; color: #12161b; background: #e3e3e4; height: 16px; border-radius: .20rem; padding: 2px 10px; top: 10px;"
+														id="verify_value" onclick="verify_btn_submit(this)">Verify</a>
+
+													<!-- <button type="button"
+												class="btn btn-xs btn-primary btns  active"
+												onclick='alert_add(this)' th:attr="frmode=add">Add
+												Parameter</button> -->
+
+												</div>
+											</div>
+
+										</td>
+
+
+									</tr>
+								</tbody>
+							</table>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+				<div
+					th:if="${formmode}=='add' OR ${formmode}=='verify' OR ${formmode}=='edit' OR ${formmode}=='view'"
+					class="container content">
+					<div class="row">
+						<div class="col-sm-12 ">
+							<form action="#" th:object="${BankDetails}" method="POST"
+								autocomplete="off" id="BankDetails">
+								<div class="card">
+									<div class="card-header">
+										<div class="float-left">
+											<b th:text="${menuname}"></b>
+										</div>
+										<div class="btn-group nav-buttons float-right">
+
+											<button type="button" class="btn btn-xs btn-primary btns"
+												id="btnInq" onclick="list()" style="border-color: #66dbe0;">List</button>
+										</div>
+
+
+
+
+
+
+
+
+
+
+
+
+									</div>
+									<div class="card-body">
+										<input type="hidden" th:value="${formmode}" id="formmode1"
+											style="display: none;"> <input autocomplete="false"
+											name="hidden" type="text" style="display: none;">
+										<div class="form-group"
+											style="font-size: 11px; line-height: 0px;">
+											<div class="row formline">
+												<div class="col-sm-2">
+													<label for="srl_no">Ref No</label>
+												</div>
+
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="rpt_ref_no"
+														class="form-control form-control-sm" name="rpt_ref_no"
+														autocomplete="off" required>
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="rpt_ref_no"
+														th:value="${Parameter?.rpt_ref_no}"
+														class="form-control form-control-sm" name="rpt_ref_no"
+														autocomplete="off" readonly>
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="rpt_ref_no"
+														th:value="${Parameter?.rpt_ref_no}"
+														class="form-control form-control-sm" name="rpt_ref_no"
+														autocomplete="off" readonly>
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">Report Code</label>
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="rpt_code"
+														class="form-control form-control-sm" name="rpt_code"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="rpt_ref_no"
+														th:value="${Parameter?.rpt_code}"
+														class="form-control form-control-sm" name="rpt_code"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="rpt_code"
+														th:value="${Parameter?.rpt_code}"
+														class="form-control form-control-sm" name="rpt_code"
+														autocomplete="off" readonly>
+												</div>
+
+											</div>
+
+											<div class="row formline">
+												<div class="col-sm-2">
+													<label for="srl_no">Report Name</label>
+												</div>
+
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="rpt_name"
+														class="form-control form-control-sm" name="rpt_name"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="rpt_name"
+														th:value="${Parameter?.rpt_name}"
+														class="form-control form-control-sm" name="rpt_name"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="rpt_name"
+														th:value="${Parameter?.rpt_name}"
+														class="form-control form-control-sm" name="rpt_name"
+														autocomplete="off" readonly>
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">Script Name</label>
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="scr_name"
+														class="form-control form-control-sm" name="scr_name"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="scr_name"
+														th:value="${Parameter?.scr_name}"
+														class="form-control form-control-sm" name="scr_name"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="scr_name"
+														th:value="${Parameter?.scr_name}"
+														class="form-control form-control-sm" name="scr_name"
+														autocomplete="off" readonly>
+												</div>
+
+											</div>
+											<div class="row formline">
+												<div class="col-sm-2">
+													<label for="srl_no">Execution Type</label>
+												</div>
+
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="exe_type"
+														class="form-control form-control-sm" name="exe_type"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="exe_type"
+														th:value="${Parameter?.exe_type}"
+														class="form-control form-control-sm" name="exe_type"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="exe_type"
+														th:value="${Parameter?.exe_type}"
+														class="form-control form-control-sm" name="exe_type"
+														autocomplete="off" readonly>
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">File Name</label>
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="output_file_name"
+														class="form-control form-control-sm"
+														name="output_file_name" autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="output_file_name"
+														th:value="${Parameter?.output_file_name}"
+														class="form-control form-control-sm"
+														name="output_file_name" autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="output_file_name"
+														th:value="${Parameter?.output_file_name}"
+														class="form-control form-control-sm"
+														name="output_file_name" autocomplete="off" readonly>
+												</div>
+
+											</div>
+											<div class="row formline">
+												<div class="col-sm-2">
+													<label for="srl_no">Input-1</label>
+												</div>
+
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="input_1"
+														class="form-control form-control-sm" name="input_1"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="input_1"
+														th:value="${Parameter?.input_1}"
+														class="form-control form-control-sm" name="input_1"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="input_1"
+														th:value="${Parameter?.input_1}"
+														class="form-control form-control-sm" name="input_1"
+														autocomplete="off" readonly>
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">Input-2</label>
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="input_2"
+														class="form-control form-control-sm" name="input_2"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="input_2"
+														th:value="${Parameter?.input_2}"
+														class="form-control form-control-sm" name="input_2"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="input_2"
+														th:value="${Parameter?.input_2}"
+														class="form-control form-control-sm" name="input_2"
+														autocomplete="off" readonly>
+												</div>
+											</div>
+
+											<div class="row formline">
+												<div class="col-sm-2">
+													<label for="srl_no">Input-3</label>
+												</div>
+
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="input_3"
+														class="form-control form-control-sm" name="input_3"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="input_3"
+														th:value="${Parameter?.input_3}"
+														class="form-control form-control-sm" name="input_3"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="input_3"
+														th:value="${Parameter?.input_3}"
+														class="form-control form-control-sm" name="input_3"
+														autocomplete="off" readonly>
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">Input-4</label>
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="input_4"
+														class="form-control form-control-sm" name="input_4"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="input_4"
+														th:value="${Parameter?.input_4}"
+														class="form-control form-control-sm" name="input_4"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="input_4"
+														th:value="${Parameter?.input_4}"
+														class="form-control form-control-sm" name="input_4"
+														autocomplete="off" readonly>
+												</div>
+											</div>
+
+
+											<div class="row formline">
+												<div class="col-sm-2">
+													<label for="srl_no">Input-5</label>
+												</div>
+
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="rpt_code"
+														class="form-control form-control-sm" name="input_5"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="input_5"
+														th:value="${Parameter?.input_5}"
+														class="form-control form-control-sm" name="input_5"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="input_5"
+														th:value="${Parameter?.input_5}"
+														class="form-control form-control-sm" name="input_5"
+														autocomplete="off" readonly>
+												</div>
+												<div class="col-sm-1"></div>
+												<label class="col-sm-2">Path</label>
+												<div th:if="${formmode}=='add'" class="col-sm-3">
+													<input type="text" id="location"
+														class="form-control form-control-sm" name="location"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='edit'" class="col-sm-3">
+													<input type="text" id="location"
+														th:value="${Parameter?.location}"
+														class="form-control form-control-sm" name="location"
+														autocomplete="off">
+												</div>
+												<div th:if="${formmode}=='verify' OR ${formmode}=='view'"
+													class="col-sm-3">
+													<input type="text" id="location"
+														th:value="${Parameter?.location}"
+														class="form-control form-control-sm" name="location"
+														autocomplete="off" readonly>
+												</div>
+
+											</div>
+											<label></label>
+										</div>
+									</div>
+									<div class="card-footer text-center">
+
+
+
+										<button type="button" class="btn btn-xs btn-primary"
+											id="btnHome" onclick="home();">Home</button>
+										<button th:if="${formmode}=='add' " type="button"
+											class="btn btn-xs btn-primary" onclick="submitform(this);"
+											form="BankDetails" id="btnSubmit"
+											th:attr="data-formmode=${formmode}">Submit</button>
+										<button th:if="${formmode}=='edit' " type="button"
+											class="btn btn-xs btn-primary" onclick="submitform(this);"
+											form="BankDetails" id="btnSubmit"
+											th:attr="data-formmode=${formmode}">Submit</button>
+										<button th:if="${formmode}=='verify' " type="button"
+											class="btn btn-xs btn-primary" onclick="verifyform(this);"
+											form="BankDetails" id="btnSubmit"
+											th:attr="data-formmode=${formmode}">Verify</button>
+										<button type="button" class="btn btn-xs btn-primary"
+											id="btnBack" onclick="back();">Back</button>
+
+									</div>
+									<div class="container content"
+										th:if="${formmode}=='edit' OR ${formmode}=='verify' "
+										th:each="alert : ${BankandBranch}"
+										style="border: 1px solid #36404a; padding: 15px;">
+
+										<div class="row formline">
+
+
+											<label class="col-sm-2">Entry User</label>
+
+											<div class="col-sm-2">
+
+												<input type="text"
+													th:if="${formmode}=='edit' OR ${formmode}=='verify' "
+													th:value="${session.USERID}" id="entry_user"
+													name="entry_user" class="form-control form-control-sm"
+													autocomplete="off" readonly />
+
+											</div>
+
+											<label class="col-sm-2">Modify User</label>
+
+											<div class="col-sm-2">
+
+												<input type="text" th:if=" ${formmode}=='verify' "
+													th:value="${Parameter?.modify_user}" id="modify_user"
+													name="modify_user" class="form-control form-control-sm"
+													autocomplete="off" readonly /> <input type="text"
+													th:if="${formmode}=='edit' " th:value="${session.USERID}"
+													id="modify_user" name="modify_user"
+													class="form-control form-control-sm" autocomplete="off"
+													readonly />
+
+											</div>
+
+											<label class="col-sm-2">Verify User</label>
+
+											<div class="col-sm-2">
+
+												<input type="text" th:if="${formmode}=='edit'"
+													th:value="${Parameter?.verify_user}" id="verify_user"
+													name="verify_user" class="form-control form-control-sm"
+													autocomplete="off" readonly /> <input type="text"
+													th:if="${formmode}=='verify' " th:value="${session.USERID}"
+													id="verify_user" name="verify_user"
+													class="form-control form-control-sm" autocomplete="off"
+													readonly />
+
+											</div>
+
+										</div>
+
+
+
+										<div class="row formline">
+
+
+											<label class="col-sm-2">Entry Time</label>
+
+											<div class="col-sm-2">
+
+												<input type="text"
+													th:if="${formmode}=='edit' OR ${formmode}=='verify' "
+													th:value="${#dates.format(Parameter?.entry_time,'dd/MM/yyyy')}"
+													id="entry_date" name="entry_time"
+													class="form-control form-control-sm" autocomplete="off"
+													readonly />
+
+											</div>
+
+
+											<label class="col-sm-2">Modify Time</label>
+
+											<div class="col-sm-2">
+
+												<input type="text" th:if="${formmode}=='verify'"
+													th:value="${#dates.format(Parameter?.modify_time,'dd/MM/yyyy')}"
+													id="modify_date" name="modify_time"
+													class="form-control form-control-sm" autocomplete="off"
+													readonly /> <input type="text"
+													th:if="${formmode}=='edit' "
+													th:value="${#dates.format(Parameter?.modify_time,'dd/MM/yyyy')}"
+													id="modify_date" name="modify_time"
+													class="form-control form-control-sm" autocomplete="off"
+													readonly />
+
+
+											</div>
+
+
+
+
+											<label class="col-sm-2">Verify Time</label>
+
+											<div class="col-sm-2">
+
+												<input type="text" th:if=" ${formmode}=='edit' "
+													id="verify_time" name="verify_time"
+													class="form-control form-control-sm" autocomplete="off"
+													readonly /> <input type="text"
+													th:if="${formmode}=='verify'"
+													th:value="${#dates.format(Parameter?.verify_time,'dd/MM/yyyy')}"
+													id="verify_date" name="verify_time"
+													class="form-control form-control-sm" autocomplete="off"
+													readonly />
+
+
+											</div>
+
+
+											<label></label>
+
+										</div>
+
+
+
+
+
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</div>
+
+
+
+
+				</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" id="CustomReports"
+							 onclick="contentLoad(this)">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+</html>

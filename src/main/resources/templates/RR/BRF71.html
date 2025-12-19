@@ -1,0 +1,2408 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				//Callurl = Callurl+"&instancecode="+instancecode;
+				Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				//	Callurl = Callurl+"&instancecode="+instancecode;
+				Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+			function showsummary(mode = 'samepage', num = 0, maxpage = 0) {
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+
+		var Callurl = /*[[@{'/Reports/' + ${reportid} + '/Summary'(asondate=${asondate}, fromdate=${fromdate}, todate=${todate}, currency=${currency}, dtltype=${dtltype})}]]*/"";
+		Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+
+		switch (mode) {
+			case "nextpage":
+				n = n + 1;
+				if (n > max) return;
+				Callurl += "&page=" + n;
+				break;
+			case "prevpage":
+				n = n - 1;
+				if (n < 0) return;
+				Callurl += "&page=" + n;
+				break;
+			case "givenpage":
+				n = parseInt($("#pageno").val()) - 1;
+				if (n > max || n < 0) return;
+				Callurl += "&page=" + n;
+				break;
+			default:
+				// samepage or initial load
+				break;
+		}
+
+
+			$('#loader1').modal('show');
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function(data) {
+					$('#loader1').modal('hide');
+					$('#summaryContainer').html($(data).find('#summaryContainer').html());
+					$("#summarybtn").addClass("active");
+					// Hide loader
+					$('#loader1').modal('hide');
+					bindNavigationButtons();
+				},
+				error: function() {
+					// Hide loader on error too
+					$('#loader1').modal('hide');
+					alert("Failed to load summary.");
+				}
+			});
+		}
+
+	function bindNavigationButtons() {
+		$('#homebtn').off('click').on('click', function () {
+			home(this);
+		});
+
+		$('#btnBack').off('click').on('click', function () {
+			back(this);
+		});
+	}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home(a) {
+			var userid = a.getAttribute("data-loginUser");
+			var roleid = a.getAttribute("data-roleId");
+
+			if (roleid === "ADM" || roleid === "GEN") {
+				location.href = "/BRBS/quarterly1";
+			} else if (roleid === "IT") {
+				location.href = "/BRBS/itmodel";
+			}
+		}
+
+		function back(a) {
+			var reportcode = a.getAttribute("data-reportcode");
+			var todate = a.getAttribute("data-todate");
+			/* alert(reportcode);
+			alert(todate); */
+			location.href = "/BRBS/BRFValidations?rptcode=" + reportcode + "&todate=" + todate;
+		}
+
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+		function addRecord() {
+			$("#edit").hide();
+			if (permission == 'W') {
+				//var url1 = /*[[@{'/customeradd/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				//Callurl = Callurl+"&instancecode="+instancecode;
+				document.getElementById("dataedit").reset();
+
+				//make readonly false to unique fields
+				//Make readonly fields
+				$("#custid").attr("readonly", false);
+				$("#custname").attr("readonly", false);
+				$("#custtype").attr("readonly", false);
+				$("#custrating").attr("readonly", false);
+				$("#accnum").attr("readonly", false);
+				$("#tratype").attr("readonly", false);
+				$("#trasubtype").attr("readonly", false);
+				$("#tradate").attr("readonly", false);
+				$("#partialtraid").attr("readonly", false);
+				$("#partialtratype").attr("readonly", false);
+				$("#tracurr").attr("readonly", false);
+				$("#traamount").attr("readonly", false);
+				$("#tracat").attr("readonly", false);
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editRecord(a) {
+			$("#add").hide();
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-custrating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+				$("#addedit").modal("toggle");
+
+				//Make readonly fields
+				$("#tradate").attr("readonly", true);
+
+			}
+
+		};
+
+		function deleteRecord(a) {
+			$("#add").hide();
+			$("#edit").hide();
+
+			alert(a.getAttribute("data-custid"));
+			if (permission == 'W') {
+				var url3 = "/customerdelete?";
+				$("#dataedit").attr('action', url3);
+
+
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-cusating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+
+				$("#datadelete").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataform(a) {
+			$("#edit").hide();
+
+			var url4 = "./customeradd?";
+
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+
+		function submitdataformedit(a) {
+			//$("#add").hide();
+			var url = "./customeredit?";
+
+			$("#dataedit").attr('action', url);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+		function submitdataformdelete(a) {
+
+			var url4 = "./customerdelete?";
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+		/*]]>*/
+	</script>
+
+	<script>
+		function modify71() {
+			/* alert("Now Modify"); */
+			removeCommas(); // Assuming removeCommas is defined elsewhere
+			$('#cancelRecord').prop("disabled", false);
+			$(".showInput").removeAttr("readonly");
+			$(".showtext").removeAttr("readonly");
+			// $(".showInputBox").prop("readonly");
+			$("#modifybtn").show();
+			$("#btnBack_edit").show();
+			$("#backbtn").hide();
+		}
+
+		function CancelEdit(event) {
+			event.preventDefault();
+			$(".showInput").each(function () {
+				var value = $(this).val();
+				var formattedValue = numberWithCommas(value);
+				$(this).val(formattedValue);
+			});
+			$(".showInput").prop("readonly", true);
+			$('#cancelRecord').prop("disabled", true);
+			$("#modifybtn").hide();
+			$("#btnBack_edit").hide();
+			$("#backbtn").show();
+		}
+
+		function numberWithCommas(x) {
+			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
+		function removeCommas() {
+			$('.showInput').each(function () {
+				var inputValue = $(this).val();
+				var newValue = inputValue.replace(/,/g, '');
+				$(this).val(newValue);
+			});
+		}
+
+		function modifySub() {
+
+			$('input').each(function () {
+				var value = $(this).val();
+				if (value) {
+					$(this).val(value.replace(/,/g, '')); // Remove commas
+				}
+			});
+
+			var date = document.getElementById('R1_COL_date').value;
+			alert(date);
+
+			var r1_visa = document.getElementById('r1_visa').value;
+			var r1_mastercard = document.getElementById('r1_mastercard').value;
+			var r1_amex = document.getElementById('r1_amex').value;
+			var r1_jcb = document.getElementById('r1_jcb').value;
+			var r1_diners = document.getElementById('r1_diners').value;
+			var r1_unionpay = document.getElementById('r1_unionpay').value;
+
+			var r2_visa = document.getElementById('r2_visa').value;
+			var r2_mastercard = document.getElementById('r2_mastercard').value;
+			var r2_amex = document.getElementById('r2_amex').value;
+			var r2_jcb = document.getElementById('r2_jcb').value;
+			var r2_diners = document.getElementById('r2_diners').value;
+			var r2_unionpay = document.getElementById('r2_unionpay').value;
+
+			var r3_visa = document.getElementById('r3_visa').value;
+			var r3_mastercard = document.getElementById('r3_mastercard').value;
+			var r3_amex = document.getElementById('r3_amex').value;
+			var r3_jcb = document.getElementById('r3_jcb').value;
+			var r3_diners = document.getElementById('r3_diners').value;
+			var r3_unionpay = document.getElementById('r3_unionpay').value;
+
+			var r4_visa = document.getElementById('r4_visa').value;
+			var r4_mastercard = document.getElementById('r4_mastercard').value;
+			var r4_amex = document.getElementById('r4_amex').value;
+			var r4_jcb = document.getElementById('r4_jcb').value;
+			var r4_diners = document.getElementById('r4_diners').value;
+			var r4_unionpay = document.getElementById('r4_unionpay').value;
+
+			var r5_visa = document.getElementById('r5_visa').value;
+			var r5_mastercard = document.getElementById('r5_mastercard').value;
+			var r5_amex = document.getElementById('r5_amex').value;
+			var r5_jcb = document.getElementById('r5_jcb').value;
+			var r5_diners = document.getElementById('r5_diners').value;
+			var r5_unionpay = document.getElementById('r5_unionpay').value;
+
+			var r6_visa = document.getElementById('r6_visa').value;
+			var r6_mastercard = document.getElementById('r6_mastercard').value;
+			var r6_amex = document.getElementById('r6_amex').value;
+			var r6_jcb = document.getElementById('r6_jcb').value;
+			var r6_diners = document.getElementById('r6_diners').value;
+			var r6_unionpay = document.getElementById('r6_unionpay').value;
+
+			var r7_visa = document.getElementById('r7_visa').value;
+			var r7_mastercard = document.getElementById('r7_mastercard').value;
+			var r7_amex = document.getElementById('r7_amex').value;
+			var r7_jcb = document.getElementById('r7_jcb').value;
+			var r7_diners = document.getElementById('r7_diners').value;
+			var r7_unionpay = document.getElementById('r7_unionpay').value;
+
+			var r8_visa = document.getElementById('r8_visa').value;
+			var r8_mastercard = document.getElementById('r8_mastercard').value;
+			var r8_amex = document.getElementById('r8_amex').value;
+			var r8_jcb = document.getElementById('r8_jcb').value;
+			var r8_diners = document.getElementById('r8_diners').value;
+			var r8_unionpay = document.getElementById('r8_unionpay').value;
+
+			var r9_visa = document.getElementById('r9_visa').value;
+			var r9_mastercard = document.getElementById('r9_mastercard').value;
+			var r9_amex = document.getElementById('r9_amex').value;
+			var r9_jcb = document.getElementById('r9_jcb').value;
+			var r9_diners = document.getElementById('r9_diners').value;
+			var r9_unionpay = document.getElementById('r9_unionpay').value;
+
+			var r10_visa = document.getElementById('r10_visa').value;
+			var r10_mastercard = document.getElementById('r10_mastercard').value;
+			var r10_amex = document.getElementById('r10_amex').value;
+			var r10_jcb = document.getElementById('r10_jcb').value;
+			var r10_diners = document.getElementById('r10_diners').value;
+			var r10_unionpay = document.getElementById('r10_unionpay').value;
+
+			var r11_visa = document.getElementById('r11_visa').value;
+			var r11_mastercard = document.getElementById('r11_mastercard').value;
+			var r11_amex = document.getElementById('r11_amex').value;
+			var r11_jcb = document.getElementById('r11_jcb').value;
+			var r11_diners = document.getElementById('r11_diners').value;
+			var r11_unionpay = document.getElementById('r11_unionpay').value;
+
+			var r12_visa = document.getElementById('r12_visa').value;
+			var r12_mastercard = document.getElementById('r12_mastercard').value;
+			var r12_amex = document.getElementById('r12_amex').value;
+			var r12_jcb = document.getElementById('r12_jcb').value;
+			var r12_diners = document.getElementById('r12_diners').value;
+			var r12_unionpay = document.getElementById('r12_unionpay').value;
+
+			var r1_total = document.getElementById('r1_total').value;
+			var r2_total = document.getElementById('r2_total').value;
+			var r3_total = document.getElementById('r3_total').value;
+			var r4_total = document.getElementById('r4_total').value;
+			var r5_total = document.getElementById('r5_total').value;
+			var r6_total = document.getElementById('r6_total').value;
+			var r7_total = document.getElementById('r7_total').value;
+			var r8_total = document.getElementById('r8_total').value;
+			var r9_total = document.getElementById('r9_total').value;
+			var r10_total = document.getElementById('r10_total').value;
+			var r11_total = document.getElementById('r11_total').value;
+			var r12_total = document.getElementById('r12_total').value;
+			var r16_jcb = document.getElementById('r16_jcb').value;
+			var r17_jcb = document.getElementById('r17_jcb').value;
+
+
+			$.ajax({
+
+				url: './Modify71',
+				data: {
+					report_date: date, r2_visa: r2_visa, r2_mastercard: r2_mastercard, r2_amex: r2_amex, r2_jcb: r2_jcb, r2_diners: r2_diners, r2_unionpay: r2_unionpay,
+					r3_visa: r3_visa, r3_mastercard: r3_mastercard, r3_amex: r3_amex, r3_jcb: r3_jcb, r3_diners: r3_diners, r3_unionpay: r3_unionpay,
+					r5_visa: r5_visa, r5_mastercard: r5_mastercard, r5_amex: r5_amex, r5_jcb: r5_jcb, r5_diners: r5_diners, r5_unionpay: r5_unionpay,
+					r6_visa: r6_visa, r6_mastercard: r6_mastercard, r6_amex: r6_amex, r6_jcb: r6_jcb, r6_diners: r6_diners, r6_unionpay: r6_unionpay,
+					r8_visa: r8_visa, r8_mastercard: r8_mastercard, r8_amex: r8_amex, r8_jcb: r8_jcb, r8_diners: r8_diners, r8_unionpay: r8_unionpay,
+					r9_visa: r9_visa, r9_mastercard: r9_mastercard, r9_amex: r9_amex, r9_jcb: r9_jcb, r9_diners: r9_diners, r9_unionpay: r9_unionpay,
+					r1_visa: r1_visa, r1_mastercard: r1_mastercard, r1_amex: r1_amex, r1_jcb: r1_jcb, r1_diners: r1_diners, r1_unionpay: r1_unionpay,
+					r4_visa: r4_visa, r4_mastercard: r4_mastercard, r4_amex: r4_amex, r4_jcb: r4_jcb, r4_diners: r4_diners, r4_unionpay: r4_unionpay,
+					r7_visa: r7_visa, r7_mastercard: r7_mastercard, r7_amex: r7_amex, r7_jcb: r7_jcb, r7_diners: r7_diners, r7_unionpay: r7_unionpay,
+					r10_visa: r10_visa, r10_mastercard: r10_mastercard, r10_amex: r10_amex, r10_jcb: r10_jcb, r10_diners: r10_diners, r10_unionpay: r10_unionpay,
+					r12_visa: r12_visa, r12_mastercard: r12_mastercard, r12_amex: r12_amex, r12_jcb: r12_jcb, r12_diners: r12_diners, r12_unionpay: r12_unionpay,
+					r11_visa: r11_visa, r11_mastercard: r11_mastercard, r11_amex: r11_amex, r11_jcb: r11_jcb, r11_diners: r11_diners, r11_unionpay: r11_unionpay,
+					r1_total: r1_total, r2_total: r2_total, r3_total: r3_total, r4_total: r4_total, r5_total: r5_total, r6_total: r6_total, r7_total: r7_total,
+					r8_total: r8_total, r9_total: r9_total, r10_total: r10_total, r11_total: r11_total, r12_total: r12_total, r16_jcb: r16_jcb, r17_jcb: r17_jcb
+				},
+				type: 'POST',
+				success: function (responseText, statusText, xhr, $form) {
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+
+				}
+
+			});
+
+
+		}
+
+	</script>
+	<script>
+		function isNumberKey(evt) {
+			var charCode = (evt.which) ? evt.which : event.keyCode;
+			if (charCode > 31 && (charCode < 48 || charCode > 57))
+				return false;
+			return true;
+		}
+	</script>
+	<script>
+		function calculateTotal() {
+
+			//r2 total code
+			var visa = parseFloat(document.getElementById('r2_visa').value.replace(',', '')) || 0;
+			var mastercard = parseFloat(document.getElementById('r2_mastercard').value.replace(',', '')) || 0;
+			var amex = parseFloat(document.getElementById('r2_amex').value.replace(',', '')) || 0;
+			var jcb = parseFloat(document.getElementById('r2_jcb').value.replace(',', '')) || 0;
+			var diners = parseFloat(document.getElementById('r2_diners').value.replace(',', '')) || 0;
+			var unionpay = parseFloat(document.getElementById('r2_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total = visa + mastercard + amex + jcb + diners + unionpay;
+
+			// Update the r2_total input field with the calculated total
+			var r2_total_input = document.getElementById('r2_total');
+			r2_total_input.value = total.toLocaleString();
+
+			//r3 total
+			var visa3 = parseFloat(document.getElementById('r3_visa').value.replace(',', '')) || 0;
+			var mastercard3 = parseFloat(document.getElementById('r3_mastercard').value.replace(',', '')) || 0;
+			var amex3 = parseFloat(document.getElementById('r3_amex').value.replace(',', '')) || 0;
+			var jcb3 = parseFloat(document.getElementById('r3_jcb').value.replace(',', '')) || 0;
+			var diners3 = parseFloat(document.getElementById('r3_diners').value.replace(',', '')) || 0;
+			var unionpay3 = parseFloat(document.getElementById('r3_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total3 = visa3 + mastercard3 + amex3 + jcb3 + diners3 + unionpay3;
+
+			// Update the r3_total input field with the calculated total
+			var r3_total_input = document.getElementById('r3_total');
+			r3_total_input.value = total3.toLocaleString();
+
+			//r5 total
+			var visa5 = parseFloat(document.getElementById('r5_visa').value.replace(',', '')) || 0;
+			var mastercard5 = parseFloat(document.getElementById('r5_mastercard').value.replace(',', '')) || 0;
+			var amex5 = parseFloat(document.getElementById('r5_amex').value.replace(',', '')) || 0;
+			var jcb5 = parseFloat(document.getElementById('r5_jcb').value.replace(',', '')) || 0;
+			var diners5 = parseFloat(document.getElementById('r5_diners').value.replace(',', '')) || 0;
+			var unionpay5 = parseFloat(document.getElementById('r5_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total5 = visa5 + mastercard5 + amex5 + jcb5 + diners5 + unionpay5;
+
+			// Update the r5_total input field with the calculated total
+			var r5_total_input = document.getElementById('r5_total');
+			r5_total_input.value = total5.toLocaleString();
+
+			//r6 total
+			var visa6 = parseFloat(document.getElementById('r6_visa').value.replace(',', '')) || 0;
+			var mastercard6 = parseFloat(document.getElementById('r6_mastercard').value.replace(',', '')) || 0;
+			var amex6 = parseFloat(document.getElementById('r6_amex').value.replace(',', '')) || 0;
+			var jcb6 = parseFloat(document.getElementById('r6_jcb').value.replace(',', '')) || 0;
+			var diners6 = parseFloat(document.getElementById('r6_diners').value.replace(',', '')) || 0;
+			var unionpay6 = parseFloat(document.getElementById('r6_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total6 = visa6 + mastercard6 + amex6 + jcb6 + diners6 + unionpay6;
+
+			// Update the r6_total input field with the calculated total
+			var r6_total_input = document.getElementById('r6_total');
+			r6_total_input.value = total6.toLocaleString();
+
+			//r8 total
+			var visa8 = parseFloat(document.getElementById('r8_visa').value.replace(',', '')) || 0;
+			var mastercard8 = parseFloat(document.getElementById('r8_mastercard').value.replace(',', '')) || 0;
+			var amex8 = parseFloat(document.getElementById('r8_amex').value.replace(',', '')) || 0;
+			var jcb8 = parseFloat(document.getElementById('r8_jcb').value.replace(',', '')) || 0;
+			var diners8 = parseFloat(document.getElementById('r8_diners').value.replace(',', '')) || 0;
+			var unionpay8 = parseFloat(document.getElementById('r8_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total8 = visa8 + mastercard8 + amex8 + jcb8 + diners8 + unionpay8;
+
+			// Update the r8_total input field with the calculated total
+			var r8_total_input = document.getElementById('r8_total');
+			r8_total_input.value = total8.toLocaleString();
+
+			//r9 total
+			var visa9 = parseFloat(document.getElementById('r9_visa').value.replace(',', '')) || 0;
+			var mastercard9 = parseFloat(document.getElementById('r9_mastercard').value.replace(',', '')) || 0;
+			var amex9 = parseFloat(document.getElementById('r9_amex').value.replace(',', '')) || 0;
+			var jcb9 = parseFloat(document.getElementById('r9_jcb').value.replace(',', '')) || 0;
+			var diners9 = parseFloat(document.getElementById('r9_diners').value.replace(',', '')) || 0;
+			var unionpay9 = parseFloat(document.getElementById('r9_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total9 = visa9 + mastercard9 + amex9 + jcb9 + diners9 + unionpay9;
+
+			// Update the r9_total input field with the calculated total
+			var r9_total_input = document.getElementById('r9_total');
+			r9_total_input.value = total9.toLocaleString();
+
+			var vr1 = visa + visa3;
+			var visar1 = document.getElementById('r1_visa');
+			visar1.value = vr1.toLocaleString();
+
+			var vr4 = visa5 + visa6;
+			var visar4 = document.getElementById('r4_visa');
+			visar4.value = vr4.toLocaleString();
+
+			var vr7 = visa8 + visa9;
+			var visar7 = document.getElementById('r7_visa');
+			visar7.value = vr7.toLocaleString();
+
+			var mr1 = mastercard + mastercard3;
+			var masterr1 = document.getElementById('r1_mastercard');
+			masterr1.value = mr1.toLocaleString();
+
+			var mr4 = mastercard5 + mastercard6;
+			var masterr4 = document.getElementById('r4_mastercard');
+			masterr4.value = mr4.toLocaleString();
+
+			var mr7 = mastercard8 + mastercard9;
+			var masterr7 = document.getElementById('r7_mastercard');
+			masterr7.value = mr7.toLocaleString();
+
+			var ar1 = amex + amex3;
+			var amexr1 = document.getElementById('r1_amex');
+			amexr1.value = ar1.toLocaleString();
+
+			var ar4 = amex5 + amex6;
+			var amexr4 = document.getElementById('r4_amex');
+			amexr4.value = ar4.toLocaleString();
+
+			var ar7 = amex8 + amex9;
+			var amexr7 = document.getElementById('r7_amex');
+			amexr7.value = ar7.toLocaleString();
+
+			var jr1 = jcb + jcb3;
+			var jcbr1 = document.getElementById('r1_jcb');
+			jcbr1.value = jr1.toLocaleString();
+
+			var jr4 = jcb5 + jcb6;
+			var jcbr4 = document.getElementById('r4_jcb');
+			jcbr4.value = jr4.toLocaleString();
+
+			var jr7 = jcb8 + jcb9;
+			var jcbr7 = document.getElementById('r7_jcb');
+			jcbr7.value = jr7.toLocaleString();
+
+			var dr1 = diners + diners3;
+			var dinersr1 = document.getElementById('r1_diners');
+			dinersr1.value = dr1.toLocaleString();
+
+			var dr4 = diners5 + diners6;
+			var dinersr4 = document.getElementById('r4_diners');
+			dinersr4.value = dr4.toLocaleString();
+
+			var dr7 = diners8 + diners9;
+			var dinersr7 = document.getElementById('r7_diners');
+			dinersr7.value = dr7.toLocaleString();
+
+			var ur1 = unionpay + unionpay3;
+			var unionpayr1 = document.getElementById('r1_unionpay');
+			unionpayr1.value = ur1.toLocaleString();
+
+			var ur4 = unionpay5 + unionpay6;
+			var unionpayr4 = document.getElementById('r4_unionpay');
+			unionpayr4.value = ur4.toLocaleString();
+
+			var ur7 = unionpay8 + unionpay9;
+			var unionpayr7 = document.getElementById('r7_unionpay');
+			unionpayr7.value = ur7.toLocaleString();
+
+
+			//r1 total
+			var visa1 = parseFloat(document.getElementById('r1_visa').value.replace(',', '')) || 0;
+			var mastercard1 = parseFloat(document.getElementById('r1_mastercard').value.replace(',', '')) || 0;
+			var amex1 = parseFloat(document.getElementById('r1_amex').value.replace(',', '')) || 0;
+			var jcb1 = parseFloat(document.getElementById('r1_jcb').value.replace(',', '')) || 0;
+			var diners1 = parseFloat(document.getElementById('r1_diners').value.replace(',', '')) || 0;
+			var unionpay1 = parseFloat(document.getElementById('r1_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total1 = visa1 + mastercard1 + amex1 + jcb1 + diners1 + unionpay1;
+
+			// Update the r1_total input field with the calculated total
+			var r1_total_input = document.getElementById('r1_total');
+			r1_total_input.value = total1.toLocaleString();
+
+			//r4 total
+			var visa4 = parseFloat(document.getElementById('r4_visa').value.replace(',', '')) || 0;
+			var mastercard4 = parseFloat(document.getElementById('r4_mastercard').value.replace(',', '')) || 0;
+			var amex4 = parseFloat(document.getElementById('r4_amex').value.replace(',', '')) || 0;
+			var jcb4 = parseFloat(document.getElementById('r4_jcb').value.replace(',', '')) || 0;
+			var diners4 = parseFloat(document.getElementById('r4_diners').value.replace(',', '')) || 0;
+			var unionpay4 = parseFloat(document.getElementById('r4_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total4 = visa4 + mastercard4 + amex4 + jcb4 + diners4 + unionpay4;
+
+			// Update the r4_total input field with the calculated total
+			var r4_total_input = document.getElementById('r4_total');
+			r4_total_input.value = total4.toLocaleString();
+
+			//r7 total
+			var visa7 = parseFloat(document.getElementById('r7_visa').value.replace(',', '')) || 0;
+			var mastercard7 = parseFloat(document.getElementById('r7_mastercard').value.replace(',', '')) || 0;
+			var amex7 = parseFloat(document.getElementById('r7_amex').value.replace(',', '')) || 0;
+			var jcb7 = parseFloat(document.getElementById('r7_jcb').value.replace(',', '')) || 0;
+			var diners7 = parseFloat(document.getElementById('r7_diners').value.replace(',', '')) || 0;
+			var unionpay7 = parseFloat(document.getElementById('r7_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total7 = visa7 + mastercard7 + amex7 + jcb7 + diners7 + unionpay7;
+
+			// Update the r7_total input field with the calculated total
+			var r7_total_input = document.getElementById('r7_total');
+			r7_total_input.value = total7.toLocaleString();
+
+			//r11 total
+			var visa11 = parseFloat(document.getElementById('r11_visa').value.replace(',', '')) || 0;
+			var mastercard11 = parseFloat(document.getElementById('r11_mastercard').value.replace(',', '')) || 0;
+			var amex11 = parseFloat(document.getElementById('r11_amex').value.replace(',', '')) || 0;
+			var jcb11 = parseFloat(document.getElementById('r11_jcb').value.replace(',', '')) || 0;
+			var diners11 = parseFloat(document.getElementById('r11_diners').value.replace(',', '')) || 0;
+			var unionpay11 = parseFloat(document.getElementById('r11_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total11 = visa11 + mastercard11 + amex11 + jcb11 + diners11 + unionpay11;
+
+			// Update the r11_total input field with the calculated total
+			var r11_total_input = document.getElementById('r11_total');
+			r11_total_input.value = total11.toLocaleString();
+
+			//r10 total
+			var visa10 = parseFloat(document.getElementById('r10_visa').value.replace(',', '')) || 0;
+			var mastercard10 = parseFloat(document.getElementById('r10_mastercard').value.replace(',', '')) || 0;
+			var amex10 = parseFloat(document.getElementById('r10_amex').value.replace(',', '')) || 0;
+			var jcb10 = parseFloat(document.getElementById('r10_jcb').value.replace(',', '')) || 0;
+			var diners10 = parseFloat(document.getElementById('r10_diners').value.replace(',', '')) || 0;
+			var unionpay10 = parseFloat(document.getElementById('r10_unionpay').value.replace(',', '')) || 0;
+
+			// Calculate total
+			var total10 = visa10 + mastercard10 + amex10 + jcb10 + diners10 + unionpay10;
+
+			// Update the r10_total input field with the calculated total
+			var r10_total_input = document.getElementById('r10_total');
+			r10_total_input.value = total10.toLocaleString();
+
+			var visa12;
+			var mastercard12;
+			var amex12;
+			var jcb12;
+			var diners12;
+			var unionpay12;
+			var total12;
+
+			//r12 visa
+			if (visa10 === 0) {
+				visa12 = '0.0000';
+			} else {
+				visa12 = (visa11 / visa10).toFixed(4);
+			}
+
+			var r12_visa_input = document.getElementById('r12_visa');
+			r12_visa_input.value = visa12.toLocaleString();
+
+			//r12 mastercard
+			if (mastercard10 === 0) {
+				mastercard12 = '0.0000';
+			} else {
+				mastercard12 = (mastercard11 / mastercard10).toFixed(4);
+			}
+
+			var r12_master_input = document.getElementById('r12_mastercard');
+			r12_master_input.value = mastercard12.toLocaleString();
+
+			//r12 amex
+			if (amex10 === 0) {
+				amex12 = '0.0000';
+			} else {
+				amex12 = (amex11 / amex10).toFixed(4);
+			}
+
+			var r12_amex_input = document.getElementById('r12_amex');
+			r12_amex_input.value = amex12.toLocaleString();
+
+			//r12 jcb
+			if (jcb10 === 0) {
+				jcb12 = '0.0000';
+			} else {
+				jcb12 = (jcb11 / jcb10).toFixed(4);
+			}
+
+			var r12_jcb_input = document.getElementById('r12_jcb');
+			r12_jcb_input.value = jcb12.toLocaleString();
+
+			//r12 diners
+			if (diners10 === 0) {
+				diners12 = '0.0000';
+			} else {
+				diners12 = (diners11 / diners10).toFixed(4);
+			}
+
+			var r12_diners_input = document.getElementById('r12_diners');
+			r12_diners_input.value = diners12.toLocaleString();
+
+			//r12 unionpay
+			if (unionpay10 === 0) {
+				unionpay12 = '0.0000';
+			} else {
+				unionpay12 = (unionpay11 / unionpay10).toFixed(4);
+			}
+
+			var r12_unionpay_input = document.getElementById('r12_unionpay');
+			r12_unionpay_input.value = unionpay12.toLocaleString();
+
+			var totalof10 = parseFloat(document.getElementById('r10_total').value.replace(',', '')) || 0;
+			var totalof11 = parseFloat(document.getElementById('r11_total').value.replace(',', '')) || 0;
+
+			if (totalof10 === 0) {
+				total12 = '0.0000';
+			} else {
+				total12 = (totalof11 / totalof10).toFixed(4);
+			}
+
+			var r12_total_input = document.getElementById('r12_total');
+			r12_total_input.value = total12.toLocaleString();
+
+		}
+
+	</script>
+	<script>
+		function verifySubmit(a) {
+			var asondate = a.getAttribute("data-fromDate");
+			$.ajax({
+				url: './verifyBRF71Report?asondate=' + asondate,
+				type: 'POST',
+				success: function (responseText, statusText, xhr, $form) {
+					alert("Success");
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+				},
+				error: function (error) {
+					console.log("Error fetching data: ", error);
+				}
+			});
+		}
+
+		function verifyscreen(a) {
+			var modFlag = a.getAttribute("data-mofifyFlag");
+			var modUser = a.getAttribute("data-mofifyUser");
+			var loginUser = a.getAttribute("data-loginUser");
+			if (modFlag == "" || modFlag == "N") {
+				$('#alert_Modify').modal("toggle");
+			} else if (modUser == "" || loginUser == "" || modUser == loginUser) {
+				$('#alert_verify_mod').modal("toggle");
+			} else {
+				$("#verify_btn").show();
+				$('#cancelRecord').removeAttr("disabled");
+			}
+		}</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-71 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 10000);
+		}
+	</script>
+	<script>
+		function showAlertMessage() {
+			alert("Details page not available for Manual Report");
+		}
+	</script>
+
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: './' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-071-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+					} else if (filetype == "BRF") {
+						a.download = '011-BRF-071-A' + ".xls"; // assuming .pdf extension for PDF files
+					} else {
+						a.download = '011-BRF-071-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+
+					// Set the appropriate message based on the downloaded filetype
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-71 ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text('Downloaded BRF-71 Detail Excel' + ".xlsx");
+					} else if (filetype == "BRF") {
+						$('#customAlertBody').text('Downloaded BRF 71 ' + ".xls"); // assuming .pdf extension for PDF files
+					} else {
+						$('#customAlertBody').text('Downloaded BRF-71 ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+	</script>
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+<style>
+/* Your existing CSS - this is the correct approach */
+.scrollable-table-container {
+    /* This is the key: it creates the scroll context */
+    max-height: 620px; /* Or a suitable height like 80vh for responsive design */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+/* Your existing sticky header CSS, targeting the tr elements within the thead */
+.scrollable-table-container thead tr:nth-child(1) {
+    position: sticky;
+    top: 0;
+    background-color: #b3b6b9;
+    z-index: 4;
+}
+
+.scrollable-table-container thead tr:nth-child(2) {
+    position: sticky;
+    top: 36px; /* adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 3;
+}
+
+
+
+.scrollable-table-container thead tr:nth-child(3) {
+    position: sticky;
+    top: 72px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 2;
+}
+
+.scrollable-table-container thead tr:nth-child(4) {
+    position: sticky;
+    top: 108px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 1;
+}
+
+
+</style>
+<script>
+$(document).ready(function () {
+	 
+});
+function tablepagination(){
+    $('#loader1').modal("hide");
+    $('#detailtable').DataTable({
+        "pageLength": 100,
+        "lengthChange": false,
+        "ordering": false,
+        "info": true,
+        "autoWidth": false,
+        "searching": true,
+        "language": {
+            "emptyTable": "No records available"
+        },
+        // --- ADD THIS LINE BELOW ---
+        "dom": '<"top"f>rt<"bottom"ip>'
+        // --- ADD THIS LINE ABOVE ---
+    });
+}
+</script>
+<style>
+/* Styles for the search box (from previous answer) */
+.dataTables_filter {
+    float: right;
+    text-align: right; /* Ensures the label and input align well within the floated div */
+}
+
+/* Clearfix to prevent layout issues from floating elements above the table */
+.dataTables_wrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Styles for the info and pagination controls */
+.dataTables_info {
+    float: left; /* Keep info text on the left */
+}
+
+.dataTables_paginate {
+    float: right; /* Move pagination to the right */
+}
+
+/* Clearfix for the bottom section (info and pagination) */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    /* Ensures they are on the same line if space allows */
+    display: inline-block;
+}
+
+/* You might want a clear div if your bottom section also has other elements */
+.clear {
+    clear: both;
+}
+
+body {
+    overflow: hidden;
+}
+   
+.container {
+max-width: 1275px;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto ;
+    margin-left: auto;
+}
+
+</style>
+<title>BCDRS</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BRF 71 - BANKING AND MONETARY
+					STATISTICS- DETAILS OF PLASTIC MONEY </b>
+				<div class="btn-group nav-buttons">
+					<button style="color: black;" type="button" class="btn btn-primary" onclick="showAlertMessage();"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" id="summarybtn" onclick="showsummary('samepage');">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'" onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol" style="background-color: #dadddf;">
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="modify71(this);"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary text-white" onclick="verifyscreen(this);"
+						title="Click to EDIT Records"
+						th:attr="data-mofifyFlag = ${modify_flg == null ? '' : modify_flg},data-mofifyUser = ${modify_user == null ? '' : modify_user},data-loginUser = ${UserId}"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="verifyBtn">Verify</button>
+					<button type="button" class="btn btn-primary text-white" title="Click to EDIT Records"
+						id="cancelRecord" data-toggle="modal" data-target="#alert_cancel" disabled>Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive scrollable-table-container" style="border-right: 1px">
+							<form id="Modify71" name="ModifyForm" autocomplete="off">
+
+
+								<table style="width: 1500px;" class="sticky-header-table table  table-bordered  table-sm table-condensed">
+									<thead style="background-color: #b3b6b9">
+										<tr style="background-color: #b3b6b9; text-align: center;">
+											<th style="width: 20px;">S.No</th>
+											<th style="width: 200px;">Brand</th>
+											<th style="width: 30px;">Visa</th>
+											<th style="width: 30px;">MasterCard</th>
+											<th style="width: 30px;">Amex</th>
+											<th style="width: 30px;">JCB</th>
+											<th style="width: 30px;">Diners</th>
+											<th style="width: 30px;">Union Pay</th>
+											<th style="width: 30px;">TOTAL</th>
+										</tr>
+
+
+
+									</thead>
+									<tbody th:each="report: ${reportsummary}">
+										<tr style="background-color: #b3b6b9">
+											<td style="text-align: right;">1</td>
+											<td th:text="${report.r1_product}"></td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													th:value="${#dates.format(report.report_date, 'dd-MM-yyyy')}"
+													id="R1_COL_date" name="report_date" style="display: none"
+													readonly /><input class="showInput" type="text"
+													th:value="${#numbers.formatDecimal(report.r1_visa,0,'COMMA',0,'POINT')}"
+													id="r1_visa" name="r1_visa"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													th:value="${#numbers.formatDecimal(report.r1_mastercard,0,'COMMA',0,'POINT')}"
+													id="r1_mastercard" name="r1_mastercard"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													th:value="${#numbers.formatDecimal(report.r1_amex,0,'COMMA',0,'POINT')}"
+													id="r1_amex" name="r1_amex"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													th:value="${#numbers.formatDecimal(report.r1_jcb,0,'COMMA',0,'POINT')}"
+													id="r1_jcb" name="r1_jcb"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													th:value="${#numbers.formatDecimal(report.r1_diners,0,'COMMA',0,'POINT')}"
+													id="r1_diners" name="r1_diners"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													th:value="${#numbers.formatDecimal(report.r1_unionpay,0,'COMMA',0,'POINT')}"
+													id="r1_unionpay" name="r1_unionpay"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input
+													class="showInput" type="text"
+													th:value="${#numbers.formatDecimal(report.r1_total,0,'COMMA',0,'POINT')}"
+													id="r1_total" name="r1_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr>
+											<td style="text-align: right">1.1</td>
+											<td th:text="${report.r2_product}"></td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r2_visa,0,'COMMA',0,'POINT')}"
+													id="r2_visa" name="r2_visa"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r2_mastercard,0,'COMMA',0,'POINT')}"
+													id="r2_mastercard" name="r2_mastercard"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"   
+													th:value="${#numbers.formatDecimal(report.r2_amex,0,'COMMA',0,'POINT')}"
+													id="r2_amex" name="r2_amex"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"   
+													th:value="${#numbers.formatDecimal(report.r2_jcb,0,'COMMA',0,'POINT')}"
+													id="r2_jcb" name="r2_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r2_diners,0,'COMMA',0,'POINT')}"
+													id="r2_diners" name="r2_diners"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r2_unionpay,0,'COMMA',0,'POINT')}"
+													id="r2_unionpay" name="r2_unionpay"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input class=""
+													type="text"
+													th:value="${#numbers.formatDecimal(report.r2_total,0,'COMMA',0,'POINT')}"
+													id="r2_total" name="r2_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr>
+											<td style="text-align: right">1.2</td>
+											<td th:text="${report.r3_product}"></td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r3_visa,0,'COMMA',0,'POINT')}"
+													id="r3_visa" name="r3_visa"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r3_mastercard,0,'COMMA',0,'POINT')}"
+													id="r3_mastercard" name="r3_mastercard"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r3_amex,0,'COMMA',0,'POINT')}"
+													id="r3_amex" name="r3_amex"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r3_jcb,0,'COMMA',0,'POINT')}"
+													id="r3_jcb" name="r3_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r3_diners,0,'COMMA',0,'POINT')}"
+													id="r3_diners" name="r3_diners"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r3_unionpay,0,'COMMA',0,'POINT')}"
+													id="r3_unionpay" name="r3_unionpay"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<th style="text-align: right; background-color: #b3b6b9"  ><input class=""
+													type="text"  
+													th:value="${#numbers.formatDecimal(report.r3_total,0,'COMMA',0,'POINT')}"
+													id="r3_total" name="r3_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<td style="text-align: right">2</td>
+											<td th:text="${report.r4_product}"></td>
+											<td style="text-align: right"   ><input class="" type="text"
+													th:value="${#numbers.formatDecimal(report.r4_visa,0,'COMMA',0,'POINT')}"
+													id="r4_visa" name="r4_visa"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="" type="text"  
+													th:value="${#numbers.formatDecimal(report.r4_mastercard,0,'COMMA',0,'POINT')}"
+													id="r4_mastercard" name="r4_mastercard"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="" type="text"  
+													th:value="${#numbers.formatDecimal(report.r4_amex,0,'COMMA',0,'POINT')}"
+													id="r4_amex" name="r4_amex"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"   ><input class="" type="text"
+													th:value="${#numbers.formatDecimal(report.r4_jcb,0,'COMMA',0,'POINT')}"
+													id="r4_jcb" name="r4_jcb"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"   ><input class="" type="text"
+													th:value="${#numbers.formatDecimal(report.r4_diners,0,'COMMA',0,'POINT')}"
+													id="r4_diners" name="r4_diners"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="" type="text"  
+													th:value="${#numbers.formatDecimal(report.r4_unionpay,0,'COMMA',0,'POINT')}"
+													id="r4_unionpay" name="r4_unionpay"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input class=""
+													type="text"
+													th:value="${#numbers.formatDecimal(report.r4_total,0,'COMMA',0,'POINT')}"
+													id="r4_total" name="r4_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr>
+											<td style="text-align: right">2.1</td>
+											<td th:text="${report.r5_product}"></td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r5_visa,0,'COMMA',0,'POINT')}"
+													id="r5_visa" name="r5_visa"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r5_mastercard,0,'COMMA',0,'POINT')}"
+													id="r5_mastercard" name="r5_mastercard"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r5_amex,0,'COMMA',0,'POINT')}"
+													id="r5_amex" name="r5_amex"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r5_jcb,0,'COMMA',0,'POINT')}"
+													id="r5_jcb" name="r5_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r5_diners,0,'COMMA',0,'POINT')}"
+													id="r5_diners" name="r5_diners"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r5_unionpay,0,'COMMA',0,'POINT')}"
+													id="r5_unionpay" name="r5_unionpay"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<th style="text-align: right; background-color: #b3b6b9"  ><input class=""
+													type="text"  
+													th:value="${#numbers.formatDecimal(report.r5_total,0,'COMMA',0,'POINT')}"
+													id="r5_total" name="r5_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr>
+											<td style="text-align: right">2.2</td>
+											<td th:text="${report.r6_product}"></td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r6_visa,0,'COMMA',0,'POINT')}"
+													id="r6_visa" name="r6_visa"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r6_mastercard,0,'COMMA',0,'POINT')}"
+													id="r6_mastercard" name="r6_mastercard"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r6_amex,0,'COMMA',0,'POINT')}"
+													id="r6_amex" name="r6_amex"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r6_jcb,0,'COMMA',0,'POINT')}"
+													id="r6_jcb" name="r6_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r6_diners,0,'COMMA',0,'POINT')}"
+													id="r6_diners" name="r6_diners"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r6_unionpay,0,'COMMA',0,'POINT')}"
+													id="r6_unionpay" name="r6_unionpay"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input class=""
+													type="text"  
+													th:value="${#numbers.formatDecimal(report.r6_total,0,'COMMA',0,'POINT')}"
+													id="r6_total" name="r6_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<td style="text-align: right">3</td>
+											<td th:text="${report.r7_product}"></td>
+											<td style="text-align: right"   ><input class="" type="text"
+													th:value="${#numbers.formatDecimal(report.r7_visa,0,'COMMA',0,'POINT')}"
+													id="r7_visa" name="r7_visa"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"   ><input class="" type="text"  
+													th:value="${#numbers.formatDecimal(report.r7_mastercard,0,'COMMA',0,'POINT')}"
+													id="r7_mastercard" name="r7_mastercard"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="" type="text"     
+													th:value="${#numbers.formatDecimal(report.r7_amex,0,'COMMA',0,'POINT')}"
+													id="r7_amex" name="r7_amex"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="" type="text"   
+													th:value="${#numbers.formatDecimal(report.r7_jcb,0,'COMMA',0,'POINT')}"
+													id="r7_jcb" name="r7_jcb"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="" type="text"   
+													th:value="${#numbers.formatDecimal(report.r7_diners,0,'COMMA',0,'POINT')}"
+													id="r7_diners" name="r7_diners"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="" type="text"   
+													th:value="${#numbers.formatDecimal(report.r7_unionpay,0,'COMMA',0,'POINT')}"
+													id="r7_unionpay" name="r7_unionpay"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<th style="text-align: right; background-color: #b3b6b9"  ><input class=""
+													type="text"  
+													th:value="${#numbers.formatDecimal(report.r7_total,0,'COMMA',0,'POINT')}"
+													id="r7_total" name="r7_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr>
+											<td style="text-align: right">3.1</td>
+											<td th:text="${report.r8_product}"></td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r8_visa,0,'COMMA',0,'POINT')}"
+													id="r8_visa" name="r8_visa"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"   
+													th:value="${#numbers.formatDecimal(report.r8_mastercard,0,'COMMA',0,'POINT')}"
+													id="r8_mastercard" name="r8_mastercard"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r8_amex,0,'COMMA',0,'POINT')}"
+													id="r8_amex" name="r8_amex"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r8_jcb,0,'COMMA',0,'POINT')}"
+													id="r8_jcb" name="r8_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r8_diners,0,'COMMA',0,'POINT')}"
+													id="r8_diners" name="r8_diners"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r8_unionpay,0,'COMMA',0,'POINT')}"
+													id="r8_unionpay" name="r8_unionpay"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input class=""
+													type="text"
+													th:value="${#numbers.formatDecimal(report.r8_total,0,'COMMA',0,'POINT')}"
+													id="r8_total" name="r8_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr>
+											<td style="text-align: right">3.2</td>
+											<td th:text="${report.r9_product}"></td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r9_visa,0,'COMMA',0,'POINT')}"
+													id="r9_visa" name="r9_visa"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r9_mastercard,0,'COMMA',0,'POINT')}"
+													id="r9_mastercard" name="r9_mastercard"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r9_amex,0,'COMMA',0,'POINT')}"
+													id="r9_amex" name="r9_amex"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"   
+													th:value="${#numbers.formatDecimal(report.r9_jcb,0,'COMMA',0,'POINT')}"
+													id="r9_jcb" name="r9_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r9_diners,0,'COMMA',0,'POINT')}"
+													id="r9_diners" name="r9_diners"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"   
+													th:value="${#numbers.formatDecimal(report.r9_unionpay,0,'COMMA',0,'POINT')}"
+													id="r9_unionpay" name="r9_unionpay"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input class=""
+													type="text"
+													th:value="${#numbers.formatDecimal(report.r9_total,0,'COMMA',0,'POINT')}"
+													id="r9_total" name="r9_total"
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<td style="text-align: right">4</td>
+											<th th:text="${report.r10_product}"></th>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r10_visa,0,'COMMA',0,'POINT')}"
+													id="r10_visa" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r10_mastercard,0,'COMMA',0,'POINT')}"
+													id="r10_mastercard" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r10_amex,0,'COMMA',0,'POINT')}"
+													id="r10_amex" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r10_jcb,0,'COMMA',0,'POINT')}"
+													id="r10_jcb" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r10_diners,0,'COMMA',0,'POINT')}"
+													id="r10_diners" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													oninput="calculateTotal()"   
+													th:value="${#numbers.formatDecimal(report.r10_unionpay,0,'COMMA',0,'POINT')}"
+													id="r10_unionpay" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<th style="text-align: right; background-color: #b3b6b9"  ><input class=""
+													type="text"  
+													th:value="${#numbers.formatDecimal(report.r10_total,0,'COMMA',0,'POINT')}"
+													id="r10_total" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr>
+											<td style="text-align: right; background-color: #b3b6b9">4.1</td>
+											<th style="background-color: #b3b6b9" th:text="${report.r11_product}"></th>
+											<td style="text-align: right"   ><input class="showInput" type="text"  
+													th:value="${#numbers.formatDecimal(report.r11_visa,0,'COMMA',0,'POINT')}"
+													id="r11_visa" name="" onkeypress="return isNumberKey(event)"
+													oninput="calculateTotal()"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r11_mastercard,0,'COMMA',0,'POINT')}"
+													id="r11_mastercard" name=""
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"  
+													th:value="${#numbers.formatDecimal(report.r11_amex,0,'COMMA',0,'POINT')}"
+													id="r11_amex" name=""
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													   
+													th:value="${#numbers.formatDecimal(report.r11_jcb,0,'COMMA',0,'POINT')}"
+													id="r11_jcb" name=""
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"  ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													   
+													th:value="${#numbers.formatDecimal(report.r11_diners,0,'COMMA',0,'POINT')}"
+													id="r11_diners" name=""
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<td style="text-align: right"   ><input class="showInput" type="text"
+													onkeypress="return isNumberKey(event)" oninput="calculateTotal()"
+													th:value="${#numbers.formatDecimal(report.r11_unionpay,0,'COMMA',0,'POINT')}"
+													id="r11_unionpay" name=""
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input
+													class="showInput" type="text"  
+													th:value="${#numbers.formatDecimal(report.r11_total,0,'COMMA',0,'POINT')}"
+													id="r11_total" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<th style="text-align: right">4.2</th>
+											<th th:text="${report.r12_product}"></th>
+											<td style="text-align: right"><input class="" type="text"    
+													th:value="${#numbers.formatDecimal(report.r12_visa,1,'COMMA',4,'POINT')}"
+													id="r12_visa" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<th style="text-align: right"   ><input class="" type="text"  
+													th:value="${#numbers.formatDecimal(report.r12_mastercard,1,'COMMA',4,'POINT')}"
+													id="r12_mastercard" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+											<td style="text-align: right"  ><input class="" type="text"   
+													th:value="${#numbers.formatDecimal(report.r12_amex,1,'COMMA',4,'POINT')}"
+													id="r12_amex" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<th style="text-align: right"  ><input class="" type="text"
+													th:value="${#numbers.formatDecimal(report.r12_jcb,1,'COMMA',4,'POINT')}"
+													id="r12_jcb" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+											<td style="text-align: right"  ><input class="" type="text"  
+													th:value="${#numbers.formatDecimal(report.r12_diners,1,'COMMA',4,'POINT')}"
+													id="r12_diners" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></td>
+											<th style="text-align: right"   ><input class="" type="text"  
+													th:value="${#numbers.formatDecimal(report.r12_unionpay,1,'COMMA',4,'POINT')}"
+													id="r12_unionpay" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+											<th style="text-align: right; background-color: #b3b6b9"   ><input
+													class="showInput" type="text"  
+													th:value="${#numbers.formatDecimal(report.r12_total,1,'COMMA',4,'POINT')}"
+													id="r12_total" name=""
+													style="border: none; background-color: #b3b6b9; text-align: right; width: 80px;"
+													readonly /></th>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<td></td>
+											<th>Notes</th>
+											<td colspan="7">Banks have to report the actual number
+												on an cumulative basis</td>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<td></td>
+											<th></th>
+											<td colspan="4">The report should be based upon the
+												number of cards activated, not the number issued.</td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<td style="text-align: right">5</td>
+											<th>EMV info</th>
+											<td colspan="6"></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td>5.1</td>
+											<td colspan="4">ATM and Backend Systems compliant: Yes
+												or No</td>
+											<td style="text-align: right;"><input class="showtext" type="text"
+													th:value="${report.r16_jcb}" id="r16_jcb" name="r16_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+
+											<td style="background-color: #b3b6b9"></td>
+											<td style="background-color: #b3b6b9"></td>
+											<td style="background-color: #b3b6b9"></td>
+										</tr>
+										<tr>
+											<td>5.2</td>
+											<td colspan="4">Expected date for ATM & backend systems
+												being fully EMV compliant:</td>
+											<td style="text-align: right;"><input class="showtext" type="text"
+													th:value="${report.r17_jcb}" id="r17_jcb" name="r17_jcb"
+													style="border: none; text-align: right; width: 80px;" readonly />
+											</td>
+
+											<td style="background-color: #b3b6b9"></td>
+											<td style="background-color: #b3b6b9"></td>
+											<td style="background-color: #b3b6b9"></td>
+										</tr>
+										<tr style="background-color: #b3b6b9">
+											<td></td>
+											<th style="text-align: center">FORM NO: BSD/BRF 71-CARDS
+												DEC14</th>
+											<td colspan="7"></td>
+										</tr>
+
+
+									</tbody>
+
+								</table>
+							</form>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276;">
+							<div class="d-flex justify-content-center">
+								<button type="button" class="btn btn-primary text-white" onclick="home(this);"
+									title="Click to EDIT Records"
+									th:attr="data-loginUser=${UserId}, data-roleId=${RoleId}" id="homebtn">Home</button>
+								<button type="button" class="btn btn-xs btn-primary sm-2" id="modifybtn"
+									onclick="modifySub();" style="display: none;">Submit</button>
+								<button type="button" class="btn btn-xs btn-primary" id="btnBack_edit"
+									style="display: none;" onclick="CancelEdit(event)">Back</button>
+								<button type="button" class="btn btn-xs btn-primary" id="verify_btn"
+									style="display: none;" th:attr="data-fromDate =${asondate}"
+									onclick="verifySubmit(this);">Verify</button>
+								<button type="button" class="btn btn-primary text-white" onclick="back(this);"
+									title="Click to EDIT Records"
+									th:attr="data-reportcode=${reportid}, data-todate=${todate}"
+									id="backbtn">Back</button>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!-- ---------------------------- Report Details section starts it will shown only if Details button clicked----------------------- -->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT NAME1</th>
+								<th>REPORT LABEL1</th>
+								<th>REPORT ADDL CRITERIA1</th>
+								<th>REPORT DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center; font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCR BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  readonly />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME 1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE 1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA 1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form--------------------------------------------------- -->
+				<!-- ---------------------------- Report Details pagination - shown if paginated ------------------------------------------------ -->
+				<div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+							th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px" th:value="${reportdetails.number+1}"
+						th:onkeypress=" return |showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+							class="fas fa-caret-right fa-2x"
+							th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+<a href="#"><i class="fas fa-caret-left fa-2x"
+                        th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+<input type="text" id="pageno" style="width: 30px"
+                        th:value="${reportdetails.number+1}"
+                        th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+                    of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+                        class="fas fa-caret-right fa-2x"
+                        th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_cancel">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Do you want to cancel the process?</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Yes</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_Modify">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Modified records can be verified.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_verify_mod">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Same user can not verify.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+</body>
+<script>
+	$(function () {
+
+		$("#tradate").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			maxDate: new Date(),
+			dateFormat: "dd-mm-yyyy"
+		});
+
+	});
+
+
+</script>
+<script>
+	$(document).ready(function () {
+		$('input.showtext[type="text"]').on('input', function () {
+			var inputValue = $(this).val();
+			var sanitizedValue = inputValue.replace(/[^a-zA-Z]/g, ''); // Allow only alphabets
+
+
+			if (inputValue !== sanitizedValue) {
+				$(this).val(sanitizedValue);
+			}
+		});
+
+		$(".showtext").each(function () {
+			$(this).attr("originalValue", $(this).val());
+		});
+	});
+</script>
+
+
+
+
+
+
+
+
+</html>

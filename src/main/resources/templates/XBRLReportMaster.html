@@ -1,0 +1,174 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	$(function() {
+
+		$("#reports").DataTable({
+			
+			"info" : false,
+			"lengthChange" : false,
+			"columns" : [
+				
+				{"title":"Report Id"},
+				{"title":"Report Name"},
+				{"title":"Frequency"},
+				{"title":"Taxonomy Version"},
+				{"title":"Taxonomy Version Date"},
+				{"title":"Enabled",
+				 "orderable": false},
+				{"title":"Domain"},
+			]
+			
+		});
+
+		
+	})
+
+	function updateValidity(a) {
+
+
+		var reportid = a.getAttribute("value");
+		var valid;
+		if ($(a).is(":checked")) {
+
+			valid = "Y";
+
+		} else {
+
+			valid = "N";
+		}
+		;
+
+		var url = "./updateValidity?reportid=" + reportid + "&valid=" + valid
+		$.ajax({
+			type : 'post',
+			url : url,
+			success : function(data) {
+
+				alert(data);
+			}
+		});
+
+	}
+
+	/*]]>*/
+</script>
+<style>
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+} 
+.dataTables_wrapper .dataTables_filter input {
+    margin-left: -0.5em;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+.headderbutton {
+    background-color: #007bff !important;
+    color: white !important;
+    width: 70px;
+    margin-right: 3px; /* adds gap between buttons */
+}
+</style>
+</head>
+<title>BBRF</title>
+<script>
+function goHome() {
+		// Redirect to the home page (adjust the URL as needed)
+		window.location.href = '/BRBS/Dashboard'; // Replace with your actual home page URL
+	}
+	function goBack() {
+		window.history.back();
+	}
+</script>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="card" style="width: 1435px; margin-left: -31px;">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4>REPORTS MASTER</h4>
+						</div>
+					</div>
+					
+						<table class="table table-striped table-bordered table-hover "  
+							id="reports" >
+							
+							 <thead class="thead-light" style="background-color:#e9ecf0">
+								<tr>
+									<th STYLE="text-align:left;">Report Id</th>
+									<th STYLE="text-align:left;">Report Name</th>
+									<th STYLE="text-align:left;">Frequency</th>
+									<th STYLE="text-align:left;">Taxonomy Version</th>
+									<th>Taxonomy Version Date</th>
+									<th>Enabled</th>
+									<th>Domain</th>
+								</tr>
+							</thead> 
+							<tbody>
+								<tr th:each="report : ${reportList}">
+									<td th:text="${report.reportid}"></td>
+									<td th:text="${report.report_name}"></td>
+									<td th:text="${report.report_frequency}"></td>
+									<td th:text="${report.xbrl_taxonomy_version}"></td>
+									<td th:text="${report.taxonomy_version_date}"></td>
+									<td><input type="checkbox" th:name="${report.reportid}"
+										th:value="${report.reportid}" th:id="${report.reportid}"
+										th:onchange="updateValidity(this)"
+										th:attr="checked = ${report.report_validity=='Y'} ? true : false ">
+									</td>
+									<td th:text="${report.domain_id}"></td>
+								</tr>
+							</tbody>
+						</table>
+				
+						
+					<div class="card-footer text-center" style="background-color: #376275;">
+	<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="goHome();">Home</button>
+	<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="goBack();">Back</button>
+</div>
+ <!-- Close card-footer -->
+
+				</div> <!-- Close card-body -->
+			</div> <!-- Close card -->
+		</div> <!-- Close col -->
+	</div> <!-- Close row -->													
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+
+</head>
+<title></title>
+<style>
+tbody {
+	display: block;
+}
+
+thead, tbody tr {
+	display: table;
+	width: 100%;
+	table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+.card-body {
+	padding: 0px;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	$(function() {
+
+		onload();
+
+	});
+	
+	
+	function onload(){
+		
+		$("#submitDownload").on("click", function() {
+			$("#filedownload").modal('hide');
+			
+			
+			var fun = $('#function :selected').val();
+
+			var Callurl = /*[[@{'/repCodeMain/Download'}]]*/null;
+				Callurl = Callurl+"?function="+fun;
+			location.href=Callurl;
+
+			/* $("#downloadform").attr('action', Callurl);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#downloadform").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#loader").hide();
+
+			};
+ */
+			/* 	$.ajax({
+			        url:Callurl ,
+			        method: 'GET',
+			        xhrFields: {
+			            responseType: 'blob'
+			        },
+			        success: function (data) {
+			        	alert("Inside success");
+			            var a = document.createElement('a');
+			            var url = window.URL.createObjectURL(data);
+			            a.href = url;
+			            a.download = 'myfile.pdf';
+			            document.body.append(a);
+			            a.click();
+			            a.remove();
+			            window.URL.revokeObjectURL(url);
+			            $("#loader").hide();
+			        }
+			    }); */
+			
+		});
+		
+		
+		
+		//To show the file download dialog
+		$("#btnDownload").on("click", function() {
+
+			$("#filedownload").modal("toggle");
+
+		});
+
+		
+		//To show the file upload dialog
+		$("#btnUpload").on("click", function() {
+
+			$("#fileupload").modal("toggle");
+
+			$(".custom-file-label").html("Choose File");
+
+		});
+
+		//To change the fileuplod label when file is selected.
+		$(".custom-file-input").on(
+				"change",
+				function() {
+
+					var fileName = $(this).val().split("\\").pop();
+					$(this).siblings(".custom-file-label").addClass("selected")
+							.html(fileName);
+
+				});
+		
+	}
+
+	function validateExten(b) {
+		var name = document.getElementById(b.id);
+
+		var ext = b.value.match(/\.(.+)$/)[1].toLowerCase();
+
+		switch (ext) {
+		case 'xlsx':
+		case 'xls':
+			break;
+		default:
+			$("#alertmsg2").text("Only xlsx, xls files allowed");
+			$('#alert2').modal("toggle");
+			b.value = '';
+		}
+
+	}
+
+	function submitdataform() {
+
+		$('#uploadForm').attr("action", "repCodeMain/Upload");
+
+		var options = {
+			beforeSubmit : validate,
+			success : showResponse
+		};
+
+		$('#uploadForm').ajaxSubmit(options);
+
+		function validate(formData, jqForm, options) {
+
+			for (var i = 0; i < formData.length; i++) {
+				if (!formData[i].value) {
+					continue;
+				} else {
+					return true;
+				}
+			}
+			$("#alertmsg2").text("Please Choose  File");
+			$('#alert2').modal("toggle");
+			return false;
+		}
+
+		function showResponse(responseText, statusText, xhr, $form) {
+
+			$("#alertmsg2").text(responseText);
+			$('#alert2').modal("toggle");
+
+		}
+
+	}
+
+	function showdetails(mode, num, maxpage, instancecode) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = /*[[@{'/ReportCodeMaintain'(dtltype=page)}]]*/null;
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				onload();
+
+				/*]]>*/
+
+			}
+		});
+	}
+
+	function searchRecord() {
+
+		$("#acctNums").val("");
+
+		$("#search").modal("toggle");
+	}
+
+	function submitSearchRecord() {
+
+		var Callurl = /*[[@{'/ReportCodeMaintain'(dtltype=search)}]]*/null;
+
+		var acctNum = $("#acctNums").val();
+
+		Callurl = Callurl + "&acctnum=" + acctNum;
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$(".modal").modal("hide");
+				$(".modal-backdrop").remove();
+				onload();
+
+				/*]]>*/
+
+			}
+		});
+	}
+
+	/*]]>*/
+</script>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content" th:fragment="repcodeconfig">
+		<div class="row">
+			<div class="col-sm-12">
+			<form id="downloadform">
+				<div class="card">
+					<div class="card-header">
+						<div class="float-left">
+							<h4>Report Code Maintenance</h4>
+						</div>
+						<div class="btn-group nav-buttons float-right">
+							<button type="button" class="btn btn-xs btn-primary btns"
+								id="btnDownload">Download</button>
+							<button type="button" class="btn btn-xs btn-primary btns"
+								id="btnUpload">Upload</button>
+						</div>
+					</div>
+					<div class="card-body table-responsive list-body">
+						<table class="table  table-bordered  table-hover table-sm "
+							style="margin-bottom: 0px">
+							<thead class="thead-light">
+								<tr>
+									<th style="text-align: center;"><a href="#"
+										data-toggle="tooltip" title="Click to Search Record"><i
+											class="fa fa-search" onclick="searchRecord();"
+											aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;Customer Id</th>
+									<th style="text-align: center;">Account No</th>
+									<th style="text-align: center;">Scheme Type</th>
+									<th style="text-align: center;">Scheme Code</th>
+									<th style="text-align: center;">Gl SubHead Code</th>
+									<th style="text-align: center;">Mapping Status</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="report : ${repcodelist.content}" class="repCodes"
+									th:onclick="">
+									<td th:text="${report.cust_id}">CHENNAI</td>
+									<td th:text="${report.acct_no}">123</td>
+									<td th:text="${report.sch_type}">456</td>
+									<td th:text="${report.sch_code}">123</td>
+									<td th:text="${report.glsl_code}">456</td>
+									<td th:text="${report.mapped}==null? 'UnMapped' : 'Mapped'"
+										th:attr="style=${report.mapped==null}? 'color:red' : 'color:green' ">456</td>
+								</tr>
+							</tbody>
+						</table>
+						<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+						<div class="float-right" th:if="${repcodelist.totalPages} gt 1">
+							<a href="#"><i class="fas fa-caret-left fa-2x"
+								th:onclick="|showdetails('prevpage',${repcodelist.number},${repcodelist.totalPages},${instancecode});|"></i></a>
+							<input type="text" id="pageno" style="width: 30px"
+								th:value="${repcodelist.number+1}"
+								th:onchange="|showdetails('givenpage',${repcodelist.number},${repcodelist.totalPages},${instancecode});|"></input>
+							of <font th:text="${repcodelist.totalPages}"></font> <a href="#"><i
+								class="fas fa-caret-right fa-2x"
+								th:onclick="|showdetails('nextpage',${repcodelist.number},${repcodelist.totalPages},${instancecode});|"></i></a>
+						</div>
+						<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+					</div>
+
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- -----------------------------------Search modal form----------------------------------------------------->
+	<div class="modal fade" id="search" th:fragment="search">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Search Records</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form id="searchdtl" method="post">
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-4" for="acctNum">Account Number</label> <input
+									class="form-control col-sm-5" type="text" id="acctNums"
+									required />
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitSearchRecord();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Search modal form----------------------------------------------------->
+	<!--------------------------------------------File Upload Modal Starts----------------------------------------------------------->
+	<div class="modal fade" id="fileupload">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Upload data</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body form-group" style="text-align: center">
+					<form method="post" enctype="multipart/form-data" id=uploadForm>
+
+						<div class="input-group">
+							<div class="row custom-file">
+								<input type="file" class="col-sm-6 custom-file-input" id="file"
+									style="padding: 10px" name="file"
+									onchange="validateExten(this);"
+									aria-describedby="inputGroupFileAddon01"> <label
+									class="custom-file-label" for="inputGroupFile01">Choose
+									file</label>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type='button' class='btn btn-xs btn-primary filepage'
+						onclick='submitdataform()' form='uploadForm'>Upload</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------File Upload Modal Ends----------------------------------------------------------->
+	<!--------------------------------------------File Download Modal Starts----------------------------------------------------------->
+	<div class="modal fade" id="filedownload">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Download Data</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body">
+
+					<form method="post" enctype="multipart/form-data" id="downloadForm">
+						<div class="form-group">
+							<div class="row" style="margin-left: 10px; margin-top: 10px;">
+
+								<select name="function" id="function"
+									class="col-sm-6 form-control" required>
+									<option value="Select">Select</option>
+									<option value="mapped">Mapped</option>
+									<option value="unmapped">UnMapped</option>
+									<option value="all">All</option>
+								</select>
+
+							</div>
+						</div>
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<button type='button' class='btn btn-xs btn-primary filepage'
+						id="submitDownload" form='downloadForm'>Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------File Download Modal Ends----------------------------------------------------------->
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert2">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg2"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+</body>
+</html>

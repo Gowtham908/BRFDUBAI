@@ -1,0 +1,2438 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: GOWTHAM.
+CREATED ON	: 09-01-2024.
+PURPOSE		: DEVELOPMENT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	var subreportid = /*[[${subreportid}]]*/null;
+
+	var secid = /*[[${secid}]]*/null;
+
+	var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+	var dtltype = /*[[${dtltype}]]*/null;
+
+	$(function() {
+
+		//to make the summary button active on load
+		$("#summarybtn").addClass("active");
+
+	});
+
+	//When report type change: set subreportid and secid and show summary.
+	function changeReptype() {
+
+		subreportid = $("#reporttype").find(':selected').val();
+
+		secid = "1";
+
+		showsummary();
+
+	};
+
+	/*to show details page - 3 parameters
+		mode - valid values are : nextpage, prevpage, givenpage, firstpage
+		num - page number to show to the user
+		maxpage - maximum number of pages avaialble in the data
+	 */
+	function showdetails(mode, num, maxpage) {
+		var filter = $("#filters").val();
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		if (filter != null) {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		} else {
+
+			var filter = null;
+
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//	Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		}
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+
+			}
+		})
+	}
+
+	//to fetch summary from the database - called from the summary button
+	function showsummary(mode, num, maxpage) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+		Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$("#summarybtn").addClass("active");
+
+				/*]]>*/
+			}
+		})
+	}
+
+	function sectionChange(a) {
+
+		secid = a;
+
+		showsummary();
+
+	};
+
+	function home() {
+		location.href = "/BRBS/BRFArchival";
+
+	}
+	function back() {
+		window.history.back();
+	}
+	function back1() {
+		  var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			
+			$.ajax({
+				type : 'get',
+				url : Callurl,
+				success : function(data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+	/*]]>*/
+</script>
+
+<style>
+.nav-buttons {
+	float: right;
+}
+
+.reptitle {
+	float: left;
+}
+
+.reptitle>p {
+	margin-top: 0px;
+}
+
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+	min-width: 1500px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not(:disabled ):not(.disabled).active, .btn-primary:not(:disabled ):not(.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.first_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 0;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.second_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 30px;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.third_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 60px;
+	width: 150px;
+	margin-top: -2px;
+}
+
+.inner {
+	overflow-x: scroll;
+	overflow-y: visible;
+	/* margin-left: 60px; */
+}
+
+.table-bordered thead td, .table-bordered thead th {
+	border-bottom-width: 0px;
+}
+
+.table-bordered {
+	border: 0px;
+}
+
+.addedit {
+	color: #007bff;
+}
+
+.addedit:hover {
+	color: #0056b3;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var currlist = /*[[${currlist}]]*/null;
+	function editsum(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#addedit").modal("toggle");
+
+		}
+	};
+
+	function editsubmitform() {
+
+		var reportdate = $("#report_date").val();
+		//	alert(reportdate);
+
+		if ($("#dataedit").valid()) {
+
+			var url = "./T1Edit?";
+
+			$("#dataedit").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataedit").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		}
+	};
+	function verifyscreen(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#verify").modal("toggle");
+
+		}
+	};
+	function verifysubmitform(a) {
+
+		if ($("#dataverify").valid()) {
+			var entry = $("#ENTRY_USER").val();
+			var modify = $("#MODIFY_USER").val();
+			var verify = $("#VERIFY_USER").val();
+
+			//var formmode = a.getAttribute("data-formmode");
+			var url = "./T1Verify?";
+
+			$("#dataverify").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataverify").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		} else {
+			$("#alertmsg").text("Same User Cannot Verify!");
+			$('#alert').modal("toggle");
+
+		}
+
+	};
+	function refreshPage() {
+		window.location.reload();
+	}
+
+function resident(a){	
+		
+		var filter = a.id;
+		var cellValue = a.textContent || a.innerText;
+		if(cellValue != '0'){
+		//alert("rwo"+cellValue)
+		alert(filter);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+		Callurl = Callurl+"&filter="+filter;	
+		$.ajax({		
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+                 $('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+			}
+		})
+		}else{
+			alert("No Records available for this selected Criteria")
+		}
+
+	}
+
+
+</script>
+
+<script type="text/javascript">
+function editRecord(a) {
+
+	if (permission == 'W') {
+
+		var url2 = "./customeredit?";
+		$("#dataedit").attr('action', url2);
+		//Assign selected values to the model box fields
+		$("#cust_id").val(a.getAttribute("data-cust_id"));
+		$("#foracid").val(a.getAttribute("data-foracid"));
+		$("#acct_name").val(a.getAttribute("data-acct_name"));
+		$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));		
+		$("#report_name_1").val(a.getAttribute("data-report_name_1"));	
+		$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+     	$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1")); 
+		$("#report_date").val(a.getAttribute("data-report_date"));
+		
+		$("#addedit").modal("toggle");
+
+	}
+
+};
+
+function submitdataformedit() {
+	    var foracid = document.getElementById('foracid').value;	    
+	    var report_label_1 = document.getElementById('report_label_1').value;  
+	    var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+	    var report_name_1 = document.getElementById('report_name_1').value;
+	    var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+    $.ajax({
+        url: './CustomerDetailEditBrf105',
+        type: 'POST',
+        data: {
+        	foracid: foracid,
+        	report_label_1: report_label_1,
+        	act_balance_amt_lc: act_balance_amt_lc,
+        	report_name_1: report_name_1,
+        	report_addl_criteria_1: report_addl_criteria_1
+        },
+        success: function (data) {
+            // Handle the response data as needed
+            alert(data);
+
+            // Reload the page
+            location.reload();
+        },
+        error: function (error) {
+            // Handle any errors that occur during the AJAX request
+            console.error("Error: " + JSON.stringify(error));
+        }
+    });
+}
+	
+	
+ </script>
+
+<script>
+function downloadexcel(button) {
+	var reportid = button.getAttribute('data-reportid');
+	var asondate = button.getAttribute('data-asondate');
+	var fromdate = button.getAttribute('data-fromdate');
+	var todate = button.getAttribute('data-todate');
+	var currency = button.getAttribute('data-currency');
+	var subreportid = button.getAttribute('data-subreportid');
+	var secid = button.getAttribute('data-secid');
+	var dtltype = button.getAttribute('data-dtltype');
+	var filetype = button.getAttribute('data-filetype');
+	
+	console.log(filetype);
+
+	$('#downloadProcessingModal').modal('show');
+
+	$.ajax({
+		url: '/BRBS/Reports/' + reportid + '/Download',
+		data : {
+			asondate : asondate,
+			fromdate : fromdate,
+			todate : todate,
+			currency : currency,
+			subreportid : subreportid,
+			secid : secid,
+			dtltype : dtltype,
+			filetype : filetype
+		},
+		type : 'POST',
+		xhrFields : {
+			responseType : 'blob'
+		},
+		success : function(data) {
+			$('#downloadProcessingModal').modal('hide');
+			var blob = new Blob([ data ], {
+				type : 'application/octet-stream'
+			});
+			var url = window.URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			a.href = url;
+			if (filetype == "excel" || filetype == "detailexcel") {
+                a.download = '011-BRF-105-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+            } else {
+                a.download = '011-BRF-105-A' + ".pdf"; // assuming .pdf extension for PDF files
+            }
+            
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            // Set the appropriate message based on the downloaded filetype
+            if (filetype == "excel") {
+                $('#customAlertBody').text('Downloaded BRF-105 ' + ".xlsx");
+            } else if (filetype == "detailexcel") {
+                $('#customAlertBody').text('Downloaded BRF-105 Detail Excel' + ".xlsx");
+            } else {
+                $('#customAlertBody').text('Downloaded BRF-105 ' + ".pdf");
+            }
+            $('#customAlertModal').modal('show');
+		}
+	});
+}
+</script>
+<title>XBRL</title>
+</head>
+<body>
+
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;">BRF 105- BANKING AND MONETARY STATISTICS - REAL ESTATE EXPOSURE</b>
+				<!--  -->
+					<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary"
+						onclick="showdetails('firstpage','1','0');" id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary"
+						onclick="showsummary();" id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button  type="button"
+							class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+														<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary"
+									th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'"
+									onclick="downloadexcel(this)">Pdf</a>
+								</li>
+								<li
+									th:if="${displaymode} == 'summary' or ${displaymode} == null">
+									<a class="text-primary"
+									th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'"
+									onclick="downloadexcel(this)">Excel</a>
+								</li>
+							<li th:if="${displaymode}=='detail'"><a
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'"
+									onclick="downloadexcel(this)"
+								>Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
+						role="dialog" aria-labelledby="downloadProcessingModalLabel"
+						aria-hidden="true">
+						<div
+							class="modal-dialog modal-dialog-centered d-flex align-items-center"
+							role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1"
+						role="dialog" aria-labelledby="customAlertModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary"
+						onclick="editsum(this);" style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'"
+						onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive"
+							style="border-right: 1px solid #dee2e6">
+							<table style="width: 2500px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead style="background-color:#b3b6b9">
+								
+								
+									
+								<tr style="text-align:center">
+									
+										<th rowspan="3" colspan="2" width = "400">Amount in AED'000	 </th>
+										<th rowspan="2" colspan="2">  Consolidated Exposures </th>
+									    <th colspan="4" > UAE Nationals & Their Entities  </th>
+									    <th colspan="4" >  Non-UAE Nationals & Their Entities   </th>
+									    <th colspan="4" >  Consolidated Real Estate Exposure with Respect to Location of the Real Estate Property   </th>
+									    <th rowspan="2"  colspan="4" >Asset Quality of Consolidated Exposures </th>
+										</tr>
+										<tr style="text-align:center">
+										<th colspan="2" >Resident</th>
+										<th colspan="2" >Non_Resident</th>
+										<th colspan="2" >Resident</th>
+										<th colspan="2" >Non_Resident</th>
+										<th colspan="2" >Inside UAE</th>
+										<th colspan="2" >Outside UAE</th>
+									</tr>
+									<tr style="text-align:center">
+								<th>  Total Exposures¹ </th>
+								<th>  CRWA of Exposures² </th>
+								<th>  Exposures¹ </th>
+					        	<th>  CRWA of Exposures² </th>
+					        	<th>  Exposures¹ </th>
+					        	<th>  CRWA of Exposures² </th>
+					        	<th>  Exposures¹ </th>
+					        	<th>  CRWA of Exposures² </th>
+					        	<th>  Exposures¹ </th>
+					        	<th>  CRWA of Exposures² </th>
+					        	<th>  Exposures¹ </th>
+					        	<th>  CRWA of Exposures² </th>
+					        	<th>  Exposures¹ </th>
+					        	<th>  CRWA of Exposures² </th>
+					        	<th> Non-performing Exposures³ </th>
+					        	<th> Specific Provision </th>
+					        	<th> Interest in Suspense </th>
+					        	<th> Defaulted Exposures⁴</th>
+									</tr>
+</thead>
+								
+								<tbody th:each="report: ${reportsummary}">
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R1_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R1_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R1_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R1_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R1_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R2_S_NO}"></th>
+	     <th style="text-align:left" th:text="${report.R2_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R2_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R2_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R2_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								
+								<tr style="text-align:right">
+								<td  th:text="${report.R3_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R3_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal( report.R3_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW103" th:text="${#numbers.formatDecimal (report.R3_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R4_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R4_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104"th:text="${#numbers.formatDecimal (report.R4_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal( report.R4_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW104" th:text="${#numbers.formatDecimal (report.R4_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R5_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R5_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal( report.R5_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW105" th:text="${#numbers.formatDecimal (report.R5_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R6_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R6_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R6_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R6_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R6_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R7_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R7_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal( report.R7_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW107" th:text="${#numbers.formatDecimal (report.R7_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R8_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R8_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal( report.R8_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW108" th:text="${#numbers.formatDecimal (report.R8_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R9_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R9_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal( report.R9_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW109" th:text="${#numbers.formatDecimal (report.R9_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R10_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R10_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R10_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R10_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R10_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+		<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R11_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R11_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R11_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R11_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R11_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R12_S_NO}"></td>
+	    <td onclick="resident(this)"  id="ROW112" style="text-align:left" th:text="${report.R12_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW112"  th:text="${#numbers.formatDecimal( report.R12_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal( report.R12_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW112" th:text="${#numbers.formatDecimal (report.R12_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R13_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R13_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW113"  th:text="${#numbers.formatDecimal( report.R13_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal( report.R13_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW113" th:text="${#numbers.formatDecimal (report.R13_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R14_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R14_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW114"  th:text="${#numbers.formatDecimal( report.R14_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal( report.R14_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW114" th:text="${#numbers.formatDecimal (report.R14_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R15_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R15_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW115"  th:text="${#numbers.formatDecimal( report.R15_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal( report.R15_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW115" th:text="${#numbers.formatDecimal (report.R15_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R16_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R16_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW116"  th:text="${#numbers.formatDecimal( report.R16_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal( report.R16_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW116" th:text="${#numbers.formatDecimal (report.R16_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R17_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R17_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW117"  th:text="${#numbers.formatDecimal( report.R17_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal( report.R17_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW117" th:text="${#numbers.formatDecimal (report.R17_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R18_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R18_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW118"  th:text="${#numbers.formatDecimal( report.R18_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal( report.R18_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW118" th:text="${#numbers.formatDecimal (report.R18_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R19_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R19_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW119"  th:text="${#numbers.formatDecimal( report.R19_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal( report.R19_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW119" th:text="${#numbers.formatDecimal (report.R19_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R20_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R20_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW120"  th:text="${#numbers.formatDecimal( report.R20_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal( report.R20_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW120" th:text="${#numbers.formatDecimal (report.R20_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+										<tr style="text-align:right">
+								<td  th:text="${report.R21_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R21_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW121"  th:text="${#numbers.formatDecimal( report.R21_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal( report.R21_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW121" th:text="${#numbers.formatDecimal (report.R21_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R22_S_NO}"></th>
+	     <th style="text-align:left" th:text="${report.R22_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R22_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R22_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R22_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R23_S_NO}"></td>
+	     <td style="text-align:left" th:text="${report.R23_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW123"  th:text="${#numbers.formatDecimal( report.R23_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal( report.R23_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW123" th:text="${#numbers.formatDecimal (report.R23_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R24_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R24_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW124"  th:text="${#numbers.formatDecimal( report.R24_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal( report.R24_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW124" th:text="${#numbers.formatDecimal (report.R24_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R25_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R25_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW125"  th:text="${#numbers.formatDecimal( report.R25_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal( report.R25_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW125" th:text="${#numbers.formatDecimal (report.R25_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R26_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R26_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW126"  th:text="${#numbers.formatDecimal( report.R26_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal( report.R26_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW126" th:text="${#numbers.formatDecimal (report.R26_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R27_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R27_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW127"  th:text="${#numbers.formatDecimal( report.R27_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal( report.R27_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW127" th:text="${#numbers.formatDecimal (report.R27_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R28_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R28_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW128"  th:text="${#numbers.formatDecimal( report.R28_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal( report.R28_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW128" th:text="${#numbers.formatDecimal (report.R28_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R29_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R29_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW129"  th:text="${#numbers.formatDecimal( report.R29_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal( report.R29_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW129" th:text="${#numbers.formatDecimal (report.R29_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R30_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R30_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW130"  th:text="${#numbers.formatDecimal( report.R30_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal( report.R30_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW130" th:text="${#numbers.formatDecimal (report.R30_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+										<tr style="text-align:right">
+								<td  th:text="${report.R31_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R31_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW131"  th:text="${#numbers.formatDecimal( report.R31_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal( report.R31_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW131" th:text="${#numbers.formatDecimal (report.R31_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R32_S_NO}"></td>
+	     <td style="text-align:left" th:text="${report.R32_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW132"  th:text="${#numbers.formatDecimal( report.R32_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal( report.R32_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW132" th:text="${#numbers.formatDecimal (report.R32_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<th style=" background-color:#b3b6b9" th:text="${report.R33_S_NO}"></th>
+								<th style="text-align:left; background-color:#b3b6b9" th:text="${report.R33_AMOUNT}"></th>
+		<td onclick="resident(this)"  id="ROW133"  th:text="${#numbers.formatDecimal( report.R33_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal( report.R33_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW133" th:text="${#numbers.formatDecimal (report.R33_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+							<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R34_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R34_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R34_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R34_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R34_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R35_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R35_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW135"  th:text="${#numbers.formatDecimal( report.R35_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal( report.R35_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW135" th:text="${#numbers.formatDecimal (report.R35_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R36_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R36_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW136"  th:text="${#numbers.formatDecimal( report.R36_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal( report.R36_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW136" th:text="${#numbers.formatDecimal (report.R36_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R37_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R37_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW137"  th:text="${#numbers.formatDecimal( report.R37_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal( report.R37_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW137" th:text="${#numbers.formatDecimal (report.R37_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R38_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R38_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R38_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R38_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R38_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R39_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R39_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW139"  th:text="${#numbers.formatDecimal( report.R39_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal( report.R39_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW139" th:text="${#numbers.formatDecimal (report.R39_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R40_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R40_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW140"  th:text="${#numbers.formatDecimal( report.R40_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal( report.R40_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW140" th:text="${#numbers.formatDecimal (report.R40_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								</tbody>
+								
+								<tbody th:each="report: ${reportsummary1}">
+										<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R41_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R41_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R41_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R41_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R41_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R42_S_NO}"></td>
+	     <td style="text-align:left" th:text="${report.R42_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW142"  th:text="${#numbers.formatDecimal( report.R42_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal( report.R42_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW142" th:text="${#numbers.formatDecimal (report.R42_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R43_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R43_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW143"  th:text="${#numbers.formatDecimal( report.R43_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal( report.R43_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW143" th:text="${#numbers.formatDecimal (report.R43_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R44_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R44_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW144"  th:text="${#numbers.formatDecimal( report.R44_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal( report.R44_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW144" th:text="${#numbers.formatDecimal (report.R44_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R45_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R45_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R45_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R45_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R45_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R46_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R46_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW146"  th:text="${#numbers.formatDecimal( report.R46_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal( report.R46_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW146" th:text="${#numbers.formatDecimal (report.R46_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R47_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R47_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW147"  th:text="${#numbers.formatDecimal( report.R47_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal( report.R47_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW147" th:text="${#numbers.formatDecimal (report.R47_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R48_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R48_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW148"  th:text="${#numbers.formatDecimal( report.R48_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal( report.R48_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW148" th:text="${#numbers.formatDecimal (report.R48_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R49_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R49_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW149"  th:text="${#numbers.formatDecimal( report.R49_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal( report.R49_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW149" th:text="${#numbers.formatDecimal (report.R49_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<th  th:text="${report.R50_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R50_AMOUNT}"></th>
+		<td onclick="resident(this)"  id="ROW150"  th:text="${#numbers.formatDecimal( report.R50_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal( report.R50_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW150" th:text="${#numbers.formatDecimal (report.R50_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+										<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R51_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R51_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R51_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R51_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R51_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<th   style=" background-color:#b3b6b9" th:text="${report.R52_S_NO}"></th>
+	     <th style="text-align:left; background-color:#b3b6b9" th:text="${report.R52_AMOUNT}"></th>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>		
+<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW152" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW152" th:text="${#numbers.formatDecimal (report.R52_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<th  style=" background-color:#b3b6b9"  th:text="${report.R53_S_NO}"></th>
+								<th style="text-align:left; background-color:#b3b6b9"  th:text="${report.R53_AMOUNT}"></th>
+		<td onclick="resident(this)"  id="ROW153"  th:text="${#numbers.formatDecimal( report.R53_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+<td onclick="resident(this)"  id="ROW153" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+<td onclick="resident(this)"  id="ROW153" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+<td onclick="resident(this)"  id="ROW153" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+<td onclick="resident(this)"  id="ROW153" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+<td onclick="resident(this)"  id="ROW153" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+<td onclick="resident(this)"  id="ROW153" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+<td onclick="resident(this)"  id="ROW153" style=" background-color:#b3b6b9"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal (report.R53_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal( report.R53_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW153" th:text="${#numbers.formatDecimal (report.R53_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<th  style=" background-color:#b3b6b9" th:text="${report.R54_S_NO}"></th>
+								<th style="text-align:left; background-color:#b3b6b9"  th:text="${report.R54_AMOUNT}"></th>
+		<td onclick="resident(this)"  id="ROW154"  th:text="${#numbers.formatDecimal( report.R54_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal (report.R54_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>
+<td onclick="resident(this)"  id="ROW154" style=" background-color:#b3b6b9"></td>		
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal( report.R54_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal (report.R54_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal( report.R54_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal (report.R54_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal( report.R54_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal (report.R54_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal( report.R54_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW154" th:text="${#numbers.formatDecimal (report.R54_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  style=" background-color:#b3b6b9"  th:text="${report.R55_S_NO}"></th>
+								<th  style="text-align:left; background-color:#b3b6b9"  th:text="${report.R55_AMOUNT}"></th>
+		<td ></td>
+		<th th:text="${#numbers.formatDecimal (report.R55_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+<td ></td>
+		<th th:text="${#numbers.formatDecimal (report.R55_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+<td ></td>
+		<th th:text="${#numbers.formatDecimal (report.R55_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+<td ></td>
+		<th th:text="${#numbers.formatDecimal (report.R55_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+<td ></td>
+		<th th:text="${#numbers.formatDecimal (report.R55_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+<td ></td>
+		<th th:text="${#numbers.formatDecimal (report.R55_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+<td ></td>
+		<th th:text="${#numbers.formatDecimal (report.R55_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R55_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R55_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R55_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R55_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								</tr>
+									<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								</tr>
+									<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								</tr>
+								<tr style="text-align:right; background-color:#b3b6b9">
+								<th  th:text="${report.R56_S_NO}"></th>
+								<th style="text-align:left" th:text="${report.R56_AMOUNT}"></th>
+		<th  th:text="${#numbers.formatDecimal( report.R56_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></th>
+		<th th:text="${#numbers.formatDecimal( report.R56_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+		<th th:text="${#numbers.formatDecimal (report.R56_DEFAULTED ,0,'COMMA',0,'POINT')}"></th>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R57_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R57_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW160"  th:text="${#numbers.formatDecimal( report.R57_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal( report.R57_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW160" th:text="${#numbers.formatDecimal (report.R57_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R58_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R58_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW161"  th:text="${#numbers.formatDecimal( report.R58_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal( report.R58_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW161" th:text="${#numbers.formatDecimal (report.R58_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R59_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R59_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW162"  th:text="${#numbers.formatDecimal( report.R59_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal( report.R59_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW162" th:text="${#numbers.formatDecimal (report.R59_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr style="text-align:right">
+								<td  th:text="${report.R60_S_NO}"></td>
+								<td style="text-align:left" th:text="${report.R60_AMOUNT}"></td>
+		<td onclick="resident(this)"  id="ROW163"  th:text="${#numbers.formatDecimal( report.R60_TOTAL_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_CRWA_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_EXPOSURE_RESIDENT_UAE  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_CRWA_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_EXPOSURE_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_CRWA_NON_RESIDENT_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_EXPOSURE_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_CRWA_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_EXPOSURE_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_CRWA_NON_RESIDENT_NON_UAE ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_EXPOSURE_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_CRWA_INSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_EXPOSURE_OUTSIDE_CONSOLIDATED  ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_CRWA_OUTSIDE_CONSOLIDATED ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_NON_PERFORMING ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal( report.R60_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+		<td onclick="resident(this)"  id="ROW163" th:text="${#numbers.formatDecimal (report.R60_DEFAULTED ,0,'COMMA',0,'POINT')}"></td>
+								</tr>
+								<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								</tr>
+									<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								</tr>
+									<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								</tr>
+								<tr>
+								<th colspan="20" > Explanatory Notes</th>
+								</tr>
+								<tr>
+								<th colspan="20" > a. Consolidation level follows the applicable capital adequacy standards for banks in the UAE and the corresponding banking return form (BRF 95). </th>
+								</tr>
+								<tr>
+								<th colspan="20" > b. Item no. 1, 2, 3 and 4 are inclusive of all data points mentioned under item no.</th>
+								</tr>
+								<tr>
+								<th colspan="20" > c. Cells G61, I61, K61, M61, E63, O63, Q63 are to be reported on a best effort basis.</th>
+								</tr>
+								<tr><th colspan="20" > </th> </tr>
+								<tr><th colspan="20" >1) Exposures are to be reported on a gross basis (including interest in suspense) as per the applicable capital adequacy standards for banks in the UAE and the corresponding banking return form (BRF 95).
+								  </th> </tr>
+								<tr><th colspan="20" >2) CRWA of Exposures are as per the applicable capital adequacy standards for banks in the UAE.
+								 </th> </tr>
+								<tr><th colspan="20" >3) Non-performing exposures as per Circular No 28/2010 Regulation for the Classification of Loans and their Provisions. 
+ </th>
+								 </tr>
+								<tr><th colspan="20" > 4) Defaulted Exposures are exposures that are more than 90 days past due (or, if applicable, the bank considers that the obligor is unlikely to pay its credit obligations in full) as per the applicable capital adequacy standards for banks in the UAE.
+								</th> </tr>
+								<tr><th colspan="20">  5) Real Estate Loans/Financing to Individuals for plots shall be covered under item 1.2.
+								  </th></tr>
+								<tr><th colspan="20">  6) Real estate Loans/Financing to Corporates includes real estate developers, GREs, HNIs, SMEs, and all other non-retail exposures. The definition of SMEs follows the corresponding bank return form (BRF 74).
+								  </th></tr>
+								<tr><th colspan="20">  7) Item no. 5 represent off-balance sheet (unfunded) gross exposures and CRWA of exposures reported as per the applicable capital adequacy standards for banks in the UAE.
+								  </th></tr>
+								<tr><th colspan="20">  8) Total CRWA of total bank risk-weighted assets per the applicable capital adequacy standards for banks in the UAE and the corresponding banking return form (BRF 95).
+								  </th></tr>
+								<tr><th colspan="20">  9) Total Gross Outstanding Assets shall be reported on a gross basis, including interest in suspense.
+								  </th></tr>
+								<tr><th colspan="20">  10) Total Gross Off-balance Sheet Exposure shall be reported on a gross basis, including interest in suspense.
+								  </th></tr>
+								<tr><th colspan="20">   FORM NO: BSD/BRF105- RE EXP/DEC2021
+								 </th></tr>
+								
+								</tbody>
+	
+							</table>
+						</div>
+						<div class="card-footer text-center"
+							th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276";>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+ <div class="col-sm-12 customcol" th:if="${displaymode}=='detail'"
+				th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null"
+						class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+                                <th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT_NAME_1</th>
+								<th>REPORT_LABEL_1</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+								
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center: font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								
+								<td></td>
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>					
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+								
+								
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center"
+					style="background-color: #386276";>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+						onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+						onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div
+						class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+										
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input
+												class="form-control col-sm-5" id="cust_id"  readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input
+												class="form-control col-sm-5" id="foracid"  readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCR BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc"  />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+									
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+										
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformedit(this);" id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div
+							class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

@@ -1,0 +1,297 @@
+create or replace PROCEDURE  "BRF80_MAPPING_PROCEDURE" ( REPORT_DATE VARCHAR2) 
+IS 
+
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+
+
+BEGIN 
+
+--NBFI
+insert into BRF80_MAPPING_TABLE
+( foracid, cust_id, ACCT_NAME,GL_SUB_HEAD_CODE,GL_CODE,ACCT_CRNCY_CODE,REPORT_DATE,SOL_ID,SCHM_CODE,CONSTITUTION_CODE,COUNTRY_OF_INCORP,COUNTRY)
+SELECT  ACCT_NUMBER,cust_id, ACCT_NAME,GL_SUB_HEAD_CODE,GL_CODE,ACCT_CRNCY_CODE,REPORT_DATE,SOL_ID,SCHM_CODE,CONSTITUTION_CODE,COUNTRY_OF_INCORP,COUNTRY
+FROM GENERAL_MASTER_TABLE  where report_date = v_report_date 
+and SCHM_CODE IN  ( 'CA101', 'CA102', 'CA103', 'CA106','CA107',
+'CA108', 'CA109', 'CA110', 'CA111', 'CA112', 'LA101', 'LA106', 'OD001', 'OD002', 'OD003', 'OD028', 'OD651', 'SB105', 'SB107',
+'TD115','SB101', 'SB102', 'SB103', 'SB106', 'SB110', 'SB201',
+'SB203', 'SB303', 'TD101', 'TD102', 'TD103', 'TD105', 'TD106', 'TD108', 'TD109','TD112', 'TD301') ;
+commit;
+
+
+
+
+--ROW101A
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW101' , report_addl_criteria_1 ='ROW101A'
+WHERE  SCHM_CODE IN  ( 'CA101');
+COMMIT;
+
+--ROW102B
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102B'
+WHERE  SCHM_CODE IN  ( 'CA102');
+COMMIT;
+
+--ROW102C
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102C'
+WHERE  SCHM_CODE IN  ( 'CA103');
+COMMIT;
+
+--ROW102D
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102D'
+WHERE  SCHM_CODE IN  ( 'CA106');
+COMMIT;
+
+--ROW102E
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102E'
+WHERE  SCHM_CODE IN  ( 'CA107');
+COMMIT;
+
+--ROW102F
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102F'
+WHERE  SCHM_CODE IN  ( 'CA108');
+COMMIT;
+
+--ROW102G
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102G'
+WHERE  SCHM_CODE IN  ( 'CA109');
+COMMIT;
+
+
+
+
+
+--ROW102J
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102J'
+WHERE  SCHM_CODE IN  ( 'CA110');
+COMMIT;
+
+--ROW102K
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102K'
+WHERE  SCHM_CODE IN  ( 'CA111');
+COMMIT;
+
+--ROW102L
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102L'
+WHERE  SCHM_CODE IN  ( 'CA112');
+COMMIT;
+
+
+--ROW102M
+UPDATE BRF80_MAPPING_TABLE SET  REPORT_NAME_1 ='BRF80', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102M'
+WHERE  SCHM_CODE IN  ( 'CA112');
+COMMIT;
+
+
+
+COMMIT;
+END;
+
+
+
+
+
+create or replace PROCEDURE BRF80_DETAIL_PROCEDURE (REPORT_DATE DATE)
+IS
+   v_report_date   date := to_date (report_date, 'DD-MM-YYYY');
+BEGIN
+
+
+Delete from BRF80_DETAILTABLE where REPORT_DATE = V_REPORT_DATE;
+Commit;
+
+
+
+insert into BRF80_DETAILTABLE
+(foracid,ACCT_NAME,CUST_ID,SCHM_CODE,SCHM_TYPE,GL_SUB_HEAD_CODE,GL_CODE,ACID,ACCT_CRNCY_CODE,REPORT_DATE,BACID,COUNTRY_OF_INCORP,
+CONSTITUTION_CODE,ACT_BALANCE_AMT_LC)
+SELECT  
+ACCT_NUMBER,ACCT_NAME,CUST_ID,SCHM_CODE,SCHM_TYPE,GL_SUB_HEAD_CODE,GL_CODE,ACID,ACCT_CRNCY_CODE,REPORT_DATE,BACID,
+COUNTRY_OF_INCORP,CONSTITUTION_CODE,ACT_BALANCE_AMT_LC  FROM GENERAL_MASTER_TABLE  where report_date = '30-jun-2023' 
+AND GL_SUB_HEAD_CODE IN ('13101', '13201', '13206', '13215', '13216', '13217', '13220', '13241', '24301', '24311', '24312', '24313', '24319', 
+'24503', '24337');
+
+
+
+MERGE INTO BRF80_DETAILTABLE M
+USING (
+    SELECT distinct   b.REPORT_LABEL_1,b.cust_id,b.foracid
+    FROM BRF80_MAPPING_TABLE  b
+    JOIN BRF80_DETAILTABLE a ON a.foracid = b.foracid
+    WHERE a.report_date = V_REPORT_DATE
+) S
+ON (M.foracid = S.foracid)
+WHEN MATCHED THEN UPDATE
+SET M.REPORT_LABEL_1 = S.REPORT_LABEL_1
+WHERE M.report_date = V_REPORT_DATE;
+COMMIT;
+
+MERGE INTO BRF80_DETAILTABLE M
+USING (
+    SELECT   b.REPORT_ADDL_CRITERIA_1,b.cust_id,b.foracid
+    FROM BRF80_mapping_table b
+    JOIN BRF80_DETAILTABLE a ON a.foracid = b.foracid
+    WHERE a.report_date = V_REPORT_DATE
+) S
+ON (M.foracid = S.foracid)
+WHEN MATCHED THEN UPDATE
+SET M.REPORT_ADDL_CRITERIA_1 = S.REPORT_ADDL_CRITERIA_1
+WHERE M.report_date = V_REPORT_DATE;
+COMMIT;
+
+MERGE INTO BRF80_DETAILTABLE M
+USING (
+    SELECT distinct  b.report_addl_criteria_1,b.cust_id,b.foracid
+    FROM BRF80_MAPPING_TABLE  b
+    JOIN BRF80_DETAILTABLE a ON a.foracid = b.foracid
+    WHERE a.report_date = V_REPORT_DATE
+) S
+ON (M.foracid = S.foracid)
+WHEN MATCHED THEN UPDATE
+SET M.report_addl_criteria_1 = S.report_addl_criteria_1
+WHERE M.report_date = V_REPORT_DATE;
+
+delete from BRF8_DETAILTABLE where report_date = V_REPORT_DATE AND report_label_1 is   null;
+Commit;
+
+COMMIT;
+END;
+
+
+
+
+
+create or replace PROCEDURE BRF80_PROCEDURE (REPORT_DATE VARCHAR2)
+IS
+    V_REPORT_DATE DATE := TO_DATE(REPORT_DATE, 'DD-MM-YYYY');
+    V_REPORT_DUE_DATE DATE := ADD_MONTHS(LAST_DAY(V_REPORT_DATE), 3);
+    V_REPORT_FROM_DATE DATE := ADD_MONTHS(LAST_DAY(V_REPORT_DATE), -3);
+    V_REPORTCODE VARCHAR2(10 BYTE);
+    V_Tier_1_Capital VARCHAR2(10 BYTE);
+
+--VARIABLE DECLARE
+ 
+V_R1_FUNDED_OS                                                                   NUMBER(24,4):=0;
+V_R1_DEBIT_SECURITIES                                                            NUMBER(24,4):=0;
+V_R1_EQUITIES  NUMBER(24,4):=0;
+V_R1_UNFUNDED_OS                                                                 NUMBER(24,4):=0;
+V_R1_CCF_EQUIVALENT_OF_UNFUNDED_OS                                               NUMBER(24,4):=0;
+V_R1_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS               NUMBER(24,4):=0;
+V_R1_TOTAL_EXPOSURE      NUMBER(24,4):=0;
+V_R1_AS_OF_TIER_1_CAPITAL                                                        NUMBER(24,4):=0;
+V_R1_CREDIT_RISK_MITIGATION_TYPE                                                 NUMBER(24,4):=0;
+V_R1_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT                                       NUMBER(24,4):=0;
+V_R1_COLLATERAL_VALUE_AFTER_HAIR_CUT                                             NUMBER(24,4):=0;                                                      
+V_R1_PROVISION                                                                   NUMBER(24,4):=0;
+V_R2_FUNDED_OS                                                                   NUMBER(24,4):=0;
+V_R2_DEBIT_SECURITIES                                                            NUMBER(24,4):=0;
+V_R2_EQUITIES  NUMBER(24,4):=0;
+V_R2_UNFUNDED_OS                                                                 NUMBER(24,4):=0;
+V_R2_CCF_EQUIVALENT_OF_UNFUNDED_OS                                               NUMBER(24,4):=0;
+V_R2_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS               NUMBER(24,4):=0;
+V_R2_TOTAL_EXPOSURE      NUMBER(24,4):=0;
+V_R2_AS_OF_TIER_1_CAPITAL                                                        NUMBER(24,4):=0;
+V_R2_CREDIT_RISK_MITIGATION_TYPE                                                 NUMBER(24,4):=0;
+V_R2_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT                                       NUMBER(24,4):=0;
+V_R2_COLLATERAL_VALUE_AFTER_HAIR_CUT                                             NUMBER(24,4):=0;                                                      
+V_R2_PROVISION                                                                      NUMBER(24,4):=0;      
+
+
+
+
+BEGIN
+
+DELETE FROM BRF80_SUMMARYTABLE  WHERE REPORT_DATE=V_REPORT_DATE;
+
+COMMIT;
+
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into   V_Tier_1_Capital from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW101' AND REPORT_ADDL_CRITERIA_1 = 'ROW101A';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_FUNDED_OS from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW102B';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_DEBIT_SECURITIES from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW102C';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into  V_R1_EQUITIES from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW102D';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_UNFUNDED_OS  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW102E';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_CCF_EQUIVALENT_OF_UNFUNDED_OS from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW102F';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW101G';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_CREDIT_RISK_MITIGATION_TYPE  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW101J';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW101K';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_COLLATERAL_VALUE_AFTER_HAIR_CUT   from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW101K';
+Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R1_PROVISION from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+
+  V_R1_TOTAL_EXPOSURE :=V_R1_FUNDED_OS++V_R1_DEBIT_SECURITIES+V_R1_EQUITIES + V_R1_UNFUNDED_OS+V_R1_CCF_EQUIVALENT_OF_UNFUNDED_OS
+  +V_R1_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS ;
+  
+
+
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_FUNDED_OS from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_DEBIT_SECURITIES from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into  V_R2_EQUITIES from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_UNFUNDED_OS  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_CCF_EQUIVALENT_OF_UNFUNDED_OS from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_TOTAL_EXPOSURE  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_AS_OF_TIER_1_CAPITAL  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_CREDIT_RISK_MITIGATION_TYPE  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT  from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_COLLATERAL_VALUE_AFTER_HAIR_CUT   from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--Select round(nvl(sum(abs(ACT_BALANCE_AMT_LC))/1000,0)) into V_R2_PROVISION from BRF80_DETAILTABLE where REPORT_DATE =V_REPORT_DATE;
+--
+--    V_R2_TOTAL_EXPOSURE :=V_R2_FUNDED_OS++V_R2_DEBIT_SECURITIES+V_R2_EQUITIES + V_R2_UNFUNDED_OS+V_R2_CCF_EQUIVALENT_OF_UNFUNDED_OS
+--  +V_R2_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS ;
+
+INSERT INTO BRF80_SUMMARYTABLE 
+(
+ TIER_1_CAPITAL  ,
+R1_FUNDED_OS                                                                   ,
+R1_DEBIT_SECURITIES                                                            ,
+R1_EQUITIES  ,
+R1_UNFUNDED_OS                                                                 ,
+R1_CCF_EQUIVALENT_OF_UNFUNDED_OS                                               ,
+R1_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS               ,
+R1_TOTAL_EXPOSURE      ,
+R1_AS_OF_TIER_1_CAPITAL                                                        ,
+R1_CREDIT_RISK_MITIGATION_TYPE                                                 ,
+R1_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT                                       ,
+R1_COLLATERAL_VALUE_AFTER_HAIR_CUT                                             ,                                                      
+R1_PROVISION                                                                   ,
+R2_FUNDED_OS                                                                   ,
+R2_DEBIT_SECURITIES                                                            ,
+R2_EQUITIES  ,
+R2_UNFUNDED_OS                                                                 ,
+R2_CCF_EQUIVALENT_OF_UNFUNDED_OS                                               ,
+R2_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS               ,
+R2_TOTAL_EXPOSURE      ,
+R2_AS_OF_TIER_1_CAPITAL                                                        ,
+R2_CREDIT_RISK_MITIGATION_TYPE                                                 ,
+R2_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT                                       ,
+R2_COLLATERAL_VALUE_AFTER_HAIR_CUT                                             ,                                                      
+R2_PROVISION                                                                      ,      
+REPORT_DATE
+)
+VALUES
+( V_TIER_1_CAPITAL  ,
+V_R1_FUNDED_OS                                                                   ,
+V_R1_DEBIT_SECURITIES                                                            ,
+V_R1_EQUITIES  ,
+V_R1_UNFUNDED_OS                                                                 ,
+V_R1_CCF_EQUIVALENT_OF_UNFUNDED_OS                                               ,
+V_R1_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS               ,
+V_R1_TOTAL_EXPOSURE      ,
+V_R1_AS_OF_TIER_1_CAPITAL                                                        ,
+V_R1_CREDIT_RISK_MITIGATION_TYPE                                                 ,
+V_R1_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT                                       ,
+V_R1_COLLATERAL_VALUE_AFTER_HAIR_CUT                                             ,                                                      
+V_R1_PROVISION                                                                   ,
+V_R2_FUNDED_OS                                                                   ,
+V_R2_DEBIT_SECURITIES                                                            ,
+V_R2_EQUITIES  ,
+V_R2_UNFUNDED_OS                                                                 ,
+V_R2_CCF_EQUIVALENT_OF_UNFUNDED_OS                                               ,
+V_R2_CCF_EQUIVALENT_OF_FUNDED_AND_UNFUNDED_LIMITS               ,
+V_R2_TOTAL_EXPOSURE      ,
+V_R2_AS_OF_TIER_1_CAPITAL                                                        ,
+V_R2_CREDIT_RISK_MITIGATION_TYPE                                                 ,
+V_R2_CREDIT_RISK_MITIGATION_AFTER_HAIR_CUT                                       ,
+V_R2_COLLATERAL_VALUE_AFTER_HAIR_CUT                                             ,                                                      
+V_R2_PROVISION                                                                      ,      
+V_REPORT_DATE
+);
+COMMIT;
+END;

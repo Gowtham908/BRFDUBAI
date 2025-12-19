@@ -1,0 +1,1688 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	:SANJEEVI S  
+CREATED ON	:05-JUNE-2024
+PURPOSE		: FRONT ENT DEVLOPMENT PROCESS
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel=”stylesheet”
+	href=”https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css” />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"
+	rel="stylesheet">
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<style>
+</style>
+
+
+
+
+
+<script th:inline="javascript">
+function editRecord(a) {
+	alert("hi")
+	var url = 'mappingedit'
+
+	$("#dataedit").attr('action', url);
+	alert("hi")
+	//Assign selected values to the model box fields
+	$ ("#cust_id").val(a.getAttribute("data-cust_id"));
+	$("#foracid").val(a.getAttribute("data-foracid"));
+    $("#acct_name").val(a.getAttribute("data-acct_name"));
+    $("#report_name_1").val(a.getAttribute("data-report_name_1"));
+    $("#report_label_1").val(a.getAttribute("data-report_label_1"));
+ //   $("#sch_type").val(a.getAttribute("data-sch_type"));
+    $("#schm_code").val(a.getAttribute("data-schm_code"));
+    $("#gl_sub_head_code").val(a.getAttribute("data-gl_sub_head_code"));
+   // $("#mis_code").val(a.getAttribute("data-mis_code"));
+   // $("#gl_sub_head_code").val(a.getAttribute("data-gl_sub_head_code"));
+    $("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+  //  $("#report_addl_criteria_2").val(a.getAttribute("data-report_addl_criteria_2"));
+   // $("#report_addl_criteria_3").val(a.getAttribute("data-report_addl_criteria_3"));
+
+	$("#addedit").modal("toggle");
+	//Make readonly fields
+	$("#foracid").attr("readonly", true);
+	$("#schm_code").attr("readonly", true);
+	$("#gl_sub_head_code").attr("readonly", true);
+  	
+	}
+</script>
+<script th:inline="javascript">
+	var select_Report = '';
+ 
+	function report() {
+		var select = document.getElementById('report_code').value;
+ 
+		select_Report = select;
+		alert(this.select_Report);
+		location.href = './ReportCodeMapping?report_code=' + select;
+ 
+		document.getElementById('refcodeviewdesc').value = select;
+ 
+	}
+	function report1() {
+		var select = document.getElementById('report_code').value;
+ 
+		// Set the new URL without refreshing the page
+		location.href = './ReportCodeMapping?formmode=product_mapping&report_code='
+				+ select;
+ 
+		// document.getElementById('report_desc').value = select;
+ 
+	}
+ 
+
+	function fnedit() {
+	    alert('hi');
+	}	function reportlist() {
+		var select = document.getElementById('report_code').value;
+		console.log(" select_Report ", select_Report);
+		location.href = 'ReportCodeMapping?formmode=listone&report_code='
+				+ select;
+ 
+	}
+	function Mapped_Accounts() {
+		var select = document.getElementById('report_code').value;
+		this.formmode = 'Mapped_Accounts';
+		location.href = 'ReportCodeMapping?formmode=Mapped_Accounts&report_code='
+				+ select;
+ 
+	}
+	function UnMapped_Accounts() {
+		var select = document.getElementById('report_code').value;
+		console.log(" select_Report ", select_Report);
+		location.href = 'ReportCodeMapping?formmode=UnMapped_Accounts&report_code='
+				+ select;
+ 
+	}
+	function mapping() {
+		var select = document.getElementById('report_code').value;
+		console.log(" select_Report ", select_Report);
+		submit(select);
+	}
+	function submit(select) {
+		console.log(" select_Report ", select_Report);
+		location.href = 'ReportCodeMapping?formmode=Mappinglist' + '&foracid='
+				+ select + '&report_code=' + select;
+	}
+	
+	function goBackAndReload() {	
+		window.history.back();
+		}
+
+	function product_mapping() {
+		var select = document.getElementById('report_code').value;
+		location.href = 'ReportCodeMapping?formmode=product_mapping&report_code='
+				+ select;
+	}
+	function list() {
+	    /*<![CDATA[*/
+	    var user = /*[[${refCodeTypeList2}]]*/;
+	    /*]]>*/
+
+	    console.log(user);
+
+	    // var select1 = document.getElementById('r_code').value;
+	    console.log(document.getElementById('row_101').getAttribute('data_row_product'));
+	    var select = document.getElementById('report_code').value;
+	    
+	   // var account_id_2 = document.getElementById('foracid2').value;'
+
+	    console.log(select1);
+
+	    // Assuming "data-report-category" is an attribute of the element with the ID 'row_101'
+	var reportCategory = document.getElementById('row_101').getAttribute('data-row-product');
+var reportCategory2 = document.getElementById('row_101').getAttribute('data-report-category');
+console.log(reportCategory);
+console.log(reportCategory2);
+
+var schemeCode = document.getElementById('schm_code1_from').value;
+var location_setup = '';
+
+if(schemeCode == ''){
+	schemeCode = null;
+}else{
+	location_setup = location_setup+'&scheme_code=' + schemeCode;
+}
+
+var gl_sub_head_code = document.getElementById('gl_sub_head_code1_from').value;
+
+if(gl_sub_head_code == ''){
+	gl_sub_head_code = null;
+}else{
+	location_setup = location_setup+'&gl_sub_head_code=' + gl_sub_head_code;
+}
+
+var report_product_label = localStorage.getItem('mapping_report_label');
+var schm_type1 = document.getElementById('schm_type1_from').value;
+/* if(schm_type1){
+	schm_type1 = null;
+}else{
+	location = location+'&schm_type=' + schm_type1;
+} */
+var gl_code1 = document.getElementById('gl_code1_from').value;
+
+	  if(gl_code1 == ''){
+		  gl_code1 = null;
+	  }else{
+		  location_setup = location_setup+'&gl_code=' + gl_code1
+	  }
+	  
+	  var select1 = document.getElementById('cust_id1_from').value;
+	  if(select1 == ''){
+		  select1 = null;
+	  }else{
+		  location_setup = location_setup+'&cust_id=' + select1
+	  }
+	  
+	    var account_id = document.getElementById('foracid1').value;	  
+	  
+	  console.log(location_setup);
+	  location.href = ''+'ReportCodeMapping?formmode=listMap&report_code=' + select  +location_setup
+			  + '&foracid=' + account_id 
+			  +'&reportlabel='+report_product_label ;
+	  
+	  
+	  localStorage.setItem('mapping_report_label','');
+	    console.log(document.getElementById('selectedValue'));
+	    console.log(document.getElementById('reportCategory'));
+	}
+
+</script>
+
+
+<script>
+
+function home() {
+	location.href = 'Dashboard'
+}
+
+function back() {
+	window.history.back();
+}
+
+
+</script>
+
+<script>
+function submitdataform(a) {
+	  alert("hi");
+	  var reportcode = document.getElementById('report_code').value;
+	  alert(reportcode);
+	  var foracid = document.getElementById('foracid').value;
+	  alert(foracid);
+
+	  $.ajax({
+	    url: './mappingedit?&foracid=' + foracid+'&reportcode='+reportcode,
+	    data: $("#dataedit").serialize(),
+	    type: 'GET',
+	    success: function (data) {
+	      setTimeout(function () {
+	        alert("Updated successfully");
+	        location.href = location.href;
+	      }, 10000); // 10000 milliseconds = 10 seconds
+	    }
+	  });
+	}
+
+</script>
+
+<script th:inline="javascript">
+	$(document)
+			.ready(
+					function() {
+ 
+						// Filter the table rows based on user input
+						$("#filterinput")
+								.on(
+										"input",
+										function() {
+											var filterValue = $(this).val()
+													.toLowerCase();
+											console.log($("#arunfilter tr"))
+ 
+											var temp = $("#arunfilter tr")
+ 
+													.filter(
+															function() {
+																$(this)
+																		.toggle(
+																				$(
+																						this)
+																						.text()
+																						.toLowerCase()
+																						.indexOf(
+																								filterValue) > -1);
+															});
+ 
+										});
+					});
+	
+	function gl_sub_head_code_change(index){
+		  /*<![CDATA[*/
+	    var detailtable6 = /*[[${detailtable6}]]*/;
+	    /*]]>*/
+		if(index != detailtable6.length){
+			document.getElementById("gl_sub_head_code1_to").value = detailtable6[index+1]
+		}else{
+			document.getElementById("gl_sub_head_code1_to").value = detailtable6[index]
+		}
+		
+	}
+	
+	function callFunction(){
+		/*<![CDATA[*/
+	    var reportDes = /*[[${reportDes}]]*/;
+	    /*]]>*/
+	    
+	   console.log(' reportDes ',reportDes);
+	    
+	}
+	
+</script>
+<script>
+	
+	function myfunction(selectedValue, reportCategory, dataRowProduct) {
+	    // The selectedValue is passed as a parameter
+	    // The reportCategory and dataRowProduct are obtained from the selected option
+localStorage.setItem('mapping_report_label',dataRowProduct);
+	    console.log(' Map',localStorage.getItem('mapping_report_label'));
+	    document.getElementById('selectedValue').textContent = selectedValue;
+		document.getElementById('reportCategory').textContent = reportCategory;
+	    console.log("Selected Value: " + selectedValue);
+	    console.log("Report Category: " + reportCategory);
+	    console.log("Data Row Product: " + dataRowProduct);
+	    
+	   
+	}
+	
+	function schm_type_change(){
+	
+		console.log(' !@#$%^&*() ');
+		
+		var schm_type = document.getElementById('schm_type1_from').value;
+		document.getElementById('schm_type1_to').value = schm_type;
+		console.log(' schm_type ',schm_type);
+	}
+	function schm_code_change(){
+		var schm_code = document.getElementById('schm_code1_from').value;
+		document.getElementById('schm_code1_to').value = schm_code;
+		console.log(' schm_code',schm_code);
+	}
+	function gl_code_change(){
+		var gl_code = document.getElementById('gl_code1_from').value;
+		document.getElementById('gl_code1_to').value = gl_code;
+		console.log(' schm_code',gl_code);
+	}
+	
+</script>
+<script>
+window.onload = function() {
+console.log(' &&&&@@@@##### ');	
+}
+
+	    function submitlist() {
+	    	var select = document.getElementById('report_code').value;
+	    	alert(select);
+	    	//var name=document.getElementById("row_101_list").value;
+	    	//alert(name);
+	    	
+	    	 var url = window.location.search;
+	    	    var params = new URLSearchParams(url);
+	    	    var id = params.get("reportlabel");
+	    	    function getCellValueForSelectedCheckbox(checkbox) {
+	    	    	  if (checkbox.checked) {
+	    	    	    // Find the closest <tr> element (table row) containing the clicked checkbox
+	    	    	    const row = checkbox.closest('tr');
+
+	    	    	    // Access a specific cell within the row (e.g., the second cell)
+	    	    	    const specificCellValue = row.cells[2].textContent; // Change the index to access the desired cell
+
+	    	    	    // You can use cellValue as needed, for example, displaying it in the console
+	    	    	   alert( specificCellValue);
+	    	    	    
+	    	    	   $.ajax({
+
+	   	    			type : 'GET',
+	   	    			url : './mappingapi?id=' + id  + "&name=" + name + "&specificCellValue=" +specificCellValue + "&select=" +select ,
+	   	    			success : function(data) {
+	   	     
+	   	    				alert(data);
+	   	    				location.reload();
+	   	     
+	   	    			}
+	   	     
+	   	    		});
+	    	    	  }
+	    	    	}
+
+	    	    	// Get all checkboxes with the "checkbox" class
+	    	    	const checkboxes = document.querySelectorAll('.checkbox');
+
+	    	    	// Call the function for each checkbox (you can call it when needed)
+	    	    	checkboxes.forEach(checkbox => {
+	    	    	  getCellValueForSelectedCheckbox(checkbox);
+	    	    	  
+	    	    	  
+	    	    	}); 
+ }
+</script>
+<script>
+
+
+function pdfCustomerdown() {
+	var filetype = a.getAttribute("data-filetype");
+	alert(filetype);
+	  $('#downloadProcessingModal').modal('show');
+	var report_name_1 = document.getElementById('report_code').value;
+	alert(report_name_1);
+	$.ajax({
+		url : './Reports/mappingDownload?&report_name_1=' + report_name_1
+				+ '&filetype=' + encodeURIComponent(filetype),
+		type : 'GET',
+		success : function() {
+			
+			 $('#downloadProcessingModal').modal('hide');
+		      // Show a success message (you can customize this part)
+		      alert("Download successful");
+			
+		}
+	});
+}
+
+function xcelCustomerdown() {
+	  var filetype = "excel";
+	  var report_name_1 = document.getElementById('report_code').value;
+
+	  // Show the download processing modal
+	  $('#downloadProcessingModal').modal('show');
+
+	  $.ajax({
+	    url: './Reports/mappingDownload?&report_name_1=' + report_name_1 + '&filetype=' + encodeURIComponent(filetype),
+	    type: 'GET',
+	    success: function () {
+	      // Hide the download processing modal upon successful download
+	      $('#downloadProcessingModal').modal('hide');
+	      // Show a success message (you can customize this part)
+	      alert("Download successful");
+	    },
+	    error: function () {
+	      // Handle errors if needed
+	      // Hide the download processing modal upon error
+	      $('#downloadProcessingModal').modal('hide');
+	      alert("Download failed");
+	    }
+	  });
+	}
+
+</script>
+<script>
+function openTab(event, tabId) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("btn");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active-tab");
+    }
+    document.getElementById(tabId).style.display = "block";
+    event.currentTarget.classList.add("active-tab");
+}
+
+
+</script>
+
+<!-- ---DBR--- -->
+<script>
+function DBR() {
+	
+    var buttonContainer = document.getElementById('buttonContainer');
+    buttonContainer.style.display = 'block';
+  }
+  </script>
+
+<script>
+    $(document).ready(function() {
+        // Function to calculate Effective partial score, Max score, Min score, and Avg score
+        function calculateValues(input) {
+            var $row = $(input).closest('tr'); // Get the closest row to the input field
+
+            var partialScore = parseFloat($row.find("[name='partial_score']").val()) || 0; // Get partial score value
+            var weight = parseFloat($row.find("[name='weight']").val()) || 0; // Get weight value
+
+            var effectivePartialScore = partialScore * weight; // Calculate effective partial score
+            
+            // Get all partial scores in the tbody
+            var partialScores = $row.closest('tbody').find("[name='partial_score']").map(function() {
+                return parseFloat($(this).val()) || 0;
+            }).get();
+            
+            var maxPartialScore = Math.max.apply(null, partialScores); // Calculate max partial score
+            var minPartialScore = Math.min.apply(null, partialScores); // Calculate min partial score
+            var avgPartialScore = partialScores.reduce((a, b) => a + b, 0) / partialScores.length; // Calculate avg partial score
+
+            var maxScore = weight * maxPartialScore; // Calculate max score as per formula = R5 * (MAX(P5:P9))
+            var minScore = weight * minPartialScore; // Calculate min score as per formula = R5 * (MIN(P5:P9))
+            var avgScore = weight * avgPartialScore; // Calculate avg score as per formula = R5 * (AVERAGE(P5:P9))
+
+            // Update the Effective partial score field in the current row
+            $row.find("[name='effective_partial_score']").val(effectivePartialScore.toFixed(2));
+            // Update the Max score field in the current row
+            $row.find("[name='max_score']").val(maxScore.toFixed(2));
+            // Update the Min score field in the current row
+            $row.find("[name='min_score']").val(minScore.toFixed(2));
+            // Update the Avg score field in the current row
+            $row.find("[name='avg_score']").val(avgScore.toFixed(2));
+        }
+
+        // Function to initialize calculations for all rows
+        function initializeCalculations() {
+            $("tr").each(function() {
+                calculateValues($(this).find("[name='partial_score'], [name='weight']"));
+            });
+        }
+
+        // Attach input event listener to all input fields with class 'dbr'
+        $(document).on('input', "[name='partial_score'], [name='weight']", function() {
+            calculateValues(this); // Call calculateValues function when input changes
+        });
+
+        // Initialize calculations on document ready
+        initializeCalculations();
+    });
+
+    // Function to make elements contenteditable and show the submit button
+    function enableContentEditable() {
+        event.preventDefault();
+        $('#submit').show();
+        $('.dbr').attr('contenteditable', 'true').focus();
+    }
+
+    // Function for adding a new DBR
+    function addDBR() {
+        enableContentEditable();
+    }
+
+    // Function for modifying an existing DBR
+    function modDBR() {
+        enableContentEditable();
+    }
+
+    // Function to collect data from the table and submit to the backend
+    function subdbr() {
+        var scheduler = [];
+
+        $("#usertable tbody tr").each(function () {
+            var row = {};
+
+            row.variable = $(this).find("[name='variable']").val();
+            row.group_dbr = $(this).find("[name='group']").val();
+            row.bin_value = $(this).find("[name='bin_value']").val();
+            row.partial_score = $(this).find("[name='partial_score']").val();
+            row.weight = $(this).find("[name='weight']").val(); // Include weight value
+            row.effective_partial_score = $(this).find("[name='effective_partial_score']").val();
+            row.max_score = $(this).find("[name='max_score']").val();
+            row.min_score = $(this).find("[name='min_score']").val();
+            row.avg_score = $(this).find("[name='avg_score']").val();
+
+            scheduler.push(row);
+        });
+
+        console.log(scheduler);
+
+        $.ajax({
+            url: './auditschedulemodifysubmit',
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(scheduler),
+            success: function (response) {
+                alert("Operation successful");
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("An error occurred: " + error);
+                console.error("Error details:", xhr, status, error);
+            }
+        });
+    }
+</script>
+
+<script>
+
+function subdbr1()
+{
+	
+	alert("submit");
+	
+	var a=
+	$.ajax({
+              url : './submit',
+              data : $("#dbrForm").serialize(),
+              type : 'POST',
+              console.log(data);
+              success : function(data) {
+
+			alert("Modified successfully");
+	} 
+	});
+}
+
+</script>
+<script>
+function calculation(){
+	
+	
+	
+	
+	
+}
+</script>
+
+
+
+
+</head>
+<title>XBRL</title>
+<style>
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+	curser: pointer;
+}
+
+.tabcontent {
+	display: none;
+	padding: 20px;
+	border-top: 1px solid #ccc;
+}
+
+.active {
+	background-color: #2084a9;
+}
+
+.btn-primary:hover {
+	background-color: #337ab7;
+	/* Change this color to the desired hover color */
+	border-color: #2e6da4;
+	/* Change this color to match the hover background color */
+	color: #fff; /* Change this color to match the hover text color */
+}
+
+/* Add this CSS to highlight the active tab */
+.active-tab {
+	background-color: #337ab7;
+	border-color: #2e6da4;
+	color: #fff;
+}
+</style>
+<style>
+        .hidden-input {
+            display: none;
+        }
+        .display-value {
+            font-size: 16px; /* Adjust the font size as needed */
+        }
+    </style>
+
+<body onload="color(this)">
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-14">
+
+				<div class="card"
+					style="width: 1600px; margin-left: -100px; margin-top: 50px;">
+					<div class="card-header"
+						style="background-color: #4d8cb9; color: white;">
+
+						<div class="row">
+
+							<h4 style="margin-top: 5px; margin-left: 20px;">ScoreCardParameter</h4>
+							<div style="padding-left: 1200px; display: none;"
+								id="buttonContainer">
+								<button type="button" onclick="addDBR();" id="addRowBtn"
+									class="btn btn-xs btn-primary btns">Add</button>
+								<button type="button" onclick="modDBR();"
+									class="btn btn-xs btn-primary btns">Modify</button>
+							</div>
+						</div>
+
+
+					</div>
+					<div class="card-body">
+
+
+						<div class="tab"
+							style="padding: 8px 12px; position: relative; font-size: 13px; width: 100%;">
+
+							<button type="button" id="DBR"
+								onclick="openTab(event, 'tab1');event.preventDefault(); DBR();"
+								class="btn btn-xs btn-primary btns">DBR</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab2');  incomeScore();"
+								class="btn btn-xs btn-primary btns">Income</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab3');event.preventDefault(); ltv();"
+								class="btn btn-primary">LTV</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab4');event.preventDefault();glcodedesc();"
+								class="btn btn-primary">Worse Payment Delay</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab5');event.preventDefault();paymentfrquncy();"
+								class="btn btn-primary">Age</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab6');event.preventDefault();infoflg();"
+								class="btn btn-primary">Length</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab7');event.preventDefault();schemecode();"
+								class="btn btn-primary">Month</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab8');event.preventDefault();schemecode();"
+								class="btn btn-primary">Number of inquiries</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab9');event.preventDefault();schemecode();"
+								class="btn btn-primary">No of active contracts</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab10');event.preventDefault();schemecode();"
+								class="btn btn-primary">Number of Dependents</button>
+						</div>
+						<!-- -----DBR----- -->
+						<div id="tab1" class="tabcontent mt-n3" th:if="${formmode}=='DBR'">
+							<form id="dbrForm" th:action="@{/submit}" method="post">
+								<table id="usertable"
+									class="table table-bordered table-hover table-condensed table-sm">
+									<thead class="thead-light">
+										<tr>
+											<th style="text-align: center; font-weight: bold;">Variable</th>
+											<th style="text-align: center;">Group</th>
+											<th style="text-align: center;">Bin Value</th>
+											<th style="text-align: center;">Partial score</th>
+											<th style="text-align: center;">Effective partial score</th>
+											<th style="text-align: center;">Weight</th>
+											<th style="text-align: center;">Max score</th>
+											<th style="text-align: center;">Min score</th>
+											<th style="text-align: center;">Avg score</th>
+										</tr>
+									</thead>
+									<tbody id="dbrtbody">
+										<tr th:each="dbr:${getDBRvalue}">
+											<td><input type="text" name="variable"
+												th:value="${dbr.variable}" class="dbr"></td>
+											<td><input type="text" name="group" 
+												th:value="${dbr.group_dbr}" class="dbr"></td>
+											<td><input type="text" name="bin_value"
+												th:value="${dbr.bin_value}" class="dbr"></td>
+											<td><input type="text" name="partial_score"
+												th:value="${dbr.partial_score}" class="dbr" id="partial_score"></td>
+											<td><input type="text" name="effective_partial_score"
+												th:value="${dbr.effactive_partial_score}" class="dbr" id="effective_partial_score"></td>
+										    <td><input type="text" name="weight" th:value="${dbr.weight}" class="dbr hidden-input" id="weight">
+                                              <span class="display-value">16%</span>
+                                             </td>
+											<td><input type="text" name="max_score"
+												th:value="${dbr.max_score}" class="dbr" id="max_score"></td>
+											<td><input type="text" name="min_score"
+												th:value="${dbr.min_score}" class="dbr" id="min_score"></td>
+											<td><input type="text" name="avg_score"
+												th:value="${dbr.avg_score}" class="dbr" id="avg_score"></td>
+										</tr>
+
+
+
+
+									</tbody>
+								</table>
+							</form>
+						</div>
+
+						<!-- --------INCOME----- -->
+						<div id="tab2" class="tabcontent mt-n3">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+
+										
+
+									</tr>
+
+
+
+
+								</tbody>
+							</table>
+						</div>
+
+						<!-- -------------LTV---- -->
+
+						<div id="tab3" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody id="ltvbody">
+									<tr>
+										<td rowspan="3"
+											style="vertical-align: middle; text-align: center;">(LTV)
+											Requested Loan to Asset Value at application</td>
+										<td style="font-weight: bold;">1</td>
+										<td>A. 0 >= LTV <= 50%</td>
+										<td></td>
+										<td></td>
+										<td rowspan="3"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="3"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="3"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="3
+										"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>B. 51% > LTV <= 70%</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>C. LTV > 71%</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+
+								</tbody>
+							</table>
+
+						</div>
+
+						<!--  -----Worse payment delay-------- -->
+						<div id="tab4" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td rowspan="7"
+											style="vertical-align: middle; text-align: center;">Worse
+											Payment Delay in Last 24 months</td>
+										<td style="font-weight: bold;">1</td>
+										<td>0</td>
+										<td></td>
+										<td></td>
+										<td rowspan="7"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="7"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="7"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="7"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>>0-15 days</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>16-30 days</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">4</td>
+										<td>31-60 days</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">5</td>
+										<td>61-90 days</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">6</td>
+										<td>>90 days</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">7</td>
+										<td>No credit History</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<!-- 	-------age------- -->
+
+						<div id="tab5" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;">Age</td>
+										<td style="font-weight: bold;">1</td>
+										<td><=30</td>
+										<td></td>
+										<td></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>31-40</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>41-50</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">4</td>
+										<td>>50</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">5</td>
+										<td>Missing (Data Anomaly)</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+
+						<!--  ------------Length-------- -->
+
+
+						<div id="tab6" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td rowspan="4"
+											style="vertical-align: middle; text-align: center;">Length
+											of current occupation</td>
+										<td style="font-weight: bold;">1</td>
+										<td>0-2 Years for SALARIED.0-4 Years for SELF EMPLOYED.</td>
+										<td></td>
+										<td></td>
+										<td rowspan="4"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="4"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="4"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="4"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>>2-4 Years for SALARIED.>4-8 Years for SELF EMPLOYED.
+										</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>>4 Years for SALARIED.>8 Years for SELF EMPLOYED.</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">4</td>
+										<td>Missing (Data anomaly)</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+
+						<!-- -----month----- -->
+
+
+						<div id="tab7" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;">Month
+											Since Relationship with Bank</td>
+										<td style="font-weight: bold;">1</td>
+										<td>A. New to bank</td>
+										<td></td>
+										<td></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>B. 0 – 3 months</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>C. >3 – 12 months</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">4</td>
+										<td>D. >12 – 36 months</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">5</td>
+										<td>E. >36 months</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<!-- -----no of inquires--- -->
+						<div id="tab8" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;">Number
+											of inquiries linked to applicant in last 3 months</td>
+										<td style="font-weight: bold;">1</td>
+										<td>0-1</td>
+										<td></td>
+										<td></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>2-4</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>>4</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">4</td>
+										<td>No credit History</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+
+
+
+						<!-- -----no of active contracts--- -->
+						<div id="tab9" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;">No
+											of active contracts at the time of application</td>
+										<td style="font-weight: bold;">1</td>
+										<td>0 (All Closed)</td>
+										<td></td>
+										<td></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>1-3</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>>3</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">4</td>
+										<td>No Credit History</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+
+						<!-- ------no of dependents---- -->
+						<div id="tab10" class="tabcontent mt-n3" style="border: none;">
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: center; font-weight: bold;">Variable</th>
+										<th style="text-align: center;">Group</th>
+										<th style="text-align: center;">Bin Value</th>
+										<th style="text-align: center;">Partial score</th>
+										<th style="text-align: center;">Effective partial score</th>
+										<th style="text-align: center;">Weight</th>
+										<th style="text-align: center;">Max score</th>
+										<th style="text-align: center;">Min score</th>
+										<th style="text-align: center;">Avg score</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;">Number
+											of Dependents</td>
+										<td style="font-weight: bold;">1</td>
+										<td>0</td>
+										<td></td>
+										<td></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"><span>%</span></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+										<td rowspan="5"
+											style="vertical-align: middle; text-align: center;"></td>
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">2</td>
+										<td>1</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">3</td>
+										<td>2</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">4</td>
+										<td>>2</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td style="font-weight: bold;">5</td>
+										<td>Missing (Data Anomaly)</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+
+
+
+
+
+
+
+
+						<div class="card-footer text-center"
+							style="background-color: #386276">
+							<button type="button" class="btn btn-xs btn-primary"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="submit"
+								style="display: none;" onclick="subdbr();">Submit</button>
+							<button type="button" class="btn btn-xs btn-primary"
+								onclick="back();">Back</button>
+						</div>
+
+
+						<div th:if="${formmode}=='Mapped_Accounts'">
+							<input id="dg" type="hidden" th:value="${formmode1}">
+
+							<div style="height: 80px;">
+								<div style="margin-left: 90%">
+									<div id="branch_filter" class="dataTables_filter">
+										<label>Search:<input type="search" id="filterinput"
+											class="form-control form-control-sm" placeholder=""
+											aria-controls="branch"></label>
+
+									</div>
+
+								</div>
+
+
+								<button type="button" class="btn btn-primary dropdown-toggle"
+									data-toggle="dropdown"
+									style="margin-inline: 80%; margin-top: -85px;">
+									Download <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+
+									<!-- <li><a onclick="pdfCustomerdown();"
+										th:attr="data-filetype='pdf' ">Pdf</a></li> -->
+
+									<li><a onclick="xcelCustomerdown();"
+										th:attr="data-filetype='excel'">Excel</a></li>
+								</ul>
+
+								<!-- Download Processing Modal -->
+								<div class="modal fade" id="downloadProcessingModal"
+									tabindex="-1" role="dialog"
+									aria-labelledby="downloadProcessingModalLabel"
+									aria-hidden="true">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+													Processing...</h5>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<table
+								class="table  table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+
+										<th></th>
+										<th style="text-align: center;">Cust Id</th>
+										<th style="text-align: center;">Acct No</th>
+										<th style="text-align: center; width: 1010px;">Name of
+											Account</th>
+										<th style="text-align: center;">Report Code</th>
+										<th style="text-align: center;">Report Label</th>
+										<th style="text-align: center;">Scheme Code</th>
+										<th style="text-align: center;">GLSH</th>
+										<th style="text-align: center; width: 800px;">Criteria-1</th>
+										<th style="text-align: center;">Criteria-2</th>
+										<th style="text-align: center;">Criteria-3</th>
+									</tr>
+								</thead>
+								<tbody id="arunfilter">
+									<tr th:each="listone,iterator : ${Mapped_Accounts}"
+										class="userlist" style="cursor: pointer;">
+
+										<td class="first_left"><a data-toggle="tooltip"
+											class="editrec" title="Click to Edit this Record"><i
+												class="fas fa-edit"
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												th:attr="data-cust_id=${listone.cust_id},
+												data-foracid=${listone.foracid},
+												data-acct_name=${listone.acct_name},
+											    data-report_name_1=${listone.report_name_1},
+												data-report_label_1=${listone.report_label_1},							
+												data-schm_code=${listone.schm_code},
+												data-gl_sub_head_code=${listone.gl_sub_head_code},										
+												data-report_addl_criteria_1=${listone.report_addl_criteria_1},
+												data-report_addl_criteria_2=${listone.report_addl_criteria_2},
+												data-report_addl_criteria_3=${listone.report_addl_criteria_3}"
+												onclick="editRecord(this)"></i></a></td>
+										<td th:text="${listone.cust_id}">456</td>
+										<td th:text="${listone.foracid}">456</td>
+										<td th:text="${listone.acct_name}">456</td>
+										<td th:text="${listone.report_name_1}">456</td>
+										<td th:text="${listone.report_label_1}">TEST</td>
+										<td th:text="${listone.schm_code}">TEST</td>
+										<td th:text="${listone.gl_sub_head_code}">TEST</td>
+										<td th:text="${listone.report_addl_criteria_1}">TEST</td>
+										<td th:text="${listone.report_addl_criteria_2}"></td>
+										<td th:text="${listone.report_addl_criteria_3}"></td>
+									</tr>
+
+								</tbody>
+							</table>
+
+
+							<div class="card-footer text-center"
+								style="background-color: #386276">
+
+
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="home();">Home</button>
+
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="back();">Back</button>
+
+
+							</div>
+
+						</div>
+
+
+
+
+
+
+
+
+
+
+
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	</div>
+
+	<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+	<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+	<div class="modal fade" id="addedit" th:fragment="dataedit">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Edit Records</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${singledetail} id="dataedit" method="post">
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-5">Customer Id </label> <input
+									class="form-control col-sm-5" type="text" id="cust_id"
+									name="cust_id" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Account No </label> <input
+									class="form-control col-sm-5" type="text" id="foracid" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Name of Account </label> <input
+									class="form-control col-sm-5" type="text" id="acct_name"
+									name="acct_name" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Report Code </label> <input
+									class="form-control col-sm-5" type="text" id="report_name_1"
+									name="report_name_1" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Report Label </label> <input
+									class="form-control col-sm-5" type="text" id="report_label_1"
+									name="report_label_1" required />
+							</div>
+
+							<!-- <div class="row">
+								<label class="col-sm-5">Scheme Type </label> <input
+									class="form-control col-sm-5" type="text" id="sch_type"
+									name="gl_sub_head_code" required />
+							</div> -->
+
+							<div class="row">
+								<label class="col-sm-5">Scheme Code </label> <input
+									class="form-control col-sm-5" type="text" id="schm_code"
+									name="schm_code" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">GLSH Code </label> <input
+									class="form-control col-sm-5" type="text" id="gl_sub_head_code"
+									name="gl_sub_head_code" />
+							</div>
+
+							<!-- <div class="row">
+								<label class="col-sm-5">MIS Code </label> <input
+									class="form-control col-sm-5" type="text" name="mis_code"
+									id="mis_code" />
+							</div> -->
+
+							<div class="row">
+								<label class="col-sm-5">Criteria 1 </label> <input
+									class="form-control col-sm-5" type="text"
+									id="report_addl_criteria_1" name="report_addl_criteria_1" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Criteria 2 </label> <input
+									class="form-control col-sm-5" type="text"
+									id="report_addl_criteria_2" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Criteria 3</label> <input
+									class="form-control col-sm-5" type="text"
+									id="report_addl_criteria_3" />
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary"
+						onclick="submitdataform(this);">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- ------------model popup--------- -->
+	<div class="modal" id="myModal" style="align: center; margin-top: 15%;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header" style="background-color: orange;">
+					<h4 class="modal-title">BANK OF BARODA</h4>
+					<button type="button" class="close" data-dismiss="modal">x</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body" style="text-align: center;">need to be
+					enable</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<script>
+
+function ltv()
+{
+	
+	alert("ltv");
+	 $.ajax({
+			type: 'GET',
+			url: './ltv',
+			success: function (data) {
+				console.log(data);
+				if(data.length > 0){
+					console.log("Inside");
+					var trHTML = '';
+					$.each(data, function (key, entity) {
+						trHTML += 
+							'<tr>'
+							+'<td rowspan="5">'+(LTV)Requested Loan to Asset Value at application +'</td>'
+						+'<td>'+ entity.group +'</td>'
+							+ '<td>' +entity.bin_value   + '</td>'
+							+ '<td>' +  + '</td>'
+							+'<td  >'+ +'</td>'
+							+ '</tr>';
+					});
+					$('#ltvbody').empty().append(trHTML);
+				}
+			},
+			error: function () {
+				$('#errorMessage').text('Error fetching data');
+				$('#errorModal').modal('show');
+			}
+		});
+	
+	
+}
+
+
+</script>
+<script>
+document.getElementById('addRowBtn').addEventListener('click', function() {
+    var table = document.getElementById('usertable').getElementsByTagName('tbody')[0];
+    var newRow = table.insertRow();
+
+    var cell1 = newRow.insertCell(0);
+    var cell2 = newRow.insertCell(1);
+    var cell3 = newRow.insertCell(2);
+    var cell4 = newRow.insertCell(3);
+    var cell5 = newRow.insertCell(4);
+    var cell6 = newRow.insertCell(5);
+    var cell7 = newRow.insertCell(6);
+    var cell8 = newRow.insertCell(7);
+    var cell9 = newRow.insertCell(8);
+
+    cell1.innerHTML = '<input type="text" name="variable" class="dbr">';
+    cell2.innerHTML = '<input type="text" name="group" class="dbr">';
+    cell3.innerHTML = '<input type="text" name="bin_value" class="dbr">';
+    cell4.innerHTML = '<input type="text" name="partial_score" class="dbr">';
+    cell5.innerHTML = '<input type="text" name="effective_partial_score" class="dbr">';
+    cell6.innerHTML = '<input type="text" name="weight" class="dbr hidden-input"><span class="display-value">16%</span>';
+    cell7.innerHTML = '<input type="text" name="max_score" class="dbr">';
+    cell8.innerHTML = '<input type="text" name="min_score" class="dbr">';
+    cell9.innerHTML = '<input type="text" name="avg_score" class="dbr">';
+});
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+

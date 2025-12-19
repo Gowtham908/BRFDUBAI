@@ -1,0 +1,2438 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: GOWTHAM.
+CREATED ON	: 11-04-2024
+PURPOSE		: TESTING
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	var subreportid = /*[[${subreportid}]]*/null;
+
+	var secid = /*[[${secid}]]*/null;
+
+	var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+	var dtltype = /*[[${dtltype}]]*/null;
+
+	$(function() {
+
+		//to make the summary button active on load
+		$("#summarybtn").addClass("active");
+
+	});
+
+	//When report type change: set subreportid and secid and show summary.
+	function changeReptype() {
+
+		subreportid = $("#reporttype").find(':selected').val();
+
+		secid = "1";
+
+		showsummary();
+
+	};
+
+	/*to show details page - 3 parameters
+		mode - valid values are : nextpage, prevpage, givenpage, firstpage
+		num - page number to show to the user
+		maxpage - maximum number of pages avaialble in the data
+	 */
+	function showdetails(mode, num, maxpage) {
+		var filter = $("#filters").val();
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		if (filter != null) {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		} else {
+
+			var filter = null;
+
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//	Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		}
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+
+			}
+		})
+	}
+
+	//to fetch summary from the database - called from the summary button
+	function showsummary(mode, num, maxpage) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+		Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$("#summarybtn").addClass("active");
+
+				/*]]>*/
+			}
+		})
+	}
+
+	function sectionChange(a) {
+
+		secid = a;
+
+		showsummary();
+
+	};
+
+	function home() {
+		location.href = "/BRBS/quarterly1";
+
+	}
+	function back() {
+		window.history.back();
+	}
+	function back1() {
+		  var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			
+			$.ajax({
+				type : 'get',
+				url : Callurl,
+				success : function(data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+	/*]]>*/
+</script>
+
+<style>
+.nav-buttons {
+	float: right;
+}
+
+.reptitle {
+	float: left;
+}
+
+.reptitle>p {
+	margin-top: 0px;
+}
+
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+	min-width: 1500px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	(:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.first_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 0;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.second_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 30px;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.third_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 60px;
+	width: 150px;
+	margin-top: -2px;
+}
+
+.inner {
+	overflow-x: scroll;
+	overflow-y: visible;
+	/* margin-left: 60px; */
+}
+
+.table-bordered thead td, .table-bordered thead th {
+	border-bottom-width: 0px;
+}
+
+.table-bordered {
+	border: 0px;
+}
+
+.addedit {
+	color: #007bff;
+}
+
+.addedit:hover {
+	color: #0056b3;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var currlist = /*[[${currlist}]]*/null;
+	function editsum(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#addedit").modal("toggle");
+
+		}
+	};
+
+	function editsubmitform() {
+
+		var reportdate = $("#report_date").val();
+		//	alert(reportdate);
+
+		if ($("#dataedit").valid()) {
+
+			var url = "./T1Edit?";
+
+			$("#dataedit").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataedit").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		}
+	};
+	function verifyscreen(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#verify").modal("toggle");
+
+		}
+	};
+	function verifysubmitform(a) {
+
+		if ($("#dataverify").valid()) {
+			var entry = $("#ENTRY_USER").val();
+			var modify = $("#MODIFY_USER").val();
+			var verify = $("#VERIFY_USER").val();
+
+			//var formmode = a.getAttribute("data-formmode");
+			var url = "./T1Verify?";
+
+			$("#dataverify").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataverify").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		} else {
+			$("#alertmsg").text("Same User Cannot Verify!");
+			$('#alert').modal("toggle");
+
+		}
+
+	};
+	function refreshPage() {
+		window.location.reload();
+	}
+
+function resident(a){	
+		
+		var filter = a.id;
+		var cellValue = a.textContent || a.innerText;
+		if(cellValue != '0'){
+		//alert("rwo"+cellValue)
+		alert(filter);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+		Callurl = Callurl+"&filter="+filter;	
+		$.ajax({		
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+                 $('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+			}
+		})
+		}else{
+			alert("No Records available for this selected Criteria")
+		}
+
+	}
+
+
+</script>
+
+<script type="text/javascript">
+function editRecord(a) {
+
+	if (permission == 'W') {
+
+		var url2 = "./customeredit?";
+		$("#dataedit").attr('action', url2);
+		//Assign selected values to the model box fields
+		$("#cust_id").val(a.getAttribute("data-cust_id"));
+		$("#foracid").val(a.getAttribute("data-foracid"));
+		$("#acct_name").val(a.getAttribute("data-acct_name"));
+		$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));		
+		$("#report_name_1").val(a.getAttribute("data-report_name_1"));	
+		$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+     	$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1")); 
+		$("#report_date").val(a.getAttribute("data-report_date"));
+		
+		$("#addedit").modal("toggle");
+
+	}
+
+};
+
+function submitdataformedit() {
+	    var foracid = document.getElementById('foracid').value;	    
+	    var report_label_1 = document.getElementById('report_label_1').value;  
+	    var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+	    var report_name_1 = document.getElementById('report_name_1').value;
+	    var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+    $.ajax({
+        url: './CustomerDetailEditBrf104',
+        type: 'POST',
+        data: {
+        	foracid: foracid,
+        	report_label_1: report_label_1,
+        	act_balance_amt_lc: act_balance_amt_lc,
+        	report_name_1: report_name_1,
+        	report_addl_criteria_1: report_addl_criteria_1
+        },
+        success: function (data) {
+            // Handle the response data as needed
+            alert(data);
+
+            // Reload the page
+            location.reload();
+        },
+        error: function (error) {
+            // Handle any errors that occur during the AJAX request
+            console.error("Error: " + JSON.stringify(error));
+        }
+    });
+}
+	
+	
+ </script>
+<script>
+function downloadexcel(button) {
+	var reportid = button.getAttribute('data-reportid');
+	var asondate = button.getAttribute('data-asondate');
+	var fromdate = button.getAttribute('data-fromdate');
+	var todate = button.getAttribute('data-todate');
+	var currency = button.getAttribute('data-currency');
+	var subreportid = button.getAttribute('data-subreportid');
+	var secid = button.getAttribute('data-secid');
+	var dtltype = button.getAttribute('data-dtltype');
+	var filetype = button.getAttribute('data-filetype');
+	
+	console.log(filetype);
+
+	$('#downloadProcessingModal').modal('show');
+
+	$.ajax({
+		url : './' + reportid + '/Download',
+		data : {
+			asondate : asondate,
+			fromdate : fromdate,
+			todate : todate,
+			currency : currency,
+			subreportid : subreportid,
+			secid : secid,
+			dtltype : dtltype,
+			filetype : filetype
+		},
+		type : 'POST',
+		xhrFields : {
+			responseType : 'blob'
+		},
+		success : function(data) {
+			$('#downloadProcessingModal').modal('hide');
+			var blob = new Blob([ data ], {
+				type : 'application/octet-stream'
+			});
+			var url = window.URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+		                a.download = '011-BRF-104-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+		            } else if(filetype == "BRF"){
+		                a.download = '011-BRF-104-A' + ".xls"; // assuming .pdf extension for PDF files
+		            }else{
+		            	a.download = '011-BRF-104-A' + ".pdf";
+		            }
+		            
+		            document.body.appendChild(a);
+		            a.click();
+		            window.URL.revokeObjectURL(url);
+		            
+		            // Set the appropriate message based on the downloaded filetype
+		            if (filetype == "excel") {
+		                $('#customAlertBody').text('Downloaded BRF-104 ' + ".xlsx");
+		            } else if (filetype == "detailexcel") {
+		                $('#customAlertBody').text('Downloaded BRF-104 Detail Excel' + ".xlsx");
+		            }else if(filetype == "BRF"){
+		            	$('#customAlertBody').text('Downloaded BRF 104 ' + ".xls"); // assuming .pdf extension for PDF files
+		            } else {
+		                $('#customAlertBody').text('Downloaded BRF-104 ' + ".pdf");
+		            }
+		            $('#customAlertModal').modal('show');
+				}
+			});
+		}
+</script>
+<style>
+    .dropdown-menu li a:hover {
+        background-color: orange; /* Orange color for hover */
+        color: white; /* White text for better contrast */
+    }
+</style>
+<title>XBRL</title>
+</head>
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+				<b style="color: white;"> BANKING AND MONETARY STATISTICS- LIST
+					OF TOP 50 RESTRUCTURED ACCOUNTS (AED 000) </b>
+				<th><b style="color: white; margin-left: 15%;">Report Date
+						- <span th:text="${todate}"></span>
+				</b></th>
+
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary"
+						onclick="showdetails('firstpage','1','0');" id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary"
+						onclick="showsummary();" id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle"
+							data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'"
+								onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'"
+								onclick="downloadexcel(this)">Excel</a>
+							</li>
+
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'"
+								onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'"
+								onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
+						role="dialog" aria-labelledby="downloadProcessingModalLabel"
+						aria-hidden="true">
+						<div
+							class="modal-dialog modal-dialog-centered d-flex align-items-center"
+							role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1"
+						role="dialog" aria-labelledby="customAlertModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary"
+						onclick="editsum(this);" style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'"
+						onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive"
+							style="border-right: 1px solid #dee2e6">
+
+
+
+							<table style="width: 2000px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead style="background-color: #b3b6b9">
+
+									<tr style="text-align: center">
+										<th>NO</th>
+										<th style="width: 500px;">Borrower's Name</th>
+										<th>CIN (CBRB system)</th>
+										<th style="background-color : green">Distressed/Non-distressed</th>
+										<th>Current Bank Internal Rating</th>
+										<th>IFRS 9 Stage (1/2/3)</th>
+										<th>Date of restructure (month/ year) (DD/MM/YYYY)</th>
+										<th>Number of times restructured previously</th>
+										<th>Date of Previous Restructure (month/year)
+											(DD/MM/YYYY)</th>
+										<th>Funded Exposure</th>
+										<th>Unfunded Exposure (CCF)</th>
+										<th style="background-color : green">Bullet/ Balloon Repayment Amount</th>
+										<th style="background-color : yellow">Legacy Interest in Suspense</th>
+										<th style="background-color : yellow">Provision for Interest & Fees past due more than 90 days</th>
+										<th>Provisions</th>
+									</tr>
+
+								</thead>
+								<tbody th:each="report: ${reportsummary}">
+									<tr>
+										<td th:text="${report.R1_No}"></td>
+										<td th:text="${report.R1_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R1_CIN	}"></td>
+										<td th:text="${report.R1_DISTRESSED	}"></td>
+										<td th:text="${report.R1_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R1_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R1_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW101"
+											th:text="${#numbers.formatDecimal(report.R1_NUMBER_OF_TIME_RESTRUCTURED, 0, 'COMMA', 0, 'POINT')}"></td>
+										<td
+											th:text="${#dates.format(report.R1_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R1_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R1_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R2_No}"></td>
+										<td th:text="${report.R2_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R2_CIN	}"></td>
+										<td th:text="${report.R2_DISTRESSED	}"></td>
+										<td th:text="${report.R2_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R2_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R2_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R2_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R2_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R2_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R3_No}"></td>
+										<td th:text="${report.R3_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R3_CIN	}"></td>
+										<td th:text="${report.R3_DISTRESSED	}"></td>
+										<td th:text="${report.R3_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R3_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R3_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW103"
+											th:text="${#numbers.formatDecimal( report.R3_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R3_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R3_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R3_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW103"
+											th:text="${#numbers.formatDecimal( report.R3_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW103"
+											th:text="${#numbers.formatDecimal( report.R3_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW103"
+											th:text="${#numbers.formatDecimal( report.R3_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW103"
+											th:text="${#numbers.formatDecimal( report.R3_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R4_No}"></td>
+										<td th:text="${report.R4_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R4_CIN	}"></td>
+										<td th:text="${report.R4_DISTRESSED	}"></td>
+										<td th:text="${report.R4_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R4_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R4_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW104"
+											th:text="${#numbers.formatDecimal( report.R4_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R4_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R4_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R4_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW104"
+											th:text="${#numbers.formatDecimal( report.R4_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW104"
+											th:text="${#numbers.formatDecimal( report.R4_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW104"
+											th:text="${#numbers.formatDecimal( report.R4_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW104"
+											th:text="${#numbers.formatDecimal( report.R4_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R5_No}"></td>
+										<td th:text="${report.R5_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R5_CIN	}"></td>
+										<td th:text="${report.R5_DISTRESSED	}"></td>
+										<td th:text="${report.R5_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R5_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R5_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R5_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R5_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R5_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R6_No}"></td>
+										<td th:text="${report.R6_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R6_CIN	}"></td>
+										<td th:text="${report.R6_DISTRESSED	}"></td>
+										<td th:text="${report.R6_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R6_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R6_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R6_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R6_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R6_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R7_No}"></td>
+										<td th:text="${report.R7_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R7_CIN	}"></td>
+										<td th:text="${report.R7_DISTRESSED	}"></td>
+										<td th:text="${report.R7_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R7_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R7_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R7_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R7_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R7_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R8_No}"></td>
+										<td th:text="${report.R8_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R8_CIN	}"></td>
+										<td th:text="${report.R8_DISTRESSED	}"></td>
+										<td th:text="${report.R8_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R8_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R8_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW108"
+											th:text="${#numbers.formatDecimal( report.R8_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R8_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R8_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R8_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW108"
+											th:text="${#numbers.formatDecimal( report.R8_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW108"
+											th:text="${#numbers.formatDecimal( report.R8_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW108"
+											th:text="${#numbers.formatDecimal( report.R8_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW108"
+											th:text="${#numbers.formatDecimal( report.R8_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R9_No}"></td>
+										<td th:text="${report.R9_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R9_CIN	}"></td>
+										<td th:text="${report.R9_DISTRESSED	}"></td>
+										<td th:text="${report.R9_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R9_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R9_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW109"
+											th:text="${#numbers.formatDecimal( report.R9_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R9_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R9_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R9_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW109"
+											th:text="${#numbers.formatDecimal( report.R9_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW109"
+											th:text="${#numbers.formatDecimal( report.R9_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW109"
+											th:text="${#numbers.formatDecimal( report.R9_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW109"
+											th:text="${#numbers.formatDecimal( report.R9_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R10_No}"></td>
+										<td th:text="${report.R10_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R10_CIN	}"></td>
+										<td th:text="${report.R10_DISTRESSED	}"></td>
+										<td th:text="${report.R10_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R10_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R10_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R10_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R10_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R10_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R11_No}"></td>
+										<td th:text="${report.R11_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R11_CIN	}"></td>
+										<td th:text="${report.R11_DISTRESSED	}"></td>
+										<td th:text="${report.R11_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R11_IFRS_9_STAGE	}"></td>
+										<td
+											th:text="${#dates.format(report.R11_DATE_OF_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: right;"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td
+											th:text="${#dates.format(report.R11_DATE_OF_PREVIOUS_RESTRUCTURE, 'dd-MM-yyyy')}"
+											style="text-align: left;"></td>
+										<td th:text="${report.R11_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R11_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal( report.R11_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R12_No}"></td>
+										<td th:text="${report.R12_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R12_CIN	}"></td>
+										<td th:text="${report.R12_DISTRESSED	}"></td>
+										<td th:text="${report.R12_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R12_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R12_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R12_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R12_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R12_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R13_No}"></td>
+										<td th:text="${report.R13_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R13_CIN	}"></td>
+										<td th:text="${report.R13_DISTRESSED	}"></td>
+										<td th:text="${report.R13_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R13_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R13_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R13_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R13_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R13_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R14_No}"></td>
+										<td th:text="${report.R14_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R14_CIN	}"></td>
+										<td th:text="${report.R14_DISTRESSED	}"></td>
+										<td th:text="${report.R14_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R14_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R14_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R14_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R14_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R14_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R15_No}"></td>
+										<td th:text="${report.R15_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R15_CIN	}"></td>
+										<td th:text="${report.R15_DISTRESSED	}"></td>
+										<td th:text="${report.R15_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R15_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R15_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW115"
+											th:text="${#numbers.formatDecimal( report.R15_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R15_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R15_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R15_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW115"
+											th:text="${#numbers.formatDecimal( report.R15_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW115"
+											th:text="${#numbers.formatDecimal( report.R15_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW115"
+											th:text="${#numbers.formatDecimal( report.R15_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW115"
+											th:text="${#numbers.formatDecimal( report.R15_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R16_No}"></td>
+										<td th:text="${report.R16_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R16_CIN	}"></td>
+										<td th:text="${report.R16_DISTRESSED	}"></td>
+										<td th:text="${report.R16_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R16_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R16_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW116"
+											th:text="${#numbers.formatDecimal( report.R16_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R16_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R16_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R16_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW116"
+											th:text="${#numbers.formatDecimal( report.R16_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW116"
+											th:text="${#numbers.formatDecimal( report.R16_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW116"
+											th:text="${#numbers.formatDecimal( report.R16_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW116"
+											th:text="${#numbers.formatDecimal( report.R16_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R17_No}"></td>
+										<td th:text="${report.R17_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R17_CIN	}"></td>
+										<td th:text="${report.R17_DISTRESSED	}"></td>
+										<td th:text="${report.R17_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R17_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R17_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R17_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R17_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R17_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R18_No}"></td>
+										<td th:text="${report.R18_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R18_CIN	}"></td>
+										<td th:text="${report.R18_DISTRESSED	}"></td>
+										<td th:text="${report.R18_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R18_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R18_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R18_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R18_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R18_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R19_No}"></td>
+										<td th:text="${report.R19_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R19_CIN	}"></td>
+										<td th:text="${report.R19_DISTRESSED	}"></td>
+										<td th:text="${report.R19_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R19_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R19_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R19_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R19_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R19_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R20_No}"></td>
+										<td th:text="${report.R20_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R20_CIN	}"></td>
+										<td th:text="${report.R20_DISTRESSED	}"></td>
+										<td th:text="${report.R20_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R20_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R20_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R20_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R20_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R20_UNFUNDED_EXPOSURE	}"></td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R21_No}"></td>
+										<td th:text="${report.R21_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R21_CIN	}"></td>
+										<td th:text="${report.R21_DISTRESSED	}"></td>
+										<td th:text="${report.R21_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R21_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R21_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R21_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R21_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R21_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R22_No}"></td>
+										<td th:text="${report.R22_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R22_CIN	}"></td>
+										<td th:text="${report.R22_DISTRESSED	}"></td>
+										<td th:text="${report.R22_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R22_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R22_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R22_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R22_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R22_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R23_No}"></td>
+										<td th:text="${report.R23_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R23_CIN	}"></td>
+										<td th:text="${report.R23_DISTRESSED	}"></td>
+										<td th:text="${report.R23_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R23_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R23_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R23_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R23_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R23_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R24_No}"></td>
+										<td th:text="${report.R24_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R24_CIN	}"></td>
+										<td th:text="${report.R24_DISTRESSED	}"></td>
+										<td th:text="${report.R24_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R24_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R24_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW124"
+											th:text="${#numbers.formatDecimal( report.R24_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R24_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R24_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R24_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW124"
+											th:text="${#numbers.formatDecimal( report.R24_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW124"
+											th:text="${#numbers.formatDecimal( report.R24_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW124"
+											th:text="${#numbers.formatDecimal( report.R24_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW124"
+											th:text="${#numbers.formatDecimal( report.R24_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R25_No}"></td>
+										<td th:text="${report.R25_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R25_CIN	}"></td>
+										<td th:text="${report.R25_DISTRESSED	}"></td>
+										<td th:text="${report.R25_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R25_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R25_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW125"
+											th:text="${#numbers.formatDecimal( report.R25_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R25_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R25_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R25_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW125"
+											th:text="${#numbers.formatDecimal( report.R25_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW125"
+											th:text="${#numbers.formatDecimal( report.R25_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW125"
+											th:text="${#numbers.formatDecimal( report.R25_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW125"
+											th:text="${#numbers.formatDecimal( report.R25_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R26_No}"></td>
+										<td th:text="${report.R26_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R26_CIN	}"></td>
+										<td th:text="${report.R26_DISTRESSED	}"></td>
+										<td th:text="${report.R26_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R26_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R26_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW126"
+											th:text="${#numbers.formatDecimal( report.R26_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R26_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R26_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R26_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW126"
+											th:text="${#numbers.formatDecimal( report.R26_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW126"
+											th:text="${#numbers.formatDecimal( report.R26_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW126"
+											th:text="${#numbers.formatDecimal( report.R26_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW126"
+											th:text="${#numbers.formatDecimal( report.R26_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R27_No}"></td>
+										<td th:text="${report.R27_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R27_CIN	}"></td>
+										<td th:text="${report.R27_DISTRESSED	}"></td>
+										<td th:text="${report.R27_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R27_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R27_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW127"
+											th:text="${#numbers.formatDecimal( report.R27_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R27_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R27_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R27_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW127"
+											th:text="${#numbers.formatDecimal( report.R27_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW127"
+											th:text="${#numbers.formatDecimal( report.R27_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW127"
+											th:text="${#numbers.formatDecimal( report.R27_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW127"
+											th:text="${#numbers.formatDecimal( report.R27_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R28_No}"></td>
+										<td th:text="${report.R28_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R28_CIN	}"></td>
+										<td th:text="${report.R28_DISTRESSED	}"></td>
+										<td th:text="${report.R28_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R28_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R28_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW128"
+											th:text="${#numbers.formatDecimal( report.R28_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R28_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R28_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R28_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW128"
+											th:text="${#numbers.formatDecimal( report.R28_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW128"
+											th:text="${#numbers.formatDecimal( report.R28_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW128"
+											th:text="${#numbers.formatDecimal( report.R28_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal( report.R28_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R29_No}"></td>
+										<td th:text="${report.R29_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R29_CIN	}"></td>
+										<td th:text="${report.R29_DISTRESSED	}"></td>
+										<td th:text="${report.R29_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R29_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R29_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW129"
+											th:text="${#numbers.formatDecimal( report.R29_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R29_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R29_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R29_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW129"
+											th:text="${#numbers.formatDecimal( report.R29_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW129"
+											th:text="${#numbers.formatDecimal( report.R29_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW129"
+											th:text="${#numbers.formatDecimal( report.R29_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW129"
+											th:text="${#numbers.formatDecimal( report.R29_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R30_No}"></td>
+										<td th:text="${report.R30_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R30_CIN	}"></td>
+										<td th:text="${report.R30_DISTRESSED	}"></td>
+										<td th:text="${report.R30_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R30_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R30_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW130"
+											th:text="${#numbers.formatDecimal( report.R30_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R30_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R30_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R30_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW130"
+											th:text="${#numbers.formatDecimal( report.R30_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW130"
+											th:text="${#numbers.formatDecimal( report.R30_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW130"
+											th:text="${#numbers.formatDecimal( report.R30_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW130"
+											th:text="${#numbers.formatDecimal( report.R30_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R31_No}"></td>
+										<td th:text="${report.R31_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R31_CIN	}"></td>
+										<td th:text="${report.R31_DISTRESSED	}"></td>
+										<td th:text="${report.R31_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R31_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R31_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW131"
+											th:text="${#numbers.formatDecimal( report.R31_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R31_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R31_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R31_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW131"
+											th:text="${#numbers.formatDecimal( report.R31_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW131"
+											th:text="${#numbers.formatDecimal( report.R31_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW131"
+											th:text="${#numbers.formatDecimal( report.R31_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW131"
+											th:text="${#numbers.formatDecimal( report.R31_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R32_No}"></td>
+										<td th:text="${report.R32_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R32_CIN	}"></td>
+										<td th:text="${report.R32_DISTRESSED	}"></td>
+										<td th:text="${report.R32_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R32_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R32_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW132"
+											th:text="${#numbers.formatDecimal( report.R32_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R32_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R32_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R32_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW132"
+											th:text="${#numbers.formatDecimal( report.R32_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW132"
+											th:text="${#numbers.formatDecimal( report.R32_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW132"
+											th:text="${#numbers.formatDecimal( report.R32_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW132"
+											th:text="${#numbers.formatDecimal( report.R32_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R33_No}"></td>
+										<td th:text="${report.R33_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R33_CIN	}"></td>
+										<td th:text="${report.R33_DISTRESSED	}"></td>
+										<td th:text="${report.R33_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R33_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R33_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW133"
+											th:text="${#numbers.formatDecimal( report.R33_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R33_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R33_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R33_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW133"
+											th:text="${#numbers.formatDecimal( report.R33_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW133"
+											th:text="${#numbers.formatDecimal( report.R33_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW133"
+											th:text="${#numbers.formatDecimal( report.R33_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW133"
+											th:text="${#numbers.formatDecimal( report.R33_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R34_No}"></td>
+										<td th:text="${report.R34_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R34_CIN	}"></td>
+										<td th:text="${report.R34_DISTRESSED	}"></td>
+										<td th:text="${report.R34_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R34_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R34_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW134"
+											th:text="${#numbers.formatDecimal( report.R34_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R34_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R34_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R34_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW134"
+											th:text="${#numbers.formatDecimal( report.R34_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW134"
+											th:text="${#numbers.formatDecimal( report.R34_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW134"
+											th:text="${#numbers.formatDecimal( report.R34_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW134"
+											th:text="${#numbers.formatDecimal( report.R34_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R35_No}"></td>
+										<td th:text="${report.R35_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R35_CIN	}"></td>
+										<td th:text="${report.R35_DISTRESSED	}"></td>
+										<td th:text="${report.R35_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R35_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R35_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW135"
+											th:text="${#numbers.formatDecimal( report.R35_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R35_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R35_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R35_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW135"
+											th:text="${#numbers.formatDecimal( report.R35_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW135"
+											th:text="${#numbers.formatDecimal( report.R35_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW135"
+											th:text="${#numbers.formatDecimal( report.R35_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW135"
+											th:text="${#numbers.formatDecimal( report.R35_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R36_No}"></td>
+										<td th:text="${report.R36_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R36_CIN	}"></td>
+										<td th:text="${report.R36_DISTRESSED	}"></td>
+										<td th:text="${report.R36_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R36_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R36_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW136"
+											th:text="${#numbers.formatDecimal( report.R36_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R36_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R36_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R36_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW136"
+											th:text="${#numbers.formatDecimal( report.R36_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW136"
+											th:text="${#numbers.formatDecimal( report.R36_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW136"
+											th:text="${#numbers.formatDecimal( report.R36_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW136"
+											th:text="${#numbers.formatDecimal( report.R36_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R37_No}"></td>
+										<td th:text="${report.R37_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R37_CIN	}"></td>
+										<td th:text="${report.R37_DISTRESSED	}"></td>
+										<td th:text="${report.R37_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R37_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R37_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW137"
+											th:text="${#numbers.formatDecimal( report.R37_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R37_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R37_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R37_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW137"
+											th:text="${#numbers.formatDecimal( report.R37_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW137"
+											th:text="${#numbers.formatDecimal( report.R37_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW137"
+											th:text="${#numbers.formatDecimal( report.R37_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW137"
+											th:text="${#numbers.formatDecimal( report.R37_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R38_No}"></td>
+										<td th:text="${report.R38_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R38_CIN	}"></td>
+										<td th:text="${report.R38_DISTRESSED	}"></td>
+										<td th:text="${report.R38_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R38_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R38_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW138"
+											th:text="${#numbers.formatDecimal( report.R38_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R38_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R38_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R38_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW138"
+											th:text="${#numbers.formatDecimal( report.R38_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW138"
+											th:text="${#numbers.formatDecimal( report.R38_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW138"
+											th:text="${#numbers.formatDecimal( report.R38_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW138"
+											th:text="${#numbers.formatDecimal( report.R38_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R39_No}"></td>
+										<td th:text="${report.R39_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R39_CIN	}"></td>
+										<td th:text="${report.R39_DISTRESSED	}"></td>
+										<td th:text="${report.R39_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R39_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R39_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW139"
+											th:text="${#numbers.formatDecimal( report.R39_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R39_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R39_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R39_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW139"
+											th:text="${#numbers.formatDecimal( report.R39_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW139"
+											th:text="${#numbers.formatDecimal( report.R39_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW139"
+											th:text="${#numbers.formatDecimal( report.R39_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW139"
+											th:text="${#numbers.formatDecimal( report.R39_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R40_No}"></td>
+										<td th:text="${report.R40_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R40_CIN	}"></td>
+										<td th:text="${report.R40_DISTRESSED	}"></td>
+										<td th:text="${report.R40_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R40_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R40_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW140"
+											th:text="${#numbers.formatDecimal( report.R40_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R40_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R40_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R40_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW140"
+											th:text="${#numbers.formatDecimal( report.R40_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW140"
+											th:text="${#numbers.formatDecimal( report.R40_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW140"
+											th:text="${#numbers.formatDecimal( report.R40_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW140"
+											th:text="${#numbers.formatDecimal( report.R40_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R41_No}"></td>
+										<td th:text="${report.R41_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R41_CIN	}"></td>
+										<td th:text="${report.R41_DISTRESSED	}"></td>
+										<td th:text="${report.R41_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R41_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R41_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW141"
+											th:text="${#numbers.formatDecimal( report.R41_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R41_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R41_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R41_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW141"
+											th:text="${#numbers.formatDecimal( report.R41_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW141"
+											th:text="${#numbers.formatDecimal( report.R41_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW141"
+											th:text="${#numbers.formatDecimal( report.R41_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW141"
+											th:text="${#numbers.formatDecimal( report.R41_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R42_No}"></td>
+										<td th:text="${report.R42_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R42_CIN	}"></td>
+										<td th:text="${report.R42_DISTRESSED	}"></td>
+										<td th:text="${report.R42_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R42_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R42_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW142"
+											th:text="${#numbers.formatDecimal( report.R42_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R42_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R42_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R42_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW142"
+											th:text="${#numbers.formatDecimal( report.R42_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW142"
+											th:text="${#numbers.formatDecimal( report.R42_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW142"
+											th:text="${#numbers.formatDecimal( report.R42_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW142"
+											th:text="${#numbers.formatDecimal( report.R42_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R43_No}"></td>
+										<td th:text="${report.R43_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R43_CIN	}"></td>
+										<td th:text="${report.R43_DISTRESSED	}"></td>
+										<td th:text="${report.R43_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R43_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R43_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW143"
+											th:text="${#numbers.formatDecimal( report.R43_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R43_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R43_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R43_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW143"
+											th:text="${#numbers.formatDecimal( report.R43_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW143"
+											th:text="${#numbers.formatDecimal( report.R43_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW143"
+											th:text="${#numbers.formatDecimal( report.R43_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW143"
+											th:text="${#numbers.formatDecimal( report.R43_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R44_No}"></td>
+										<td th:text="${report.R44_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R44_CIN	}"></td>
+										<td th:text="${report.R44_DISTRESSED	}"></td>
+										<td th:text="${report.R44_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R44_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R44_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW144"
+											th:text="${#numbers.formatDecimal( report.R44_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R44_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R44_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R44_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW144"
+											th:text="${#numbers.formatDecimal( report.R44_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW144"
+											th:text="${#numbers.formatDecimal( report.R44_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW144"
+											th:text="${#numbers.formatDecimal( report.R44_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW144"
+											th:text="${#numbers.formatDecimal( report.R44_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R45_No}"></td>
+										<td th:text="${report.R45_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R45_CIN	}"></td>
+										<td th:text="${report.R45_DISTRESSED	}"></td>
+										<td th:text="${report.R45_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R45_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R45_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW145"
+											th:text="${#numbers.formatDecimal( report.R45_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R45_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R45_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R45_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW145"
+											th:text="${#numbers.formatDecimal( report.R45_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW145"
+											th:text="${#numbers.formatDecimal( report.R45_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW145"
+											th:text="${#numbers.formatDecimal( report.R45_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW145"
+											th:text="${#numbers.formatDecimal( report.R45_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R46_No}"></td>
+										<td th:text="${report.R46_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R46_CIN	}"></td>
+										<td th:text="${report.R46_DISTRESSED	}"></td>
+										<td th:text="${report.R46_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R46_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R46_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW146"
+											th:text="${#numbers.formatDecimal( report.R46_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R46_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R46_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R46_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW146"
+											th:text="${#numbers.formatDecimal( report.R46_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW146"
+											th:text="${#numbers.formatDecimal( report.R46_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW146"
+											th:text="${#numbers.formatDecimal( report.R46_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW146"
+											th:text="${#numbers.formatDecimal( report.R46_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R47_No}"></td>
+										<td th:text="${report.R47_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R47_CIN	}"></td>
+										<td th:text="${report.R47_DISTRESSED	}"></td>
+										<td th:text="${report.R47_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R47_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R47_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW147"
+											th:text="${#numbers.formatDecimal( report.R47_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R47_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R47_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R47_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW147"
+											th:text="${#numbers.formatDecimal( report.R47_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW147"
+											th:text="${#numbers.formatDecimal( report.R47_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW147"
+											th:text="${#numbers.formatDecimal( report.R47_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW147"
+											th:text="${#numbers.formatDecimal( report.R47_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R48_No}"></td>
+										<td th:text="${report.R48_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R48_CIN	}"></td>
+										<td th:text="${report.R48_DISTRESSED	}"></td>
+										<td th:text="${report.R48_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R48_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R48_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW148"
+											th:text="${#numbers.formatDecimal( report.R48_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R48_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R48_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R48_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW148"
+											th:text="${#numbers.formatDecimal( report.R48_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW148"
+											th:text="${#numbers.formatDecimal( report.R48_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW148"
+											th:text="${#numbers.formatDecimal( report.R48_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW148"
+											th:text="${#numbers.formatDecimal( report.R48_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R49_No}"></td>
+										<td th:text="${report.R49_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R49_CIN	}"></td>
+										<td th:text="${report.R49_DISTRESSED	}"></td>
+										<td th:text="${report.R49_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R49_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R49_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW149"
+											th:text="${#numbers.formatDecimal( report.R49_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R49_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R49_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R49_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW149"
+											th:text="${#numbers.formatDecimal( report.R49_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW149"
+											th:text="${#numbers.formatDecimal( report.R49_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW149"
+											th:text="${#numbers.formatDecimal( report.R49_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW149"
+											th:text="${#numbers.formatDecimal( report.R49_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr>
+										<td th:text="${report.R50_No}"></td>
+										<td th:text="${report.R50_BORROWERS_NAME	}"></td>
+										<td th:text="${report.R50_CIN	}"></td>
+										<td th:text="${report.R50_DISTRESSED	}"></td>
+										<td th:text="${report.R50_CURRENT_BANK_INTERNAL_RATING	}"></td>
+										<td th:text="${report.R50_IFRS_9_STAGE	}"></td>
+										<td th:text="${report.R50_DATE_OF_RESTRUCTURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW150"
+											th:text="${#numbers.formatDecimal( report.R50_NUMBER_OF_TIME_RESTRUCTURED ,0,'COMMA',0,'POINT')	}"></td>
+										<td th:text="${report.R50_DATE_OF_PREVIOUS_RESTRUCTURE	}"></td>
+										<td th:text="${report.R50_FUNDED_EXPOSURE	}"></td>
+										<td th:text="${report.R50_UNFUNDED_EXPOSURE	}"></td>
+										<td style="text-align: right" onclick="resident(this)" id="ROW150"
+											th:text="${#numbers.formatDecimal( report.R50_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW150"
+											th:text="${#numbers.formatDecimal( report.R50_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></td>
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW150"
+											th:text="${#numbers.formatDecimal( report.R50_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"><
+
+										
+										<td style="text-align: right" onclick="resident(this)"
+											id="ROW150"
+											th:text="${#numbers.formatDecimal( report.R50_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td th:text="${report.R51_No}"></td>
+										<th style="text-align: center"
+											th:text="${report.R51_BORROWERS_NAME	}"></th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="text-align: right" 
+											th:text="${#numbers.formatDecimal( report.R51_REPAYMENT_AMOUNT ,0,'COMMA',0,'POINT')	}"></td>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal( report.R51_LEGACY_INTEREST ,0,'COMMA',0,'POINT')	}"></th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal( report.R51_PROVISION_INTEREST,0,'COMMA',0,'POINT')	}"></th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal( report.R51_SPECIFIC_PROVISION ,0,'COMMA',0,'POINT')	}"></th>
+									</tr>
+									<tr>
+										<td></td>
+										<td colspan="6">*length total facility includes grace
+											period</td>
+										<td colspan="8" rowspan="2"></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td colspan="6">FORM NO: BSD/BRF 104 Top 50 Restructured
+											Loan NOV 2018</td>
+									</tr>
+								</tbody>
+
+							</table>
+						</div>
+						<div class="card-footer text-center"
+							th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276";>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'"
+				th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null"
+						class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT_NAME_1</th>
+								<th>REPORT_LABEL_1</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center: font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec"
+									title="Click to Edit this Record"><i
+										th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+										class="fas fa-edit"
+										th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}"
+										onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center"
+					style="background-color: #386276";>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+						onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+						onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div
+						class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input
+												class="form-control col-sm-5" id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input
+												class="form-control col-sm-5" id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCR BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1
+												name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformedit(this);" id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div
+							class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

@@ -1,0 +1,972 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<style>
+.tablinks {
+	background-color: #f2f2f2;
+	color: #000;
+}
+
+/* Highlighted tab style */
+.tablinks.active {
+	background-color: #007bff;
+	/* Change this to your desired highlight color */
+	color: #fff;
+	/* Change this to the text color for highlighted tabs */
+}
+
+.space_div {
+	padding-top: 70px;
+}
+
+.mytask {
+	height: 500px;
+	width: 750px;
+}
+
+.btns {
+	float: right;
+	margin: 5px;
+}
+
+.col-sm-5 {
+	padding-bottom: 15px;
+}
+
+.list-body {
+	padding: 0px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.formline {
+	padding-bottom: 15px;
+}
+
+	.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}	
+
+#finusertb {
+	width: 460px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
+
+.container {
+	text-align: center;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	$(function() {
+		
+		 var dataTableOptions = {
+			      "info": false,
+			      "lengthChange": false,
+			      "pageLength": 10
+			   };
+
+		var finusers = /*[[${FinUserProfiles}]]*/null;
+
+		console.log(finusers);
+
+		
+
+		$("#expiryDate,#disableDate,#disableTilDate,#passExDate,#effectiveTill")
+				.datepicker({
+					minDate : new Date(),
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "dd-mm-yy"
+				});
+
+	});
+
+	function getUserlist(mode, num, maxpage) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = 'UserProfile?formmode=list';
+
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		location.href = Callurl;
+	}
+
+	function finuser(a) {
+
+		$
+				.ajax({
+					type : 'get',
+					url : '/XBRL/Finuserdata?userid=' + a.id,
+
+					success : function(data) {
+
+						/*<![CDATA[*/
+
+						$('.finuserapply').html(data);
+
+						$(
+								"#expiryDate,#disableDate,#disableTilDate,#passExDate,#effectiveTill")
+								.datepicker({
+									changeMonth : true,
+									changeYear : true,
+									dateFormat : "dd-mm-yy"
+								});
+
+						/*]]>*/
+
+						$("#finusers").modal("hide");
+					}
+
+				})
+
+	}
+
+	function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+		window.history.back();
+	}
+	function list1() {
+		
+		location.href = 'Referencecodemain?formmode=list1';
+	}
+
+	function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+
+		window.history.back();
+	}
+
+	function list() {
+		location.href = 'Referencecodemain?formmode=list';
+	}
+	function custadd() {
+		location.href = 'Referencecodemain?formmode=add';
+	}
+
+	function submitform() {
+
+		//Creating Validating Rules
+		$('#userProfile').validate({
+			messages : {
+				userid : "Please Provide User Id"
+			}
+		});
+
+		if ($("#userProfile").valid()) {
+
+			var formmode = /*[[${formmode}]]*/null;
+
+			var url = "./createUser?formmode=" + formmode;
+
+			$("#userProfile").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#userProfile").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+
+		}
+
+	};
+
+	function openTab(evt, tabName) {
+		evt.preventDefault();
+		let currentTab = 'tab1';
+
+		tablinks = document.getElementsByClassName("tablinks");
+		for (i = 0; i < tablinks.length; i++) {
+			tablinks[i].classList.remove("active");
+		}
+
+		// Add the "active" class to the clicked tab
+		evt.currentTarget.classList.add("active");
+
+		// Check if the previous tab has been completed before allowing navigation
+		if (currentTab == 'tab1'
+				|| confirm("Complete the previous tab before moving on.")) {
+
+			// Hide all tabs
+			hideAllTabs();
+
+			// Show the selected tab
+			document.getElementById(tabName).style.display = 'block';
+
+			// Update the currentTab variable
+			currentTab = tabName;
+		} else {
+			// Prevent navigation if the previous tab is not completed
+			evt.preventDefault();
+		}
+	}
+
+	function hideAllTabs() {
+		// Hide all tab content
+		const tabContents = document.getElementsByClassName('tabcontent');
+		for (let i = 0; i < tabContents.length; i++) {
+			tabContents[i].style.display = 'none';
+		}
+	}
+
+	hideAllTabs();
+	document.getElementById('tab1').style.display = 'block';
+
+	/*]]>*/
+</script>
+
+<script>
+	function tab1submit() {
+		alert("sanjeev");
+
+		var a = document.getElementById("acct_number").value;
+		alert(a);
+		$.ajax({
+
+			url : './Customermain?a=' + a,
+
+			data : $("#customer").serialize(),
+
+			type : 'POST',
+
+			success : function(data) {
+
+				alert("Add Scuccessfully");
+
+			}
+
+		});
+
+	}
+
+	function edittab1(a) {
+		//alert("hi overseas")
+		event.preventDefault();
+
+		var name = document.getElementById("cust_id").value;
+		alert(name)
+
+		$.ajax({
+			url : './editcustomer',
+			data : $("#editcustomer").serialize(),
+			type : 'POST',
+			success : function(data) {
+				window.history.back();
+
+			}
+
+		});
+		alert("edited  Successfully");
+	}
+
+	function Customer(a) {
+		alert("vijay");
+		$('#placelist').empty();
+
+		$.ajax({
+					url : 'Referencecodemaincustomerlist',
+					type : 'GET',
+					dataType : 'json',
+					// Change to 'json' as you are expecting JSON response
+					// Your other settings...
+
+					success : function(response) {
+
+						const b = response; // Store the parsed JSON response in variable b
+
+						//	var fromDate = value.from_date instanceof Date ? value.from_date.toISOString().split('T')[0] : value.from_date;
+						//	var today = value.from_date instanceof Date ? value.to_date.toISOString().split('T')[0] : value.from_date;
+
+						var trHTML = ''
+						$
+								.each(
+										b,
+										function(key, value) {
+											trHTML += '<tr id=' + value.cust_id + '>'
+
+													+ '<td style="text-align:left;">'
+													+ value.referene_type
+													+ '</td>'
+													+ '<td style="text-align:left;">'
+													+ value.cust_id
+													+ '</td>'
+
+													+ '<td style="text-align:left;">'
+													+ value.reference_code
+													+ '</td>' // Corrected field name
+													+ '<td style="text-align:left;">'
+													+ value.description
+													+ '</td>' // Corrected field name
+													+ '<td style="text-align:left;">'
+													+ value.remarks
+													+ '</td>' // Corrected field name
+													+ '<td style="width: 34px;"><input type="radio" id="btnclick'
+													+ value.cust_id
+													+ '" data-customer="'
+													+ value.cust_id
+													+ '" onclick="listradioclickzero(this)" /></td>'
+
+													+ '</tr>';
+										});
+						$('#placelist').empty().append(trHTML); // Use $('#placelist') to update the table
+
+						// Show the parsed object as a string in the alert
+						// Assuming you want to show the first object in the array
+
+						// Rest of your code
+					}
+				});
+		
+		$("#usertable").DataTable(dataTableOptions);
+	}
+	
+	
+
+	function Account(a) {
+		alert("hihihi")
+		$('#placelist').empty();
+
+		$('#placelist').empty();
+		// Your existing code
+
+		$
+				.ajax({
+					url : 'Referencecodemaincustomerlist1',
+					type : 'GET',
+					dataType : 'json',
+					// Change to 'json' as you are expecting JSON response
+					// Your other settings...
+
+					success : function(response) {
+
+						const b = response; // Store the parsed JSON response in variable b
+
+						//	var fromDate = value.from_date instanceof Date ? value.from_date.toISOString().split('T')[0] : value.from_date;
+						//	var today = value.from_date instanceof Date ? value.to_date.toISOString().split('T')[0] : value.from_date;
+
+						var trHTML = ''
+						$
+								.each(
+										b,
+										function(key, value) {
+											trHTML += '<tr id=' + value.cust_id + '>'
+
+													+ '<td style="text-align:left;">'
+													+ value.referene_type
+													+ '</td>'
+													+ '<td style="text-align:left;">'
+													+ value.acct_number
+													+ '</td>'
+
+													+ '<td style="text-align:left;">'
+													+ value.reference_code
+													+ '</td>' // Corrected field name
+													+ '<td style="text-align:left;">'
+													+ value.description
+													+ '</td>' // Corrected field name
+													+ '<td style="text-align:left;">'
+													+ value.remarks
+													+ '</td>' // Corrected field name
+													+ '<td style="width: 34px;"><input type="radio" id="btnclick'
+													+ value.cust_id
+													+ '" data-customer="'
+													+ value.cust_id
+													+ '" onclick="listradioclickzero(this)" /></td>'
+
+													+ '</tr>';
+										});
+						$('#placelist').empty().append(trHTML); // Use $('#placelist') to update the table
+
+						// Show the parsed object as a string in the alert
+						// Assuming you want to show the first object in the array
+
+						// Rest of your code
+					}
+				});
+	}
+
+	function listradioclickzero(a) {
+
+		alert("hihi");
+
+		var a = a.getAttribute("data-customer");
+		alert(a)
+
+		location.href = 'Referencecodemain?formmode=edit' + '&cust_id=' + a;
+	}
+</script>
+
+
+</head>
+<title>BCDRS</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('UserProfile')" id="ques"></i>
+
+	<div th:if="${formmode}=='list'" class="container content">
+		<div class="row">
+			<div class="col-sm-12" style="font-size: 12px;">
+				<div class="card" style="width: 1433px; margin-left: -36px;">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4>Reference Code Maintenance</h4>
+						</div>
+						<div style="float: right">
+							<button type="button" class="btn btn-primary"
+								onclick="upload(this);" id="detailsbtn">Upload</button>
+							<button type="button" class="btn btn-primary"
+								onclick="custadd();">Add</button>
+							<button type="button" class="btn btn-primary" onclick="list1();"
+								id="detailsbtn">List</button>
+							<!-- <button type="button" class="btn btn-primary"
+								onclick="customer(this);" id="detailsbtn">Customer</button>
+							<button type="button" class="btn btn-primary"
+								onclick="account();" id="detailsbtn">Account</button> -->
+
+						</div>
+
+					</div>
+
+
+					<div class="card-body">
+						<table class="table  table-bordered  table-hover table-sm"
+							style="margin-bottom: 0px; width: 100%;" id="usertable">
+							<thead class="thead-light" style="background-color:#e9ecf0">
+								<tr style="text-align: left; font-size: large;">
+
+									<th>Referene Type</th>
+									<th>Customer Id/Account No</th>
+									<th>Reference Code</th>
+									<th>Description</th>
+									<th>Remarks</th>
+									<th>Edit</th>
+								</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
+
+					<div class="card-footer text-center "  style="background-color: #376275;">
+						<button type="button" class="btn btn-primary" id="btnHome"
+							style="width: 120px" onclick="home();">Home</button>
+						<button type="button" class="btn btn-primary" id="btnBack"
+							style="width: 120px" onclick="back();">Back</button>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!---------------------User List Ends--------------------------------------------------------->
+	<div th:if="${formmode}=='list1'" class="container content">
+		<div class="row">
+			<div class="col-sm-12 finuserapply">
+				<input id="vj" th:value="${tab}" type="text" hidden />
+				<div class="card"
+					style="margin-left: -100px; width: 1500px; height: 100%">
+					<div class="card-header"style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4 >Reference Code Maintenance</h4>
+						</div>
+						<div style="float: right; position: relative; overflow: hidden;"
+							class="tab">
+
+
+							<button class="tablinks" id="smooth1"
+								style="width: 140px; height: 40px; font-size: 14px; font-weight: bold; margin-left: 30px;"
+								onclick="Customer(this);">Customer</button>
+							<button class="tablinks" id="smooth2"
+								style="width: 140px; font-size: 14px; height: 40px; font-weight: bold;"
+								onclick="Account(this);">Account</button>
+						</div>
+
+					</div>
+
+					<div class="card-body">
+						<table class="table  table-bordered  table-hover table-sm"
+							style="margin-bottom: 0px; width: 100%;" id="usertable">
+							<thead class="thead-light">
+								<tr style="text-align: left; font-size: large;">
+
+									<th>Referene Type</th>
+									<th>Customer Id/Account No</th>
+									<th>Reference Code</th>
+									<th>Description</th>
+									<th>Remarks</th>
+									<th>select</th>
+								</tr>
+							</thead>
+							<tbody id="placelist">
+								<!-- <tr th:each="getcode : ${getreference}">
+
+
+
+
+									<td th:text="${getcode.referene_type}">CHENNAI</td>
+									<td th:text="${getcode.cust_id}">CHENNAI</td>
+									<td th:text="${getcode.acct_number}">CHENNAI</td>
+									<td th:text="${getcode.reference_code}">CHENNAI</td>
+									<td th:text="${getcode.description}">CHENNAI</td>
+									<td th:text="${getcode.remarks}">CHENNAI</td>
+							<td>
+    <input type="radio" th:attr="data-customer=${getcode?.cust_id}" onclick="listradio(this)">
+</td>
+
+
+								</tr>
+ -->
+
+							</tbody>
+						</table>
+					</div>
+
+					<div class="card-footer text-center " style="background-color: #376275;">
+						<button type="button" class="btn btn-primary" id="btnHome"
+							style="width: 120px" onclick="home();">Home</button>
+						<button type="button" class="btn btn-primary" id="btnBack"
+							style="width: 120px" onclick="back();">Back</button>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!---------------------User Edit form Starts-------------------------------------------------->
+	<div th:if=" ${formmode}=='add'" class="container content"
+		id="specific_tab">
+		<div class="row">
+			<div class="col-sm-12 finuserapply">
+				<input id="vj" th:value="${tab}" type="text" hidden />
+				<div class="card"
+					style="margin-left: -100px; width: 1500px; height: 100%">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4>Reference Code Maintenance</h4>
+						</div>
+						<!-- 	<div style="float: right; position: relative; overflow: hidden;"
+							class="tab">
+
+
+							<button class="tablinks" id="smooth1"
+								style="width: 140px; height: 40px; font-size: 14px; font-weight: bold; margin-left: 30px;"
+								onclick="openTab(event, 'tab1');">Customer</button>
+							<button class="tablinks" id="smooth2"
+								style="width: 140px; font-size: 14px; height: 40px; font-weight: bold;"
+								onclick="openTab(event, 'tab2');">Account</button>
+						</div> -->
+
+					</div>
+					<div id="tab1" class="tabcontent"
+						style="display: block; margin-top: -10px;">
+						<form action="#" method="post" autocomplete="off" id="customer"
+							th:object="${viewcustomer}" th:fragment="finuserapply">
+							<div class="modal-header">
+								<div class="float-left"></div>
+								<div class="card-body">
+									<input autocomplete="false" name="hidden" type="text"
+										style="display: none;">
+									<div class="form-group">
+										<div class="row formline">
+
+											<label class="col-sm-2" for="userId">Referene Type</label>
+
+											<div class="col-sm-3">
+												<input type="text" id="referene_type"
+													class="form-control form-control-sm" name="referene_type"
+													autocomplete="off" />
+											</div>
+											<div class="col-sm-1"></div>
+
+											<label class="col-sm-2" for="userName">Customer Id</label>
+
+											<div class="col-sm-3">
+												<input type="text" id="cust_id" name="cust_id"
+													class="form-control form-control-sm" autocomplete="false" />
+											</div>
+
+
+
+
+										</div>
+
+
+										<div class="row formline">
+
+											<label class="col-sm-2">Reference Code</label>
+											<div class="col-sm-3">
+												<input type="text" name="reference_code" id="reference_code"
+													class="form-control form-control-sm" autocomplete="false" />
+											</div>
+
+											<div class="col-sm-1"></div>
+
+
+											<label class="col-sm-2">Description</label>
+											<div class="col-sm-3">
+												<input type="text" name="description" id="description"
+													class="form-control form-control-sm" autocomplete="false" />
+											</div>
+											<div class="col-sm-1"></div>
+										</div>
+
+
+
+										<div class="row formline">
+
+											<label class="col-sm-2">Remarks</label>
+											<div class="col-sm-3">
+												<input type="text" id="remarks" name="remarks"
+													class="form-control form-control-sm" autocomplete="off" />
+											</div>
+
+											<div class="col-sm-1"></div>
+
+											<label class="col-sm-2">Account No</label>
+											<div class="col-sm-3">
+												<input type="text" name="acct_number
+												"
+													id="acct_number" class="form-control form-control-sm"
+													autocomplete="false" />
+											</div>
+											<div class="col-sm-1"></div>
+
+
+
+
+										</div>
+
+
+
+
+
+
+
+									</div>
+
+
+
+								</div>
+							</div>
+						</form>
+						<div class="card-footer text-center " style="background-color: #376275;">
+							<input type="button" onclick="home();" class="btn btn-primary"
+								id="hometab1" value="Home" align="center" /> <input
+								type="button" onclick="tab1submit();" class="btn btn-primary"
+								id="tab1submit" value="Submit" align="center" /> <input
+								type="button" onclick="back();" class="btn btn-primary"
+								id="backtab1" value="Back" align="center" />
+						</div>
+					</div>
+
+					<!-- 	<div id="tab2" class="tabcontent"
+						style="display: none; margin-top: -30px;">
+						<form action="#" method="post" autocomplete="off" id="customer"
+							th:object="${viewcustomer}" th:fragment="finuserapply">
+							<div class="modal-header">
+								<div class="float-left"></div>
+								<div class="card-body">
+									<input autocomplete="false" name="hidden" type="text"
+										style="display: none;">
+									<div class="form-group">
+										<div class="row formline">
+
+											<label class="col-sm-2" for="userId">Referene Type</label>
+
+											<div class="col-sm-3">
+												<input type="text" id="sol_id"
+													class="form-control form-control-sm" name="sol_id"
+													autocomplete="off" />
+											</div>
+											<div class="col-sm-1"></div>
+
+											<label class="col-sm-2" for="userName">Account No</label>
+
+											<div class="col-sm-3">
+												<input type="text" id="acct_no" name="acct_no"
+													class="form-control form-control-sm" autocomplete="false" />
+											</div>
+										</div>
+
+
+										<div class="row formline">
+
+											<label class="col-sm-2">Reference Code</label>
+											<div class="col-sm-3">
+												<input type="text" name="ref_code" id="ref_code" value=""
+													class="form-control form-control-sm" autocomplete="false" />
+											</div>
+
+											<div class="col-sm-1"></div>
+
+
+											<label class="col-sm-2">Description</label>
+											<div class="col-sm-3">
+												<input type="text" name="desc" id="desc" value=""
+													class="form-control form-control-sm" autocomplete="false" />
+											</div>
+											<div class="col-sm-1"></div>
+										</div>
+
+
+
+										<div class="row formline">
+
+											<label class="col-sm-2">Remarks</label>
+											<div class="col-sm-3">
+												<input type="text" id="remarks" value="" name="remarks"
+													class="form-control form-control-sm" autocomplete="off" />
+											</div>
+											<div class="col-sm-1"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+						<div class="card-footer text-center ">
+							<input type="button" onclick="home();" class="btn btn-primary"
+								id="hometab1" value="Home" align="center" /> <input
+								type="button" onclick="tab2submit();" class="btn btn-primary"
+								id="tab1submit" value="Submit" align="center" /> <input
+								type="button" onclick="back();" class="btn btn-primary"
+								id="backtab1" value="Back" align="center" />
+						</div>
+					</div> -->
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Edit  -->
+	<div th:if=" ${formmode}=='edit'" class="container content"
+		id="specific_tab">
+		<div class="row">
+			<div class="col-sm-12 finuserapply">
+				<input id="vj" th:value="${tab}" type="text" hidden />
+				<div class="card"
+					style="margin-left: -100px; width: 1500px; height: 100%">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4>Reference Code Maintenance</h4>
+						</div>
+						<div style="float: right; position: relative; overflow: hidden;"
+							class="tab">
+
+
+							<button class="tablinks" id="smooth1"
+								style="width: 140px; height: 40px; font-size: 14px; font-weight: bold; margin-left: 30px;"
+								onclick="openTab(event, 'tab1');">Customer</button>
+							<!-- <button class="tablinks" id="smooth2"
+								style="width: 140px; font-size: 14px; height: 40px; font-weight: bold;"
+								onclick="openTab(event, 'tab2');">Account</button> -->
+						</div>
+
+					</div>
+					<div id="tab1" class="tabcontent"
+						style="display: block; margin-top: -30px;">
+						<form action="#" method="post" autocomplete="off"
+							id="editcustomer" th:object="${editcustomer}"
+							th:fragment="finuserapply">
+							<div class="modal-header">
+								<div class="float-left"></div>
+								<div class="card-body">
+									<input autocomplete="false" name="hidden" type="text"
+										style="display: none;">
+									<div class="form-group">
+										<div class="row formline">
+
+											<label class="col-sm-2" for="userId">Referene Type</label>
+
+											<div class="col-sm-3">
+												<input type="text" id="referene_type"
+													class="form-control form-control-sm" name="referene_type"
+													th:value="${editcustomer?.referene_type}"
+													autocomplete="off" />
+											</div>
+											<div class="col-sm-1"></div>
+
+											<label class="col-sm-2" for="userName">Customer Id</label>
+
+											<div class="col-sm-3">
+												<input type="text" id="cust_id" name="cust_id"
+													class="form-control form-control-sm" autocomplete="false"
+													th:value="${editcustomer?.cust_id}" />
+											</div>
+
+
+
+
+										</div>
+
+
+										<div class="row formline">
+
+											<label class="col-sm-2">Reference Code</label>
+											<div class="col-sm-3">
+												<input type="text" name="reference_code" id="reference_code"
+													class="form-control form-control-sm" autocomplete="false"
+													th:value="${editcustomer?.reference_code}" />
+											</div>
+
+											<div class="col-sm-1"></div>
+
+
+											<label class="col-sm-2">Description</label>
+											<div class="col-sm-3">
+												<input type="text" name="description" id="description"
+													class="form-control form-control-sm" autocomplete="false"
+													th:value="${editcustomer?.description}" />
+											</div>
+											<div class="col-sm-1"></div>
+										</div>
+
+
+
+										<div class="row formline">
+
+											<label class="col-sm-2">Remarks</label>
+											<div class="col-sm-3">
+												<input type="text" id="remarks" name="remarks"
+													class="form-control form-control-sm" autocomplete="off"
+													th:value="${editcustomer?.remarks}" />
+											</div>
+
+											<div class="col-sm-1"></div>
+
+											<label class="col-sm-2">Account No</label>
+											<div class="col-sm-3">
+												<input type="text" name="acct_number
+												"
+													id="acct_number" class="form-control form-control-sm"
+													autocomplete="false"
+													th:value="${editcustomer?.acct_number}" />
+											</div>
+											<div class="col-sm-1"></div>
+
+
+
+
+										</div>
+
+
+
+
+
+
+
+									</div>
+
+
+
+								</div>
+							</div>
+						</form>
+						<div class="card-footer text-center " style="background-color: #376275;">
+							<input type="button" onclick="home();" class="btn btn-primary"
+								id="hometab1" value="Home" align="center" /> <input
+								type="button" onclick="edittab1();" class="btn btn-primary"
+								id="tab1submit" value="Submit" align="center" /> <input
+								type="button" onclick="back();" class="btn btn-primary"
+								id="backtab1" value="Back" align="center" />
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

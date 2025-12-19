@@ -1,0 +1,359 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	
+		
+	$(function() {
+		
+		var fromdate;
+		var todate;
+		var tabledata = /*[[${auditlogs}]]*/ null;
+	
+		
+	   var table = $('#auditlogtb').DataTable({
+		   "info" : false,
+			"lengthChange" : false,
+	        data: tabledata,
+	        columns: [
+	            { "data" : "report_id",
+	              "title" : "Report Id"},
+	            { "data" : "table_name",
+	              "title" : "Table Name"},
+	            { "data" : "report_date",
+	               "title" : "Report Date"},
+	            { "data" : "enterer_id",
+	              "title" : "Modify User"},
+	            { "data" : "audit_date",
+	              "title" : "Modify Date"},
+	            { "data" : "rmks",
+	              "title" : "Remarks"},
+	            { "data" : null,
+		          "className": 'details-control',
+		          "orderable":  false,
+		          "defaultContent": '',
+		          "title" : ""}
+		        
+	        ]
+	    });
+		
+
+		$("#fromdate").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate : new Date(),
+			dateFormat : "dd-mm-yy",
+				onClose : function() {
+					fromdate = $(this).datepicker('getDate');
+				}
+		});
+		$("#todate").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate : new Date(),
+			dateFormat : "dd-mm-yy",
+			onClose : function() {
+				todate = $(this).datepicker('getDate');
+			}
+		});
+		
+		$("#view").on("click",function() {
+
+			var fromdate2 = $("#fromdate").val();
+			var todate2 = $("#todate").val();
+			
+			var diff = new Date(todate - fromdate);
+			// get days
+			var days = diff/1000/60/60/24;
+			if(days<=31){
+			var url = /*[[@{/auditList}]]*/null;
+			var dates = {
+				fromdate : fromdate2,
+				todate : todate2
+			}
+
+			$.ajax({
+				type : "get",
+				cache : false,
+				url : url,
+				data : dates, // multiple data sent using ajax
+				success : function(data) {
+					
+					tabledata = data;
+					
+					console.log(tabledata);
+
+					 $('#auditlogtb').dataTable().fnDestroy();
+						
+						table = $('#auditlogtb').DataTable( {
+							"info" : false,
+							"lengthChange" : false,
+						        data: tabledata,
+						        columns: [
+						        	 { "data" : "report_id" },
+							            { "data" : "table_name" },
+							            { "data" : "report_date"},
+							            { "data" : "enterer_id"},
+							            { "data" : "audit_date"},
+							            { "data" : "rmks"},
+							            { "data" : null,
+								          "className": 'details-control',
+								          "orderable":  false,
+								          "defaultContent": '',
+								          "title" : ''}
+						        ]
+						    } );
+						
+						$("#auditlogtb_length").parent().remove();
+						$("#auditlogtb_info").parent().remove();
+
+					
+
+				}
+			});
+
+			}else{
+				
+				$("#alertmsg").text("Maximum 31 days only Allowed");
+				$("#alert").modal("toggle");
+				
+			}
+			
+			
+			
+		});
+		
+
+		$("#downloadfile").on("click",function(){
+			
+			var fromdate2 = $("#fromdate").val();
+			var todate2 = $("#todate").val();
+			
+			var diff = new Date(todate - fromdate);
+			// get days
+			var days = diff/1000/60/60/24;
+			if(days<=31){
+			var url = /*[[@{/auditLogs/Download}]]*/null;
+			
+
+			url = url+"?fromdate="+fromdate2+"&todate="+todate2 ;
+			location.href=url;
+
+			}else{
+				
+				$("#alertmsg").text("Maximum 31 days only Allowed");
+				$("#alert").modal("toggle");
+				
+			}
+		
+			
+			
+		});
+		
+		
+		function format ( d ) {
+		    // `d` is the original data object for the row
+		   var htmlstr;
+		   var str =  d.modified_fields_data;
+		    
+		   var data;
+		   var modhtml="";
+		   
+		   if (str!=null){
+			   
+			data = str.split("|");
+				var length=data.length-(data.length%3);
+				var allMods = new Array();
+				var count =0;
+			for(i=0; i<length; i=i+3){
+					 var obj = new Object();
+					for(j=i; j < i+3; j++){
+						 if(j%3==0){
+							 obj.colname=data[j];
+						 }else if(j%3==1){
+							 obj.oldval=data[j];
+						 }else{
+							 obj.newval=data[j];
+						 }
+						}
+					console.log(obj);
+
+					allMods[count]=obj;
+					count++;
+
+				};
+				
+				modhtml = '<tr><td colspan="3">Changed Fields :<td></tr>'+
+		        '<tr>'+
+	            '<td>Column Name</td>'+
+	            '<td>Old Value</td>'+
+	            '<td>New Value</td>'+
+	        	'</tr>';
+				
+				 allMods.forEach(function(value){
+						
+				    	modhtml = modhtml+"<tr><td id='' >"+value.colname+"</td><td id='' class='alnum'>"+value.oldval+"</td><td id='' class='alnum'>"+value.newval+"</td></tr>";
+
+						}); 
+				
+		   }
+		    
+		    htmlstr = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+		        '<tr>'+
+		            '<td>Unique Id:</td>'+
+		            '<td colspan="2">'+d.unique_id+'</td>'+
+		        '</tr>';
+		    
+				htmlstr = htmlstr + modhtml+ '</table>';
+		    
+		    return htmlstr;
+		};
+		
+		
+		$('#auditlogtb tbody').on('click', 'td.details-control', function () {
+	        var tr = $(this).closest('tr');
+	        var row = table.row( tr );
+	 
+	        if ( row.child.isShown() ) {
+	            // This row is already open - close it
+	            row.child.hide();
+	            tr.removeClass('shown');
+	        }
+	        else {
+	            // Open this row
+	            row.child( format(row.data()) ).show();
+	            tr.addClass('shown');
+	        }
+	    } );
+		
+	})
+
+	
+
+	/*]]>*/
+</script>
+<style>
+/* #auditlogtb_filter {
+	margin-left: 100px;
+} */
+
+.row1 {
+	padding-bottom: 10px;
+}
+
+/* #auditlogtb>thead>tr>th {
+	line-height: 50px;
+}
+
+#auditlogtb>tbody>tr>td {
+	line-height: 30px;
+	
+} */
+
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+} 
+
+td.details-control {
+    background: url("images/details_open.png") no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url("images/details_close.png") no-repeat center center;
+}
+</style>
+</head>
+<title>XBRL</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="card">
+					<div class="card-header">
+						<div class="float-left">
+							<h4>Audit Inquiries</h4>
+						</div>
+					</div>
+
+					<div class="card-body">
+						<form class="form-horizontal" method="post" name="CriteriaForm"
+							id="reportform">
+							<div class="form-group">
+								<div class="row row1">
+									<label class="col-sm-3 control-label">From Date<span
+										style="color: red; font-size: 10px;" class="mant">*</span></label> <input
+										type="text" name="fromdate" id="fromdate" value=""
+										class="col-sm-3 form-control  form-control-sm" placeholder="dd-mm-yyyy"
+										required />
+								</div>
+								<div class="row row1">
+									<label class="col-sm-3 control-label">To Date<span
+										style="color: red; font-size: 10px;" class="mant">*</span></label> <input
+										type="text" name="todate" id="todate" value=""
+										class="col-sm-3 form-control  form-control-sm" placeholder="dd-mm-yyyy"
+										required />
+									<div class="col-sm-3">
+										<button type="button" id="view" class="btn btn-primary btn-sm">View</button>
+										<button type="button" id="downloadfile"
+											class="btn btn-primary btn-sm">Download</button>
+									</div>
+								</div>
+
+							</div>
+						</form>
+						<table class="table-striped table-bordered" id="auditlogtb"
+							style="width: 100%">
+							
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

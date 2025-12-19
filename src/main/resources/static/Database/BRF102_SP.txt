@@ -1,0 +1,97 @@
+create or replace PROCEDURE  "BRF102_SUMMARY_PROCEDURE" (REPORT_DATE DATE)
+IS
+   v_report_date   date := to_date (report_date, 'DD-MM-YYYY');
+BEGIN
+
+
+Delete from BRF102_SUMMARYTABLE where report_date = v_report_date;
+Commit;
+
+insert into BRF102_SUMMARYTABLE
+( ACCOUNT_NUMBER, CUSTOMER_NAME,CURRENCY,REPORT_DATE,LAST_TRANSACTION_DATE,ACCOUNT_BALANCE,
+INTEREST_RATE_APPLICABLE)
+SELECT  foracid, ACCT_NAME,ACCT_CRNCY_CODE,REPORT_DATE,TRAN_DATE,ACT_BALANCE_AMT_LC,
+INT_RATE FROM BRF102_DETAILTABLE  
+where report_date = '30-JUN-2023';
+
+
+COMMIT;
+END;
+--------
+create or replace PROCEDURE         "BRF102_DETAIL_PROCEDURE" (REPORT_DATE DATE)
+IS
+   v_report_date   date := to_date (report_date, 'DD-MM-YYYY');
+BEGIN
+
+
+Delete from BRF102_DETAILTABLE where report_date = v_report_date;
+Commit;
+
+insert into BRF102_DETAILTABLE
+( foracid, ACCT_NAME,ACCT_CRNCY_CODE,REPORT_DATE,TRAN_DATE,ACT_BALANCE_AMT_LC,
+INT_RATE,REPORT_NAME_1,REPORT_LABEL_1)
+SELECT  foracid, ACCT_NAME,ACCT_CRNCY_CODE,REPORT_DATE,TRAN_DATE,ACCT_BALANCE_AMT_LC,
+INT_RATE,REPORT_NAME_1,REPORT_LABEL_1 FROM brf102_mapping_table  
+where report_date = '30-JUN-2023' ;
+
+
+COMMIT;
+END;
+----------------
+create or replace PROCEDURE         "BRF102_MAPPING_PROCEDURE" ( REPORT_DATE VARCHAR2) 
+IS 
+
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+
+
+BEGIN 
+
+--INSERT
+insert into brf102_mapping_table
+( foracid, cust_id, ACCT_NAME,GL_SUB_HEAD_CODE,GL_CODE,ACCT_CRNCY_CODE,REPORT_DATE,
+SOL_ID,SCHM_CODE,CONSTITUTION_CODE,COUNTRY_OF_INCORP,COUNTRY,TRAN_DATE,
+ACCT_BALANCE_AMT_LC,INT_RATE)
+SELECT  ACCT_NUMBER,cust_id, ACCT_NAME,GL_SUB_HEAD_CODE,GL_CODE,ACCT_CRNCY_CODE,
+REPORT_DATE,SOL_ID,SCHM_CODE,CONSTITUTION_CODE,COUNTRY_OF_INCORP,COUNTRY,
+TRAN_DATE,ACT_BALANCE_AMT_LC,INT_RATE FROM GENERAL_MASTER_TABLE  
+where report_date = '30-JUN-2023' and ABS(tran_date-report_date)>1095 
+order by act_balance_amt_lc desc
+fetch first 50 rows only;
+
+
+--FOR DIFF DATE
+--UPDATE brf102_mapping_table SET   REPORT_NAME_1 ='BRF102',
+--DIFF_DATE = ABS(TRAN_DATE - REPORT_DATE), ACCT_BALANCE_AMT_LC = 
+--round(nvl(abs(ACCT_BALANCE_AMT_LC)/1000,0)) ;
+--COMMIT;
+
+--
+--select * from general_master_table where report_date = '30-JUN-2023' and ABS(tran_date-report_date)>1095 order by act_balance_amt_lc desc
+--fetch first 50 rows only
+
+--FOR TOP 50 RECORDS
+--UPDATE brf102_mapping_table 
+--SET REPORT_NAME_1 = 'BRF102',
+--    REPORT_LABEL_1 = 'TRAN_DATE'
+--WHERE ROWID IN (
+--    SELECT rid
+--    FROM (
+--        SELECT ROWID as rid
+--        FROM (
+--            SELECT ROWID, DIFF_DATE, ACCT_BALANCE_AMT_LC
+--            FROM brf102_mapping_table
+--            WHERE DIFF_DATE > 1095
+--            ORDER BY ACCT_BALANCE_AMT_LC DESC
+--        )
+--        WHERE ROWNUM <= 50
+--    )
+--);
+--COMMIT;
+
+
+
+
+
+
+COMMIT;
+END;

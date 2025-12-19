@@ -1,0 +1,786 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>BBRF</title>
+
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+		th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+	<style>
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		table {
+			border-collapse: collapse;
+			border: 1px solid black;
+			border-color: #e9ecef;
+		}
+
+
+		.modal-backdrop {
+			background-color: +[];
+			zoom: 1;
+		}
+
+
+		.addedit {
+			color: #007bff;
+		}
+	</style>
+	<style>
+		.table-container {
+			max-height: 580px;
+			overflow-y: auto;
+			overflow-x: auto;
+		}
+
+		table.fixed-header-table {
+			width: 100%;
+			border-collapse: collapse;
+			table-layout: fixed;
+		}
+
+		thead th {
+			position: sticky;
+			top: 0;
+			background: #f8f9fa;
+			/* or white */
+			z-index: 1;
+			border: 1px solid #dee2e6;
+			text-align: left;
+		}
+
+		table.fixed-header-table th,
+		table.fixed-header-table td {
+			padding: 8px;
+			border: 1px solid #dee2e6;
+			text-align: center;
+		}
+	</style>
+
+	<script th:inline="javascript">
+
+		var curdupdatestate = false;
+		/*<![CDATA[*/
+
+		var dtltype = /*[[${glsubhead}]]*/null;
+		console.log(dtltype);
+		function showdetails(mode, num, maxpage) {
+
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+
+			var today = new Date();
+			var Callurl = /*[[@{'/GlSubHead'}]]*/
+		
+		switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "?page=" + n;
+					console.log("Callurl " + Callurl);
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "?page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "?page=" + n;
+			}
+
+
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+
+
+					/*]]>*/
+
+				}
+			})
+		}
+		function submitSearchRecord() {
+
+			if ($("#searchdtl").valid()) {
+
+				var url = /*[[@{'/rbssearch'}]]*/
+
+					$("#searchdtl").attr('action', url);
+
+				var options = {
+					success: showResponse  // post-submit callback 
+				};
+
+				$('#searchdtl').ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+					$(".modal").modal("hide");
+					$('.content').html(responseText);
+					$(".modal-backdrop").remove();
+
+				}
+			}
+
+		};
+
+
+		function searchRecord() {
+			$("#search").modal("toggle");
+
+		};
+
+		function home() {
+			location.href = 'Dashboard'
+		}
+
+		function back() {
+			window.history.back();
+		}
+		function submit(a) {
+			//alert("yy");
+			//alert("hi")
+			var url4 = "./CONTACT?";
+			$("#edit").hide();
+			if (curdupdatestate) {
+				url4 = "./CONTACT?";
+			} else {
+				url4 = "./CONTACTEDIT?";
+			}
+
+			//alert(url4);
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				};
+
+
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+
+		};
+
+		function addRecord() {
+
+
+			/* 	alert("hi")
+						//Assign action url for the edit/add form
+						var url = /*[[@{'rbscontactadd'}]]*/
+
+			$("#dataedit").attr('action', url);
+			console.log("hi")
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			//make readonly false to unique fields
+			//Make readonly fields
+			/* 	$("#SRL_NO_edit").attr("readonly", false); */
+
+
+			/* $("#addedit").modal("toggle"); */
+		};
+		function addRecord1() {
+
+
+			curdupdatestate = true;
+
+			//Reset form if any data present
+
+			document.getElementById("dataedit").reset();
+
+			//make readonly false to unique fields
+			//Make readonly fields
+			$("#SRL_NO_edit").attr("readonly", false);
+			$("#CONTACT_NAME_edit").attr("readonly", false);
+			$("#DESIGNATION_edit").attr("readonly", false);
+			$("#PHONE_NUMBER_edit").attr("readonly", false);
+			$("#EMAIL_ID_edit").attr("readonly", false);
+			$("#MODULE_edit").attr("readonly", false);
+
+
+
+			$("#addedit").modal("toggle");
+
+
+		};
+
+
+
+
+
+
+		function submitdataform() {
+
+			if ($("#dataedit").valid()) {
+
+				var options = {
+					success: showResponse  // post-submit callback 
+				};
+
+				$('#dataedit').ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					if ($('#addedit').is(':visible')) {
+						$('#addedit').modal("hide");
+					};
+
+					if ($('#datadelete').is(':visible')) {
+						$('#datadelete').modal("hide");
+					};
+					$('#alert').modal("toggle");
+
+				}
+
+			}
+
+		}
+
+		function editRecord(a) {
+			// Set modal title
+			$(".modal-title").text("Add/Edit Records");
+
+			var url = /*[[@{'/rbscontactedit'}]]*/
+			$("#dataedit").attr('action', url);
+
+			// Fill values
+			$("#SRL_NO_edit").val(a.getAttribute("data-srl_no")).attr("readonly", true);
+			$("#CONTACT_NAME_edit").val(a.getAttribute("data-name")).attr("readonly", false);
+			$("#DESIGNATION_edit").val(a.getAttribute("data-designation")).attr("readonly", false);
+			$("#PHONE_NUMBER_edit").val(a.getAttribute("data-phone")).attr("readonly", false);
+			$("#EMAIL_ID_edit").val(a.getAttribute("data-email")).attr("readonly", false);
+			$("#module").val(a.getAttribute("data-module")).attr("readonly", false);
+
+			// Show the Submit button
+			$(".modal-footer .btn-primary").show();
+
+			// Show modal
+			$("#addedit").modal("toggle");
+		}
+
+
+		function viewRecord(a) {
+			// Set modal title
+			$(".modal-title").text("View Records");
+
+			// Fill values and make all fields readonly
+			$("#SRL_NO_edit").val(a.getAttribute("data-srl_no")).attr("readonly", true);
+			$("#CONTACT_NAME_edit").val(a.getAttribute("data-name")).attr("readonly", true);
+			$("#DESIGNATION_edit").val(a.getAttribute("data-designation")).attr("readonly", true);
+			$("#PHONE_NUMBER_edit").val(a.getAttribute("data-phone")).attr("readonly", true);
+			$("#EMAIL_ID_edit").val(a.getAttribute("data-email")).attr("readonly", true);
+			$("#module").val(a.getAttribute("data-module")).attr("readonly", true);
+
+			// Hide the Submit button
+			$(".modal-footer .btn-primary").hide();
+
+			// Show modal
+			$("#addedit").modal("toggle");
+		}
+
+
+
+		function deleteRecord(a) {
+			console.log("deleteRecord");
+
+
+			//Assign action url for the edit/add form
+			var url = /*[[@{'rbscontactdelete'}]]*/
+				$("#dataedit").attr('action', url);
+
+			//Assign selected values to the model box fields
+			$("#SRL_NO_edit").val(a.getAttribute("data-srl_no"));
+			$("#CONTACT_NAME_edit").val(a.getAttribute("data-name"));
+			$("#DESIGNATION_edit").val(a.getAttribute("data-designation"));
+			$("#PHONE_NUMBER_edit").val(a.getAttribute("data-phone"));
+			$("#EMAIL_ID_edit").val(a.getAttribute("data-email"));
+			$("#MODULE_edit").val(a.getAttribute("data-module"));
+
+			$("#datadelete").modal("toggle");
+
+
+
+		};
+
+
+		/*]]>*/
+	</script>
+
+</head>
+
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<i class="fa fa-question-circle" aria-hidden="true" onclick="docEmb('Report')"></i>
+
+	<div class="container content" th:fragment="reportcontent">
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div class="card" style="width: 1406px;">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4>BRF CONTACT DETAIL</h4>
+						
+							
+					
+						</div>
+						<!-- <div class="btn-group nav-buttons float-right">
+						
+						<button type="button" class="btn btn-xs btn-primary btns" id="btnInq"
+								onclick="addRecord1()">Add</button>
+						</div> -->
+					</div>
+
+					<div class="table-container" style="overflow-x: auto; border-right: 1px solid #dee2e6">
+						<table class="table  table-bordered  table-hover table-sm"
+							style="margin-bottom: 0px; width: 1404px" id="glsubheadtb">
+							<thead class="thead-light">
+								<tr style="text-align:left">
+									 <th><a data-toggle="tooltip" class="editrec" title="Click to add new Records"><i
+												class="fa fa-plus-circle" onclick="addRecord1();"
+												aria-hidden="true"></i></a></th> 
+												
+									 <th class="second_left"><a href="#" data-toggle="tooltip"
+											title="Click to Search Record"><i class="fa fa-search"
+												onclick="searchRecord();" aria-hidden="true"></i></a></th>
+									
+									<th>Srl No</th>
+									<th>Contact Name</th>
+									<th>Designation</th>
+									<th>Mobile Number</th>
+									<th>Email ID</th>
+									
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr th:each="continfo : ${ContactInfo}" class="ContactInfo">
+									<td class="first_left"><a data-toggle="tooltip" class="editrec"
+											title="Click to Edit this Record"><i class="fas fa-edit"
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit " th:attr="data-srl_no=${continfo.srl_no},
+												data-name=${continfo.contact_name},
+												data-designation=${continfo.designation},
+												data-phone=${continfo.phone_number},
+												data-email=${continfo.email_id},
+												data-module=${continfo.module},
+												data-remark=${continfo.remarks},
+												data-report=${continfo.report_section},
+												data-entryuser=${continfo.entry_user},
+												data-modifyuser=${continfo.modify_user},
+												data-verifyuser=${continfo.verify_user},
+												data-entrytime=${continfo.entry_time},
+												data-modifytime=${continfo.modify_time},
+												data-verifytime=${continfo.verify_time}" onclick="editRecord(this)"></i></a></td>
+
+									<td class="second_left"><a data-toggle="tooltip" class="editrec"
+											title="Click to delete this Record"><i
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												class="fas fa-minus-circle" th:attr="data-srl_no=${continfo.srl_no},
+												data-name=${continfo.contact_name},
+												data-designation=${continfo.designation},
+												data-phone=${continfo.phone_number},
+												data-email=${continfo.email_id},
+												data-module=${continfo.module},
+												data-remark=${continfo.remarks},
+												data-report=${continfo.report_section},
+												data-entryuser=${continfo.entry_user},
+												data-modifyuser=${continfo.modify_user},
+												data-verifyuser=${continfo.verify_user},
+												data-entrytime=${continfo.entry_time},
+												data-modifytime=${continfo.modify_time},
+												data-verifytime=${continfo.verify_time}" onclick="deleteRecord(this)"></i></a></td>
+ 
+									<td th:text="${continfo.srl_no}">CHENNAI</td>
+									<td th:text="${continfo.contact_name}">CHENNAI</td>
+									<td th:text="${continfo.designation}">CHENNAI</td>
+									<td th:text="${continfo.phone_number}">CHENNAI</td>
+									<td th:text="${continfo.email_id}">CHENNAI</td>
+<!-- <td>
+	<div class="dropdown">
+		<button class="btn btn-secondary dropdown-toggle" type="button"
+			id="dropdownMenuButton" title="Action"
+			style="line-height: 0.7; font-size: 11px; color: #3a4550; background: #e3e3e4;"
+			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Action
+		</button>
+
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
+			style="background-color: #e3e3e4; color: #3a4550;">
+
+			Modify Option
+			<a class="dropdown-item" title="Modify"
+				style="cursor: pointer; height: 20px; color: #3a4550; background: #e3e3e4; height: 16px; border-radius: .20rem; padding: 2px 10px; top: 10px; padding-bottom:2px;"
+				th:attr="
+					data-srl_no=${continfo.srl_no},
+					data-name=${continfo.contact_name},
+					data-designation=${continfo.designation},
+					data-phone=${continfo.phone_number},
+					data-email=${continfo.email_id},
+					data-module=${continfo.module},
+					data-remark=${continfo.remarks},
+					data-report=${continfo.report_section},
+					data-entryuser=${continfo.entry_user},
+					data-modifyuser=${continfo.modify_user},
+					data-verifyuser=${continfo.verify_user},
+					data-entrytime=${continfo.entry_time},
+					data-modifytime=${continfo.modify_time},
+					data-verifytime=${continfo.verify_time}"
+				onclick="editRecord(this)">
+				Modify
+			</a>
+			<div class="dropdown-divider"></div>
+			
+
+			Delete Option
+			<a class="dropdown-item" title="Delete"
+				style="cursor: pointer; height: 16px; color: #3a4550; background: #e3e3e4; border-radius: .20rem; padding-bottom: 5px;padding: 4px 10px;"
+				th:attr="
+					data-srl_no=${continfo.srl_no},
+					data-name=${continfo.contact_name},
+					data-designation=${continfo.designation},
+					data-phone=${continfo.phone_number},
+					data-email=${continfo.email_id},
+					data-module=${continfo.module},
+					data-remark=${continfo.remarks},
+					data-report=${continfo.report_section},
+					data-entryuser=${continfo.entry_user},
+					data-modifyuser=${continfo.modify_user},
+					data-verifyuser=${continfo.verify_user},
+					data-entrytime=${continfo.entry_time},
+					data-modifytime=${continfo.modify_time},
+					data-verifytime=${continfo.verify_time}"
+				onclick="deleteRecord(this)">
+				Delete
+			</a>
+			
+			<div class="dropdown-divider"></div>
+			
+			<a class="dropdown-item" title="View"
+				style="cursor: pointer; height: 20px; color: #3a4550; background: #e3e3e4; height: 16px; border-radius: .20rem; padding: 2px 10px; top: 10px; padding-bottom:2px;"
+				th:attr="
+					data-srl_no=${continfo.srl_no},
+					data-name=${continfo.contact_name},
+					data-designation=${continfo.designation},
+					data-phone=${continfo.phone_number},
+					data-email=${continfo.email_id},
+					data-module=${continfo.module},
+					data-remark=${continfo.remarks},
+					data-report=${continfo.report_section},
+					data-entryuser=${continfo.entry_user},
+					data-modifyuser=${continfo.modify_user},
+					data-verifyuser=${continfo.verify_user},
+					data-entrytime=${continfo.entry_time},
+					data-modifytime=${continfo.modify_time},
+					data-verifytime=${continfo.verify_time}"
+				onclick="viewRecord(this)">
+				View
+			</a>
+		</div>
+	</div>
+</td>
+ -->
+
+									
+								</tr>
+
+
+							</tbody>
+						</table>
+
+
+						<!--  -->
+						<table th:if="${searchmsg} != null" class="table  table-bordered  table-hover table-sm"
+							style="margin-bottom: 0px; width: 2000px" id="glsubheadtb">
+							<thead class="thead-light">
+								<tr>
+									<th><a data-toggle="tooltip" class="editrec" title="Click to add new Records"><i
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												class="fa fa-plus-circle" onclick="addRecord();"
+												aria-hidden="true"></i></a></th>
+									<th class="second_left"><a href="#" data-toggle="tooltip"
+											title="Click to Search Record"><i class="fa fa-search"
+												onclick="searchRecord();" aria-hidden="true"></i></a></th>
+									<th>Gl Head</th>
+									<th>Gl Sub Head Code</th>
+									<th>Gl Desc</th>
+									<th>Type</th>
+									<th>Scheme Type</th>
+									<th>Scheme Code</th>
+									<th>Assets</th>
+									<th>Liab</th>
+									<th>Assests Memo</th>
+									<th>Liab Memo</th>
+									<th>Available in MCBL</th>
+									<th>Net Flag</th>
+									<th>BLS0110</th>
+									<th>SUP0500</th>
+									<th>SUP0700</th>
+									<th>FIM0600</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td colspan="10">No Data Available</td>
+								</tr>
+							</tbody>
+						</table>
+
+					</div>
+					<div class="card-footer text-center" style="background-color: #376275;">
+						<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+							onclick="home();">Home</button>
+						<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+							onclick="back();">Back</button>
+					</div>
+
+
+
+
+
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form th:object=${singledetail} id="dataedit" method="post">
+									<div class="form-group">
+										<div class="row">
+											<label class="col-sm-5" for=gl_head>SRL_NO</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{srl_no}"
+												id="SRL_NO_edit" required />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5" for=gl_sub_head_code>Contact
+												Name</label> <input class="form-control col-sm-5" type="text"
+												th:field="*{contact_name}" id="CONTACT_NAME_edit" required />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5" for=schm_type>Designation</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{designation}"
+												id="DESIGNATION_edit" required />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5" for=schm_code>Phone Number</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{phone_number}"
+												id="PHONE_NUMBER_edit" required />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5" for=schm_code>Mail ID</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{email_id}"
+												id="EMAIL_ID_edit" required />
+										</div>
+										<div class="row">
+											<label class="col-sm-5" for=schm_code>Module</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{module}"
+												id="module" required />
+										</div>
+
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" onclick="submit(this);">Submit</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		<div class="float-right" th:if="${ContactInfo.totalPages} gt 1">
+			<a href="#"><i class="fas fa-caret-left fa-2x"
+					th:onclick="|showdetails('prevpage',${ContactInfo.number},${ContactInfo.totalPages});|"></i></a>
+			<input type="text" id="pageno" style="width: 30px" th:value="${ContactInfo.number+1}"
+				th:onchange="|showdetails('givenpage',${ContactInfo.number},${ContactInfo.totalPages});|"></input>
+			of <font th:text="${ContactInfo.totalPages}"></font> <a href="#"><i class="fas fa-caret-right fa-2x"
+					th:onclick="|showdetails('nextpage',${ContactInfo.number},${ContactInfo.totalPages});|"></i></a>
+		</div>
+	</div>
+
+	<!-- -----------------------------------Search modal form----------------------------------------------------->
+	<div class="modal fade" id="search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Search
+						Record</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:object=${singledetail} id="searchdtl" method="post">
+						<div class="form-group">
+
+							<div class="row">
+								<label class="col-sm-5" for=gl_head>SRL_No</label> <input class="form-control col-sm-5"
+									type="text" th:field="*{srl_no}" id="SRL_NO" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5" for=gl_sub_head_code>Contact
+									Name</label> <input class="form-control col-sm-5" type="text"
+									th:field="*{contact_name}" id="CONTACT_NAME" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5" for=schm_type>Designation</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{designation}" id="DESIGNATION"
+									required />
+							</div>
+
+
+
+							<div class="row">
+								<label class="col-sm-5" for=PHONE_NUMBER>Phone Number</label> <input
+									class="form-control col-sm-5" type="text" th:field="*{phone_number}"
+									id="PHONE_NUMBER" required />
+							</div>
+
+						</div>
+
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" onclick="submitSearchRecord();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Search modal form----------------------------------------------------->
+
+	<!-------------------------------------Details edit modal form----------------------------------------------------->
+
+
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+	<div class="modal fade" id="datadelete">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					Are you Sure want to delete?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="submitdataform();">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+
+
+
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" onclick="location.reload();"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+
+</body>
+
+</html>

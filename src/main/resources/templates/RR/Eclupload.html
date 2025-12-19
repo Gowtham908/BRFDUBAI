@@ -1,0 +1,551 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<style>
+.row1 {
+	padding: 7px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var reportlist = /*[[${reportlist}]]*/null;
+
+	var frequency;
+
+	var report;
+	
+	var reportid;
+
+	var precheckmsg;
+
+	var asondate;
+
+	$(function() {
+		
+		console.log(reportlist);
+
+		$("#asonDate").datepicker(
+				{
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "dd-mm-yy",
+					maxDate : new Date(),
+					onClose : function() {
+						var asondate = $(this).datepicker('getDate');
+
+						if (asondate) {
+							
+							if(reportid=='BLS0100'){
+								
+								$("#dt2").datepicker("setDate", asondate);
+								$('#dt1').datepicker("setDate", asondate);
+								
+							}else{
+
+							if (frequency == "Monthly") {
+
+								asondate = new Date(asondate.getFullYear(),
+										asondate.getMonth() + 1, 0);
+								$(this).datepicker("setDate", asondate);
+								$('#dt2').datepicker("setDate", asondate);
+								asondate.setDate(1);
+								$('#dt1').datepicker("setDate", asondate);
+
+							} else if (frequency == "Daily") {
+
+								$("#dt2").datepicker("setDate", asondate);
+								$('#dt1').datepicker("setDate", asondate);
+
+							} else if (frequency == "Fortnightly") {
+
+								$("#dt2").datepicker('setDate', asondate);
+								asondate.setDate(asondate.getDate() - 13);
+								$('#dt1').datepicker("setDate", asondate);
+
+							} else if (frequency == "Half Yearly") {
+								asondate.setMonth((Math.trunc(asondate.getMonth()/6)*6)+5);
+								asondate = new Date(asondate.getFullYear(), asondate.getMonth() + 1, 0);
+					            $(this).datepicker('setDate', asondate);
+					            $("#dt2").datepicker('setDate', asondate);
+					            $("#asonDate").datepicker('setDate', asondate);
+					            asondate.setDate(1);
+					            asondate.setMonth(Math.trunc(asondate.getMonth()/6)*6);
+					            $("#dt1").datepicker('setDate', asondate);
+					            
+
+							} else if (frequency == "Yearly") {
+
+								asondate.setDate(31);
+								asondate.setMonth(11);
+								$('#dt2').datepicker("setDate", asondate);
+								$(this).datepicker('setDate', asondate);
+
+								asondate.setDate(1);
+								asondate.setMonth(0);
+								$("#dt1").datepicker("setDate", asondate);
+
+							} else if (frequency == "Quarterly") {
+
+								asondate.setMonth((Math.trunc(asondate
+										.getMonth() / 3) * 3) + 2);
+								asondate = new Date(asondate.getFullYear(),
+										asondate.getMonth() + 1, 0);
+								$(this).datepicker('setDate', asondate);
+								$("#dt2").datepicker('setDate', asondate);
+
+								asondate.setDate(1);
+								asondate.setMonth(Math.trunc(asondate
+										.getMonth() / 3) * 3);
+
+								$("#dt1").datepicker('setDate', asondate);
+
+							} else if (frequency == "Weekly") {
+
+							}
+							}
+							;
+
+						}
+					}
+
+				});
+		$("#dt1").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate : new Date(),
+			dateFormat : "dd-mm-yy"
+		});
+		$("#dt2").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate : new Date(),
+			dateFormat : "dd-mm-yy"
+		});
+		
+		
+	
+	});
+
+	//To show report name
+	function showReportName() {
+		var i;
+		var selectedIndex = $("#reportlist option:selected").index();
+		report = reportlist[selectedIndex - 1];
+		frequency = report.report_frequency;
+		reportid = report.dpnd_report_id;
+
+		var noofFiles = parseInt(report.file_count);
+
+		//to clear the form if any report previously selected
+		$("#fileinput").empty();
+		$("#asonDate").val("");
+		$("#dt1").val("");
+		$("#dt2").val("");
+
+		//to clear the precheck value if any report previously selected
+		precheckmsg = "";
+		$(".filepage").remove();
+
+		if (noofFiles == 1) {
+
+			$("#uploadForm")
+					.append(
+							"<div class='input-group filepage' style='padding: 2px;'><div class='input-group-prepend' id='"+i+"p'><span class='input-group-text'>"+report.dpnd_report_id+"_MANUAL</span></div><div class='custom-file'><input type='file' class='custom-file-input' id='inputGroupFile"
+									+ i
+									+ "' onchange='validateExten(this);' name='files' aria-describedby='inputGroupFileAddon"
+									+ i
+									+ "'><label class='custom-file-label' for='inputGroupFile"+i+"' id='inputGroupFile"+i+"0'>Choose File</label></div></div>");
+		} else {
+			for (i = 1; i <= noofFiles; i++) {
+
+				$("#uploadForm")
+						.append(
+								"<div class='input-group filepage' style='padding: 2px;'><div class='input-group-prepend' id='"+i+"p'><span class='input-group-text'>"+report.dpnd_report_id+"_S"+i+"_MANUAL</span></div><div class='custom-file'><input type='file' class='custom-file-input' id='inputGroupFile"
+										+ i
+										+ "' onchange='validateExten(this);' name='files' aria-describedby='inputGroupFileAddon name='files'"
+										+ i
+										+ "'><label class='custom-file-label' for='inputGroupFile"+i+"' id='inputGroupFile"+i+"0'>Choose File</label></div></div>");
+			}
+
+		}
+		$("#uploadForm")
+				.append(
+						"<br><button type='button' class='btn btn-xs btn-primary filepage' onclick='submitdataform()' form='uploadForm'>Upload</button>");
+
+		$("#repname").text(report.report_name);
+
+	};
+
+	//To open the File upload dialog if the user wants to upload
+	function openUploadModal() {
+		
+		$(".custom-file-label").html("Choose File");
+		document.getElementById("uploadForm").reset();
+
+		$("#fileupload").modal("toggle");
+	}
+
+	//To show alert msg to the user incase of data existance
+	function precheckAlert() {
+
+		if ($("#reportform").valid()) {
+
+			if (precheckmsg != "") {
+
+				$("#alertmsg").text(precheckmsg);
+				$("#alert").modal("toggle");
+
+			} else {
+				
+				$(".custom-file-label").html("Choose File");
+				document.getElementById("uploadForm").reset();
+
+				$("#fileupload").modal("toggle");
+
+			}
+
+		}
+
+	}
+
+	//Checks whether data already availabel for the report in the master table and save it in a 
+	//variable precheckmsg
+	function uploadPrecheck() {
+
+		asondate = $("#asonDate").val();
+		
+
+		var Callurl = "./upload/preCheck?reportId=" + report.dpnd_report_id
+				+ "&asonDate=" + asondate;
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+				
+				if (data != 'success') {
+					precheckmsg = data;
+
+				}
+			}
+	
+		});
+		
+		
+		
+
+	}
+
+	function validateExten(b) {
+		var name = document.getElementById(b.id);
+
+		$("#" + b.id + "0").text(name.files.item(0).name);
+		var ext = b.value.match(/\.(.+)$/)[1].toLowerCase();
+
+		switch (ext) {
+		case 'xlsx':
+		case 'xls':
+		case 'csv':
+		case 'xml':
+			break;
+		default:
+			$("#alertmsg2").text("Only xlsx, xls, xml or csv files allowed");
+			$('#alert2').modal("toggle");
+			b.value = '';
+		}
+
+	}
+	
+	function closeform(){
+		
+		 $('#fileupload').modal("hide");
+		 location.reload();
+		 
+		
+	}
+
+	function submitdataform() {
+
+		$('#uploadForm').attr("action",
+				"upload/" + report.dpnd_report_id + "?asondate=" + asondate);
+
+		var options = {
+			beforeSubmit : validate,
+			success : showResponse
+		};
+
+		$('#uploadForm').ajaxSubmit(options);
+
+		function validate(formData, jqForm, options) {
+
+			for (var i = 0; i < formData.length; i++) {
+				
+				if (!formData[i].value) {
+					continue;
+				} else {
+					return true;
+				}
+			}
+			$("#alertmsg2").text("Please Choose atleast one File");
+			$('#alert2').modal("toggle");
+			return false;
+		}
+
+		function showResponse(responseText, statusText, xhr, $form) {
+
+			$("#alertmsg2").text(responseText);
+			$('#alert2').modal("toggle");
+			
+		}
+		
+		
+		
+		
+		
+
+	}
+	
+	
+	/* function submituploadform(a) {
+		
+	
+		if ($("#reportform").valid()) {
+			var url = "./fileUploadPOMaster";
+
+			$("#reportform").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#reportform").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg1").text(responseText);
+
+				$('#alert1').modal("toggle");
+			};
+		}
+	} */
+
+	/*]]>*/
+</script>
+
+<script>
+
+function submituploadform(a) {
+	alert("Initiating upload...");
+	if ($("#reportform").valid()) { // Ensure the form is valid
+		var url = "./fileUploadPOMaster";
+		$("#reportform").attr('action', url);
+
+		// AJAX submit options
+		var options = {
+			success: showResponse, // Post-submit callback 
+			error: function () {
+				alert("An error occurred while submitting the form");
+			}
+		};
+
+		// Submit the form using ajaxSubmit
+		$("#reportform").ajaxSubmit(options);
+
+		// Callback function after a successful submission
+		function showResponse(responseText, statusText, xhr, $form) {
+			$("#alertmsg1").text(responseText); // Display response text in your alert modal
+			$('#alert1').modal("toggle"); // Show the alert modal
+		};
+	} else {
+		alert("Form is not valid!"); // Notify the user about form validation failure
+	}
+}
+
+</script>
+
+
+</script>
+
+<script>
+function eclfileupload() {
+    
+
+    filetext = $("#eclfile").val();    
+    
+
+  
+
+    if (filetext == "") {
+        alert("Please choose a file");
+    } else {
+        alert("Validation OK");
+    }
+}
+
+
+</script>
+</head>
+<title>XBRL</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-12">
+				<form class="form-horizontal" method="post" name="CriteriaForm"
+					id="reportform">
+
+					<div class="card">
+						<div class="card-header">
+							<h4><b>ECL File Upload</b></h4>
+						</div>
+						<div class="card-body">
+							<div class="form-group">
+
+								<div class="row rowline" >
+								<div class="col-sm-3"></div>
+								
+									<label  style="font-size:large;">File upload</label> 
+							
+									
+								<div class="col-sm-1"></div>
+									
+									<input type="file" name="file"  accept=".xlsx,.xls,.csv" />
+
+									
+								
+									</div>
+									<!-- <select
+										th:object="${reportlist}" name="reportid" id="reportlist"
+										onchange="showReportName();" class="col-sm-3 form-control">
+										<option value="Select">Select</option>
+										<option th:each="report : ${reportlist}"
+											th:value="${report.dpnd_report_id}"
+										div	th:text="${report.dpnd_report_id}"></option>
+
+
+									</select> <span class="col-sm-6" id="repname"></span> -->
+
+							<!-- 	<div class="row row1">
+									<label class="col-sm-3 control-label">As On date</label> <input
+										type="text" name="asondate" id="asonDate" value=""
+										class="col-sm-3 form-control" placeholder="dd-mm-yyyy"
+										onchange="uploadPrecheck();" required />
+								</div>
+								<div class="row row1">
+									<label class="col-sm-3 control-label">From date<span
+										style="color: red; font-size: 10px;" class="mant">*</span></label> <input
+										type="text" name="fromdate" id="dt1" value=""
+										class="col-sm-3 form-control" placeholder="dd-mm-yyyy"
+										required />
+								</div>
+								<div class="row row1">
+									<label class="col-sm-3 control-label">To date<span
+										style="color: red; font-size: 10px;" class="mant">*</span></label> <input
+										type="text" name="todate" id="dt2" value=""
+										class="col-sm-3 form-control" placeholder="dd-mm-yyyy"
+										required />
+								</div> -->
+							</div>
+
+
+						</div>
+						<div class="card-footer text-center">
+							<button type="button" class="btn btn-xs btn-primary"
+							onclick="submituploadform(this);" id="btnUpload">Submit</button>
+							<button type="reset" class="btn btn-xs btn-primary" id="btnClear">Clear</button>
+						</div>
+						</form>
+					</div>
+				
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------File Upload Modal Starts----------------------------------------------------------->
+	<div class="modal fade" id="fileupload">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Upload data</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body form-group">
+					<form th:action="@{/upload/import}" method="post"
+						enctype="multipart/form-data" id=uploadForm>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------File Upload Modal Ends----------------------------------------------------------->
+
+	<!--------------------------------------------------------------- Modal for dialog messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="openUploadModal();">Yes</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert2">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg2"></p>
+					<button type="button" class="btn btn-primary" onclick="closeform();" data-dismiss="modal">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+</body>
+</body>
+</html>

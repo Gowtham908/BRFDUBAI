@@ -1,0 +1,1694 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: ARUN.R  
+CREATED ON	: 8.1.23
+PURPOSE		: BRF4 Reports-development
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+	<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+	<script src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+		th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					tablepagination();
+
+				},
+				error: function () {
+
+					alert("Failed to load details.");
+				}
+			});
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+			// $("#date").css("display","none");
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+				},
+				error: function () {
+
+					alert("Failed to load summary.");
+				}
+			});
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+
+			location.href = "/BRBS/monthly1";
+
+
+		}
+
+		function back() {
+			window.history.back();
+		}
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+
+		function resident(a) {
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf4',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+
+	</script>
+
+
+
+
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-4 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 3000);
+		}
+	</script>
+
+
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: './' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-004-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+					} else if (filetype == "BRF") {
+						a.download = '011-BRF-004-A' + ".xls"; // assuming .pdf extension for PDF files
+					} else {
+						a.download = '011-BRF-004-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+
+					// Set the appropriate message based on the downloaded filetype
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-004 ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text('Downloaded BRF-004 Detail Excel' + ".xlsx");
+					} else if (filetype == "BRF") {
+						$('#customAlertBody').text('Downloaded BRF 004 ' + ".xls"); // assuming .pdf extension for PDF files
+					} else {
+						$('#customAlertBody').text('Downloaded BRF-004 ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+
+	</script>
+
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+
+	<style>
+		/* Your existing CSS - this is the correct approach */
+		.scrollable-table-container {
+			/* This is the key: it creates the scroll context */
+			max-height: 620px;
+			/* Or a suitable height like 80vh for responsive design */
+			overflow-y: auto;
+			border: 1px solid #ccc;
+		}
+
+		/* Your existing sticky header CSS, targeting the tr elements within the thead */
+		.scrollable-table-container thead tr:nth-child(1) {
+			position: sticky;
+			top: 0;
+			background-color: #b3b6b9;
+			z-index: 4;
+		}
+
+		.scrollable-table-container thead tr:nth-child(2) {
+			position: sticky;
+			top: 36px;
+			/* adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 3;
+		}
+
+
+
+		.scrollable-table-container thead tr:nth-child(3) {
+			position: sticky;
+			top: 72px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 2;
+		}
+
+		.scrollable-table-container thead tr:nth-child(4) {
+			position: sticky;
+			top: 108px;
+			/* Adjust based on row height */
+			background-color: #b3b6b9;
+			z-index: 1;
+		}
+	</style>
+	<script>
+		$(document).ready(function () {
+
+		});
+		function tablepagination() {
+			$('#detailtable').DataTable({
+				"pageLength": 100,
+				"lengthChange": false,
+				"ordering": false,
+				"info": true,
+				"autoWidth": false,
+				"searching": true,
+				"language": {
+					"emptyTable": "No records available"
+				},
+				// --- ADD THIS LINE BELOW ---
+				"dom": '<"top"f>rt<"bottom"ip>'
+				// --- ADD THIS LINE ABOVE ---
+			});
+		}
+	</script>
+	<style>
+		/* Styles for the search box (from previous answer) */
+		.dataTables_filter {
+			float: right;
+			text-align: right;
+			/* Ensures the label and input align well within the floated div */
+		}
+
+		/* Clearfix to prevent layout issues from floating elements above the table */
+		.dataTables_wrapper:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+
+		/* Styles for the info and pagination controls */
+		.dataTables_info {
+			float: left;
+			/* Keep info text on the left */
+		}
+
+		.dataTables_paginate {
+			float: right;
+			/* Move pagination to the right */
+		}
+
+		/* Clearfix for the bottom section (info and pagination) */
+		.dataTables_wrapper .dataTables_info,
+		.dataTables_wrapper .dataTables_paginate {
+			/* Ensures they are on the same line if space allows */
+			display: inline-block;
+		}
+
+		/* You might want a clear div if your bottom section also has other elements */
+		.clear {
+			clear: both;
+		}
+	</style>
+	<title>BCDRS</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;">BANKING AND MONETARY STATISTICS- INCOME
+					STATEMENT - BRF 4 (AED in 000) </b>
+				<th><b style="color: white; margin-left: 20%;">Report
+						Date - <span th:text="${todate}"></span>
+					</b></th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showdetails('firstpage','1','0');"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'" onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<!-- <button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button> -->
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive scrollable-table-container"
+							style="border-right: 1px solid #dee2e6">
+							<table style="width: 1498px;"
+								class="sticky-header-table table  table-bordered table-hover table-sm table-condensed">
+								<thead class="thead-light">
+									<tr style="background-color: #b3b6b9">
+
+										<th>No</th>
+										<th></th>
+										<th>INCOME & EXPENSE ITEMS</th>
+										<th>Year to Date</th>
+									</tr>
+
+
+								</thead>
+								<tbody th:each="report: ${reportsummary}">
+
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">1</th>
+										<th></th>
+										<th th:text="${report.r1_product}">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r1_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.1</td>
+										<td th:text="${report.r2_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r2_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.2</td>
+										<td th:text="${report.r3_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r3_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td style="text-align: right">1.3</td>
+										<td th:text="${report.r4_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r4_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.1</td>
+										<td th:text="${report.r5_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r5_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW105" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.2</td>
+										<td th:text="${report.r6_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r6_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW106" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.3</td>
+										<td th:text="${report.r7_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r7_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.4</td>
+										<td th:text="${report.r8_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r8_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.5</td>
+										<td th:text="${report.r9_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r9_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW109" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.6</td>
+										<td th:text="${report.r10_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r10_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW110" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.7</td>
+										<td th:text="${report.r11_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r11_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.8</td>
+										<td th:text="${report.r12_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r12_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.3.9</td>
+										<td th:text="${report.r13_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW113" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td style="text-align: right">1.4</td>
+										<td th:text="${report.r14_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r14_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.4.1</td>
+										<td th:text="${report.r15_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r15_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.4.2</td>
+										<td th:text="${report.r16_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r16_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.4.3</td>
+										<td th:text="${report.r17_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r17_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.5</td>
+										<td th:text="${report.r18_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r18_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW118" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">1.6</td>
+										<td th:text="${report.r19_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW119" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">2</th>
+										<th></th>
+										<th th:text="${report.r20_product}">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r20_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">2.1</td>
+
+										<td th:text="${report.r21_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r21_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">2.2</td>
+
+										<td th:text="${report.r22_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r22_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW122" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">2.3</td>
+
+										<td th:text="${report.r23_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r23_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW123" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td style="text-align: right">2.4</td>
+
+										<td th:text="${report.r24_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r24_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">2.4.1</td>
+
+										<td th:text="${report.r25_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r25_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">2.4.2</td>
+
+										<td th:text="${report.r26_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r26_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW126" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">2.4.4</td>
+
+										<td th:text="${report.r27_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r27_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW127" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">2.5</td>
+
+										<td th:text="${report.r28_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r28_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW128" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">3</th>
+										<th></th>
+										<th th:text="${report.r29_product}" align="">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r29_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">4</th>
+										<th></th>
+										<th th:text="${report.r30_product}">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r30_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.1</td>
+
+										<td th:text="${report.r31_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r31_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW131" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<td style="text-align: right">4.2</td>
+
+										<td th:text="${report.r32_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r32_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.2.1</td>
+
+										<td th:text="${report.r33_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r33_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW133" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.2.2</td>
+
+										<td th:text="${report.r34_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r34_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW134" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.2.3</td>
+
+										<td th:text="${report.r35_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r35_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW135" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.2.4</td>
+
+										<td th:text="${report.r36_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r36_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW136" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.2.5</td>
+
+										<td th:text="${report.r37_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r37_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW137" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.3</td>
+
+										<td th:text="${report.r38_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r38_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW138" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.4</td>
+
+										<td th:text="${report.r39_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r39_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW139" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.5</td>
+
+										<td th:text="${report.r40_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r40_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW140" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.6</td>
+
+										<td th:text="${report.r41_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r41_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW141" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">4.7</td>
+
+										<td th:text="${report.r42_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r42_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW142" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">5</th>
+										<th></th>
+										<th th:text="${report.r43_product}" align="">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r43_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">6</th>
+										<th></th>
+										<th th:text="${report.r44_product}" align="">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r44_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.1</td>
+
+										<td th:text="${report.r45_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r45_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW145" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.2</td>
+
+										<td th:text="${report.r46_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r46_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW146" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.3</td>
+
+										<td th:text="${report.r47_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r47_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW147" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.4</td>
+
+										<td th:text="${report.r48_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r48_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW148" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.5</td>
+
+										<td th:text="${report.r49_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r49_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW149" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.6</td>
+
+										<td th:text="${report.r50_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r50_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.6.1</td>
+
+										<td th:text="${report.r51_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r51_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW151" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.6.2</td>
+
+										<td th:text="${report.r52_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r52_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW152" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">6.7</td>
+
+										<td th:text="${report.r53_product}" align="">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW153" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">7</th>
+										<td></td>
+										<th th:text="${report.r54_product}" align="">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r54_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">8</th>
+										<td></td>
+										<th th:text="${report.r55_product}" align="">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r55_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">8.1</td>
+
+										<td style="background-color:yellow" th:text="${report.r56_product}" align="">
+											CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r56_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW156" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right">8.2</td>
+
+										<td style="background-color:yellow" th:text="${report.r57_product}" align="">
+											CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r57_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW157" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td></td>
+										<th style="text-align: right; background-color: yellow;">8.3</th>
+
+										<th th:text="${report.r58_product}" align="">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r58_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right; background-color:yellow">8.3.1</td>
+
+										<td style="background-color:yellow" th:text="${report.r59_product}" align="">
+											CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r59_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW159" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td
+											style="text-align: right; background-color: #b3b6b9; text-decoration: line-through;">
+											8.3.2</td>
+
+										<td style="background-color:yellow; text-decoration: line-through;"
+											th:text="${report.r60_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r60_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW160" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right; background-color:yellow">8.3.3</td>
+
+										<td style="background-color:yellow" th:text="${report.r61_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r61_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW161" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right; background-color:yellow">8.4</td>
+
+										<td th:text="${report.r62_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r62_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW162" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right; background-color:yellow">8.5</td>
+
+										<td th:text="${report.r63_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r63_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW163" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right; background-color:yellow">8.6</td>
+
+										<td style="background-color:yellow" th:text="${report.r64_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r64_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW164" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td style="text-align: right; background-color:yellow">8.7</td>
+
+										<td th:text="${report.r65_product}">CHENNAI</td>
+										<td style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r65_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW165" onclick="resident(this)">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+
+										<th style="text-align: right">9</th>
+										<th></th>
+										<th th:text="${report.r66_product}">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r66_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW166" onclick="resident(this)">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">10</th>
+										<td></td>
+										<th th:text="${report.r67_product}">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r67_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<th style="text-align: right">11</th>
+										<td></td>
+										<th th:text="${report.r68_product}">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r68_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW168" onclick="resident(this)">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">12</th>
+										<td></td>
+										<th th:text="${report.r69_product}">CHENNAI</th>
+										<th style="text-align: right"
+											th:text="${#numbers.formatDecimal(report.r69_year_to_date,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+									</tr>
+									<tr>
+										<th colspan="2"></th>
+										<th>FORM NO: BSD/BRF 4- INCOME STAT/MAR14</th>
+										<th></th>
+
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: auto; border-right: 1px solid #dee2e6" th:class="${searchmsg == null}?'inner'">
+
+					<table id="detailtable" class="table table-bordered table-sm" style="width: 1498px">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT NAME 1</th>
+								<th>REPORT LABEL 1</th>
+								<th>REPORT ADDL CRITERIA 1</th>
+								<th>REPORT DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody>
+							<tr th:each="report,iterator : ${reportdetails}">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 2, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCT BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="loader1" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="background: transparent;">
+				<div class="modal-body" style="text-align: center">
+					<div>
+						<img th:src=@{/images/loader.gif} id="bfirelogo" style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;" alt="Bornfire">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<style>
+	.pagination {
+		margin: 0;
+	}
+
+	.page-item.active .page-link {
+		background-color: #386276;
+		border-color: #386276;
+	}
+
+	.page-link {
+		color: #386276;
+	}
+
+	.page-link:hover {
+		color: #2a4a5c;
+	}
+
+	.form-select {
+		display: inline-block;
+		width: auto;
+	}
+</style>
+
+
+</html>

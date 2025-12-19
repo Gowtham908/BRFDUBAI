@@ -1,0 +1,291 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+
+</head>
+<title>BCDRS</title>
+<style>
+	.customcol {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+
+	table {
+		border-collapse: collapse;
+		border: 1px solid black;
+		border-color: #e9ecef;
+	}
+
+	.modal-backdrop {
+		background-color: +[];
+		zoom: 1;
+	}
+
+	.addedit {
+		color: #007bff;
+	}
+
+	.row {
+		margin-left: 0px;
+		margin-right: 0px;
+	}
+
+	.fa-play-circle:hover {
+		color: #2dc32a;
+		cursor: pointer;
+	}
+
+	.fa-play-circle {
+		color: #20f31c;
+		cursor: pointer;
+	}
+</style>
+<style>
+	.table-container {
+		max-height: 300px;
+		overflow-y: auto;
+	}
+
+	table.fixed-header-table {
+		width: 100%;
+		border-collapse: collapse;
+		table-layout: fixed;
+	}
+
+	thead th {
+		position: sticky;
+		top: 0;
+		background: #f8f9fa;
+		/* or white */
+		z-index: 1;
+		border: 1px solid #dee2e6;
+		text-align: center;
+	}
+
+	table.fixed-header-table th,
+	table.fixed-header-table td {
+		padding: 8px;
+		border: 1px solid #dee2e6;
+		text-align: center;
+	}
+
+	.table-container {
+		max-height: 500px;
+		/* You can adjust this height */
+		overflow-y: auto;
+	}
+
+	.btn-primary {
+		background-color: #E77400;
+		border-color: #0c0c0c;
+	}
+</style>
+
+<!----------------------------------------Scripts to edit report details-------------------------------------------->
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var EtlError = /*[[${EtlError}]]*/0;
+	var EtlStatus = /*[[${EtlStatus}]]*/0;
+	console.log(EtlError);
+	console.log(EtlStatus);
+	var url;
+	function runprocedure(a) {
+
+		var report_date = a.getAttribute("data-report_date");
+		url = "./etlRun?reportdate=" + report_date
+		$("#alertmsg2")
+			.text(
+				"Please confirm to Run ETL process for the date "
+				+ report_date);
+		$("#runconfirm").modal("toggle");
+
+	}
+
+	function callprocedure() {
+		if ($('#runconfirm').is(':visible')) {
+			$('#runconfirm').modal("hide");
+			$("#loader").show();
+		};
+
+		$.ajax({
+			type: 'post',
+			url: url,
+			success: function (data) {
+
+
+
+				$("#alertmsg").text(data);
+				$("#alert").modal("toggle");
+
+			}
+		});
+	}
+	function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+		window.history.back();
+	}
+	/*]]>*/
+</script>
+
+<body>
+	<!-- --------------------------------------------------- Header Section starts --------------------------------------------------- -->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<!-- --------------------------------------------------- Header Section Ends ----------------------------------------------------- -->
+	<i class="fa fa-question-circle" aria-hidden="true" onclick="docEmb('Report')"></i>
+	<div class="container content" th:fragment="reportcontent">
+		<div class="card" style="width: 1421px; margin-left: -2%">
+			<div class="card-header" style="background-color: #376275;">
+				<div class="float-left" style="color: white;">
+					<h4>ETL MONITOR</h4>
+				</div>
+			</div>
+			<!-- Tab buttons -->
+			<div class="row">
+				<div class="col-sm-12 customcol" style="background-color: #adb5bd;">
+					<ul class="nav nav-tabs">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#etlStatus">ETL Status</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#etlErrors">ETL Error</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- Tab content -->
+			<div class="tab-content mt-3" th:if="${displaymode}=='summary' or ${displaymode}==null"
+				style="overflow-x: auto;">
+
+				<!-- ETL Status Tab (Active by default) -->
+				<div class="tab-pane active" id="etlStatus">
+					<div class="table-container">
+						<table class="table table-bordered table-hover table-sm table-condensed" style="width: 1398px;">
+							<thead class="thead-light">
+								<tr>
+									<th style="text-align:left;">Process Id</th>
+									<th style="text-align:left;">Module Name</th>
+									<th style="text-align:left;">Report Date</th>
+									<th style="text-align:left;">Start Time</th>
+									<th style="text-align:left;">End Time</th>
+									<th style="text-align:left;">Status Flag</th>
+									<th style="text-align:left;">Rerun ETL</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:if="${etlstatus}!=null" th:each="etlstatus : ${EtlStatus}">
+									<td th:text="${etlstatus.process_id}"></td>
+									<td th:text="${etlstatus.module_name}"></td>
+									<td th:text="${#dates.format(etlstatus.report_date, 'dd-MM-yyyy')}"></td>
+									<td th:text="${#dates.format(etlstatus.start_time, 'hh:mm a')}"></td>
+									<td th:text="${#dates.format(etlstatus.end_time, 'hh:mm a')}"></td>
+									<td th:text="${etlstatus.status_flg}"></td>
+									<td>
+										<i class="fas fa-play-circle"
+											th:attr="data-report_date=${#dates.format(etlstatus.report_date, 'dd-MMM-yyyy')}"
+											th:onclick="runprocedure(this);"></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="card-footer text-center" style="background-color: #376275;">
+						<button type="button" class="btn btn-xs btn-primary" onclick="home();">Home</button>
+						<button type="button" class="btn btn-xs btn-primary" onclick="back();">Back</button>
+					</div>
+				</div>
+
+				<!-- ETL Errors Tab -->
+				<div class="tab-pane" id="etlErrors">
+					<div class="table-container">
+						<table class="table table-bordered table-hover table-sm table-condensed" style="width: 1398px;">
+							<thead class="thead-light">
+								<tr>
+									<th style="text-align:left;">Error Id</th>
+									<th style="text-align:left;">Report Date</th>
+									<th style="text-align:left;">Error Details</th>
+									<th style="text-align:left;">Error Time</th>
+									<th style="text-align:left;">Rerun ETL</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:if="${etlerror}!=null" th:each="etlerror : ${EtlError}">
+									<td th:text="${etlerror.error_id}"></td>
+									<td th:text="${#dates.format(etlerror.report_date, 'dd-MM-yyyy')}"></td>
+									<td th:text="${etlerror.error_details}"></td>
+									<td th:text="${#dates.format(etlerror.recr_time, 'dd-MM-yyyy hh:mm:ss')}"></td>
+									<td>
+										<i class="fas fa-play-circle"
+											th:attr="data-report_date=${#dates.format(etlerror.report_date, 'dd-MMM-yyyy')}"
+											th:onclick="runprocedure(this);"></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="card-footer text-center" style="background-color: #376275;">
+						<button type="button" class="btn btn-xs btn-primary" onclick="home();">Home</button>
+						<button type="button" class="btn btn-xs btn-primary" onclick="back();">Back</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+		<div class="modal fade" id="alert">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-body" style="text-align: center">
+						<p id="alertmsg"></p>
+						<button type="button" class="btn btn-primary" onclick="location.reload();"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+		<div class="modal fade" id="runconfirm">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-body" style="text-align: center">
+						<button type="button" class="close" data-dismiss="modal">×</button>
+						<p id="alertmsg2"></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick="callprocedure();">Run</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+
+</html>

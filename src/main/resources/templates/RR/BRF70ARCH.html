@@ -1,0 +1,2309 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: 
+CREATED ON	: 
+PURPOSE		: QUARTELY REPORT
+TESTING     : ARUN R -24.1.24
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+			location.href = "/BRBS/BRFArchival";
+
+		}
+		function back() {
+			window.history.back();
+		}
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+
+		// Modify 
+
+		function showmodify() {
+			removeCommas();
+			$(".Show_input").prop("readonly", false);
+			$("#submitButton").show();
+		}
+
+		function removeCommas() {
+			$('.Show_input').each(function () {
+				var inputValue = $(this).val();
+				var newValue = inputValue.replace(/,/g, '');
+				$(this).val(newValue);
+			});
+		}
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.scroll {
+			overflow-x: scroll;
+			overflow-y: scroll;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+
+		.Show_input {
+			border: unset;
+			width: 75px;
+		}
+
+		input:focus {
+			outline: none;
+			border: unset;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+
+
+	</script>
+
+	<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf070',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+
+		function fileuploads(a) {
+			var asondate = a.getAttribute("data-todate");
+			if ($("#fileupload").valid()) {
+				var url = './uploadscreen?asondate=' + asondate;
+				$("#fileupload").attr('action', url);
+				var options = {
+					success: showResponse
+				};
+				$("#fileupload").ajaxSubmit(options);
+				function showResponse(responseText, statusText, xhr, $form) {
+					//alert("Success");
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+					// Show the button again after the request is completed
+				}
+			}
+		}
+
+	</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-070 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 5000);
+		}
+		
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data : {
+					asondate : asondate,
+					fromdate : fromdate,
+					todate : todate,
+					currency : currency,
+					subreportid : subreportid,
+					secid : secid,
+					dtltype : dtltype,
+					filetype : filetype
+				},
+				type : 'POST',
+				xhrFields : {
+					responseType : 'blob'
+				},
+				success : function(data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([ data ], {
+						type : 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if(filetype == "excel"){
+						a.download = 'BRF-070' + ".xlsx";
+					}else{
+						a.download = 'BRF-070' + ".pdf";
+					}
+					
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					if(filetype == "excel"){
+						$('#customAlertBody').text('Downloaded BRF-070 ' + ".xlsx");
+					}else{
+						$('#customAlertBody').text('Downloaded BRF-070 ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+	</script>
+	<script type="text/javascript">
+		function getReport(a) {
+			alert("hi")
+			location.href = "./modify?formmode=modify";
+		}
+
+		function showtotal() {
+			$("#R1_COL_5").val((parseFloat($("#R1_COL_1").val()) || 0) + (parseFloat($("#R1_COL_3").val())) || 0);
+			$("#R1_COL_6").val((parseFloat($("#R1_COL_2").val()) || 0) + (parseFloat($("#R1_COL_4").val())) || 0);
+			$("#R2_COL_5").val((parseFloat($("#R2_COL_1").val()) || 0) + (parseFloat($("#R2_COL_3").val())) || 0);
+			$("#R2_COL_6").val((parseFloat($("#R2_COL_2").val()) || 0) + (parseFloat($("#R2_COL_4").val())) || 0);
+
+			$("#R3_COL_5").val((parseFloat($("#R3_COL_1").val()) || 0) + (parseFloat($("#R3_COL_3").val())) || 0);
+			$("#R3_COL_6").val((parseFloat($("#R3_COL_2").val()) || 0) + (parseFloat($("#R3_COL_4").val())) || 0);
+
+			$("#R4_COL_5").val((parseFloat($("#R4_COL_1").val()) || 0) + (parseFloat($("#R4_COL_3").val())) || 0);
+			$("#R4_COL_6").val((parseFloat($("#R4_COL_2").val()) || 0) + (parseFloat($("#R4_COL_4").val())) || 0);
+
+			$("#R5_COL_5").val((parseFloat($("#R5_COL_1").val()) || 0) + (parseFloat($("#R5_COL_3").val())) || 0);
+			$("#R5_COL_6").val((parseFloat($("#R5_COL_2").val()) || 0) + (parseFloat($("#R5_COL_4").val())) || 0);
+
+			$("#R6_COL_5").val((parseFloat($("#R6_COL_1").val()) || 0) + (parseFloat($("#R6_COL_3").val())) || 0);
+			$("#R6_COL_6").val((parseFloat($("#R6_COL_2").val()) || 0) + (parseFloat($("#R6_COL_4").val())) || 0);
+
+			$("#R8_COL_5").val((parseFloat($("#R8_COL_1").val()) || 0) + (parseFloat($("#R8_COL_3").val())) || 0);
+			$("#R8_COL_6").val((parseFloat($("#R8_COL_2").val()) || 0) + (parseFloat($("#R8_COL_4").val())) || 0);
+
+			$("#R9_COL_5").val((parseFloat($("#R9_COL_1").val()) || 0) + (parseFloat($("#R9_COL_3").val())) || 0);
+			$("#R9_COL_6").val((parseFloat($("#R9_COL_2").val()) || 0) + (parseFloat($("#R9_COL_4").val())) || 0);
+
+			$("#R10_COL_5").val((parseFloat($("#R10_COL_1").val()) || 0) + (parseFloat($("#R10_COL_3").val()) || 0));
+			$("#R10_COL_6").val((parseFloat($("#R10_COL_2").val()) || 0) + (parseFloat($("#R10_COL_4").val()) || 0));
+
+			$("#R11_COL_5").val((parseFloat($("#R11_COL_1").val()) || 0) + (parseFloat($("#R11_COL_3").val()) || 0));
+			$("#R11_COL_6").val((parseFloat($("#R11_COL_2").val()) || 0) + (parseFloat($("#R11_COL_4").val()) || 0));
+
+			$("#R12_COL_5").val((parseFloat($("#R12_COL_1").val()) || 0) + (parseFloat($("#R12_COL_3").val()) || 0));
+			$("#R12_COL_6").val((parseFloat($("#R12_COL_2").val()) || 0) + (parseFloat($("#R12_COL_4").val()) || 0));
+
+			$("#R13_COL_5").val((parseFloat($("#R13_COL_1").val()) || 0) + (parseFloat($("#R13_COL_3").val()) || 0));
+			$("#R13_COL_6").val((parseFloat($("#R13_COL_2").val()) || 0) + (parseFloat($("#R13_COL_4").val()) || 0));
+
+			$("#R14_COL_5").val((parseFloat($("#R14_COL_1").val()) || 0) + (parseFloat($("#R14_COL_3").val()) || 0));
+			$("#R14_COL_6").val((parseFloat($("#R14_COL_2").val()) || 0) + (parseFloat($("#R14_COL_4").val()) || 0));
+
+			$("#R7_COL_1").val((parseFloat($("#R1_COL_1").val()) || 0) + (parseFloat($("#R2_COL_1").val()) || 0) + (parseFloat($("#R3_COL_1").val()) || 0) + (parseFloat($("#R4_COL_1").val()) || 0) + (parseFloat($("#R5_COL_1").val()) || 0) + (parseFloat($("#R6_COL_1").val()) || 0) - (parseFloat($("#R6_COL_1").val())) || 0);
+			$("#R7_COL_2").val((parseFloat($("#R1_COL_2").val()) || 0) + (parseFloat($("#R2_COL_2").val()) || 0) + (parseFloat($("#R3_COL_2").val()) || 0) + (parseFloat($("#R4_COL_2").val()) || 0) + (parseFloat($("#R5_COL_2").val()) || 0) + (parseFloat($("#R6_COL_2").val()) || 0) - (parseFloat($("#R6_COL_2").val())) || 0);
+			$("#R7_COL_3").val((parseFloat($("#R1_COL_3").val()) || 0) + (parseFloat($("#R2_COL_3").val()) || 0) + (parseFloat($("#R3_COL_3").val()) || 0) + (parseFloat($("#R4_COL_3").val()) || 0) + (parseFloat($("#R5_COL_3").val()) || 0) + (parseFloat($("#R6_COL_3").val()) || 0) - (parseFloat($("#R6_COL_3").val())) || 0);
+			$("#R7_COL_4").val((parseFloat($("#R1_COL_4").val()) || 0) + (parseFloat($("#R2_COL_4").val()) || 0) + (parseFloat($("#R3_COL_4").val()) || 0) + (parseFloat($("#R4_COL_4").val()) || 0) + (parseFloat($("#R5_COL_4").val()) || 0) + (parseFloat($("#R6_COL_4").val()) || 0) - (parseFloat($("#R6_COL_4").val())) || 0);
+			$("#R7_COL_5").val((parseFloat($("#R1_COL_5").val()) || 0) + (parseFloat($("#R2_COL_5").val()) || 0) + (parseFloat($("#R3_COL_5").val()) || 0) + (parseFloat($("#R4_COL_5").val()) || 0) + (parseFloat($("#R5_COL_5").val()) || 0) + (parseFloat($("#R6_COL_5").val()) || 0) - (parseFloat($("#R6_COL_5").val())) || 0);
+			$("#R7_COL_6").val((parseFloat($("#R1_COL_6").val()) || 0) + (parseFloat($("#R2_COL_6").val()) || 0) + (parseFloat($("#R3_COL_6").val()) || 0) + (parseFloat($("#R4_COL_6").val()) || 0) + (parseFloat($("#R5_COL_6").val()) || 0) + (parseFloat($("#R6_COL_6").val()) || 0) - (parseFloat($("#R6_COL_6").val())) || 0);
+			$("#R7_COL_7").val((parseFloat($("#R1_COL_7").val()) || 0) + (parseFloat($("#R2_COL_7").val()) || 0) + (parseFloat($("#R3_COL_7").val()) || 0) + (parseFloat($("#R4_COL_7").val()) || 0) + (parseFloat($("#R5_COL_7").val()) || 0) + (parseFloat($("#R6_COL_7").val()) || 0) - (parseFloat($("#R6_COL_7").val())) || 0);
+			$("#R7_COL_8").val((parseFloat($("#R1_COL_8").val()) || 0) + (parseFloat($("#R2_COL_8").val()) || 0) + (parseFloat($("#R3_COL_8").val()) || 0) + (parseFloat($("#R4_COL_8").val()) || 0) + (parseFloat($("#R5_COL_8").val()) || 0) + (parseFloat($("#R6_COL_8").val()) || 0) - (parseFloat($("#R6_COL_8").val())) || 0);
+			$("#R7_COL_11").val((parseFloat($("#R1_COL_11").val()) || 0) + (parseFloat($("#R2_COL_11").val()) || 0) + (parseFloat($("#R3_COL_11").val()) || 0) + (parseFloat($("#R4_COL_11").val()) || 0) + (parseFloat($("#R5_COL_11").val()) || 0) + (parseFloat($("#R6_COL_11").val()) || 0));
+			$("#R7_COL_12").val((parseFloat($("#R1_COL_12").val()) || 0) + (parseFloat($("#R2_COL_12").val()) || 0) + (parseFloat($("#R3_COL_12").val()) || 0) + (parseFloat($("#R4_COL_12").val()) || 0) + (parseFloat($("#R5_COL_12").val()) || 0) + (parseFloat($("#R6_COL_12").val()) || 0));
+			$("#R7_COL_13").val((parseFloat($("#R1_COL_13").val()) || 0) + (parseFloat($("#R2_COL_13").val()) || 0) + (parseFloat($("#R3_COL_13").val()) || 0) + (parseFloat($("#R4_COL_13").val()) || 0) + (parseFloat($("#R5_COL_13").val()) || 0) + (parseFloat($("#R6_COL_13").val()) || 0));
+			$("#R7_COL_14").val((parseFloat($("#R1_COL_14").val()) || 0) + (parseFloat($("#R2_COL_14").val()) || 0) + (parseFloat($("#R3_COL_14").val()) || 0) + (parseFloat($("#R4_COL_14").val()) || 0) + (parseFloat($("#R5_COL_14").val()) || 0) + (parseFloat($("#R6_COL_14").val()) || 0));
+
+			// %%
+
+			calculateRatio("R1");
+			updateSecondValue("R1");
+			calculateRatio("R2");
+			updateSecondValue("R2");
+			calculateRatio("R3");
+			updateSecondValue("R3");
+			calculateRatio("R4");
+			updateSecondValue("R4");
+			calculateRatio("R5");
+			updateSecondValue("R5");
+			calculateRatio("R6");
+			updateSecondValue("R6");
+			calculateRatio("R7");
+			updateSecondValue("R7");
+
+		}
+
+		function calculateRatio(idPrefix) {
+			try {
+				var numerator = (parseFloat($("#" + idPrefix + "_COL_1").val()) || 0) + (parseFloat($("#" + idPrefix + "_COL_2").val()) || 0);
+				console.log(numerator);
+				var denominator = (parseFloat($("#" + idPrefix + "_COL_5").val()) || 0) + (parseFloat($("#" + idPrefix + "_COL_6").val()) || 0);
+				console.log(denominator);
+				var result = denominator !== 0 ? numerator / denominator : NaN;
+				console.log(result);
+				var resultString = !isNaN(result) ? result.toFixed(4) : 0;
+				console.log(resultString);
+				$("#" + idPrefix + "_COL_9").val(resultString);
+			} catch (error) {
+				console.error("Error calculating ratio:", error);
+			}
+		}
+
+		function updateSecondValue(inputPrefix) {
+			try {
+				var col_1 = parseFloat($("#" + inputPrefix + "_COL_1").val()) || 0;
+				var col_2 = parseFloat($("#" + inputPrefix + "_COL_2").val()) || 0;
+				var col_7 = parseFloat($("#" + inputPrefix + "_COL_7").val()) || 0;
+				var col_8 = parseFloat($("#" + inputPrefix + "_COL_8").val()) || 0;
+				var numerator = col_1 + col_2 - col_7 - col_8;
+				var denominator = col_7 + col_8;
+				var result = denominator !== 0 ? numerator / denominator : NaN;
+				var resultString = !isNaN(result) ? result.toFixed(4) : 0;
+				$("#" + inputPrefix + "_COL_10").val(resultString);
+			} catch (error) {
+				console.error("Error calculating ratio:", error);
+			}
+		}
+
+	</script>
+<script>
+    function showAlertMessage() {
+        alert("Details page not available for Manual Report");
+    }
+</script>
+<script>
+function downloadexcel(button) {
+	var reportid = button.getAttribute('data-reportid');
+	var asondate = button.getAttribute('data-asondate');
+	var fromdate = button.getAttribute('data-fromdate');
+	var todate = button.getAttribute('data-todate');
+	var currency = button.getAttribute('data-currency');
+	var subreportid = button.getAttribute('data-subreportid');
+	var secid = button.getAttribute('data-secid');
+	var dtltype = button.getAttribute('data-dtltype');
+	var filetype = button.getAttribute('data-filetype');
+	
+	console.log(filetype);
+
+	$('#downloadProcessingModal').modal('show');
+
+	$.ajax({
+		url: '/BRBS/Reports/' + reportid + '/Download',
+		data : {
+			asondate : asondate,
+			fromdate : fromdate,
+			todate : todate,
+			currency : currency,
+			subreportid : subreportid,
+			secid : secid,
+			dtltype : dtltype,
+			filetype : filetype
+		},
+		type : 'POST',
+		xhrFields : {
+			responseType : 'blob'
+		},
+		success : function(data) {
+			$('#downloadProcessingModal').modal('hide');
+			var blob = new Blob([ data ], {
+				type : 'application/octet-stream'
+			});
+			var url = window.URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			a.href = url;
+			if(filetype == "excel" ||filetype == "detailexcel"){
+				a.download = '011-BRF-070-A' + ".xlsx";
+			}else{
+				a.download = '011-BRF-070-A' + ".pdf";
+			}
+			
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			if(filetype == "excel" ||filetype == "detailexcel"){
+				$('#customAlertBody').text('011-BRF-070-A ' + ".xlsx");
+			}else{
+				$('#customAlertBody').text('011-BRF-070-A ' + ".pdf");
+			}
+			$('#customAlertModal').modal('show');
+		}
+	});
+}
+ 
+</script>
+	<title>XBRL</title>
+</head>
+
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true" onclick="docEmb('Report')" id="ques"></i>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BRF 70 - BANKING AND MONETARY STATISTICS-
+					EMPLOYMENT DATA </b>
+				<!--  -->
+				
+			<div class="btn-group nav-buttons">
+				<button style="color: black;" type="button" class="btn btn-primary" 
+						onclick="showAlertMessage();" id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary"
+						onclick="showsummary();" id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button  type="button"
+							class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+														<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary"
+									th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'"
+									onclick="downloadexcel(this)">Pdf</a>
+								</li>
+								<li
+									th:if="${displaymode} == 'summary' or ${displaymode} == null">
+									<a class="text-primary"
+									th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'"
+									onclick="downloadexcel(this)">Excel</a>
+								</li>
+							<li th:if="${displaymode}=='detail'"><a
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'"
+									onclick="downloadexcel(this)"
+								>Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
+						role="dialog" aria-labelledby="downloadProcessingModalLabel"
+						aria-hidden="true">
+						<div
+							class="modal-dialog modal-dialog-centered d-flex align-items-center"
+							role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1"
+						role="dialog" aria-labelledby="customAlertModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+				    <div class="col-sm-12 customcol" style="background-color: #dadddf;">
+				        <div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+				            <button type="button" class="btn btn-primary"
+				                    onclick="showmodify(this);"
+				                    title="Click to EDIT Records"
+				                    th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+				                    id="addRecord">Modify</button>
+				            <button type="button" class="btn btn-primary text-white" onclick="verifyscreen(this);"
+				                    title="Click to EDIT Records"
+				                    th:attr="data-mofifyFlag = ${modify_flg == null ? '' : modify_flg},data-mofifyUser = ${modify_user == null ? '' : modify_user},data-loginUser = ${UserId}"
+				                    th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+				                    id="verifyBtn">Verify</button>
+				            <button type="button" class="btn btn-primary text-white" title="Click to EDIT Records"
+				                    id="cancelRecord" data-toggle="modal" data-target="#alert_cancel" disabled>Cancel</button>
+				        </div>
+				    </div>
+				</div>
+		<!-- ------------------------------------------------------------- Report title ends ----------------------------------------------- -->
+
+		<!-- ---------------------------- Report summary section starts it will shown only if summary button clicked----------------------- -->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+					<div class="col-sm-12">
+						<form action="#" method="POST" id="fileupload">
+							<div class="table-responsive scroll"
+								style="border-right: 1px solid #dee2e6;max-height: 100vh;">
+
+								<table style="width: 1800px;"
+									class="table  table-bordered table-hover table-sm table-condensed">
+									<thead style="background-color: #b3b6b9">
+
+										<tr style="text-align: center">
+											<th>S.N.</th>
+											<th style="width: 500px">Category</th>
+											<th colspan="2">UAE Nationals (Nos)</th>
+											<th colspan="2">Other Nationalities (Nos)</th>
+											<th colspan="2">Total</th>
+											<th colspan="2">Position of UAE Nationals last year,
+												ending 31 December………</th>
+											<th rowspan="2">% of UAE Nationals to Total</th>
+											<th rowspan="2">% increase in the number of UAE
+												Nationals since 31 December last year</th>
+											<th colspan="2">No of UAE Nationals resigned/left during
+												the year</th>
+											<th colspan="2">No of UAE Nationals joined during the
+												year</th>
+										</tr>
+										<tr style="text-align: center">
+											<th></th>
+											<th></th>
+											<th>Male</th>
+											<th>Female</th>
+											<th>Male</th>
+											<th>Female</th>
+											<th>Male</th>
+											<th>Female</th>
+											<th>Male</th>
+											<th>Female</th>
+											<th>Male</th>
+											<th>Female</th>
+											<th>Male</th>
+											<th>Female</th>
+
+										</tr>
+									</thead>
+									<tbody th:each="report: ${reportsummary}">
+
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R1_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00">Senior
+												Management<SUP>1</SUP>
+											</td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_1  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_1" name="R1_COL_1" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_2  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_2" name="R1_COL_2"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_3  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_3" name="R1_COL_3"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_4  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_4" name="R1_COL_4"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly></td>
+
+											<td id="ROW101" style="background-color: #b3b6b9;"><input type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_5  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_5" name="R1_COL_5"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+
+											<td style="background-color: #b3b6b9;" id="ROW101"><input type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_6  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_6" name="R1_COL_6"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_7  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_7" name="R1_COL_7" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_8  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_8" name="R1_COL_8" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW101" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_9  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_9" name="R1_COL_9"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW101" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_10  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_10" name="R1_COL_10"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_11  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_11" name="R1_COL_11" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_12  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_12" name="R1_COL_12" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_13  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_13" name="R1_COL_13" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW101" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R1_COL_14  ,0,'COMMA',0,'POINT')}"
+													id="R1_COL_14" name="R1_COL_14" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R2_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00">Middle
+												Management<SUP>2</SUP>
+											</td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_1  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_1" name="R2_COL_1"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_2  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_2" name="R2_COL_2"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_3  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_3" name="R2_COL_3"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_4  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_4" name="R2_COL_4"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly></td>
+											<td style="background-color: #b3b6b9;" id="ROW102"><input type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_5  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_5" name="R2_COL_5"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td style="background-color: #b3b6b9;" id="ROW102"><input type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_6  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_6" name="R2_COL_6"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_7  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_7" name="R2_COL_7" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_8  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_8" name="R2_COL_8" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW102" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_9  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_9" name="R2_COL_9"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW102" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_10  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_10" name="R2_COL_10"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_11  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_11" name="R2_COL_11" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_12  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_12" name="R2_COL_12" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_13  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_13" name="R2_COL_13" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW102" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R2_COL_14  ,0,'COMMA',0,'POINT')}"
+													id="R2_COL_14" name="R2_COL_14" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R3_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00">Branch
+												Managers<SUP>3</SUP>
+											</td>
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_1  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_1" name="R3_COL_1"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_2  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_2" name="R3_COL_2"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_3  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_3" name="R3_COL_3"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_4  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_4" name="R3_COL_4"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly></td>
+											<td id="ROW103" style="background-color: #b3b6b9;"><input
+													th:value="${#numbers.formatDecimal( report.R3_COL_5  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_5" name="R3_COL_5"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW103" style="background-color: #b3b6b9;"><input
+													th:value="${#numbers.formatDecimal( report.R3_COL_6  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_6" name="R3_COL_6"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_7  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_7" name="R3_COL_7" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_8  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_8" name="R3_COL_8" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW103" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_9  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_9" name="R3_COL_9"
+													style="background-color: #FFFF00;; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW103" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_10  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_10" name="R3_COL_10"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_11 ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_11" name="R3_COL_11" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_12  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_12" name="R3_COL_12" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_13  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_13" name="R3_COL_13" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW103" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R3_COL_14  ,0,'COMMA',0,'POINT')}"
+													id="R3_COL_14" name="R3_COL_14" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R4_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00">Junior
+												Management<SUP>4</SUP>
+											</td>
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_1  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_1" name="R4_COL_1"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_2  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_2" name="R4_COL_2"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_3  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_3" name="R4_COL_3"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_4  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_4" name="R4_COL_4"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly></td>
+											<td id="ROW104" style="background-color: #b3b6b9;"><input
+													th:value="${#numbers.formatDecimal( report.R4_COL_5  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_5" name="R4_COL_5"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW104" style="background-color: #b3b6b9;"><input
+													th:value="${#numbers.formatDecimal( report.R4_COL_6  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_6" name="R4_COL_6"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_7  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_7" name="R4_COL_7" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_8  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_8" name="R4_COL_8" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW104" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_9  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_9" name="R4_COL_9"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW104" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_10  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_10" name="R4_COL_10"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_11  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_11" name="R4_COL_11" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_12  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_12" name="R4_COL_12" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_13  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_13" name="R4_COL_13" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW104" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R4_COL_14  ,0,'COMMA',0,'POINT')}"
+													id="R4_COL_14" name="R4_COL_14" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+										</tr>
+										<tr style="text-align: right">
+											<td th:text="${report.R5_S_NO}"></td>
+											<td style="text-align: left" th:text="${report.R5_CATEGORY	}"></td>
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_1" name="R5_COL_1"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_2" name="R5_COL_2"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_3" name="R5_COL_3"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_4" name="R5_COL_4"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly></td>
+											<td id="ROW105" style="background-color: #b3b6b9;"><input
+													th:value="${#numbers.formatDecimal( report.R5_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_5" name="R5_COL_5"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW105" style="background-color: #b3b6b9;"><input
+													th:value="${#numbers.formatDecimal( report.R5_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_6" name="R5_COL_6"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_7 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_7" name="R5_COL_7" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_8 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_8" name="R5_COL_8" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW105" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_9 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_9" name="R5_COL_9"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW105" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_10 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_10" name="R5_COL_10"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_11 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_11" name="R5_COL_11" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_12 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_12" name="R5_COL_12" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_13 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_13" name="R5_COL_13" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW105" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R5_COL_14 ,0,'COMMA',0,'POINT')}"
+													id="R5_COL_14" name="R5_COL_14" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+										</tr>
+										<tr style="text-align: right">
+											<td th:text="${report.R6_S_NO}"></td>
+											<td style="text-align: left" th:text="${report.R6_CATEGORY	}"></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_1" name="R6_COL_1"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_2" name="R6_COL_2"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal(report.R6_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_3" name="R6_COL_3"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_4" name="R6_COL_4"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly></td>
+											<td id="ROW106" style="background-color: #b3b6b9;"><input class="Show_input"
+													th:value="${#numbers.formatDecimal(report.R6_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_5" name="R6_COL_5"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW106" style="background-color: #b3b6b9;"><input class="Show_input"
+													th:value="${#numbers.formatDecimal(report.R6_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_6" name="R6_COL_6"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_7 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_7" name="R6_COL_7" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_8 ,0,'COMMA',0,'POINT')}"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													id="R6_COL_8" name="R6_COL_8"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW106" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_9 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_9" name="R6_COL_9"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+											<td id="ROW106" style="background-color: #FFFF00;"><input
+													class="display-input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_10 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_10" name="R6_COL_10"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_11 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_11" name="R6_COL_11" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_12 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_12" name="R6_COL_12" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_13 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_13" name="R6_COL_13" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+											<td id="ROW106" style="background-color: #FFFFFF;"><input
+													class="display-input Show_input" type="text"
+													th:value="${#numbers.formatDecimal( report.R6_COL_14 ,0,'COMMA',0,'POINT')}"
+													id="R6_COL_14" name="R6_COL_14" oninput="return showtotal()"
+													onmousedown="return showtotal()"
+													style="background-color: #FFFFFF; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly></td>
+
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R7_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00"
+												th:text="${report.R7_CATEGORY	}"></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_1" name="R7_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_2" name="R7_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_3" name="R7_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_4" name="R7_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_5" name="R7_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_6" name="R7_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_7 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_7" name="R7_COL_7"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_8 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_8" name="R7_COL_8"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal(report.R7_COL_9, 0, 'COMMA', 4, 'POINT')}"
+													id="R7_COL_9" name="R7_COL_9"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #FFFF00;"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_10 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_10" name="R7_COL_10"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #b3b6b9"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_11 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_11" name="R7_COL_11"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #b3b6b9"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_12 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_12" name="R7_COL_12"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #b3b6b9"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_13 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_13" name="R7_COL_13"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+
+											<td id="ROW107" style="background-color: #b3b6b9"><input
+													class="display-input"
+													th:value="${#numbers.formatDecimal( report.R7_COL_14 ,0,'COMMA',0,'POINT')}"
+													id="R7_COL_14" name="R7_COL_14"
+													style="background-color: #b3b6b9; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													readonly /></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R8_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00">Outsourced
+												staff<SUP>5</SUP>
+											</td>
+											<td id="ROW108" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R8_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R8_COL_1" name="R8_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW108" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R8_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R8_COL_2" name="R8_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW108" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R8_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R8_COL_3" name="R8_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW108" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R8_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R8_COL_4" name="R8_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW108" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R8_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R8_COL_5" name="R8_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW108" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R8_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R8_COL_6" name="R8_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td style="background-color: #b3b6b9" colspan="8"></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R9_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00">Total
+												number of employees trained (items 1-5 only) YTD<SUP>6</SUP>
+											</td>
+											<td id="ROW109" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R9_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R9_COL_1" name="R9_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW109" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R9_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R9_COL_2" name="R9_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW109" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R9_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R9_COL_3" name="R9_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW109" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R9_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R9_COL_4" name="R9_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW109" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R9_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R9_COL_5" name="R9_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW109" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R9_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R9_COL_6" name="R9_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td style="background-color: #b3b6b9" colspan="8"></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R10_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00"
+												th:text="${report.R10_CATEGORY	}"></td>
+											<td id="ROW110" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R10_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R10_COL_1" name="R10_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW110" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R10_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R10_COL_2" name="R10_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW110" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R10_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R10_COL_3" name="R10_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW110" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R10_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R10_COL_4" name="R10_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW110" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R10_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R10_COL_5" name="R10_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW110" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R10_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R10_COL_6" name="R10_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td style="background-color: #b3b6b9" colspan="8"></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R11_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00">
+												Average Training Man days<SUP>7</SUP> (YTD) per employee for
+												(1) above
+											</td>
+											<td id="ROW111" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R11_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R11_COL_1" name="R11_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW111" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R11_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R11_COL_2" name="R11_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW111" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R11_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R11_COL_3" name="R11_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW111" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R11_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R11_COL_4" name="R11_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW111" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R11_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R11_COL_5" name="R11_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW111" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R11_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R11_COL_6" name="R11_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td style="background-color: #b3b6b9" colspan="8"></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R12_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00"
+												th:text="${report.R12_CATEGORY	}"></td>
+											<td id="ROW112" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R12_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R12_COL_1" name="R12_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW112" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R12_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R12_COL_2" name="R12_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW112" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R12_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R12_COL_3" name="R12_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW112" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R12_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R12_COL_4" name="R12_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													onchange="showtotal()" readonly /></td>
+
+											<td id="ROW112" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R12_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R12_COL_5" name="R12_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW112" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R12_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R12_COL_6" name="R12_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td style="background-color: #b3b6b9" colspan="8"></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R13_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00"
+												th:text="${report.R13_CATEGORY	}"></td>
+											<td id="ROW113" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R13_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R13_COL_1" name="R13_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW113" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R13_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R13_COL_2" name="R13_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW113" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R13_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R13_COL_3" name="R13_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW113" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R13_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R13_COL_4" name="R13_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW113" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R13_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R13_COL_5" name="R13_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW113" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R13_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R13_COL_6" name="R13_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td style="background-color: #b3b6b9" colspan="8"></td>
+										</tr>
+										<tr style="text-align: right">
+											<td style="background-color: #FFFF00" th:text="${report.R14_S_NO}"></td>
+											<td style="text-align: left; background-color: #FFFF00"
+												th:text="${report.R14_CATEGORY	}"></td>
+											<td id="ROW114" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R14_COL_1 ,0,'COMMA',0,'POINT')}"
+													id="R14_COL_1" name="R14_COL_1"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW114" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R14_COL_2 ,0,'COMMA',0,'POINT')}"
+													id="R14_COL_2" name="R14_COL_2"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW114" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R14_COL_3 ,0,'COMMA',0,'POINT')}"
+													id="R14_COL_3" name="R14_COL_3"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW114" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R14_COL_4 ,0,'COMMA',0,'POINT')}"
+													id="R14_COL_4" name="R14_COL_4"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW114" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R14_COL_5 ,0,'COMMA',0,'POINT')}"
+													id="R14_COL_5" name="R14_COL_5"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+
+											<td id="ROW114" style="background-color: #FFFF00"><input
+													class="display-input Show_input"
+													th:value="${#numbers.formatDecimal( report.R14_COL_6 ,0,'COMMA',0,'POINT')}"
+													id="R14_COL_6" name="R14_COL_6"
+													style="background-color: #FFFF00; width: 100px; height: 28px; border-color: transparent; text-align: right;"
+													oninput="return showtotal()" onmousedown="return showtotal()"
+													readonly /></td>
+											<td style="background-color: #b3b6b9" colspan="8"></td>
+										</tr>
+
+
+										<tr style="background-color: #FFFF00">
+											<td colspan="16">Note: 1. Senior Management include CEO,
+												Dy.CEO, Head of Audit and other Department Heads whom
+												reports directly to CEO or Board Committees/Board or Head
+												Office of Foreign Bank.</td>
+										</tr>
+										<tr style="background-color: #FFFF00">
+											<td colspan="16">2. Middle Management include all
+												department managers or unit heads, Zonal/Regional Head not
+												reported above, excluding Branch Managers and Junior
+												Managers.</td>
+										</tr>
+										<tr style="background-color: #FFFF00">
+											<td colspan="16">3. Branch Managers include Head of all
+												Branches in UAE & Team Leaders in other back office units.</td>
+										</tr>
+										<tr style="background-color: #FFFF00">
+											<td colspan="16">4. Junior Managers will include all
+												other supervisory staff who are not included above working
+												in Head Office, Zonal offices, Regional Offices, Back office
+												operations, call centres etc.</td>
+										</tr>
+										<tr style="background-color: #FFFF00">
+											<td colspan="16">5. Outsourced staff defined as staff
+												working exclusively for the bank. 6. YTD is year to Date
+												information(cumulative position). 7. Man days is actual
+												working hours in a day.</td>
+										</tr>
+										<tr style="background-color: #FFFF00">
+											<td colspan="3">FORM NO: BSD/BRF70-Employment Data/
+												DEC14</td>
+										</tr>
+									</tbody>
+
+								</table>
+							</div>
+							<div class="card-footer text-center"
+								th:if="${displaymode}=='summary' or ${displaymode}==null"
+								style="background-color: #386276" ;>
+								<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+									onclick="home();">Home</button>
+								<button id="submitButton" type="button" class="btn btn-xs btn-primary Show_input"
+									form="fileupload" th:attr="data-todate=${asondate}" onclick="fileuploads(this);"
+									style="display: none;">Submit</button>
+								<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+									onclick="back();">Back</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 	---------------------------------------------- Modify ------------------- -->
+
+		<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+		<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+		<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+			<div style="overflow-x: inherit; border-right: 1px solid #dee2e6" th:class="${searchmsg == null}?'inner'">
+				<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+					id="detailtb">
+					<thead class="thead-light">
+						<tr style="text-align: center">
+							<th></th>
+
+							<th>CUST ID</th>
+							<th>ACCT NO</th>
+							<th>ACCT NAME</th>
+							<th>ACT BALANCE AMT LC</th>
+							<!-- <th>IND</th> -->
+							<th>REPORT NAME 1</th>
+							<th>REPORT LABEL 1</th>
+							<th>REPORT ADDL CRITERIA 1</th>
+							<th>REPORT DATE</th>
+
+						</tr>
+
+					</thead>
+					<tbody th:each="report,iterator : ${reportdetails}">
+
+
+						<tr style="text-align: center; font-weight: bold;">
+							<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+							<!-- <td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+										th:classappend="${session.PERMISSIONS == 'W'}  ? addedit " class="fas fa-edit"
+										th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+ -->
+							<td th:text="${report.cust_id}"></td>
+							<td th:text="${report.foracid}"></td>
+							<td th:text="${report.acct_name}">CHENNAI</td>
+							<td style="text-align: right;"
+								th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+								CHENNAI</td>
+							<!-- 	<td th:text="${report.remarks}"></td> -->
+							<td th:text="${report.report_name_1}"></td>
+							<td th:text="${report.report_label_1}">CHENNAI</td>
+							<td th:text="${report.report_addl_criteria_1}"></td>
+							<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="card-footer text-center" style="background-color: #386276" ;>
+				<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+				<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+			</div>
+			<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+			<div class="modal fade" id="addedit" th:fragment="dataedit">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+
+						<!-- Modal Header -->
+						<div class="modal-header">
+							<h4 class="modal-title">Add/Edit Records</h4>
+							<button type="button" class="close" data-dismiss="modal">×</button>
+						</div>
+						<div class="modal-body" style="text-align: center">
+							<form id="dataedit" method="post">
+								<div class="form-group">
+
+									<div class="row">
+										<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+											id="cust_id" readonly />
+									</div>
+									<div class="row">
+										<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+											id="foracid" readonly />
+									</div>
+									<div class="row">
+										<label class="col-sm-5">Acct Name</label> <input class="form-control col-sm-5"
+											id="acct_name" readonly />
+									</div>
+									<div class="row">
+										<label class="col-sm-5">ACCR BALANCE LC</label> <input
+											class="form-control col-sm-5" id="act_balance_amt_lc" />
+									</div>
+									<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+									<div class="row">
+										<label class="col-sm-5">REPORT NAME 1</label> <input
+											class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+									</div>
+									<div class="row">
+										<label class="col-sm-5">REPORT LABLE 1</label> <input
+											class="form-control col-sm-5" id="report_label_1" />
+									</div>
+									<div class="row">
+										<label class="col-sm-5">REPORT ADDL CRITERIA 1</label> <input
+											class="form-control col-sm-5" id="report_addl_criteria_1" />
+									</div>
+
+									<div class="row">
+										<label class="col-sm-5">REPORT DATE</label> <input class="form-control col-sm-5"
+											id="report_date" readonly />
+									</div>
+								</div>
+							</form>
+							<div class="modal-footer">
+
+								<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+									id="edit">Submit</button>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-------------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="datadelete">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-body" style="text-align: center">
+								<button type="button" class="close" data-dismiss="modal">×</button>
+								Are you Sure want to delete?
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary"
+									onclick="submitdataformdelete(this);">Submit</button>
+								<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- -----------------------------------Search modal form----------------------------------------------------->
+			<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+			<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+		</div>
+		<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<script>
+		$(document).ready(function () {
+			$('input[type="text"]').on('input', function () {
+				var sanitizedValue = $(this).val().replace(/[^0-9]/g, '');
+				var numericValue = parseInt(sanitizedValue) || 0;
+				$(this).val(numericValue);
+			});
+		});
+	</script>
+
+</body>
+
+
+</html>

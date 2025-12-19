@@ -1,0 +1,1989 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	:SANJEEVI S  
+CREATED ON	:10-MAY-2024
+PURPOSE		: DEVLOPMENT PROCESS
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel=”stylesheet”
+	href=”https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css” />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"
+	rel="stylesheet">
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+</style>
+
+<style type="text/css">
+.scrollable-table-container {
+	max-height: 400px; /* Adjust the height as needed */
+	overflow-y: auto;
+	overflow-x: auto;
+}
+</style>
+
+
+
+
+
+<script th:inline="javascript">
+function editRecord(a) {
+	alert("hi")
+	var url = 'mappingedit'
+
+	$("#dataedit").attr('action', url);
+	alert("hi")
+	//Assign selected values to the model box fields
+	$ ("#cust_id").val(a.getAttribute("data-cust_id"));
+	$("#foracid").val(a.getAttribute("data-foracid"));
+    $("#acct_name").val(a.getAttribute("data-acct_name"));
+    $("#report_name_1").val(a.getAttribute("data-report_name_1"));
+    $("#report_label_1").val(a.getAttribute("data-report_label_1"));
+ //   $("#sch_type").val(a.getAttribute("data-sch_type"));
+    $("#schm_code").val(a.getAttribute("data-schm_code"));
+    $("#gl_sub_head_code").val(a.getAttribute("data-gl_sub_head_code"));
+   // $("#mis_code").val(a.getAttribute("data-mis_code"));
+   // $("#gl_sub_head_code").val(a.getAttribute("data-gl_sub_head_code"));
+    $("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+  //  $("#report_addl_criteria_2").val(a.getAttribute("data-report_addl_criteria_2"));
+   // $("#report_addl_criteria_3").val(a.getAttribute("data-report_addl_criteria_3"));
+
+	$("#addedit").modal("toggle");
+	//Make readonly fields
+	$("#foracid").attr("readonly", true);
+	$("#schm_code").attr("readonly", true);
+	$("#gl_sub_head_code").attr("readonly", true);
+  	
+	}
+</script>
+
+<script th:inline="javascript">
+	var select_Report = '';
+ 
+	function report() {
+		var select = document.getElementById('report_code').value;
+ 
+		select_Report = select;
+		alert(this.select_Report);
+		location.href = './ReportCodeMapping?report_code=' + select;
+ 
+		document.getElementById('refcodeviewdesc').value = select;
+ 
+	}
+	function report1() {
+		var select = document.getElementById('report_code').value;
+ 
+		// Set the new URL without refreshing the page
+		location.href = './ReportCodeMapping?formmode=product_mapping&report_code='
+				+ select;
+ 
+		// document.getElementById('report_desc').value = select;
+ 
+	}
+ 
+	function product() {
+		var brf = document.getElementById('row_101').value;
+		var select = document.getElementById('report_code').value;
+		alert(brf);
+		
+		 /*<![CDATA[*/
+	    var productmapping = /*[[${refCodeTypeList2}]]*/
+		 console.log(productmapping);
+		 var reportproductmap = productmapping.filter(data=>data.row_101 == brf)[0].report_code;
+		 console.log(reportproductmap);
+		 alert(reportproductmap);
+	    /*]]>*/
+	    
+		$
+				.ajax({
+					type : 'GET',
+					url : './ReportCodeMapping?formmode=product_mapping&row_101='
+							+ brf+'&reportproductmap=' + reportproductmap +'&report_code=' + select ,
+					success : function(data) {
+						var $response = $(data);
+ 
+						// Find the specific element in the response
+						var $placelist = $response.find('.repCodes');
+ 
+						if ($placelist.length) {
+							// Update the #placelist element with the content of .repCodes
+							$('#placelist').replaceWith($placelist);
+						} else {
+							console
+									.error(".repCodes element not found in the response.");
+						}
+					}
+				});
+ 
+	}
+	function fnedit() {
+	    alert('hi');
+	}	function reportlist() {
+		var select = document.getElementById('report_code').value;
+		console.log(" select_Report ", select_Report);
+		location.href = 'ReportCodeMapping?formmode=listone&report_code='
+				+ select;
+ 
+	}
+	function Mapped_Accounts() {
+		var select = document.getElementById('report_code').value;
+		this.formmode = 'Mapped_Accounts';
+		location.href = 'ReportCodeMapping?formmode=Mapped_Accounts&report_code='
+				+ select;
+ 
+	}
+	function UnMapped_Accounts() {
+		var select = document.getElementById('report_code').value;
+		console.log(" select_Report ", select_Report);
+		location.href = 'ReportCodeMapping?formmode=UnMapped_Accounts&report_code='
+				+ select;
+ 
+	}
+	function mapping() {
+		var select = document.getElementById('report_code').value;
+		console.log(" select_Report ", select_Report);
+		submit(select);
+	}
+	function submit(select) {
+		console.log(" select_Report ", select_Report);
+		location.href = 'ReportCodeMapping?formmode=Mappinglist' + '&foracid='
+				+ select + '&report_code=' + select;
+	}
+	
+	function goBackAndReload() {	
+		window.history.back();
+		}
+
+	function product_mapping() {
+		var select = document.getElementById('report_code').value;
+		location.href = 'ReportCodeMapping?formmode=product_mapping&report_code='
+				+ select;
+	}
+	function list() {
+	    /*<![CDATA[*/
+	    var user = /*[[${refCodeTypeList2}]]*/	    /*]]>*/
+
+	    console.log(user);
+
+	    // var select1 = document.getElementById('r_code').value;
+	    console.log(document.getElementById('row_101').getAttribute('data_row_product'));
+	    var select = document.getElementById('report_code').value;
+	    
+	   // var account_id_2 = document.getElementById('foracid2').value;'
+
+	    console.log(select1);
+
+	    // Assuming "data-report-category" is an attribute of the element with the ID 'row_101'
+	var reportCategory = document.getElementById('row_101').getAttribute('data-row-product');
+var reportCategory2 = document.getElementById('row_101').getAttribute('data-report-category');
+console.log(reportCategory);
+console.log(reportCategory2);
+
+var schemeCode = document.getElementById('schm_code1_from').value;
+var location_setup = '';
+
+if(schemeCode == ''){
+	schemeCode = null;
+}else{
+	location_setup = location_setup+'&scheme_code=' + schemeCode;
+}
+
+var gl_sub_head_code = document.getElementById('gl_sub_head_code1_from').value;
+
+if(gl_sub_head_code == ''){
+	gl_sub_head_code = null;
+}else{
+	location_setup = location_setup+'&gl_sub_head_code=' + gl_sub_head_code;
+}
+
+var report_product_label = localStorage.getItem('mapping_report_label');
+var schm_type1 = document.getElementById('schm_type1_from').value;
+/* if(schm_type1){
+	schm_type1 = null;
+}else{
+	location = location+'&schm_type=' + schm_type1;
+} */
+var gl_code1 = document.getElementById('gl_code1_from').value;
+
+	  if(gl_code1 == ''){
+		  gl_code1 = null;
+	  }else{
+		  location_setup = location_setup+'&gl_code=' + gl_code1
+	  }
+	  
+	  var select1 = document.getElementById('cust_id1_from').value;
+	  if(select1 == ''){
+		  select1 = null;
+	  }else{
+		  location_setup = location_setup+'&cust_id=' + select1
+	  }
+	  
+	    var account_id = document.getElementById('foracid1').value;	  
+	  
+	  console.log(location_setup);
+	  location.href = ''+'ReportCodeMapping?formmode=listMap&report_code=' + select  +location_setup
+			  + '&foracid=' + account_id 
+			  +'&reportlabel='+report_product_label ;
+	  
+	  
+	  localStorage.setItem('mapping_report_label','');
+	    console.log(document.getElementById('selectedValue'));
+	    console.log(document.getElementById('reportCategory'));
+	}
+
+</script>
+
+
+<script>
+function showpopup(a) {
+    $('#myModal').modal('show');
+}
+function home() {
+	location.href = 'Dashboard'
+}
+
+function back() {
+	location.href = 'cooloff'
+}
+
+</script>
+
+<script>
+function submitdataform(a) {
+	  alert("hi");
+	  var reportcode = document.getElementById('report_code').value;
+	  alert(reportcode);
+	  var foracid = document.getElementById('foracid').value;
+	  alert(foracid);
+
+	  $.ajax({
+	    url: './mappingedit?&foracid=' + foracid+'&reportcode='+reportcode,
+	    data: $("#dataedit").serialize(),
+	    type: 'GET',
+	    success: function (data) {
+	      setTimeout(function () {
+	        alert("Updated successfully");
+	        location.href = location.href;
+	      }, 10000); // 10000 milliseconds = 10 seconds
+	    }
+	  });
+	}
+
+</script>
+
+<script th:inline="javascript">
+	$(document)
+			.ready(
+					function() {
+ 
+						// Filter the table rows based on user input
+						$("#filterinput")
+								.on(
+										"input",
+										function() {
+											var filterValue = $(this).val()
+													.toLowerCase();
+											console.log($("#arunfilter tr"))
+ 
+											var temp = $("#arunfilter tr")
+ 
+													.filter(
+															function() {
+																$(this)
+																		.toggle(
+																				$(
+																						this)
+																						.text()
+																						.toLowerCase()
+																						.indexOf(
+																								filterValue) > -1);
+															});
+ 
+										});
+					});
+	
+	function gl_sub_head_code_change(index){
+		  /*<![CDATA[*/
+	    var detailtable6 = /*[[${detailtable6}]]*/
+	    /*]]>*/
+		
+		if(index != detailtable6.length){
+			document.getElementById("gl_sub_head_code1_to").value = detailtable6[index+1]
+		}else{
+			document.getElementById("gl_sub_head_code1_to").value = detailtable6[index]
+		}
+		
+	}
+	
+	function callFunction(){
+		/*<![CDATA[*/
+	    var reportDes = /*[[${reportDes}]]*/	    /*]]>*/
+	    
+	   console.log(' reportDes ',reportDes);
+	    
+	}
+	
+</script>
+<script>
+	
+	function myfunction(selectedValue, reportCategory, dataRowProduct) {
+	    // The selectedValue is passed as a parameter
+	    // The reportCategory and dataRowProduct are obtained from the selected option
+localStorage.setItem('mapping_report_label',dataRowProduct);
+	    console.log(' Map',localStorage.getItem('mapping_report_label'));
+	    document.getElementById('selectedValue').textContent = selectedValue;
+		document.getElementById('reportCategory').textContent = reportCategory;
+	    console.log("Selected Value: " + selectedValue);
+	    console.log("Report Category: " + reportCategory);
+	    console.log("Data Row Product: " + dataRowProduct);
+	    
+	   
+	}
+	
+	function schm_type_change(){
+	
+		console.log(' !@#$%^&*() ');
+		
+		var schm_type = document.getElementById('schm_type1_from').value;
+		document.getElementById('schm_type1_to').value = schm_type;
+		console.log(' schm_type ',schm_type);
+	}
+	function schm_code_change(){
+		var schm_code = document.getElementById('schm_code1_from').value;
+		document.getElementById('schm_code1_to').value = schm_code;
+		console.log(' schm_code',schm_code);
+	}
+	function gl_code_change(){
+		var gl_code = document.getElementById('gl_code1_from').value;
+		document.getElementById('gl_code1_to').value = gl_code;
+		console.log(' schm_code',gl_code);
+	}
+	
+</script>
+<script>
+window.onload = function() {
+console.log(' &&&&@@@@##### ');	
+}
+
+	    function submitlist() {
+	    	var select = document.getElementById('report_code').value;
+	    	alert(select);
+	    	//var name=document.getElementById("row_101_list").value;
+	    	//alert(name);
+	    	
+	    	 var url = window.location.search;
+	    	    var params = new URLSearchParams(url);
+	    	    var id = params.get("reportlabel");
+	    	    function getCellValueForSelectedCheckbox(checkbox) {
+	    	    	  if (checkbox.checked) {
+	    	    	    // Find the closest <tr> element (table row) containing the clicked checkbox
+	    	    	    const row = checkbox.closest('tr');
+
+	    	    	    // Access a specific cell within the row (e.g., the second cell)
+	    	    	    const specificCellValue = row.cells[2].textContent; // Change the index to access the desired cell
+
+	    	    	    // You can use cellValue as needed, for example, displaying it in the console
+	    	    	   alert( specificCellValue);
+	    	    	    
+	    	    	   $.ajax({
+
+	   	    			type : 'GET',
+	   	    			url : './mappingapi?id=' + id  + "&name=" + name + "&specificCellValue=" +specificCellValue + "&select=" +select ,
+	   	    			success : function(data) {
+	   	     
+	   	    				alert(data);
+	   	    				location.reload();
+	   	     
+	   	    			}
+	   	     
+	   	    		});
+	    	    	  }
+	    	    	}
+
+	    	    	// Get all checkboxes with the "checkbox" class
+	    	    	const checkboxes = document.querySelectorAll('.checkbox');
+
+	    	    	// Call the function for each checkbox (you can call it when needed)
+	    	    	checkboxes.forEach(checkbox => {
+	    	    	  getCellValueForSelectedCheckbox(checkbox);
+	    	    	  
+	    	    	  
+	    	    	}); 
+ }
+</script>
+<script>
+
+
+function pdfCustomerdown() {
+	var filetype = a.getAttribute("data-filetype");
+	alert(filetype);
+	  $('#downloadProcessingModal').modal('show');
+	var report_name_1 = document.getElementById('report_code').value;
+	alert(report_name_1);
+	$.ajax({
+		url : './Reports/mappingDownload?&report_name_1=' + report_name_1
+				+ '&filetype=' + encodeURIComponent(filetype),
+		type : 'GET',
+		success : function() {
+			
+			 $('#downloadProcessingModal').modal('hide');
+		      // Show a success message (you can customize this part)
+		      alert("Download successful");
+			
+		}
+	});
+}
+
+function xcelCustomerdown() {
+	  var filetype = "excel";
+	  var report_name_1 = document.getElementById('report_code').value;
+
+	  // Show the download processing modal
+	  $('#downloadProcessingModal').modal('show');
+
+	  $.ajax({
+	    url: './Reports/mappingDownload?&report_name_1=' + report_name_1 + '&filetype=' + encodeURIComponent(filetype),
+	    type: 'GET',
+	    success: function () {
+	      // Hide the download processing modal upon successful download
+	      $('#downloadProcessingModal').modal('hide');
+	      // Show a success message (you can customize this part)
+	      alert("Download successful");
+	    },
+	    error: function () {
+	      // Handle errors if needed
+	      // Hide the download processing modal upon error
+	      $('#downloadProcessingModal').modal('hide');
+	      alert("Download failed");
+	    }
+	  });
+	}
+
+</script>
+<script>
+function openTab(event, tabId) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("btn");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active-tab");
+    }
+    document.getElementById(tabId).style.display = "block";
+    event.currentTarget.classList.add("active-tab");
+}
+
+
+</script>
+
+<script>
+ function SubPortfolioCode()
+ {	
+	 $.ajax({
+			type: 'GET',
+			url: './SubPortfolioCode',
+			success: function (data) {
+				console.log(data);
+				if(data.length > 0){
+					console.log("Inside");
+					var trHTML = '';
+					$.each(data, function (key, entity) {
+						trHTML += 
+							'<tr class="fs-6">'
+							+'<td onclick="showpopup(this);" >'+'<i class="fa fa-edit" style="font-size: 15px; color: blue"></i>'+'</td>'
+							+ '<td>' + entity.portfolio_code + '</td>'
+							+ '<td>' + entity.sub_portfolio_code + '</td>'
+							+ '<td>' + entity.rating_type + '</td>'
+							+'<td onclick="showpopup(this);" >'+'<i class="fa fa-trash" style="font-size: 15px; color:red;"></i>'+'</td>'
+							+ '</tr>';
+					});
+					$('#bodyoftab2').empty().append(trHTML);
+				}
+			},
+			error: function () {
+				$('#errorMessage').text('Error fetching data');
+				$('#errorModal').modal('show');
+			}
+		});
+ }
+ 
+ 
+ function countrycode() {
+       $.ajax({
+	        type: 'GET',
+	        url: './countrycode', // Make sure this URL matches your controller mapping
+	        success: function (data) {
+	            console.log("the dataaaa", data);
+	            if ( data.length > 0) {
+	                var trHTML = '';
+	                $.each(data, function (key, entity) {
+	                    trHTML +=
+	                        '<tr class="fs-6">' +
+	                        '<td onclick="showpopup(this);"><i class="fa fa-edit" style="font-size: 15px; color: blue"></i></td>' +
+	                        '<td>' + entity.country_code + '</td>' +
+	                        '<td>' + entity.country_code_desc + '</td>' +
+	                        '<td onclick="showpopup(this);"><i class="fa fa-trash" style="font-size: 15px; color:red;"></i></td>' +
+	                        '</tr>';
+	                });
+	                $('#bodyoftab3').empty().append(trHTML);
+	            } else {
+	                console.log("No data received.");
+	            }
+	        },
+	        error: function (xhr, status, error) {
+	            console.error("Error fetching data:", error);
+	            alert("Error fetching data");
+	        }
+	    });
+	}
+ 
+ function glcodedesc()
+ {
+		$.ajax({
+				type: 'GET',
+				url: './glcodedesc',
+				success: function (data) {
+					console.log(data);
+					if(data.length > 0){
+						console.log("Inside");
+						var trHTML = '';
+						$.each(data, function (key, entity) {
+							trHTML += 
+								'<tr class="fs-6">'
+								+'<td onclick="showpopup(this);" >'+'<i class="fa fa-edit" style="font-size: 15px; color: blue"></i>'+'</td>'
+								+ '<td>' + entity.gl_code + '</td>'
+								+ '<td>' + entity.glcode_desc + '</td>'
+								+ '<td>' + entity.ifrs_product_mapping + '</td>'
+								+'<td>' + entity.payment_frequency + '</td>'
+								+'<td onclick="showpopup(this);" >'+'<i class="fa fa-trash" style="font-size: 15px; color:red;"></i>'+'</td>'
+								+ '</tr>';
+						});
+						$('#bodyoftab4').empty().append(trHTML);
+					}
+				},
+				error: function () {
+					$('#errorMessage').text('Error fetching data');
+					$('#errorModal').modal('show');
+				}
+			});
+}
+
+ function paymentfrquncy()
+ {
+		$.ajax({
+				type: 'GET',
+				url: './paymentfrquncy',
+				success: function (data) {
+					console.log(data);
+					if(data.length > 0){
+						console.log("Inside");
+						var trHTML = '';
+						$.each(data, function (key, entity) {
+							trHTML += 
+								'<tr class="fs-6">'
+								+'<td onclick="showpopup(this);" >'+'<i class="fa fa-edit" style="font-size: 15px; color: blue"></i>'+'</td>'
+								+ '<td>' + entity.code + '</td>'
+								+ '<td>' + entity.type + '</td>'
+							    +'<td onclick="showpopup(this);" >'+'<i class="fa fa-trash" style="font-size: 15px; color:red;"></i>'+'</td>'
+								+ '</tr>';
+						});
+						$('#bodyoftab5').empty().append(trHTML);
+					}
+				},
+				error: function () {
+					$('#errorMessage').text('Error fetching data');
+					$('#errorModal').modal('show');
+				}
+			});
+	 
+	 
+ }
+ 
+ function infoflg()
+ {	$.ajax({
+				type: 'GET',
+				url: './infoflg',
+				success: function (data) {
+					console.log(data);
+					if(data.length > 0){
+						console.log("Inside");
+						var trHTML = '';
+						$.each(data, function (key, entity) {
+							trHTML += 
+								'<tr class="fs-6">'
+								+'<td onclick="showpopup(this);" >'+'<i class="fa fa-edit" style="font-size: 15px; color: blue"></i>'+'</td>'
+								+ '<td>' + entity.code + '</td>'
+								+ '<td>' + entity.type + '</td>'
+							    +'<td onclick="showpopup(this);" >'+'<i class="fa fa-trash" style="font-size: 15px; color:red;"></i>'+'</td>'
+								+ '</tr>';
+						});
+						$('#bodyoftab6').empty().append(trHTML);
+					}
+				},
+				error: function () {
+					$('#errorMessage').text('Error fetching data');
+					$('#errorModal').modal('show');
+				}
+			});
+}
+ 
+ function schemecode()
+ {
+		$.ajax({
+				type: 'GET',
+				url: './schemecode',
+				success: function (data) {
+					console.log(data);
+					if(data.length > 0){
+						console.log("Inside");
+						var trHTML = '';
+						$.each(data, function (key, entity) {
+							trHTML += 
+								'<tr class="fs-6">'
+								+'<td onclick="showpopup(this);" >'+'<i class="fa fa-edit" style="font-size: 15px; color: blue"></i>'+'</td>'
+								+ '<td>' + entity.scheme_code + '</td>'
+								+ '<td>' + entity.scheme_code_des + '</td>'
+								+ '<td>' + entity.portfolio + '</td>'
+							    +'<td onclick="showpopup(this);" >'+'<i class="fa fa-trash" style="font-size: 15px; color:red;"></i>'+'</td>'
+								+ '</tr>';
+						});
+						$('#bodyoftab7').empty().append(trHTML);
+					}
+				},
+				error: function () {
+					$('#errorMessage').text('Error fetching data');
+					$('#errorModal').modal('show');
+					alert("no data ");
+				}
+			});
+}
+ 
+ window.onload = function() {
+     var formmode = "${formmode}"; // Assuming formmode is a server-side variable
+     if (formmode === "ConstitutionDesc") {
+         document.getElementById("tab1").style.display = "block";
+     } else {
+         // Display default tab content here
+     }
+ };
+ </script>
+
+
+
+</head>
+<title>XBRL</title>
+<style>
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+	curser: pointer;
+}
+
+.tabcontent {
+	display: none;
+	padding: 20px;
+	border-top: 1px solid #ccc;
+}
+
+.active {
+	background-color: #2084a9;
+}
+
+.btn-primary:hover {
+	background-color: #337ab7;
+	/* Change this color to the desired hover color */
+	border-color: #2e6da4;
+	/* Change this color to match the hover background color */
+	color: #fff; /* Change this color to match the hover text color */
+}
+
+/* Add this CSS to highlight the active tab */
+.active-tab {
+	background-color: #337ab7;
+	border-color: #2e6da4;
+	color: #fff;
+}
+</style>
+
+
+<body onload="color(this)">
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-14">
+
+				<div class="card"
+					style="width: 1500px; margin-left: -50px; margin-top: 10px;">
+					<div class="card-header"
+						style="background-color: #4d8cb9; color: white;">
+
+						<div class="row">
+							<h4 style="margin-top: 5px; margin-left: 20px;">COOLOFF</h4>
+
+
+
+						</div>
+
+
+					</div>
+
+					<div class="card-body">
+
+
+						<div class="tab"
+							style="padding: 8px 12px; position: relative; font-size: 13px; width: 100%;">
+
+
+							<button type="button" id=""
+								onclick="openTab(event, 'tab1');event.preventDefault();SubPortfolioCode();"
+								class="btn btn-xs btn-primary btns">Tab 1</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab2');event.preventDefault();countrycode();"
+								class="btn btn-primary">Tab2</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab3');event.preventDefault();glcodedesc();"
+								class="btn btn-primary">Tab3</button>
+							<button type="button" id=""
+								onclick="openTab(event, 'tab4');event.preventDefault();paymentfrquncy();"
+								class="btn btn-primary">tab4</button>
+
+						</div>
+
+						<div id="tab1" class="tabcontent mt-n3" style="border: none;">
+							<div class="scrollable-table-container"
+								style="max-height: 500px; overflow-y: auto;">
+
+								<table
+									class="table table-bordered table-hover table-condensed table-sm">
+									<thead class="thead-light"
+										style="position: sticky; top: 0; background-color: white; z-index: 1;">
+										<tr>
+											<th onclick="showpopup(this);"
+												style="cursor: pointer; text-align: center;"><i
+												class="fa fa-plus" style="font-size: 15px; color: blue;"></i>
+											</th>
+											<th style="text-align: center;">Cust ID</th>
+											<th style="text-align: center;">Stage</th>
+											<th style="text-align: center;">Stage Reason</th>
+											<th style="text-align: center;">Final Status As on Date</th>
+											<th style="text-align: center;">Asset Classification as
+												on date</th>
+											<th style="text-align: center;">SMA</th>
+											<th style="text-align: center;">Watch List</th>
+											<th style="text-align: center;">Any Other Reasons
+												Mention - "OtherReason" in respective customer ID</th>
+											<th style="text-align: center;">Eligible2</th>
+											<th style="text-align: center;">Eligible1 Change Formula
+												Range Here (last 4Q)</th>
+											<th style="text-align: center;">OLD Reason</th>
+
+										</tr>
+									</thead>
+									<tbody th:each="cooloff : ${getcooloff}" class="repCodes"
+										id="placelist">
+										<tr>
+											<td onclick="showpopup(this);" id="edit"><i
+												class="fa fa-edit" style="font-size: 15px; color: blue;"></i>
+											</td>
+											<td align="right" th:text="${cooloff.CUST_ID}"></td>
+											<td th:text="${cooloff.STAGE}"></td>
+											<td th:text="${cooloff.STAGE_REASON}"></td>
+											<td th:text="${cooloff.Final_Status_As_on_Date}"></td>
+											<td th:text="${cooloff.Asset_Classification_as_on_Date}"></td>
+											<td align="right" th:text="${cooloff.SMA}"></td>
+											<td th:text="${cooloff.WATCH_LIST}"></td>
+											<td th:text="${cooloff.OtherReason}"></td>
+											<td th:text="${cooloff.ELIGIBLE2}"></td>
+											<td th:text="${cooloff.Eligible1_Change_Formula_Range}"></td>
+											<td th:text="${cooloff.OLD_REASON}"></td>
+											<td onclick="showpopup(this);" id="delete"><i
+												class="fa fa-trash" style="font-size: 15px; color: red;"></i>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="card-footer text-center"
+								style="background-color: #386276">
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="home();">Home</button>
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="back();">Back</button>
+							</div>
+						</div>
+
+						<div id="tab2" class="tabcontent mt-n3" style="border: none;">
+
+							<table
+								class="table table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+										<th onclick="showpopup(this);"><i class="fa fa-plus"
+											style="font-size: 15px; color: blue"></i></th>
+										<th style="text-align: center;">30.09.2023</th>
+										<th style="text-align: center;">30.06.2023</th>
+										<th style="text-align: center;">31.03.2023</th>
+										<th style="text-align: center;">31.12.2022</th>
+										<th style="text-align: center;">30.09.2022</th>
+										<th style="text-align: center;">30.06.2022</th>
+										<th style="text-align: center;">31.03.2022</th>
+										<th style="text-align: center;">31.12.2021</th>
+										<th style="text-align: center;">30.09.2021</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody th:each="cooloff2 : ${getcooloff2}" class="repCodes">
+									<tr>
+										<td onclick="showpopup(this);" id="edit"><i
+											class="fa fa-edit" style="font-size: 15px; color: blue;"></i>
+										</td>
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_30_09_2023,1,'COMMA',0,'POINT')}"></td>
+
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_30_06_2023,1,'COMMA',0,'POINT')}"></td>
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_31_03_2023,1,'COMMA',0,'POINT')}"></td>
+
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_31_12_2022,1,'COMMA',0,'POINT')}"></td>
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_30_09_2022,1,'COMMA',0,'POINT')}"></td>
+
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_30_06_2022,1,'COMMA',0,'POINT')}"></td>
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_31_03_2022,1,'COMMA',0,'POINT')}"></td>
+
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_31_12_2021,1,'COMMA',0,'POINT')}"></td>
+										<td align="right"
+											th:text="${#numbers.formatDecimal(cooloff2.DATA_30_09_2021,1,'COMMA',0,'POINT')}"></td>
+
+
+
+										<td onclick="showpopup(this);" id="delete"><i
+											class="fa fa-trash" style="font-size: 15px; color: red;"></i>
+										</td>
+									</tr>
+								</tbody>
+
+							</table>
+							<div class="card-footer text-center"
+								style="background-color: #386276">
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="home();">Home</button>
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="back();">Back</button>
+							</div>
+						</div>
+
+
+						<div id="tab3" class="tabcontent mt-n3" style="border: none;">
+							<div class="card-body">
+								<div class="scrollable-table-container"
+									style="max-height: 500px; overflow-y: auto;">
+									<table
+										class="table table-bordered table-hover table-condensed table-sm">
+										<thead class="thead-light">
+											<tr>
+												<th onclick="showpopup(this);"><i class="fa fa-plus"
+													style="font-size: 15px; color: blue;"></i></th>
+												<th style="text-align: center;">30.09.2021</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">31.12.2021</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">31.03.2022</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">30.06.2022</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">30.09.2022</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">31.12.2022</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">31.03.2023</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">30.06.2023</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+												<th style="text-align: center;">30.09.2023</th>
+												<th style="text-align: center;">Reason for Stage 2 & 3</th>
+											</tr>
+										</thead>
+										<tbody th:each="cooloff3 : ${getcooloff3}" class="repCodes">
+											<tr>
+												<td onclick="showpopup(this);" id="edit"><i
+													class="fa fa-edit" style="font-size: 15px; color: blue;"></i></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_30_09_2021, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_1}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_31_12_2021, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_2}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_31_03_2022, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_3}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_30_06_2022, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_4}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_30_09_2022, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_5}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_31_12_2022, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_6}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_31_03_2023, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_7}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_30_06_2023, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_8}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff3.REASON_STAGE2_3_30_09_2023, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff3.REASON_STAGE2_3_9}"></td>
+												<td onclick="showpopup(this);" id="delete"><i
+													class="fa fa-trash" style="font-size: 15px; color: red;"></i></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="card-footer text-center"
+									style="background-color: #386276;">
+									<button type="button" class="btn btn-xs btn-primary"
+										onclick="home();">Home</button>
+									<button type="button" class="btn btn-xs btn-primary"
+										onclick="back();">Back</button>
+								</div>
+							</div>
+						</div>
+
+						<div id="tab4" class="tabcontent mt-n3" style="border: none;">
+							<div class="card-body">
+								<div class="scrollable-table-container"
+									style="max-height: 500px; overflow-y: auto;">
+									<table
+										class="table table-bordered table-hover table-condensed table-sm">
+										<thead class="thead-light">
+											<tr>
+												<th onclick="showpopup(this);"><i class="fa fa-plus"
+													style="font-size: 15px; color: blue;"></i></th>
+												<th style="text-align: center;">CBSID</th>
+												<th style="text-align: center;">Branch Name</th>
+												<th style="text-align: center;">COMPANY_NAME</th>
+												<th style="text-align: center;">Status 2013</th>
+												<th style="text-align: center;">Status 2014</th>
+												<th style="text-align: center;">Status 2015</th>
+												<th style="text-align: center;">Status 2016</th>
+												<th style="text-align: center;">Status 2017</th>
+												<th style="text-align: center;">Status 2018</th>
+												<th style="text-align: center;">Status 2019</th>
+												<th style="text-align: center;">Status 2020</th>
+												<th style="text-align: center;">Status 2021</th>
+												<th style="text-align: center;">Status 2022</th>
+												<th style="text-align: center;">Status 2023</th>
+												<th></th>
+												<th style="text-align: center;">Status 2013</th>
+												<th style="text-align: center;">Status 2014</th>
+												<th style="text-align: center;">Status 2015</th>
+												<th style="text-align: center;">Status 2016</th>
+												<th style="text-align: center;">Status 2017</th>
+												<th style="text-align: center;">Status 2018</th>
+												<th style="text-align: center;">Status 2019</th>
+												<th style="text-align: center;">Status 2020</th>
+												<th style="text-align: center;">Status 2021</th>
+												<th style="text-align: center;">Status 2022</th>
+												<th style="text-align: center;">Status 2023</th>
+												<th style="text-align: center;">Inception Rating</th>
+												<th style="text-align: center;">Max Rating during book
+													period</th>
+												<th style="text-align: center;">Change (Max -
+													Inception)</th>
+												<th style="text-align: center;">Remarks</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody th:each="cooloff4 : ${getcooloff4}" class="repCodes">
+											<tr>
+												<td onclick="showpopup(this);" id="edit"><i
+													class="fa fa-edit" style="font-size: 15px; color: blue;"></i></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.CBSID, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right" th:text="${cooloff4.BRANCH_NAME}"></td>
+												<td th:text="${cooloff4.COMPANY_NAME}"></td>
+												<td th:text="${cooloff4.STATUS_2013}"></td>
+												<td th:text="${cooloff4.STATUS_2014}"></td>
+												<td th:text="${cooloff4.STATUS_2015}"></td>
+												<td align="right" th:text="${cooloff4.STATUS_2016}"></td>
+												<td th:text="${cooloff4.STATUS_2017}"></td>
+												<td th:text="${cooloff4.STATUS_2018}"></td>
+												<td th:text="${cooloff4.STATUS_2019}"></td>
+												<td th:text="${cooloff4.STATUS_2020}"></td>
+												<td th:text="${cooloff4.STATUS_2021}"></td>
+												<td th:text="${cooloff4.STATUS_2022}"></td>
+												<td th:text="${cooloff4.STATUS_2023}"></td>
+												<td></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2013_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2014_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2015_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2016_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2017_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2018_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2019_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2020_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2021_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2022_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.STATUS_2023_2, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.INCEPTION_RATING, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.MAX_RATING_DURING_BOOK_PERIOD, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td align="right"
+													th:text="${#numbers.formatDecimal(cooloff4.Change_Max_Inception, 1, 'COMMA', 0, 'POINT')}"></td>
+												<td th:text="${cooloff4.REMARKS}"></td>
+												<td onclick="showpopup(this);" id="delete"><i
+													class="fa fa-trash" style="font-size: 15px; color: red;"></i></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="card-footer text-center"
+									style="background-color: #386276;">
+									<button type="button" class="btn btn-xs btn-primary"
+										onclick="home();">Home</button>
+									<button type="button" class="btn btn-xs btn-primary"
+										onclick="back();">Back</button>
+								</div>
+							</div>
+						</div>
+
+
+
+
+
+						<div th:if="${formmode}=='Mapped_Accounts'">
+							<input id="dg" type="hidden" th:value="${formmode1}">
+
+							<div style="height: 80px;">
+								<div style="margin-left: 90%">
+									<div id="branch_filter" class="dataTables_filter">
+										<label>Search:<input type="search" id="filterinput"
+											class="form-control form-control-sm" placeholder=""
+											aria-controls="branch"></label>
+
+									</div>
+
+								</div>
+
+
+								<button type="button" class="btn btn-primary dropdown-toggle"
+									data-toggle="dropdown"
+									style="margin-inline: 80%; margin-top: -85px;">
+									Download <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+
+									<!-- <li><a onclick="pdfCustomerdown();"
+										th:attr="data-filetype='pdf' ">Pdf</a></li> -->
+
+									<li><a onclick="xcelCustomerdown();"
+										th:attr="data-filetype='excel'">Excel</a></li>
+								</ul>
+
+								<!-- Download Processing Modal -->
+								<div class="modal fade" id="downloadProcessingModal"
+									tabindex="-1" role="dialog"
+									aria-labelledby="downloadProcessingModalLabel"
+									aria-hidden="true">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+													Processing...</h5>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<table
+								class="table  table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+
+										<th></th>
+										<th style="text-align: center;">Cust Id</th>
+										<th style="text-align: center;">Acct No</th>
+										<th style="text-align: center; width: 1010px;">Name of
+											Account</th>
+										<th style="text-align: center;">Report Code</th>
+										<th style="text-align: center;">Report Label</th>
+										<th style="text-align: center;">Scheme Code</th>
+										<th style="text-align: center;">GLSH</th>
+										<th style="text-align: center; width: 800px;">Criteria-1</th>
+										<th style="text-align: center;">Criteria-2</th>
+										<th style="text-align: center;">Criteria-3</th>
+									</tr>
+								</thead>
+								<tbody id="arunfilter">
+									<tr th:each="listone,iterator : ${Mapped_Accounts}"
+										class="userlist" style="cursor: pointer;">
+
+										<td class="first_left"><a data-toggle="tooltip"
+											class="editrec" title="Click to Edit this Record"><i
+												class="fas fa-edit"
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												th:attr="data-cust_id=${listone.cust_id},
+												data-foracid=${listone.foracid},
+												data-acct_name=${listone.acct_name},
+											    data-report_name_1=${listone.report_name_1},
+												data-report_label_1=${listone.report_label_1},							
+												data-schm_code=${listone.schm_code},
+												data-gl_sub_head_code=${listone.gl_sub_head_code},										
+												data-report_addl_criteria_1=${listone.report_addl_criteria_1},
+												data-report_addl_criteria_2=${listone.report_addl_criteria_2},
+												data-report_addl_criteria_3=${listone.report_addl_criteria_3}"
+												onclick="editRecord(this)"></i></a></td>
+										<td th:text="${listone.cust_id}">456</td>
+										<td th:text="${listone.foracid}">456</td>
+										<td th:text="${listone.acct_name}">456</td>
+										<td th:text="${listone.report_name_1}">456</td>
+										<td th:text="${listone.report_label_1}">TEST</td>
+										<td th:text="${listone.schm_code}">TEST</td>
+										<td th:text="${listone.gl_sub_head_code}">TEST</td>
+										<td th:text="${listone.report_addl_criteria_1}">TEST</td>
+										<td th:text="${listone.report_addl_criteria_2}"></td>
+										<td th:text="${listone.report_addl_criteria_3}"></td>
+									</tr>
+
+								</tbody>
+							</table>
+
+
+							<div class="card-footer text-center"
+								style="background-color: #386276">
+
+
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="home();">Home</button>
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="back();">Back</button>
+
+
+							</div>
+
+						</div>
+
+						<div th:if="${formmode}=='UnMapped_Accounts'">
+							<input id="dg" type="hidden" th:value="${formmode1}">
+							<div style="height: 80px;">
+								<div style="margin-left: 90%">
+									<div id="branch_filter" class="dataTables_filter">
+										<label>Search:<input type="search" id="filterinput"
+											class="form-control form-control-sm" placeholder=""
+											aria-controls="branch"></label>
+									</div>
+								</div>
+
+							</div>
+
+							<table
+								class="table  table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+
+										<th></th>
+										<th style="text-align: center;">Cust Id</th>
+										<th style="text-align: center;">Acct No</th>
+										<th style="text-align: center;">Name of Account</th>
+										<th style="text-align: center;">Report Code</th>
+										<th style="text-align: center;">Report Label</th>
+										<th style="text-align: center;">Scheme Code</th>
+										<th style="text-align: center;">GLSH</th>
+										<th style="text-align: center;">Criteria-1</th>
+										<th style="text-align: center;">Criteria-2</th>
+										<th style="text-align: center;">Criteria-3</th>
+									</tr>
+								</thead>
+
+
+
+								<tbody id="arunfilter">
+									<tr th:each="listone,iterator : ${UnMapped_Accounts}"
+										th:style="${iterator.index > 300} ? 'display: none' : ''"
+										class="userlist" style="cursor: pointer">
+
+
+										<td class="first_left"><a data-toggle="tooltip"
+											class="editrec" title="Click to Edit this Record"><i
+												class="fas fa-edit"
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												th:attr="data-cust_id=${listone.cust_id},
+												data-foracid=${listone.foracid},
+												data-acct_name=${listone.acct_name},
+											    data-report_name_1=${listone.report_name_1},
+												data-report_label_1=${listone.report_label_1},					
+												data-schm_code=${listone.schm_code},
+												data-gl_sub_head_code=${listone.gl_sub_head_code},									
+												data-report_addl_criteria_1=${listone.report_addl_criteria_1}"
+												onclick="editRecord(this)"></i></a></td>
+
+
+										<td th:text="${listone.cust_id}" style="text-align: right;">456</td>
+										<td th:text="${listone.foracid}">1</td>
+										<td th:text="${listone.acct_name}" style="width: 600px;">456</td>
+										<td th:text="${listone.report_name_1}"></td>
+										<td th:text="${listone.report_label_1}">TEST</td>
+
+										<td th:text="${listone.schm_code}">TEST</td>
+										<td th:text="${listone.gl_sub_head_code}">TEST</td>
+
+										<td th:text="${listone.report_addl_criteria_1}"
+											style="width: 400px;">TEST</td>
+										<td></td>
+										<td></td>
+
+									</tr>
+								</tbody>
+							</table>
+							<div class="card-footer text-center"
+								style="background-color: #386276">
+
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="home();">Home</button>
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="back();">Back</button>
+
+							</div>
+						</div>
+						<div th:if="${formmode}=='Mapping' "></div>
+
+
+						<div th:if="${formmode}=='Mappinglist' ">
+
+							<div style="margin-left: 25px">
+								<label style="font-size: 20px"><b>Product Label:</b></label> <select
+									name="row_101"
+									onchange="myfunction(this.value, this.options[this.selectedIndex].getAttribute('data-report-category'),this.options[this.selectedIndex].getAttribute('data-row-product'))"
+									id="row_101" style="vertical-align: middle; margin-left: 10px;">
+									<option value="">Select</option>
+									<option th:each="refcode : ${refCodeTypeList2}"
+										th:value="${refcode?.report_desc}"
+										th:text="${refcode?.row_101}"
+										th:attr="data-row-product=${refcode?.row_101},data-report-category=${refcode?.report_category}">
+									</option>
+								</select>
+
+								<div id="displayValues"
+									style="font-size: 20px; display: inline; margin-left: 10px;">
+									<p style="display: inline; margin-right: 10px;">
+										<b>Field Description: </b> <span id="selectedValue"> </span>
+									</p>
+									<p style="display: inline;">
+										<b>Report Level-2: </b> <span id="reportCategory"
+											th:text="${report_category_level}"> </span>
+									</p>
+								</div>
+							</div>
+
+
+							<input id="dg" type="hidden" th:value="${formmode1}">
+
+							<div style="text-align: center; margin-left: 250px;">
+
+
+								<div class="row formline" style="text-align: center">
+									<div class="col-sm-2"></div>
+									<div class="col-sm-3">
+										<h4>From</h4>
+									</div>
+
+
+									<div class="col-sm-3">
+										<h4>To</h4>
+									</div>
+								</div>
+
+
+
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="cust_id1" style="margin-right: 10px;">Customer
+											Id</label>
+									</div>
+									<div class="col-sm-3">
+										<!-- <select name="cust_id1" id="cust_id1_from"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											
+										</select> -->
+										<input type="text" id="cust_id1_from" name="cust_id1_from"
+											style="vertical-align: middle; margin-left: 10px; width: 75%" />
+									</div>
+
+
+									<div class="col-sm-3">
+										<!-- <select name="cust_id" id="cust_id1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											
+										</select> -->
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="foracid1" style="margin-right: 10px;">Account
+											No </label>
+									</div>
+									<div class="col-sm-3">
+										<!-- <select name="foracid1" id="foracid1"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="Select">Select</option>
+											<option th:each="refcode : ${detailtable3}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select> -->
+										<input type="text" id="foracid1" name="foracid1"
+											style="vertical-align: middle; margin-left: 10px; width: 75%" />
+									</div>
+
+
+									<div class="col-sm-3">
+										<!-- <select name="foracid1" id="foracid1"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="Select">Select</option>
+											<option th:each="refcode : ${detailtable3}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select> -->
+										<input type="text" id="foracid2" name="foracid1"
+											style="vertical-align: middle; margin-left: 10px; width: 75%" />
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="schm_type1">Scheme Type </label>
+									</div>
+									<div class="col-sm-3">
+										<select name="schm_type1" id="schm_type1_from"
+											onchange="schm_type_change()"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="">Select</option>
+											<option th:each="refcode : ${detailtable4}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select>
+									</div>
+
+
+
+									<div class="col-sm-3">
+										<!-- <select name="schm_type1" id="schm_type1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="Select">Select</option>
+											<option th:each="refcode : ${detailtable4}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select> -->
+										<input name="schm_type1" th:readonly="true" id="schm_type1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+									</div>
+
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="schm_code1">Scheme code </label>
+									</div>
+									<div class="col-sm-3">
+										<select name="schm_code1" id="schm_code1_from"
+											onchange="schm_code_change()"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="">Select</option>
+											<option th:each="refcode : ${detailtable5}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select>
+									</div>
+
+
+									<div class="col-sm-3">
+										<!-- <select name="gl_code1" id="schm_code1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="Select">Select</option>
+											<option th:each="refcode : ${detailtable5}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select> -->
+										<input name="schm_code1" th:readonly="true" id="schm_code1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-right: 40px;">GL
+											code </label>
+									</div>
+									<div class="col-sm-3">
+										<select name="gl_code1" id="gl_code1_from"
+											onchange="gl_code_change()"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="">Select</option>
+											<option th:each="refcode : ${detailtable1}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select>
+									</div>
+
+
+									<div class="col-sm-3">
+										<!-- <select name="gl_code1" id="gl_code1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="Select">Select</option>
+											<option th:each="refcode : ${detailtable1}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select> -->
+										<input name="gl_code1" th:readonly="true" id="gl_code1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-right: 20px;">GLSH
+											code </label>
+									</div>
+									<div class="col-sm-3">
+										<select name="gl_sub_head_code1" id="gl_sub_head_code1_from"
+											onchange="gl_sub_head_code_change(this.selectedIndex)"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="">Select</option>
+											<option th:each="refcode : ${detailtable6}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select>
+									</div>
+
+
+									<div class="col-sm-3">
+										<!-- <select name="gl_sub_head_code1" id="gl_sub_head_code1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+											<option value="Select">Select</option>
+											<option th:each="refcode : ${detailtable6}"
+												th:value="${refcode}" th:text="${refcode}"></option>
+										</select> -->
+										<input th:readonly="true" name="gl_sub_head_code1"
+											id="gl_sub_head_code1_to"
+											style="vertical-align: middle; margin-left: 10px; width: 75%">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-right: 30px;">MIS
+											code </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId">Other Criteria </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-left: 30px;">Additional
+											Criteria </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-right: 30px;">Remarks
+											1 </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-right: 30px;">Remarks
+											2 </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-right: 30px;">Remarks
+											3 </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-left: 30px;">Additional
+											Filters 1 </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="userId" style="margin-left: 30px;">Additional
+											Filters 2 </label>
+									</div>
+									<div class="col-sm-3">
+										<input type="text" value="" id="userId"
+											class="form-control form-control-sm" name="userid"
+											autocomplete="off" required="">
+									</div>
+
+
+									<div class="col-sm-3">
+										<input type="text" value="" id="userName"
+											class="form-control form-control-sm" autocomplete="false"
+											required="" name="username">
+									</div>
+								</div>
+
+							</div>
+							<div class="card-footer text-center"
+								style="background-color: #386276">
+								<button type="button" class="btn btn-primary" onclick="list()">List</button>
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="home();">Home</button>
+								<button type="button" class="btn btn-xs btn-primary"
+									onclick="back();">Back</button>
+							</div>
+
+						</div>
+
+
+
+						<div th:if="${formmode}=='listMap'">
+
+							<div style="margin-left: 25px">
+								<label style="font-size: 20px"><b>Product Label:</b></label> <select
+									name="row_101" id="row_101_list"
+									style="vertical-align: middle; margin-left: 10px;">
+									<option value="Select">Select</option>
+									<option id="row_10111" th:each="refcode : ${refCodeTypeList2}"
+										th:value="${refcode?.report_desc}"
+										th:text="${refcode?.row_101}"
+										th:selected="${(reportlabel!=undefined) ? refcode?.row_101 == reportlabel : false}"
+										th:attr="data-row-product=${refcode?.row_101},data-report-category=${refcode?.report_category}">
+									</option>
+								</select>
+
+								<div id="displayValues"
+									style="font-size: 20px; display: inline; margin-left: 10px;">
+									<p style="display: inline; margin-right: 10px;">
+										<b>Field Description: </b> <span id="selectedValue"
+											th:text="${reportDes}"> </span>
+									</p>
+									<p style="display: inline;">
+										<b>Report Level-2: </b> <span id="reportCategory"
+											th:text="${report_category_level}"> </span>
+									</p>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-12 finuserapply">
+									<form method="post" autocomplete="off" id="userProfile">
+										<div class="card">
+											<div class="panel panel-primary filterable">
+												<div class="card-header d-flex justify-content-between"
+													style="background-color: #f1f1f1;">
+													<h3>List of Mapping Accounts</h3>
+												</div>
+
+												<br>
+
+												<table id="middile"
+													class="table  table-bordered table-hover table-condensed table-sm">
+													<thead class="thead-light">
+														<tr>
+															<th></th>
+															<th style="text-align: center;">Cust Id</th>
+															<th style="text-align: center;">Acct No</th>
+															<th style="text-align: center;">Name of Account</th>
+															<th style="text-align: center;">Mapping Label</th>
+															<th style="text-align: center;">Scheme Code</th>
+															<th style="text-align: center;">GLSH</th>
+
+															<!-- <th style="text-align: center;">Criteria</th> -->
+															<th style="text-align: center;">Remarks</th>
+															<th style="text-align: center;">Select</th>
+
+														</tr>
+													</thead>
+
+
+													<tbody>
+														<tr th:each="listone,iterator : ${bmt_accountList}"
+															th:style="${iterator.index > 300} ? 'display: none' : ''"
+															class="userlist" style="cursor: pointer">
+															<th th:text="${iterator.index + 1}">1</th>
+															<td th:text="${listone.custid}"
+																style="text-align: right;">456</td>
+															<td th:text="${listone.foracid}">1</td>
+															<td th:text="${listone.acctname}" style="width: 600px;">456</td>
+															<td th:text="${listone.reportlabel1}"></td>
+															<td th:text="${listone.schmcode}">TEST</td>
+															<td th:text="${listone.glsubheadcode}">1</td>
+
+															<!-- <td th:text="${listone[8]}"></td> -->
+															<td></td>
+															<td><input type="checkbox" name="isTermsChecked"
+																class="checkbox" id="isTermsChecked" value=""
+																th:checked="${isChecked}"
+																onchange="handleCheckboxChange(this)"></td>
+
+
+														</tr>
+													</tbody>
+
+
+
+
+												</table>
+												<div class="card-footer text-center"
+													style="background-color: #386276">
+
+													<button type="button" class="btn btn-xs btn-primary"
+														onclick="submitlist();">Submit</button>
+													<button type="button" class="btn btn-xs btn-primary"
+														onclick="goBackAndReload()">Back</button>
+												</div>
+											</div>
+										</div>
+									</form>
+
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!--Product Mapping  -->
+					<div th:if="${formmode}=='product_mapping'">
+						<input id="dg" type="hidden" th:value="${formmode1}">
+						<div style="margin-left: 25px">
+
+
+							<label><b>Product Name</b></label> <select name="row_101"
+								onchange="product()" id="row_101">
+								<option value="Select">Select</option>
+								<option th:each="refcode : ${refCodeTypeList2}"
+									th:text="${refcode?.row_101}"></option>
+
+							</select>
+
+
+						</div>
+						<br>
+
+						<table
+							class="table  table-bordered table-hover table-condensed table-sm">
+							<thead class="thead-light">
+								<tr>
+									<th></th>
+									<th style="text-align: center;">Cust Id</th>
+									<th style="text-align: center;">Acct No</th>
+									<th style="text-align: center;">Name of Account</th>
+									<th style="text-align: center;">Report Code</th>
+									<th style="text-align: center;">Report Label</th>
+
+									<th style="text-align: center;">Scheme Code</th>
+									<th style="text-align: center;">GLSH</th>
+
+									<th style="text-align: center;">Criteria-1</th>
+									<th style="text-align: center;">Criteria-2</th>
+									<th style="text-align: center;">Criteria-3</th>
+								</tr>
+							</thead>
+							<tbody class="repCodes" id="placelist">
+								<tr th:each="report ,iterator: ${PMapping_product}"
+									id="placelist">
+
+									<td class="first_left"><a data-toggle="tooltip"
+										class="editrec" title="Click to Edit this Record"><i
+											class="fas fa-edit"
+											th:attr="data-cust_id=${report.custid},
+										        data-foracid=${report.foracid},
+												data-acct_name=${report.acctname},
+											    data-report_name_1=${report.reportname1},
+												data-report_label_1=${report.reportlabel1},							
+												data-schm_code=${report.schmcode},
+												data-gl_sub_head_code=${report.glsubheadcode},										
+												data-report_addl_criteria_1=${report.reportaddlcriteria1}"
+											onclick="editRecord(this)"></i></a></td>
+									<td th:text="${report.custid}">456</td>
+									<td th:text="${report.foracid}">456</td>
+									<td th:text="${report.acctname}">456</td>
+									<td th:text="${report.reportname1}">456</td>
+									<td th:text="${report.reportlabel1}">TEST</td>
+
+									<td th:text="${report.schmcode}">TEST</td>
+									<td th:text="${report.glsubheadcode}">TEST</td>
+
+									<td th:text="${report.reportaddlcriteria1}">TEST</td>
+									<td></td>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="card-footer text-center"
+							style="background-color: #386276">
+							<button type="button" class="btn btn-xs btn-primary"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	</div>
+
+	<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+	<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+	<div class="modal fade" id="addedit" th:fragment="dataedit">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Edit Records</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${singledetail} id="dataedit" method="post">
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-5">Customer Id </label> <input
+									class="form-control col-sm-5" type="text" id="cust_id"
+									name="cust_id" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Account No </label> <input
+									class="form-control col-sm-5" type="text" id="foracid" required />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Name of Account </label> <input
+									class="form-control col-sm-5" type="text" id="acct_name"
+									name="acct_name" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Report Code </label> <input
+									class="form-control col-sm-5" type="text" id="report_name_1"
+									name="report_name_1" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Report Label </label> <input
+									class="form-control col-sm-5" type="text" id="report_label_1"
+									name="report_label_1" required />
+							</div>
+
+							<!-- <div class="row">
+								<label class="col-sm-5">Scheme Type </label> <input
+									class="form-control col-sm-5" type="text" id="sch_type"
+									name="gl_sub_head_code" required />
+							</div> -->
+
+							<div class="row">
+								<label class="col-sm-5">Scheme Code </label> <input
+									class="form-control col-sm-5" type="text" id="schm_code"
+									name="schm_code" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">GLSH Code </label> <input
+									class="form-control col-sm-5" type="text" id="gl_sub_head_code"
+									name="gl_sub_head_code" />
+							</div>
+
+							<!-- <div class="row">
+								<label class="col-sm-5">MIS Code </label> <input
+									class="form-control col-sm-5" type="text" name="mis_code"
+									id="mis_code" />
+							</div> -->
+
+							<div class="row">
+								<label class="col-sm-5">Criteria 1 </label> <input
+									class="form-control col-sm-5" type="text"
+									id="report_addl_criteria_1" name="report_addl_criteria_1" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Criteria 2 </label> <input
+									class="form-control col-sm-5" type="text"
+									id="report_addl_criteria_2" />
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Criteria 3</label> <input
+									class="form-control col-sm-5" type="text"
+									id="report_addl_criteria_3" />
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary"
+						onclick="submitdataform(this);">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- ------------model popup--------- -->
+	<div class="modal" id="myModal" style="align: center; margin-top: 15%;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header" style="background-color: orange;">
+					<h4 class="modal-title">BANK OF BARODA</h4>
+					<button type="button" class="close" data-dismiss="modal">x</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body" style="text-align: center;">need to be
+					enable</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+
+
+

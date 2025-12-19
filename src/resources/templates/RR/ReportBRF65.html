@@ -1,0 +1,888 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!--
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/font-awesome/5.9.0/css/all.min.css"
+          th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+          th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+    <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+            th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+    <script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+            th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+    <script src="/webjars/jquery/3.4.1/jquery.min.js"
+            th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+    <script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+            th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+    <script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+            th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+    <script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+            th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+    <script th:inline="javascript">
+	/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+
+		$(function(){
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype(){
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+	/*to show details page - 3 parameters
+		mode - valid values are : nextpage, prevpage, givenpage, firstpage
+		num - page number to show to the user
+		maxpage - maximum number of pages avaialble in the data
+	*/
+	function showdetails(mode,num,maxpage) {
+		var filter =$("#filters").val();
+	var n=parseInt(num);
+	var max = parseInt(maxpage);
+	if(filter!= null){
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+		//Callurl = Callurl+"&instancecode="+instancecode;
+		Callurl = Callurl+"&filter="+filter;
+	}else{
+
+		var filter= null;
+
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+	//	Callurl = Callurl+"&instancecode="+instancecode;
+		Callurl = Callurl+"&filter="+filter;
+	}	switch(mode){
+		case "nextpage":
+			n=n+1;
+			if(n>max){
+				break;
+			}
+			Callurl = Callurl+"&page="+n;
+			break;
+		case "prevpage":
+			n=n-1;
+			if(n<0){
+				break;
+			}
+			Callurl = Callurl+"&page="+n;
+			break;
+		case "givenpage":
+			n=parseInt($("#pageno").val())-1;
+			if(n>max||n<0){
+			break;
+			}
+			Callurl = Callurl+"&page="+n;
+		}
+
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+
+				$('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+
+			}
+		})
+	}
+
+
+
+	//to fetch summary from the database - called from the summary button
+	function showsummary(mode,num,maxpage) {
+
+
+		var n=parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+		Callurl = Callurl+"&subreportid="+subreportid+"&secid="+secid;
+		switch(mode){
+		case "nextpage":
+			n=n+1;
+			if(n>max){
+				break;
+			}
+			Callurl = Callurl+"&page="+n;
+			break;
+		case "prevpage":
+			n=n-1;
+			if(n<0){
+				break;
+			}
+			Callurl = Callurl+"&page="+n;
+			break;
+		case "givenpage":
+			n=parseInt($("#pageno").val())-1;
+			if(n>max||n<0){
+			break;
+			}
+			Callurl = Callurl+"&page="+n;
+		}
+
+
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$("#summarybtn").addClass("active");
+
+				/*]]>*/
+			}
+		})
+	}
+
+
+	function sectionChange(a){
+
+		secid = a;
+
+		showsummary();
+
+	};
+
+		function home(){
+		location.href = "/BRBS/rbsreports";
+
+}
+	/*]]>*/
+</script>
+
+    <style>
+.nav-buttons {
+	float: right;
+}
+
+.reptitle {
+	float: left;
+}
+
+.reptitle>p {
+	margin-top:;
+}
+
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+	min-width: 1500px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.first_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 0;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.second_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 30px;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.third_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 60px;
+	width: 150px;
+	margin-top: -2px;
+}
+
+.inner {
+	overflow-x: scroll;
+	overflow-y: visible;
+	/* margin-left: 60px; */
+}
+
+.table-bordered thead td, .table-bordered thead th {
+	border-bottom-width: 0px;
+}
+
+.table-bordered {
+	border: 0px;
+}
+
+.addedit {
+	color: #007bff;
+}
+
+.addedit:hover {
+	color: #0056b3;
+}
+</style>
+    <script th:inline="javascript">
+			/*<![CDATA[*/
+			var currlist = /*[[${currlist}]]*/null;
+			function editsum(a){
+
+
+
+
+
+				if(permission=='W' && dtltype=='report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+				$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+
+
+				$("#addedit").modal("toggle");
+
+
+
+				}
+			};
+
+			function editsubmitform() {
+
+							var reportdate = $("#report_date").val();
+						//	alert(reportdate);
+
+							if ($("#dataedit").valid()) {
+
+								var url = "./T1Edit?";
+
+
+								$("#dataedit").attr('action', url);
+
+								var options = {
+									success : showResponse
+								// post-submit callback
+								};
+
+								$("#dataedit").ajaxSubmit(options);
+
+								function showResponse(responseText, statusText, xhr, $form) {
+
+									$("#alertmsg").text(responseText);
+
+									$('#alert').modal("toggle");
+
+								}
+								;
+							}
+						};
+						function verifyscreen(a){
+
+
+							if(permission=='W' && dtltype=='report') {
+							//Assign action url for the edit/add form
+							var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+							$("#dataedit").attr('action', url);
+							//Reset form if any data present
+							document.getElementById("dataedit").reset();
+
+							/* //make readonly false to unique fields
+							//Make readonly fields
+							$("#cntprty_code").attr("readonly",false);
+							$("#report_date").attr("readonly",false); */
+
+							//Reset errors
+							var validator = $("#dataedit").validate();
+							validator.resetForm();
+
+
+
+							$("#verify").modal("toggle");
+
+
+
+							}
+						};
+						function verifysubmitform(a) {
+
+							if ($("#dataverify").valid()) {
+								var entry=$("#ENTRY_USER").val();
+								var modify=$("#MODIFY_USER").val();
+								var verify=$("#VERIFY_USER").val();:='0';
+
+
+										//var formmode = a.getAttribute("data-formmode");
+										var url = "./T1Verify?";
+
+										$("#dataverify").attr('action', url);
+
+										var options = {
+											success : showResponse
+										// post-submit callback
+										};
+
+
+										$("#dataverify").ajaxSubmit(options);
+
+										function showResponse(responseText, statusText, xhr, $form) {
+
+											$("#alertmsg").text(responseText);
+
+											$('#alert').modal("toggle");
+
+										};
+									}else{
+										$("#alertmsg").text("Same User Cannot Verify!");
+										$('#alert').modal("toggle");
+
+								}
+
+						};
+						function refreshPage(){
+						    window.location.reload();
+						}
+
+			/*]]>*/
+		</script>
+
+    <title>XBRL</title>
+</head>
+<body>
+<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+<div th:insert="XBRLHeaderMenu :: header"></div>
+<i class="fa fa-question-circle" aria-hidden="true"
+   onclick="docEmb('Report')" id="ques"></i>
+<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+<div class="container content" th:fragment="reportcontent">
+    <!--------------------------------------------------------------- Report title starts -------------------------------------------->
+    <div class="row">
+        <div class="col-sm-12 customcol"
+             style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+            <b style="color: white;"> BANKING AND MONETARY STATISTICS- RESCHEDULED  LOANS- BRF 65 (AED 000)												
+            </b>
+            <div class="btn-group nav-buttons">
+                <button type="button" class="btn btn-primary"
+                        onclick="showdetails('firstpage','1','0');" id="detailsbtn">Details</button>
+                <button type="button" class="btn btn-primary"
+                        onclick="showsummary();" id="summarybtn">Summary</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle"
+                            data-toggle="dropdown">
+                        Download <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li th:if="${displaymode}=='summary' or ${displaymode}==null"><a
+                                th:href="|@{'/Reports/'+${reportid}+'/Download'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},subreportid=${subreportid},secid=${secid},dtltype=${dtltype})}&filetype=pdf|">Pdf</a></li>
+                        <li th:if="${displaymode}=='summary' or ${displaymode}==null"><a
+                                th:href="|@{'/Reports/'+${reportid}+'/Download'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},subreportid=${subreportid},secid=${secid},dtltype=${dtltype})}&filetype=excel|">Excel</a></li>
+
+                        <li th:if="${displaymode}=='detail'"><a
+                                th:href="|@{'/Reports/'+${reportid}+'/Download'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},subreportid=${subreportid},secid=${secid},dtltype=${dtltype})}&filetype=detailexcel|">Excel</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 customcol"
+             style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+            <div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+                <button type="button" class="btn btn-primary"
+                        onclick="editsum(this);" style="margin-top: -10px; padding: 3px;"
+                        title="Click to EDIT Records"
+                        th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+                        id="addRecord">Modify</button>
+                <button type="button" class="btn btn-primary"
+                        style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+                        title="view the records" id="addRecord">Inquiry</button>
+                <button type="button" class="btn btn-primary"
+                        th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'"
+                        onclick="verifyscreen(this);"
+                        style="margin-top: -10px; padding: 3px;"
+                        title="Click to EDIT Records"
+                        th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+                        id="addRecord">Verify</button>
+            </div>
+        </div>
+    </div>
+    <!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+    <!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+    <div class="row">
+       <div class="col-sm-12 customcol"
+				th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive"
+							style="border-right: 1px solid #dee2e6">
+							<table style="width: =3000px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead class="thead-light">
+									
+									<tr>
+									    <th>Segments </th>
+										<th>Rescheduled Amount</th>
+										<th>Rescheduled twice</th>
+										<th>Principal regularly amortized over the period</th>
+										<th>Repayment after grace period exceeding one year</th>
+										<th>Bullet repayment</th>
+										<th>Interest / profit (overdue but credited to P/L)</th>
+										<th> Interest / profit(overdue and credited to interest in suspense)</th>
+										<th>Specific provisions</th>
+								</tr>
+								
+								</thead>
+								<tbody th:each="report: ${reportsummary}">                               
+
+                                     <tr>
+										<td th:text="${report.R1_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.R1_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.R1_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.R1_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.R1_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.R1_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.R1_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.R1_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.R1_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.R1_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+										
+										 															
+									</tr>	
+									<tr>
+										<td th:text="${report.S1_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.S1_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.S1_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S1_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S1_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.S1_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.S1_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.S1_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.S1_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.S1_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									<tr>
+										<td th:text="${report.S2_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.S2_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.S2_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S2_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S2_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.S2_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.S2_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.S2_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.S2_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.S2_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									<tr>
+										<td th:text="${report.S3_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.S3_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.S3_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S3_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S3_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.S3_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.S3_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.S3_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.S3_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.S3_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									<tr>
+										<td th:text="${report.S4_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.S4_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.S4_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S4_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.S4_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.S4_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.S4_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.S4_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.S4_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.S4_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>
+									
+									<tr>
+										<td th:text="${report.T1_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.T1_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.T1_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T1_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T1_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.T1_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.T1_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.T1_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.T1_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.T1_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>
+									
+									<tr>
+										<td th:text="${report.T2_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.T2_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.T2_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T2_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T2_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.T2_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.T2_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.T2_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.T2_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.T2_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+										
+									<tr>
+										<td th:text="${report.T3_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.T3_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.T3_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T3_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T3_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.T3_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.T3_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.T3_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.T3_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.T3_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>
+									<tr>
+										<td th:text="${report.T4_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.T4_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.T4_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T4_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T4_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.T4_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.T4_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.T4_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.T4_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.T4_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>
+									<tr>
+										<td th:text="${report.T5_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.T5_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.T5_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T5_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.T5_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.T5_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.T5_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.T5_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.T5_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.T5_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									<tr>
+										<td th:text="${report.V1_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.V1_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.V1_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V1_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V1_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.V1_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.V1_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.V1_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.V1_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.V1_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>
+									<tr>
+										<td th:text="${report.V2_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.V2_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.V2_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V2_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V2_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.V2_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.V2_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.V2_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.V2_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.V2_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									<tr>
+										<td th:text="${report.V3_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.V3_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.V3_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V3_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V3_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.V3_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.V3_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.V3_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.V3_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.V3_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									
+									<tr>
+										<td th:text="${report.V4_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.V4_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.V4_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V4_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V4_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.V4_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.V4_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.V4_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.V4_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.V4_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									
+									<tr>
+										<td th:text="${report.V5_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.V5_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.V5_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V5_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V5_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.V5_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.V5_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.V5_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.V5_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.V5_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>
+									
+									<tr>
+										<td th:text="${report.V6_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.V6_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.V6_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V6_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V6_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.V6_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.V6_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.V6_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.V6_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.V6_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+										
+								<tr>
+										<td th:text="${report.V7_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.V7_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.V7_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V7_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.V7_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.V7_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.V7_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.V7_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.V7_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.V7_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									
+									<tr>
+										<td th:text="${report.W1_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.W1_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.W1_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.W1_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.W1_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.W1_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.W1_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.W1_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.W1_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.W1_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									
+									<tr>
+										<td th:text="${report.X1_RESCHEDULED_AMT}">CHENNAI</td>
+										<td th:text="${report.X1_RESCHEDULED_ONCE}" >CHENNAI</td>
+										<td th:text="${report.X1_RESCHEDULED_TWICE	}">CHENNAI</td>
+										<td th:text="${report.X1_RESCHEDULED_MORE_THAN_TWICE	}">CHENNAI</td>
+										<td th:text="${report.X1_PRINCIPAL_REGULARLY_AMORTIZED_PERIOD	}">CHENNAI</td>
+										<td th:text="${report.X1_REPAYMENT_AFTER_GRACE_PERIOD_EXCEED_ONEYR	}">CHENNAI</td>
+										<td th:text="${report.X1_BULLET_REPAYMENT	}">CHENNAI</td>
+										<td th:text="${report.X1_INTEREST_PROFIT_OVERDUE_PL	}">CHENNAI</td>
+										<td th:text="${report.X1_INTEREST_PROFIT_OVERDUE_INTSUS	}">CHENNAI</td>
+										<td th:text="${report.X1_SPECIFIC_PROVISIONS	}">CHENNAI</td>
+																		 															
+									</tr>	
+									
+										</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center"
+							th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276";>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<!-- <button type="button" class="btn btn-xs btn-primary"
+									id="btnBack" onclick="back();">Back</button> -->
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'"
+				th:fragment="detail">
+				<div style="overflow-x: auto; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null"
+						class="table table-bordered table-sm" style="width: 3000px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr>
+								<th>Customer Id</th>
+								<th>Customer Name</th>
+								<th>Customer Type</th>
+								<th>Customer Rating</th>
+								<th>Account Number</th>
+								<th>Account Name</th>
+								<th>Transaction Type</th>
+								<th>Transaction Sub Type</th>
+								<th>Transaction Date</th>
+								<th>Transaction Id</th>
+								<th>Partial Transaction Id</th>
+								<th>Partial Transaction Type</th>
+								<th>Transaction Currency</th>
+								<th>Transaction Amount</th>
+								<th>Transaction Category</th>
+
+							</tr>
+
+						</thead>
+						<tbody>
+							<tr th:each="repdetail : ${reportdetails.content}">
+
+								<td th:text="${repdetail.cust_id	}">CHENNAI</td>
+								<td th:text="${repdetail.cust_name	}">CHENNAI</td>
+								<th:block th:switch="${repdetail.cust_type}">
+									<td th:case="'C'">Customer</td>
+									<td th:case="'E'">Employee</td>
+									<td th:case="'O'">Office</td>
+								</th:block>
+								<td th:text="${repdetail.cust_rating	}">CHENNAI</td>
+								<td th:text="${repdetail.acct_no	}">CHENNAI</td>
+								<td th:text="${repdetail.acct_name	}">CHENNAI</td>
+								<th:block th:switch="${repdetail.tran_type}">
+									<td th:case="'T'">Transfer</td>
+									<td th:case="'L'">Clearing</td>
+									<td th:case="'C'">Cash</td>
+									<td th:case="''">Transfer</td>
+								</th:block>
+								<td th:text="${repdetail.tran_sub_type	}">CHENNAI</td>
+								<td
+									th:text="${#dates.format(repdetail.tran_date, 'dd/MM/yyyy')}"></td>
+
+								<td th:text="${repdetail.tran_id	}">CHENNAI</td>
+								<td th:text="${repdetail.part_tran_id	}">CHENNAI</td>
+								<th:block th:switch="${repdetail.part_tran_type}">
+									<td th:case="'D'">Debit</td>
+									<td th:case="'C'">Credit</td>
+								</th:block>
+								<td th:text="${repdetail.tran_crncy	}">CHENNAI</td>
+								<td
+									th:text="${#numbers.formatDecimal(repdetail.tran_amt	,1,'COMMA',2,'POINT')}"
+									align="right">CHENNAI</td>
+								<td th:text="${repdetail.tran_category	}">CHENNAI</td>
+
+
+							</tr>
+						</tbody>
+					</table>
+
+
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+
+				<!-------------------------------------Details edit modal form----------------------------------------------------->
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div>
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+    </div>
+</div>
+
+<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+<div class="modal fade" id="alert">
+    <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align: center">
+                <p id="alertmsg"></p>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="refreshPage()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+</html>

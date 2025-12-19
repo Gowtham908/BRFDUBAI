@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MainRBR" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="20299364-efa8-4f4e-9a4b-1148f4e7578c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CXBRL.jrdax"/>
+	<parameter name="SubRep1" class="java.io.InputStream"/>
+	<parameter name="index" class="java.io.InputStream"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="191" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="20" width="200" height="57" uuid="c68f3807-4d39-42a6-b49d-7fa7acab50a1"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{index}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="0" y="120" width="201" height="60" uuid="7f634556-681b-45db-8018-2bac0a3c42c0"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SubRep1}]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="90" width="201" height="1" uuid="1d13caf4-f369-4f2b-843f-3873db092ecc"/>
+			</break>
+			<break>
+				<reportElement x="0" y="190" width="201" height="1" uuid="eb000556-4e27-4c14-861e-5d221069f5ef"/>
+			</break>
+		</band>
+	</summary>
+</jasperReport>

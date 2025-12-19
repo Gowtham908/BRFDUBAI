@@ -1,0 +1,2557 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+
+		function home() {
+			location.href = "/BRBS/BRFArchival";
+
+		}
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+		function addRecord() {
+			$("#edit").hide();
+			if (permission == 'W') {
+				//var url1 = /*[[@{'/customeradd/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				//Callurl = Callurl+"&instancecode="+instancecode;
+				document.getElementById("dataedit").reset();
+
+				//make readonly false to unique fields
+				//Make readonly fields
+				$("#custid").attr("readonly", false);
+				$("#custname").attr("readonly", false);
+				$("#custtype").attr("readonly", false);
+				$("#custrating").attr("readonly", false);
+				$("#accnum").attr("readonly", false);
+				$("#tratype").attr("readonly", false);
+				$("#trasubtype").attr("readonly", false);
+				$("#tradate").attr("readonly", false);
+				$("#partialtraid").attr("readonly", false);
+				$("#partialtratype").attr("readonly", false);
+				$("#tracurr").attr("readonly", false);
+				$("#traamount").attr("readonly", false);
+				$("#tracat").attr("readonly", false);
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editRecord(a) {
+			$("#add").hide();
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-custrating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+				$("#addedit").modal("toggle");
+
+				//Make readonly fields
+				$("#tradate").attr("readonly", true);
+
+			}
+
+		};
+
+		function deleteRecord(a) {
+			$("#add").hide();
+			$("#edit").hide();
+
+			alert(a.getAttribute("data-custid"));
+			if (permission == 'W') {
+				var url3 = "/customerdelete?";
+				$("#dataedit").attr('action', url3);
+
+
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-custrating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+
+				$("#datadelete").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataform(a) {
+			$("#edit").hide();
+
+			var url4 = "./customeradd?";
+
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+
+		function submitdataformedit(a) {
+			//$("#add").hide();
+			var url = "./customeredit?";
+
+			$("#dataedit").attr('action', url);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+		function submitdataformdelete(a) {
+
+			var url4 = "./customerdelete?";
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+		/*]]>*/
+	</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-53 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 25000);
+		}
+	</script>
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-053-A' + ".xlsx";
+					} else {
+						a.download = '011-BRF-053-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					if (filetype == "excel" || filetype == "detailexcel") {
+						$('#customAlertBody').text('011-BRF-053-A ' + ".xlsx");
+					} else {
+						$('#customAlertBody').text('011-BRF-053-A ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+	</script>
+	<script>
+		function showAlertMessage() {
+			alert("Details page not available for Nil Report");
+		}
+	</script>
+
+
+	<title>XBRL</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true" onclick="docEmb('Report')" id="ques"></i>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BANKING AND MONETARY STATISTICS- GLOBAL INCOME STATEMENT - BRF 53 (AED 000)
+				</b>
+				</b></th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showAlertMessage();"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive" style="border-right: 1px solid #dee2e6">
+							<table style="width: 2500px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead style="background-color:">
+
+									<tr style="background-color:#b3b6b9;text-align:center">
+										<th> </th>
+										<th width="300"> </th>
+										<th rowspan="3" style="background-color:#fffc04">Global Amount</th>
+										<th rowspan="2" style="text-align:center" class="align-middle"> UAE BRF 2</th>
+										<th colspan="6"> Foreign branches/ countries </th>
+										<th colspan="6"> Foreign branches/ countries </th>
+										<th colspan="6"> Foreign branches/ countries </th>
+										<th colspan="3"> Foreign branches/ countries </th>
+
+									</tr>
+									<tr style="background-color:#fffc04;text-align:center">
+										<td style="background-color:#b3b6b9"> </td>
+										<td style="background-color:#b3b6b9"> </td>
+
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+
+										<th>NA </th>
+										<th>NA </th>
+										<th>NA </th>
+									</tr>
+
+									<tr style="background-color:#b3b6b9;text-align:center;height:45px"
+										class="align-bottom">
+										<th> No</th>
+										<th> </th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+										<th>YTD</th>
+									</tr>
+
+								</thead>
+								<tbody th:each="report: ${reportsummary}">
+									<tr style="background-color:#b3b6b9;font-weight:bold">
+										<th style=text-align:right>5</th>
+										<td th:text="${report.	r1_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_global_amount,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r1_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style=text-align:right>5.1</th>
+										<td th:text="${report.r2_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r2_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>5.2</th>
+										<td th:text="${report.r3_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r3_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>5.3</th>
+										<td th:text="${report.r4_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r4_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>5.4</th>
+										<td th:text="${report.r5_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r5_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr style="background-color:#b3b6b9;font-weight:bold">
+										<td style=text-align:right>6</td>
+										<td th:text="${report.r6_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_global_amount,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r6_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+
+									<tr style=text-align:right>
+										<th style=text-align:right>6.1</th>
+										<td th:text="${report.r7_product}" style=text-align:left>CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_uae,0,'COMMA',0,'POINT')}"
+											align="right" class="align-bottom">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r7_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+									<tr style=text-align:right>
+										<th style=text-align:right>6.2</th>
+										<td th:text="${report.r8_product}" style="text-align:left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_global_amount,0,'COMMA',0,'POINT')}"
+											style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_uae,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd1,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd2,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd3,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd4,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd5,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd6,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd7,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd8,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd9,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd10,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd11,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd12,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd13,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd14,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd15,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd16,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd17,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd18,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd19,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd20,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r8_ytd21,0,'COMMA',0,'POINT')}">
+											CHENNAI</td>
+
+									</tr>
+
+
+
+									<tr>
+										<th style=text-align:right>6.3</th>
+										<td th:text="${report.r9_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r9_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>6.4</th>
+										<td th:text="${report.r10_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+
+									<tr style="background-color:#b3b6b9;font-weight:bold">
+										<td style=text-align:right>7</td>
+										<td th:text="${report.r11_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_global_amount,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr style="background-color:#fffc04;font-weight:bold">
+										<td style="background-color:#b3b6b9;text-align:right">8</td>
+										<td th:text="${report.r12_product}" style="background-color:#b3b6b9">CHENNAI
+										</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_global_amount,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<th style=text-align:right>8.1</th>
+										<td th:text="${report.r13_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+									<tr style="background-color:#b3b6b9;font-weight:bold">
+										<td style=text-align:right>8.2</td>
+										<td th:text="${report.r14_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_global_amount,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>8.2.1</th>
+										<td th:text="${report.r15_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+
+
+									<tr>
+										<th style=text-align:right>8.2.2</th>
+										<td th:text="${report.r16_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>8.2.3</th>
+										<td th:text="${report.r17_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>8.3</th>
+										<td th:text="${report.r18_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>8.4</th>
+										<td th:text="${report.r19_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<th style=text-align:right>8.5</th>
+										<td th:text="${report.r20_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+									</tr>
+									<tr>
+										<th style=text-align:right>8.6</th>
+										<td th:text="${report.r21_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<th style=text-align:right>9</th>
+										<th th:text="${report.r22_product}">CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r22_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+									</tr>
+									<tr style="background-color:#b3b6b9;font-weight:bold">
+										<td style=text-align:right>10</td>
+										<td th:text="${report.r23_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_global_amount,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th style=text-align:right>10.1</th>
+										<th th:text="${report.r24_product}">CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r24_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+									</tr>
+
+
+									<tr>
+										<th style=text-align:right>11</th>
+										<th th:text="${report.r25_product}">CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r25_global_amount,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color:#fffc04">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+
+									</tr>
+									<tr style="background-color:#b3b6b9;font-weight:bold">
+										<td style=text-align:right>12</td>
+										<td th:text="${report.r26_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_global_amount,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_uae,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd1,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd2,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd3,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd4,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd5,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd6,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd7,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd8,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd9,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd10,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd11,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd12,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd13,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd14,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd15,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd16,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd17,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd18,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd19,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd20,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_ytd21,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+
+									<tr style="background-color:#b3b6b9">
+										<td></td>
+										<th>Form No: BSD/BRF 53- GLOB INCOME/ DEC 13</th>
+										<td colspan="23"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="window.history.back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: auto; border-right: 1px solid #dee2e6" th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1500px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align:center">
+								<th><a data-toggle="tooltip" class="editrec" title="Click to add new Records"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fa fa-plus-circle" onclick="addRecord();" aria-hidden="true"></i></a>
+								</th>
+								<th></th>
+								<th>Cust ID</th>
+								<th>Cust Name</th>
+								<th>Cust Typ</th>
+								<th>Cust Rat</th>
+								<th>Acc No</th>
+								<th>Acc Name</th>
+								<th>Trn Typ</th>
+								<th>Trn Sub Typ</th>
+								<th>Trn Dt</th>
+								<th>Trn ID</th>
+								<th>Prt Trn ID</th>
+								<th>Prt Trn Typ</th>
+								<th>Trn Cur</th>
+								<th>Trn Amt</th>
+								<th>Trn Cat</th>
+
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="repdetail : ${reportdetails.content}">
+							<tr th:if="${reportdetails}!=null" th:each="repdetail : ${reportdetails}">
+
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="data-custid=${repdetail.cust_id},
+                                        data-custname=${repdetail.cust_name},
+                                        data-custtype=${repdetail.cust_type},
+                                        data-custrating=${repdetail.cust_rating},
+                                        data-accnum=${repdetail.acct_no},
+                                        data-accname=${repdetail.acct_name},
+                                        data-tratype=${repdetail.tran_type},
+                                        data-trasubtype=${repdetail.tran_sub_type},
+                                        data-tradate=${#dates.format(repdetail.tran_date, 'dd-MM-yyyy')},
+                                        data-traid=${repdetail.tran_id},
+                                        data-partialtraid=${repdetail.part_tran_id},
+                                        data-partialtratype=${repdetail.part_tran_type},
+                                        data-tracurr=${repdetail.tran_crncy},
+                                        data-traamount=${repdetail.tran_amt},
+                                        data-tracat=${repdetail.tran_category}" onclick="editRecord(this)"></i></a>
+								</td>
+
+								<td><a data-toggle="tooltip" class="editrec" title="Click to delete this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-minus-circle" th:attr="data-custid=${repdetail.cust_id},
+                                        data-custname=${repdetail.cust_name},
+                                        data-custtype=${repdetail.cust_type},
+                                        data-custrating=${repdetail.cust_rating},
+                                        data-accnum=${repdetail.acct_no},
+                                        data-accname=${repdetail.acct_name},
+                                        data-tratype=${repdetail.tran_type},
+                                        data-trasubtype=${repdetail.tran_sub_type},
+                                        data-tradate=${#dates.format(repdetail.tran_date, 'dd-MM-yyyy')},
+                                        data-traid=${repdetail.tran_id},
+                                        data-partialtraid=${repdetail.part_tran_id},
+                                        data-partialtratype=${repdetail.part_tran_type},
+                                        data-tracurr=${repdetail.tran_crncy},
+                                        data-traamount=${repdetail.tran_amt},
+                                        data-tracat=${repdetail.tran_category}" onclick="deleteRecord(this)"></i></a>
+								</td>
+
+
+
+								<td th:text="${repdetail.cust_id    }">CHENNAI</td>
+								<td th:text="${repdetail.cust_name    }">CHENNAI</td>
+								<th:block th:switch="${repdetail.cust_type}">
+									<td th:case="'C'">Customer</td>
+									<td th:case="'E'">Employee</td>
+									<td th:case="'O'">Office</td>
+								</th:block>
+								<td th:text="${repdetail.cust_rating    }">CHENNAI</td>
+								<td th:text="${repdetail.acct_no    }">CHENNAI</td>
+								<td th:text="${repdetail.acct_name    }">CHENNAI</td>
+								<th:block th:switch="${repdetail.tran_type}">
+									<td th:case="'T'">XFER</td>
+									<td th:case="'L'">Clearing</td>
+									<td th:case="'C'">Cash</td>
+									<td th:case="''">XFER</td>
+								</th:block>
+								<td th:text="${repdetail.tran_sub_type    }">CHENNAI</td>
+								<td th:text="${#dates.format(repdetail.tran_date, 'dd/MM/yyyy')}"></td>
+
+								<td th:text="${repdetail.tran_id    }">CHENNAI</td>
+								<td th:text="${repdetail.part_tran_id    }">CHENNAI</td>
+								<th:block th:switch="${repdetail.part_tran_type}">
+									<td th:case="'D'">Dr</td>
+									<td th:case="'C'">Cr</td>
+								</th:block>
+								<td th:text="${repdetail.tran_crncy    }">CHENNAI</td>
+								<td th:text="${#numbers.formatDecimal(repdetail.tran_amt    ,1,'COMMA',2,'POINT')}"
+									align="right">CHENNAI</td>
+								<td th:text="${repdetail.tran_category    }">CHENNAI</td>
+
+
+							</tr>
+						</tbody>
+					</table>
+
+
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form th:object=${singledetail} id="dataedit" method="post">
+									<div class="form-group">
+										<div class="row">
+											<label class="col-sm-5">Customer Id</label> <input
+												class="form-control col-sm-5" type="number" th:field="*{cust_id}"
+												th:value="${cust_id}" id="custid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Customer Name</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{cust_name}"
+												th:value="${cust_name}" id="custname" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Customer Type</label>
+
+											<select class="form-control col-sm-5" th:field="*{cust_type}"
+												th:value="${cust_type}" id="custtype">
+												<option value="C">Customer</option>
+												<option value="E">Employee</option>
+												<option value="O">Office</option>
+											</select>
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Customer Rating</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{cust_rating}"
+												th:value="${cust_rating}" id="custrating">
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">Account Number</label> <input
+												class="form-control col-sm-5" type="number" th:field="*{acct_no}"
+												th:value="${acct_no}" id="accnum">
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Account Name</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{acct_name}"
+												th:value="${acct_name}" id="accname">
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Transaction Type</label>
+											<select class="form-control col-sm-5" type="text" th:field="*{tran_type}"
+												th:value="${tran_type}" id="tratype">
+												<option value="T">Transfer</option>
+												<option value="C">Clearing</option>
+												<option value="C">Cash</option>
+
+											</select>
+
+										</div>
+
+
+										<div class="row">
+											<label class="col-sm-5">Transaction Sub Type</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{tran_sub_type}"
+												th:value="${tran_sub_type}" id="trasubtype">
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">Transaction Date</label> <input
+												class="form-control col-sm-5 hasDatepicker" th:field="*{tran_date}"
+												th:value="${tran_date}" type="Date" id="tradate">
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">Transaction Id</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{tran_id}"
+												th:value="${tran_id}" id="traid">
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Partial Transaction Id</label>
+											<input class="form-control col-sm-5" type="number"
+												th:field="*{part_tran_id}" th:value="${part_tran_id}" id="partialtraid">
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">Partial Transaction Type</label>
+											<select class="form-control col-sm-5" type="text"
+												th:field="*{part_tran_type}" th:value="${part_tran_type}"
+												id="partialtratype">
+												<option value="C">Credit</option>
+												<option value="D">Debit</option>
+											</select>
+
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Transaction Currency</label> <input
+												class="form-control col-sm-5" type="text" th:field="*{tran_crncy}"
+												th:value="${tran_crncy}" id="tracurr">
+
+										</div>
+									</div>
+									<div class="row">
+										<label class="col-sm-5">Transaction Amount</label> <input
+											class="form-control col-sm-5" type="number" th:field="*{tran_amt}"
+											th:value="${tran_amt}" id="traamount">
+
+									</div>
+									<div class="row">
+										<label class="col-sm-5">Transaction Category</label> <input
+											class="form-control col-sm-5" type="number" th:field="*{tran_category}"
+											th:value="${tran_category}" id="tracat">
+
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" onclick="submitdataform(this);"
+									id="add">Add</button>
+								<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+									id="edit">Edit</button>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-------------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="datadelete">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-body" style="text-align: center">
+								<button type="button" class="close" data-dismiss="modal">×</button>
+								Are you Sure want to delete?
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary"
+									onclick="submitdataformdelete(this);">Submit</button>
+								<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- -----------------------------------Search modal form----------------------------------------------------->
+			<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+<a href="#"><i class="fas fa-caret-left fa-2x"
+                        th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+<input type="text" id="pageno" style="width: 30px"
+                        th:value="${reportdetails.number+1}"
+                        th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+                    of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+                        class="fas fa-caret-right fa-2x"
+                        th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+</div> -->
+			<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+		</div>
+		<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+	</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+
+</body>
+
+
+</html>

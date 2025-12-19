@@ -1,0 +1,3648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FX (MR5)" pageWidth="1300" pageHeight="1000" columnWidth="1260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ac9048bd-f98d-4c5f-ad94-580ca398a632">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LINUX"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="TRUE"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="REPORT_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from MR5 where report_date=$P{REPORT_DATE}]]>
+	</queryString>
+	<field name="R1_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R1_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_PRODUCT"/>
+	</field>
+	<field name="R1_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R1_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R1_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R1_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R1_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R1_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R1_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R1_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R1_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R1_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R1_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R1_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R1_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R1_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R1_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R2_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R2_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_PRODUCT"/>
+	</field>
+	<field name="R2_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R2_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R2_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R2_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R2_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R2_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R2_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R2_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R2_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R2_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R2_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R2_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R2_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R2_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R2_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R3_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R3_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_PRODUCT"/>
+	</field>
+	<field name="R3_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R3_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R3_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R3_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R3_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R3_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R3_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R3_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R3_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R3_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R3_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R3_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R3_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R3_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R3_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R4_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R4_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_PRODUCT"/>
+	</field>
+	<field name="R4_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R4_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R4_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R4_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R4_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R4_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R4_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R4_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R4_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R4_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R4_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R4_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R4_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R4_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R4_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R5_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R5_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_PRODUCT"/>
+	</field>
+	<field name="R5_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R5_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R5_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R5_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R5_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R5_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R5_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R5_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R5_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R5_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R5_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R5_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R5_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R5_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R5_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R6_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R6_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_PRODUCT"/>
+	</field>
+	<field name="R6_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R6_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R6_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R6_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R6_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R6_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R6_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R6_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R6_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R6_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R6_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R6_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R6_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R6_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R6_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R7_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R7_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_PRODUCT"/>
+	</field>
+	<field name="R7_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R7_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R7_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R7_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R7_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R7_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R7_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R7_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R7_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R7_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R7_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R7_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R7_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R7_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R7_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R8_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R8_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_PRODUCT"/>
+	</field>
+	<field name="R8_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R8_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R8_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R8_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R8_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R8_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R8_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R8_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R8_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R8_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R8_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R8_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R8_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R8_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R8_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R9_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R9_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_PRODUCT"/>
+	</field>
+	<field name="R9_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R9_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R9_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R9_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R9_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R9_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R9_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R9_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R9_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R9_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R9_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R9_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R9_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R9_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R9_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R10_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R10_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_PRODUCT"/>
+	</field>
+	<field name="R10_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R10_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R10_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R10_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R10_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R10_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R10_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R10_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R10_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R10_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R10_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R10_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R10_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R10_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R10_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R11_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R11_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_PRODUCT"/>
+	</field>
+	<field name="R11_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R11_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R11_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R11_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R11_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R11_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R11_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R11_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R11_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R11_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R11_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R11_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R11_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R11_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R11_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R12_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R12_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_PRODUCT"/>
+	</field>
+	<field name="R12_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R12_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R12_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R12_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R12_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R12_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R12_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R12_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R12_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R12_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R12_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R12_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R12_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R12_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R12_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R13_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R13_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_PRODUCT"/>
+	</field>
+	<field name="R13_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R13_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R13_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R13_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R13_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R13_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R13_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R13_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R13_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R13_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R13_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R13_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R13_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R13_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R13_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R14_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R14_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_PRODUCT"/>
+	</field>
+	<field name="R14_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R14_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R14_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R14_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R14_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R14_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R14_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R14_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R14_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R14_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R14_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R14_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R14_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R14_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R14_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R15_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R15_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_PRODUCT"/>
+	</field>
+	<field name="R15_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R15_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R15_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R15_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R15_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R15_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R15_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R15_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R15_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R15_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R15_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R15_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R15_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R15_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R15_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R16_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R16_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_PRODUCT"/>
+	</field>
+	<field name="R16_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R16_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R16_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R16_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R16_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R16_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R16_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R16_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R16_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R16_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R16_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R16_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R16_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R16_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R16_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R17_PRODUCT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="R17_PRODUCT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_PRODUCT"/>
+	</field>
+	<field name="R17_TOTAL_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R17_TOTAL_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_TOTAL_SPOT_CLAIM"/>
+	</field>
+	<field name="R17_TOTAL_SPOT_LIABILITY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R17_TOTAL_SPOT_LIABILITY"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_TOTAL_SPOT_LIABILITY"/>
+	</field>
+	<field name="R17_NET_SPOT_CLAIM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R17_NET_SPOT_CLAIM"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_NET_SPOT_CLAIM"/>
+	</field>
+	<field name="R17_NET_FOR_PURCHASE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R17_NET_FOR_PURCHASE"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_NET_FOR_PURCHASE"/>
+	</field>
+	<field name="R17_DELTA_WEIGHT_POSITION" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R17_DELTA_WEIGHT_POSITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_DELTA_WEIGHT_POSITION"/>
+	</field>
+	<field name="R17_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R17_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R17_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R17_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R17_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R18_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R18_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R18_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R18_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R18_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R18_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R19_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R19_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R19_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R19_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R19_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R19_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R20_NET_OVERALL_LONG" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R20_NET_OVERALL_LONG"/>
+		<property name="com.jaspersoft.studio.field.label" value="R20_NET_OVERALL_LONG"/>
+	</field>
+	<field name="R20_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R20_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R20_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="R21_NET_OVERALL_SHORT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="R21_NET_OVERALL_SHORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="R21_NET_OVERALL_SHORT"/>
+	</field>
+	<field name="REPORT_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="REPORT_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="REPORT_DATE"/>
+	</field>
+	<field name="REPORT_FROM_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="REPORT_FROM_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="REPORT_FROM_DATE"/>
+	</field>
+	<field name="REPORT_TO_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="REPORT_TO_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="REPORT_TO_DATE"/>
+	</field>
+	<field name="REPORT_SUBMIT_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="REPORT_SUBMIT_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="REPORT_SUBMIT_DATE"/>
+	</field>
+	<field name="ENTITY_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ENTITY_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTITY_FLG"/>
+	</field>
+	<field name="MODIFY_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MODIFY_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="MODIFY_FLG"/>
+	</field>
+	<field name="DEL_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEL_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEL_FLG"/>
+	</field>
+	<field name="BANK_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BANK_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="BANK_NAME"/>
+	</field>
+	<field name="REPORTING_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="REPORTING_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="REPORTING_DATE"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="50" height="10" uuid="14f132c1-a0b1-4a09-aebf-5d4674adc284"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="10" width="50" height="10" uuid="f2447f78-1f5a-4509-ba78-05a0325012a7"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="20" width="160" height="20" uuid="49100da0-5ee9-43e8-84f0-c4d0d14351ed"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="20" width="160" height="20" uuid="cafb85d3-018a-4212-8dd1-6300c3b9fae7"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="40" width="80" height="20" uuid="1586ce88-05b7-4860-8cd3-a52a7bd27376"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="40" width="110" height="20" uuid="c5d8c00a-671e-4594-889a-11a6ac4a06d3"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="130" y="40" width="310" height="20" backcolor="#C7C5C5" uuid="8db9325a-9ec0-4434-8a92-630d54865a4a"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[See Basel II, June 2006, Para 718(xxx)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="40" width="160" height="20" uuid="678d76b0-402d-4c86-8f33-1bee0a5e2c80"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="40" width="160" height="20" uuid="11cd4129-1f3b-4641-a117-5b95c8d57e50"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="20" width="500" height="20" uuid="d12dda99-c035-4f5a-a630-a8cb3634ffca"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARKET RISK: STANDARDISED APPROACHES FOR FOREIGN EXCHANGE RISK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="40" width="190" height="20" uuid="e2551590-a121-472a-8187-d64574e1af20"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="20" width="190" height="20" uuid="cd9edd11-89fd-4826-a901-1f56a80f2f53"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="60" width="110" height="20" uuid="d1bc6dcc-e466-4574-a6b8-867ee79a55bd"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="60" width="130" height="20" uuid="4ab45f78-f12e-47cf-81f9-58b4773ba37c"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="60" width="160" height="20" uuid="c6ac22df-de94-4f6c-aa79-a1b6277c119f"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="60" width="160" height="20" uuid="be9c4f30-6bd3-4d64-af2e-02b4e4fce50e"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="80" width="80" height="10" uuid="074d1768-efa6-46dc-9beb-07fce0a3b14d"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="80" width="110" height="10" uuid="e1b601ac-427e-4778-a1a2-c046a960eb56"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="80" width="130" height="10" uuid="51d7aab6-a7af-43fa-b422-efc386736d49"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="80" width="160" height="10" uuid="0904ba03-ae00-40e4-8de6-f4487e42639c"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="80" width="160" height="10" uuid="340c76ef-3e64-4873-b4c9-ac727f99e362"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="80" width="180" height="10" uuid="f4384772-d7a9-4268-bd66-3098820f39d8"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="60" width="80" height="20" uuid="38a4595d-814c-44b4-bf04-fbe22d4700b7"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="60" width="180" height="20" uuid="370b79ff-41e0-4b49-9419-8bce65dcd75c"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="80" width="190" height="10" uuid="68cc949b-ce91-4767-a6df-22907fe1e129"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="60" width="190" height="20" uuid="2f3ce699-f77e-4925-b567-b14c0cf02ede"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="60" width="160" height="20" uuid="c4501615-c27b-406f-81f2-b8086eba69b8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AED 000's]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="80" width="160" height="10" uuid="1db34d87-b3e4-45fb-b35e-17d7dfc64494"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="20" width="160" height="20" uuid="4d17e87b-5018-47a6-826f-c6ae4d7a13ac"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MR5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="40" width="160" height="20" uuid="ec869e65-9924-4ce8-b9fb-db18469011f6"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<summary>
+		<band height="735" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="50" y="0" width="80" height="30" backcolor="#C7C5C5" uuid="95a94d01-26c0-4079-99fb-40eb48ec09bd"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CURRENCY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="260" y="0" width="180" height="30" backcolor="#C7C5C5" uuid="bf70eada-8194-45e3-9bdd-13254228ef95"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL SPOT LIABILITIES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="130" y="0" width="130" height="30" backcolor="#C7C5C5" uuid="d3f1870e-a25d-4788-bcd4-2a28f0995b90"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL SPOT CLAIMS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="440" y="0" width="110" height="30" backcolor="#C7C5C5" uuid="77a08fce-28a4-4322-8789-a78f7be7d6aa"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NET SPOT CLAIM (LIABILITIES)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="550" y="0" width="190" height="30" backcolor="#C7C5C5" uuid="7b8b7854-c457-41f6-aa42-588fecbdeceb"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NET FORWARD PURCHASE (SALES)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="740" y="0" width="160" height="30" backcolor="#C7C5C5" uuid="7086a64c-ccfa-4a18-ae61-e85c7f33b61e"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Delta weighted positions for Options]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="900" y="0" width="160" height="30" backcolor="#C7C5C5" uuid="f238983e-6014-4c88-bd7c-ee3213bb577d"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NET OVERALL LONG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1060" y="0" width="160" height="30" backcolor="#C7C5C5" uuid="ccff6c32-6d81-42bd-aecc-53b87c2afb7c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NET OVERALL (SHORT)]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="30" width="110" height="30" backcolor="#C7C5C5" uuid="76e8b8b6-99a2-488f-b789-2929f166e37a">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D9-E9"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="30" width="160" height="30" backcolor="#C7C5C5" uuid="084c0e30-be6a-4a8a-a267-d126c072feae">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F9+G9+H9&lt;0,F9+G9+H9,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="30" width="160" height="30" backcolor="#C7C5C5" uuid="71f445ce-967f-4371-95a4-64b3e59bc43f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="30" width="130" height="30" backcolor="#C7C5C5" uuid="f47e3cbf-9db7-45dc-8c59-5def38cfd204"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="30" width="180" height="30" backcolor="#C7C5C5" uuid="d3079397-4dbb-4db1-9451-3565ccecc530"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="30" width="190" height="30" backcolor="#C7C5C5" uuid="17fd8494-4812-4ddc-bb09-f4dd18e89b89"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="30" width="80" height="30" backcolor="#C7C5C5" uuid="1d83bf59-bd4c-4163-a1d0-dfa99a1f7a7c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="30" width="160" height="30" backcolor="#C7C5C5" uuid="e8f0c0ec-788b-45ca-9a7f-ee08e8f6a8c8">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F9+G9+H9>0,F9+G9+H9,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R1_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="60" width="180" height="30" backcolor="#C7C5C5" uuid="12e5784e-b3ba-4675-ba58-8f69e2fa2641"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="60" width="160" height="30" backcolor="#C7C5C5" uuid="c684e197-1d8f-4e6e-a258-5c132f5fbf08"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="60" width="190" height="30" backcolor="#C7C5C5" uuid="7b0a887d-6fad-4f13-89d0-d93a8ef1c7a1"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="60" width="160" height="30" backcolor="#C7C5C5" uuid="0185f102-2741-44ca-9b65-ded2f5ca9f46">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F10+G10+H10>0,F10+G10+H10,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="60" width="110" height="30" backcolor="#C7C5C5" uuid="bd453436-0d14-49e6-8e8a-eab3a24a81e2">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D10-E10"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="60" width="130" height="30" backcolor="#C7C5C5" uuid="67da3b46-e381-4be9-ab8e-d920419e87eb"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="60" width="160" height="30" backcolor="#C7C5C5" uuid="d02259bc-e1d2-47e1-ba4d-a1ec749833b9">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F10+G10+H10&lt;0,F10+G10+H10,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="60" width="80" height="30" backcolor="#C7C5C5" uuid="06ad637e-1219-4d0a-8301-7871c408d7f5"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R2_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="90" width="80" height="30" backcolor="#C7C5C5" uuid="88016b72-ac27-4e8c-b169-9502cb413ece"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="90" width="160" height="30" backcolor="#C7C5C5" uuid="14d8ae8e-b2d1-4f38-bc48-7feec33389db">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F11+G11+H11&lt;0,F11+G11+H11,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="90" width="160" height="30" backcolor="#C7C5C5" uuid="bd113acc-6d9f-45e2-951e-27a0f9b66e31">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F11+G11+H11>0,F11+G11+H11,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="90" width="110" height="30" backcolor="#C7C5C5" uuid="1a2b521f-9b34-4652-a5e1-e5e0a87b0a79">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D11-E11"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="90" width="160" height="30" backcolor="#C7C5C5" uuid="42ad9bd2-fb8c-4c90-9adc-b0b504a52bfe"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="90" width="130" height="30" backcolor="#C7C5C5" uuid="be2b1ef9-6427-4756-a8d2-19af2954ce83"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="90" width="180" height="30" backcolor="#C7C5C5" uuid="ec482b92-154d-4843-966f-e83d62caf47b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="90" width="190" height="30" backcolor="#C7C5C5" uuid="12346cab-0f38-4a6c-9025-5326415341f4"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R3_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="120" width="160" height="30" backcolor="#C7C5C5" uuid="6e8993e9-d96c-42c7-ad47-d669f4d7a55d">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F12+G12+H12>0,F12+G12+H12,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="120" width="160" height="30" backcolor="#C7C5C5" uuid="66753f3d-4f5d-4cf8-aec4-f6c70aa5208c">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F12+G12+H12&lt;0,F12+G12+H12,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="120" width="130" height="30" backcolor="#C7C5C5" uuid="78d0ef80-4b50-4115-9841-9b0a8d5f4847"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="120" width="80" height="30" backcolor="#C7C5C5" uuid="f78cd642-4f88-4e62-b2ee-8edf0614b7c6"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="120" width="190" height="30" backcolor="#C7C5C5" uuid="3f21e117-a1d0-4f5f-be38-3585973e0b3b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="120" width="180" height="30" backcolor="#C7C5C5" uuid="b02d9ecc-52ce-4f43-be95-f9d6e4c67cef"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="120" width="160" height="30" backcolor="#C7C5C5" uuid="03b62c93-86ed-4db6-ac7b-8bb2e63fbdc8"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="120" width="110" height="30" backcolor="#C7C5C5" uuid="35e50fb8-f57c-4168-b9d0-e5e65c6c8514">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D12-E12"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R4_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="150" width="160" height="30" backcolor="#C7C5C5" uuid="94a75a80-bf16-4e96-b550-5a217e81cd89">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F13+G13+H13&lt;0,F13+G13+H13,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="150" width="110" height="30" backcolor="#C7C5C5" uuid="c262aebc-85cf-4b70-be36-a5d6bd66fb47">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D13-E13"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="150" width="160" height="30" backcolor="#C7C5C5" uuid="aff9d76b-0afb-4d3d-af18-d239686691cd"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="150" width="190" height="30" backcolor="#C7C5C5" uuid="c6b3475e-e171-433c-a6ef-cfe9f50f41f7"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="150" width="180" height="30" backcolor="#C7C5C5" uuid="682725f3-4052-43cc-a386-d416d3f65c3a"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="150" width="130" height="30" backcolor="#C7C5C5" uuid="9d818308-0762-4fad-ab8e-922dff9a4755"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="150" width="160" height="30" backcolor="#C7C5C5" uuid="5aac2ce3-3add-48f1-aeeb-44af390e89be">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F13+G13+H13>0,F13+G13+H13,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="150" width="80" height="30" backcolor="#C7C5C5" uuid="f657fab0-4f20-4c1a-8c2a-7ddf86e59edc"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R5_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="180" width="180" height="30" backcolor="#C7C5C5" uuid="df3ec1a6-659d-4a85-909a-04233f611b5b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="180" width="160" height="30" backcolor="#C7C5C5" uuid="2a080d3d-e48e-486d-a559-96ad01aad150">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F14+G14+H14&lt;0,F14+G14+H14,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="180" width="130" height="30" backcolor="#C7C5C5" uuid="0f9cd58f-3ed0-47a9-a972-edb7f68fd088"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="180" width="110" height="30" backcolor="#C7C5C5" uuid="67a7b2be-1946-49b3-969f-73f94bb58b82">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D14-E14"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="180" width="160" height="30" backcolor="#C7C5C5" uuid="ca1ef06e-b130-4618-b839-9b6ac1cc0ebf">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F14+G14+H14>0,F14+G14+H14,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="180" width="80" height="30" backcolor="#C7C5C5" uuid="55ef2538-fc51-47e2-932d-db7ca7ee0497"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="180" width="160" height="30" backcolor="#C7C5C5" uuid="d56b80cc-bddb-4b34-ab1f-5a50a8b6c1ef"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="180" width="190" height="30" backcolor="#C7C5C5" uuid="1e7a9b9b-0319-4777-9ea9-5ee5583831b7"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R6_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="210" width="160" height="30" backcolor="#C7C5C5" uuid="c1ee46cf-0f32-4a94-aefd-9084f4fc4c71">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F15+G15+H15&lt;0,F15+G15+H15,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="210" width="160" height="30" backcolor="#C7C5C5" uuid="5f3a7f2a-c50e-4ec1-9f7a-732de658ccb1">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F15+G15+H15>0,F15+G15+H15,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="210" width="190" height="30" backcolor="#C7C5C5" uuid="6b2a80ee-8b83-4e1e-8013-04e0d98c6f23"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="210" width="110" height="30" backcolor="#C7C5C5" uuid="0f520ee2-6660-4ecb-8e94-f99396e7e8e9">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D15-E15"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="210" width="180" height="30" backcolor="#C7C5C5" uuid="1a96c0bc-288d-4ab7-a9f7-a4376940c3fd"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="210" width="160" height="30" backcolor="#C7C5C5" uuid="66ee74b2-2d53-4053-9839-fa2002cb429f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="210" width="80" height="30" backcolor="#C7C5C5" uuid="9262121d-ab63-4170-a86a-6e5abc87ad8f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="210" width="130" height="30" backcolor="#C7C5C5" uuid="ceb864dc-7e3a-47a7-a2d0-178b5c63e6db"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R7_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="240" width="130" height="30" backcolor="#C7C5C5" uuid="46b8256f-c206-459f-af73-799d41fe5dff"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="240" width="180" height="30" backcolor="#C7C5C5" uuid="96683924-7b2f-4971-9f68-80012f03d923"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="240" width="80" height="30" backcolor="#C7C5C5" uuid="6c077be9-fa51-49a8-a6d0-0a3361ee2d28"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="240" width="160" height="30" backcolor="#C7C5C5" uuid="fa6d4e22-aee1-425c-afe9-30297ff5bfb4">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F16+G16+H16>0,F16+G16+H16,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="240" width="110" height="30" backcolor="#C7C5C5" uuid="dc088b49-dde3-4781-ada6-6cef40f44c07">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D16-E16"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="240" width="190" height="30" backcolor="#C7C5C5" uuid="7100a19f-f062-458f-b6d3-2ce3d4b240e1"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="240" width="160" height="30" backcolor="#C7C5C5" uuid="d6527482-f49f-4b8b-aa3a-86513da9fc31"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="240" width="160" height="30" backcolor="#C7C5C5" uuid="deb6644e-c943-436b-8777-f8a372a47df5">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F16+G16+H16&lt;0,F16+G16+H16,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R8_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="270" width="110" height="30" backcolor="#C7C5C5" uuid="dad6556a-7ea8-4f13-98e9-4e56bd29c3d2">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D17-E17"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="270" width="190" height="30" backcolor="#C7C5C5" uuid="050848db-2c85-4350-ae00-d1d60ef75d69"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="270" width="160" height="30" backcolor="#C7C5C5" uuid="32deab0c-873b-4ff6-8062-f312965a12c1"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="270" width="130" height="30" backcolor="#C7C5C5" uuid="c17943da-894f-4101-bfc5-e728ac65c6b1"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="270" width="160" height="30" backcolor="#C7C5C5" uuid="4fbc092d-3a1e-46c9-9c4a-bf0d59d2c57c">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F17+G17+H17&lt;0,F17+G17+H17,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="270" width="180" height="30" backcolor="#C7C5C5" uuid="eb8e3b94-89f8-43a4-9fc1-52ec9bccff0f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="270" width="160" height="30" backcolor="#C7C5C5" uuid="6f464af6-2056-485b-a6e8-215cd00de908">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F17+G17+H17>0,F17+G17+H17,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="270" width="80" height="30" backcolor="#C7C5C5" uuid="8807e498-a1e8-4911-95e6-1f84278dc5cf"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R9_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="300" width="110" height="30" backcolor="#C7C5C5" uuid="88a4007e-93fd-46bc-80d1-dcf3a82f7c46">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D18-E18"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="300" width="160" height="30" backcolor="#C7C5C5" uuid="0af93ff7-d8c4-4b46-84dc-14bcb1d756d4">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F18+G18+H18&lt;0,F18+G18+H18,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="300" width="160" height="30" backcolor="#C7C5C5" uuid="3493242b-e018-4477-97ef-e04c2500c2cb"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="300" width="160" height="30" backcolor="#C7C5C5" uuid="bd7a1c1f-5d79-4558-a25b-a7bad0f90d3f">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F18+G18+H18>0,F18+G18+H18,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="300" width="80" height="30" backcolor="#C7C5C5" uuid="adec3510-03b7-427e-9a37-ce65fa480922"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="300" width="130" height="30" backcolor="#C7C5C5" uuid="b1e5de58-d002-4403-8fd1-32e07c8de967"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="300" width="190" height="30" backcolor="#C7C5C5" uuid="d5aaff1e-5b7b-4f72-b90d-78ae35ebfa49"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="300" width="180" height="30" backcolor="#C7C5C5" uuid="ef8da3bf-0e36-470c-97f3-c818b3e25523"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R10_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="330" width="190" height="30" backcolor="#C7C5C5" uuid="b4bab0e7-fc85-4476-9d82-d1417d00370c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="330" width="180" height="30" backcolor="#C7C5C5" uuid="0481adee-aed1-4109-a391-1da402d5d3e9"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="330" width="160" height="30" backcolor="#C7C5C5" uuid="29fc6739-4d6c-4551-b02d-3c8bf5586b84">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F19+G19+H19>0,F19+G19+H19,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="330" width="80" height="30" backcolor="#C7C5C5" uuid="07b9257b-6b06-4595-a8dd-1fc564e54d77"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="330" width="160" height="30" backcolor="#C7C5C5" uuid="f23870f7-8b5a-494b-86b8-0a9ed9a855e8"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="330" width="110" height="30" backcolor="#C7C5C5" uuid="9197cffe-5840-4d0d-954a-3fdea6e8468f">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D19-E19"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="330" width="160" height="30" backcolor="#C7C5C5" uuid="e6f6f097-5978-4387-b774-5fa03a2e45f8">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F19+G19+H19&lt;0,F19+G19+H19,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="330" width="130" height="30" backcolor="#C7C5C5" uuid="9175da0d-bce6-44ce-8d66-7826a2656145"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R11_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="360" width="130" height="30" backcolor="#C7C5C5" uuid="2a9dd7a1-1ac2-4aa4-9e06-37bc2b237cd6"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="360" width="160" height="30" backcolor="#C7C5C5" uuid="8cbb6fab-d272-4a38-8ede-21e550b488a0"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="360" width="80" height="30" backcolor="#C7C5C5" uuid="c5eb723d-544d-4f63-aa74-efac97905dcd"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="360" width="190" height="30" backcolor="#C7C5C5" uuid="10fa5640-9bc4-4fbb-abea-8ae73f294ee0"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="360" width="160" height="30" backcolor="#C7C5C5" uuid="136092c0-0e6a-44d1-b2bb-d56e027b230e">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F20+G20+H20>0,F20+G20+H20,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="360" width="160" height="30" backcolor="#C7C5C5" uuid="63eb2f6c-2b58-4ad3-901c-7f182660d3b6">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F20+G20+H20&lt;0,F20+G20+H20,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="360" width="110" height="30" backcolor="#C7C5C5" uuid="c4a92238-d713-4480-a03c-89770c2a8884">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D20-E20"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="360" width="180" height="30" backcolor="#C7C5C5" uuid="f2e80552-e80c-480d-b1a4-31b9a1aecf3e"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R12_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="390" width="130" height="30" backcolor="#C7C5C5" uuid="aa0360cc-30b0-4d9e-a00b-53f8529a0d7e"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="390" width="80" height="30" backcolor="#C7C5C5" uuid="cfb49b62-e81b-48c1-a70f-85a2425f8c13"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="390" width="110" height="30" backcolor="#C7C5C5" uuid="a2b2a0f4-76a2-44c5-8b2f-87eae120adbf">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D21-E21"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="390" width="160" height="30" backcolor="#C7C5C5" uuid="12a219ca-f1a5-4dae-b339-feef22dd5fae">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F21+G21+H21>0,F21+G21+H21,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="390" width="180" height="30" backcolor="#C7C5C5" uuid="30083ec6-7703-44a8-88fd-063bef795dae"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="390" width="190" height="30" backcolor="#C7C5C5" uuid="a6db0793-0f25-4c1b-b6c8-859c0ae39496"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="390" width="160" height="30" backcolor="#C7C5C5" uuid="8a447d30-7723-4f6e-b1d0-cfa10c6b5dbd"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="390" width="160" height="30" backcolor="#C7C5C5" uuid="8b8658a4-e923-4fb1-a55f-2c65cea22953">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F21+G21+H21&lt;0,F21+G21+H21,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R13_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="420" width="180" height="30" backcolor="#C7C5C5" uuid="45c71fd1-721d-4b5d-aeac-38f412d2fc31"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="420" width="80" height="30" backcolor="#C7C5C5" uuid="9d4862a0-e2b1-4f1e-9fdb-4c5b8f5d8929"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="420" width="130" height="30" backcolor="#C7C5C5" uuid="ae437f36-b5fd-4be0-aa30-85eadf83b287"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="420" width="160" height="30" backcolor="#C7C5C5" uuid="61e1568b-e9c8-4627-9dc2-b84bff1f2f85"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="420" width="160" height="30" backcolor="#C7C5C5" uuid="a77daf32-0940-47ed-b623-e12b03ef7da3">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F22+G22+H22>0,F22+G22+H22,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="420" width="110" height="30" backcolor="#C7C5C5" uuid="c2c9b5ea-ebdc-4c61-997f-baf39f8800d3">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D22-E22"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="420" width="160" height="30" backcolor="#C7C5C5" uuid="c19299ae-6449-4065-b612-ad8b37ab2daf">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=IF(F22+G22+H22&lt;0,F22+G22+H22,0)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="420" width="190" height="30" backcolor="#C7C5C5" uuid="cf2a16a6-1768-4a6b-9e6a-71a08db01967"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R14_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="450" width="110" height="15" backcolor="#C7C5C5" uuid="9f977b08-892d-4280-8859-c10d44503990">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=SUM(F9:F21)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="450" width="130" height="15" backcolor="#C7C5C5" uuid="f9aae275-0d43-4bbe-8a1f-b9eb13e914bb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=SUM(D9:D21)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="450" width="190" height="15" backcolor="#C7C5C5" uuid="99cb404f-c15d-4c48-9b46-527be5c7ece2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=SUM(G9:G21)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="450" width="80" height="15" backcolor="#C7C5C5" uuid="c7004955-b5a8-4a2d-b0a8-48b51026e177">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="450" width="160" height="15" backcolor="#C7C5C5" uuid="3c35044c-4480-4870-b45b-4e2e248b9e05">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=SUM(J9:J21)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="450" width="160" height="15" backcolor="#C7C5C5" uuid="3a99b777-8196-4437-946e-c1bbfb573c8b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=SUM(H9:H21)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="450" width="160" height="15" backcolor="#C7C5C5" uuid="a1e25560-59c5-4b75-a56c-356fcd4b2aff">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=SUM(I9:I21)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="450" width="180" height="15" backcolor="#C7C5C5" uuid="0b56743f-85c0-4a06-a926-a89da417fbbd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=SUM(E9:E21)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R15_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="465" width="130" height="30" backcolor="#C7C5C5" uuid="d8d72859-bd57-44f2-9aff-9edc3fbfdf70"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="465" width="110" height="30" backcolor="#C7C5C5" uuid="f9f0b7e6-1e3e-413e-aa75-2ef9e48c4845">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=D24-E24"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="465" width="80" height="30" backcolor="#C7C5C5" uuid="867379ae-d96c-4450-8a3e-998ab0523e5c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="465" width="190" height="30" backcolor="#C7C5C5" uuid="89fc8683-8f81-4e0a-a3cc-9551ab0c2b88"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="465" width="160" height="30" backcolor="#C7C5C5" uuid="1a2366d7-8038-4f0d-971e-48e931f997b6"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="465" width="180" height="30" backcolor="#C7C5C5" uuid="4524a2da-3039-4d03-8de5-084a7439b1c9"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="465" width="160" height="30" backcolor="#C7C5C5" uuid="637f28f5-f101-4798-8f74-924368a642e7"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="465" width="160" height="30" backcolor="#C7C5C5" uuid="c421226c-1b2c-4eb0-bd0f-882c61b927b8"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R16_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="495" width="1170" height="15" uuid="690a26c2-dd1a-4672-80c1-1b7d2bbd1e80"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="440" y="510" width="110" height="30" backcolor="#C7C5C5" uuid="0dd03441-c440-47b1-95c6-fa71e383f0ef">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=+F24+F23"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_NET_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="1060" y="510" width="160" height="30" backcolor="#C7C5C5" uuid="6ec37d20-caf1-4fef-b903-93c46c6c855b">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=+J24+J23"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="550" y="510" width="190" height="30" backcolor="#C7C5C5" uuid="50c146a2-75bc-4f29-a74f-87e6bc0e0baf">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=+G24+G23"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_NET_FOR_PURCHASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="260" y="510" width="180" height="30" backcolor="#C7C5C5" uuid="37d54dc7-336a-4f25-bbb0-842ce799cb4d">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=+E24+E23"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_TOTAL_SPOT_LIABILITY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="900" y="510" width="160" height="30" backcolor="#C7C5C5" uuid="0dab6d66-9d6d-4fcf-951d-8547a7fd9a9a">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=+I24+I23"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="130" y="510" width="130" height="30" backcolor="#C7C5C5" uuid="769b2d30-96fe-438f-89f5-730ddec3a9f1">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=+D24+D23"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_TOTAL_SPOT_CLAIM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="740" y="510" width="160" height="30" backcolor="#C7C5C5" uuid="b13a38c1-cc9a-439e-8f94-8d31efee1485">
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=+H24+H23"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_DELTA_WEIGHT_POSITION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="50" y="510" width="80" height="30" backcolor="#C7C5C5" uuid="cdfee1eb-b13b-4d5f-8f77-f5cf06337e10"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R17_PRODUCT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="540" width="80" height="15" uuid="71915649-7779-456b-810a-dae7b8e4602c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="540" width="130" height="15" uuid="8884d9d7-84ea-4df4-900a-58faa7bd3ae8">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="540" width="180" height="15" uuid="a245f768-fd23-40b5-92f4-42483f274c39">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="540" width="110" height="15" uuid="46d05e46-3334-4c71-9ab0-726814af31a5">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="540" width="190" height="15" uuid="72f09fcc-1e1f-4fbf-b174-6c4ca12053a0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="540" width="160" height="15" uuid="d11ca5e8-97e6-40a0-b291-2c9f648a2fb0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="540" width="160" height="15" uuid="74c9c779-3185-4938-ace0-5a1459551f83">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="540" width="160" height="15" uuid="a5dabcd7-8e05-4bf4-88df-bbc287c8651d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="555" width="80" height="15" uuid="8909ac23-75fc-4a26-872f-0767ccd4addc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Less]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="130" y="555" width="770" height="15" backcolor="#FFF830" uuid="f97bb733-1137-465e-b363-d4d0924aed63">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Net Open positions in US$ and AED pegged to US$]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="1060" y="555" width="160" height="15" backcolor="#FFF830" uuid="908c64eb-5c1b-45b0-9077-f09366445012">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=J9"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R18_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="900" y="555" width="160" height="15" backcolor="#FFF830" uuid="bf433c7e-9a96-4334-a9b4-1cd88ca4e241">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=I9"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R18_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="570" width="80" height="15" uuid="b95fbfab-7789-401d-b43d-570a83b827e8">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="570" width="770" height="15" uuid="63df33f0-3a92-444b-a0bb-72a835bccc6b">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="570" width="160" height="15" uuid="aa8e21db-c51b-43b8-be71-7174b3b57017">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="570" width="160" height="15" uuid="675f8414-f37a-46eb-8094-ba692a8f955c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="585" width="80" height="15" uuid="f9a533d2-4223-4f57-bfdd-8d669fb14628">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="585" width="770" height="15" uuid="fee8640e-5bd6-4a74-9de5-abe4d292af4a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Aggregate Long and short positions excluding US$ and AED pegged to US$]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="1060" y="585" width="160" height="15" uuid="781f0fcf-4379-4dc0-89aa-4919f6fc2cd3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=J26-J28"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R19_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="900" y="585" width="160" height="15" uuid="eb269af2-9a5c-41f4-aa6c-3c37514d1625">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=I26-I28"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R19_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="260" y="600" width="180" height="15" uuid="65bc476e-46c8-4698-91a4-aeaca580e640">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="600" width="160" height="15" uuid="f303f1f6-6a39-4ae2-9494-68ed6b40787e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Aggregate Short]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="600" width="160" height="15" uuid="06d75484-57f5-4e39-a2bb-656ab486232c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Aggregate Long]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="600" width="130" height="15" uuid="6601e57d-50cc-4c45-9128-b60b957df277">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="600" width="80" height="15" uuid="efefa5b4-101c-49d2-847b-deaa06c5b6e5">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="600" width="110" height="15" uuid="80d1ace2-cb7c-4a2a-87dd-be4b7b010c9c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="600" width="190" height="15" uuid="39a8a491-fddf-4f64-9557-97703455549f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="600" width="160" height="15" uuid="414a29d6-a893-474e-849a-20702a8ae47c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="615" width="180" height="15" uuid="fdb6bd64-f994-4c65-a0d2-fac1a78b4bc8">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="615" width="160" height="15" uuid="b150fa70-aff1-4e56-b549-eded8b208929">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="615" width="160" height="15" uuid="a635db0a-ebc5-4087-89d4-133e39da683c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="615" width="130" height="15" uuid="8bc37a8b-a62e-48c7-8f21-80b19a65f18b">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="615" width="80" height="15" uuid="3f0fbfee-f094-4e7c-a7ab-451b5868bfca">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="615" width="110" height="15" uuid="b0db9cdb-dd1a-400e-909a-d97d6f6f864d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="615" width="190" height="15" uuid="74269c53-32b1-41a4-97de-686bb74d0c8a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="615" width="160" height="15" uuid="1e40a3f0-5034-4866-9d7f-7a01e052fdb6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="630" width="80" height="15" uuid="628c0015-44e4-44d7-8195-425a0f3f8fa0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="260" y="630" width="640" height="15" backcolor="#C7C5C5" uuid="af90ebd2-37a8-44cc-aec8-b6a924ee4ff4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Higher of the Aggregate of net overall long/ short open position = Risk weighted Assets]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="630" width="130" height="15" uuid="991f4480-86b3-4867-8b9d-828deea73559">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="900" y="630" width="160" height="15" uuid="8a12a5b4-8b42-48c9-9fe3-5a65edc055a3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R20_NET_OVERALL_LONG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="1060" y="630" width="160" height="15" uuid="2652b427-a47b-4994-8bd1-3903a0b09eda">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=(IF(ABS(I30)>ABS(J30),ABS(I30),ABS(J30)))+ABS(I22+J22)"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R20_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="660" width="80" height="15" uuid="a618d776-f7fe-4466-ba6c-0c633ac9fe4d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="660" width="180" height="15" uuid="e8fd8d42-72db-4617-b64f-1c91959d6c0e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="550" y="660" width="510" height="15" backcolor="#C7C5C5" uuid="8ad4d581-ec6a-4892-957b-590fe660bc0d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[CAPITAL CHARGE = RWA x8%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="660" width="130" height="15" uuid="10e9416c-b022-40cb-8ccf-cecb68b0f417">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="1060" y="660" width="160" height="15" uuid="5876f575-795e-4d24-85a9-ac62ca891946">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.export.xls.formula"><![CDATA["=(+J33*8)/100"]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{R21_NET_OVERALL_SHORT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="440" y="660" width="110" height="15" uuid="3778ed63-c392-4419-b9a7-4bd84ff23db6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="645" width="80" height="15" uuid="f05dfe47-3a18-43b6-a38d-67ed76115b10">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="645" width="180" height="15" uuid="a1fd8e71-2222-45ca-91e4-ec15ceb52fac">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="645" width="190" height="15" uuid="22daff06-3647-4aef-ba16-22fde1dd4d5b">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="645" width="130" height="15" uuid="dbb477d9-cbe6-42cd-a451-35fde25d905f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="645" width="160" height="15" uuid="552ddb4e-cce4-4020-96c1-d869952c666c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="645" width="160" height="15" uuid="4396f9e0-8651-4b2e-84b1-0d80d5127ebe">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="645" width="110" height="15" uuid="3f3881a0-7c79-4e7c-a0f9-5dbfede2a1f1">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="645" width="160" height="15" uuid="82108a92-be64-46b2-a606-00521d0472f9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="675" width="500" height="15" uuid="d59b9616-5a47-43d0-97d2-43eabd0ecfdb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Total long claims and total spot liabilities have to be inserted in absolute amounts.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="675" width="190" height="15" uuid="18f16f7d-a093-4a89-926c-db4ba77375a2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="675" width="160" height="15" uuid="78c887be-f530-44f6-81ec-7b889f0e5caa">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="675" width="160" height="15" uuid="bbcb559f-5e0b-47c2-a1a4-a8d64ba53cbc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="675" width="160" height="15" uuid="7e0608a6-1f40-4fa0-9470-b35ec7e2933f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="690" width="80" height="15" uuid="ae2bf6dd-7b9c-456f-8e2c-7d2392877667">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="690" width="190" height="15" uuid="c43cab06-4d5a-4e6e-a9d9-664ecc0a524d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="690" width="110" height="15" uuid="367c065a-6f98-4759-b38d-65b4fd9e2367">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="900" y="690" width="160" height="15" uuid="66195ba3-1eee-467b-910a-af951f6fb9a1">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="690" width="180" height="15" uuid="5b2cac89-7739-4c58-80fd-1775b3bba565">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1060" y="690" width="160" height="15" uuid="b937b707-bd9f-481a-96de-6d7a12cbc62f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="690" width="160" height="15" uuid="5c92eac8-04a0-4832-b172-f2078dcaf488">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="690" width="130" height="15" uuid="20edd2d6-69d9-40da-a929-3388cba38366">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="705" width="80" height="15" uuid="ffec8c22-7c5a-4eb9-97f9-f125c7161baa">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="705" width="190" height="15" uuid="75119d25-fb32-462e-b9b0-0c6155df3ec6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="705" width="110" height="15" uuid="2e1e6c47-ba69-4183-92c1-3a54949dc840">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="900" y="705" width="320" height="15" uuid="6d26dbcd-a9cf-4159-88a4-674a318feafb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BANK_NAME}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="260" y="705" width="180" height="15" uuid="eac096ce-f35d-4392-aa77-c3ac07bf528f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="705" width="160" height="15" uuid="328aaf30-b028-43a1-9428-7a3ce17f4f48">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name of Bank:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="705" width="130" height="15" uuid="cb5a120f-fc44-42d1-908d-020b50db10e7">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="720" width="80" height="15" uuid="a07e6ba6-dcb0-42f1-9092-11436fd19bc2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="720" width="190" height="15" uuid="00acb437-f41e-4448-b9ac-d29f897be334">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="720" width="110" height="15" uuid="faf37121-42ac-44ee-abf4-c2857e2a85d2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="DD/MM/YYYY">
+				<reportElement x="900" y="720" width="320" height="15" uuid="4db47d9a-b5fd-4d99-a813-d4d724dc3b6c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REPORT_DATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="260" y="720" width="180" height="15" uuid="5e237091-08ee-431c-b56b-25353707f129">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="720" width="160" height="15" uuid="4db32b7b-7672-442c-951b-1e45f230b668">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reporting Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="720" width="130" height="15" uuid="39ea50bd-2129-4037-820d-0d9b6f092d96">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

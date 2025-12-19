@@ -1,0 +1,3612 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: 
+CREATED ON	: 
+PURPOSE		: QUARTELY REPORT
+TESTING     : ARUN R -24.1.24
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+			location.href = "/BRBS/BRFArchival";
+
+		}
+		function back() {
+			window.history.back();
+		}
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+
+		/*]]>*/
+	</script>
+	<style>
+		.showInputBox {
+			border: none;
+			/* Remove border */
+			background: transparent;
+			/* Remove background */
+			padding: 0;
+		}
+
+		.showtext {
+			border: none;
+			/* Remove border */
+			background: transparent;
+			/* Remove background */
+			padding: 0;
+		}
+	</style>
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.form-control {
+			display: -webkit-inline-box;
+		}
+
+		.form-control-sm {
+			width: auto;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+	</script>
+
+	<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(
+					a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(
+					a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document
+				.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf32',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+	</script>
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-032-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+					} else if (filetype == "BRF") {
+						a.download = '011-BRF-032-A' + ".xls"; // assuming .pdf extension for PDF files
+					} else {
+						a.download = '011-BRF-032-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+
+					// Set the appropriate message based on the downloaded filetype
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-32-ARCH ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text(
+							'Downloaded BRF-32 Detail Excel' + ".xlsx");
+					} else if (filetype == "BRF") {
+						$('#customAlertBody').text('Downloaded BRF 32-ARCH ' + ".xls"); // assuming .pdf extension for PDF files
+					} else {
+						$('#customAlertBody').text('Downloaded BRF-32-ARCH ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+	</script>
+	<script>
+		function ModifySubmit(a) {
+			alert('Modify Data')
+			var asondate = a.getAttribute("data-fromDate");
+			/* alert(asondate) */
+			var e = document.getElementById("LEGALCASE");
+			var value = e.value;
+			var text = e.options[e.selectedIndex].text;
+			/* alert(text) */
+			// Get the table cell where the value should be displayed
+			if ($("#Report_Detail_Edit").valid()) {
+				var url = './modifyRecord32?asondate=' + asondate;
+				$("#Report_Detail_Edit").attr('action', url);
+				var options = {
+					success: showResponse
+				};
+				$("#Report_Detail_Edit").ajaxSubmit(options);
+				function showResponse(responseText, statusText, xhr, $form) {
+					/* alert("Success"); */
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+					// Show the button again after the request is completed
+					showButton();
+				}
+
+			}
+		}
+
+		function verifySubmit(a) {
+			var asondate = a.getAttribute("data-fromDate");
+			$.ajax({
+				url: './verifyBRF32Report?asondate=' + asondate,
+				type: 'POST',
+				success: function (responseText, statusText, xhr, $form) {
+					alert("Success");
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+				},
+				error: function (error) {
+					console.log("Error fetching data: ", error);
+				}
+			});
+		}
+		function clickEditbutton() {
+			alert('EDIT DATA');
+			$('#verify_btn').hide();
+			$('.showInputBox').removeAttr("readonly");
+			$(".showtext").removeAttr("readonly");
+			$('#cancelRecord').prop("disabled", false);
+			$('.ModifySubmitBtn').show();
+			$('#btnBack_edit').show();
+			$("#btnBack").hide();
+			removeCommas();
+		}
+
+		function CancelEdit(event) {
+			event.preventDefault();
+
+			$(".showInputBox").each(function () {
+				var value = $(this).val();
+				var formattedValue = numberWithCommas(value);
+				$(this).val(formattedValue);
+			});
+			$(".showInputBox").prop("readonly", true);
+			$('#cancelRecord').prop("disabled", true);
+			$('.ModifySubmitBtn').hide();
+			$("#btnBack_edit").hide();
+			$("#btnBack").show();
+		}
+
+		function verifyscreen(a) {
+			var modFlag = a.getAttribute("data-mofifyFlag");
+			var modUser = a.getAttribute("data-mofifyUser");
+			var loginUser = a.getAttribute("data-loginUser");
+			if (modFlag == "" || modFlag == "N") {
+				$('#alert_Modify').modal("toggle");
+			} else if (modUser == "" || loginUser == "" || modUser == loginUser) {
+				$('#alert_verify_mod').modal("toggle");
+			} else {
+				$("#verify_btn").show();
+				$('#cancelRecord').removeAttr("disabled");
+			}
+		}
+	</script>
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+	<title>XBRL</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BANKING & MONETARY STATISTICS- TOP 15
+					CLASSIFIED ACCOUNTS EACH IN EACH CATEGORY- BRF 32 (AED 000) </b>
+				<th><b style="color: white; margin-left: 15%;">Report Date
+						- <span th:text="${todate}"></span>
+					</b></th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showdetails('firstpage','1','0');"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'" onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+				<div class="btn-group nav-buttons mt-2 mr-2 mb-2" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary text-white" onclick="clickEditbutton(this);"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit"
+						id="addRecord">Modify</button>
+
+					<button type="button" class="btn btn-primary text-white" onclick="verifyscreen(this);"
+						title="Click to EDIT Records"
+						th:attr="data-mofifyFlag = ${modify_flg == null ? '' : modify_flg},data-mofifyUser = ${modify_user == null ? '' : modify_user},data-loginUser = ${UserId}"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit"
+						id="verifyBtn">Verify</button>
+
+					<button type="button" class="btn btn-primary text-white" title="Click to EDIT Records"
+						id="cancelRecord" data-toggle="modal" data-target="#alert_cancel" disabled>Cancel</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<form action="#" th:object="${report}" method="post" id="Report_Detail_Edit" autocomplete="off"
+				name="report" th:fragment="finuserapply">
+
+				<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+					<div class="row">
+
+						<div class="col-sm-12">
+
+							<div class="table-responsive" style="border-right: 1px solid #dee2e6">
+								<table style="width: 1500px;"
+									class="table  table-bordered table-hover table-sm table-condensed">
+									<thead style="background-color: #b3b6b9">
+
+										<tr style="text-align: center">
+											<th class="align-middle">No</th>
+											<th width="600" style="text-align: left">Borrower's name</th>
+											<th width="200">Group's name (if applicable)</th>
+											<th class="align-middle">Emirate / country where
+												borrower is domiciled</th>
+											<th class="align-middle">Outstanding amount</th>
+											<th class="align-middle">Specific Provisions</th>
+											<th class="align-middle">Allocated provisions</th>
+											<th class="align-middle">Legal case (yes / no)</th>
+											<th class="align-middle">Remarks if any</th>
+										</tr>
+										<tr>
+											<th colspan="9">Top 15 Watch list account</th>
+										</tr>
+									</thead>
+									<tbody th:each="report: ${reportsummary}">
+										<tr style="background-color: #b3b6b9">
+										<tr>
+											<td style="text-align: center">1</td>
+											<td style="text-align: center" th:text="${report.r1_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r1_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r1_emirate}">CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r1_outstanding_amount,0,'COMMA',0,'POINT')}"
+												onclick="resident(this)" id="ROW101">CHENNAI</td>
+
+											<td style="text-align: right"><input type="text"
+													name="r1_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r1_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+
+											<td style="text-align: right"><input type="text"
+													name="r1_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r1_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<!-- <option value="NA">Select</option>
+													<option value="YES">YES</option>
+													<option value="NO">NO</option> -->
+											<td style="text-align: center"><select id="LEGALCASE" name="r1_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r1_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r1_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r1_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r1_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r1_remarks" class="showtext" th:value="${(report.r1_remarks)}"
+													readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">2</td>
+											<td style="text-align: center" th:text="${report.r2_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r2_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r2_emirate}">CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r2_outstanding_amount,0,'COMMA',0,'POINT')}"
+												onclick="resident(this)" id="ROW102">CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r2_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r2_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r2_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r2_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r2_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r2_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r2_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r2_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r2_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r2_remarks" class="showtext" th:value="${(report.r2_remarks)}"
+													readonly />
+											</td>
+										</tr>
+
+
+										<tr>
+											<td style="text-align: center">3</td>
+											<td style="text-align: center" th:text="${report.r3_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r3_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r3_emirate}">CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r3_outstanding_amount,0,'COMMA',0,'POINT')}"
+												onclick="resident(this)" id="ROW103">CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r3_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r3_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r3_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r3_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r3_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r3_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r3_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r3_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r3_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r3_remarks" class="showtext" th:value="${(report.r3_remarks)}"
+													readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">4</td>
+											<td style="text-align: center" th:text="${report.r4_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r4_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r4_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW104"
+												th:text="${#numbers.formatDecimal(report.r4_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r4_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r4_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r4_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r4_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r4_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r4_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r4_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r4_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r4_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r4_remarks" class="showtext" th:value="${(report.r4_remarks)}"
+													readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">5</td>
+											<td style="text-align: center" th:text="${report.r5_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r5_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r5_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW105"
+												th:text="${#numbers.formatDecimal(report.r5_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r5_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r5_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r5_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r5_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r5_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r5_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r5_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r5_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r5_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r5_remarks" class="showtext" th:value="${(report.r5_remarks)}"
+													readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">6</td>
+											<td style="text-align: center" th:text="${report.r6_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r6_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r6_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW106"
+												th:text="${#numbers.formatDecimal(report.r6_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r6_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r6_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r6_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r6_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r6_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r6_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r6_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r6_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r6_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r6_remarks" class="showtext" th:value="${(report.r6_remarks)}"
+													readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">7</td>
+											<td style="text-align: center" th:text="${report.r7_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r7_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r7_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW107"
+												th:text="${#numbers.formatDecimal(report.r7_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r7_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r7_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r7_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r7_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r7_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r7_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r7_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r7_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r7_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r7_remarks" class="showtext" th:value="${(report.r7_remarks)}"
+													readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">8</td>
+											<td style="text-align: center" th:text="${report.r8_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r8_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r8_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW108"
+												th:text="${#numbers.formatDecimal(report.r8_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r8_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r8_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r8_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r8_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r8_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r8_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r8_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r8_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r8_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r8_remarks" class="showtext" th:value="${(report.r8_remarks)}"
+													readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">9</td>
+											<td style="text-align: center" th:text="${report.r9_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r9_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r9_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW109"
+												th:text="${#numbers.formatDecimal(report.r9_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r9_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r9_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r9_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r9_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r9_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r9_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r9_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r9_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r9_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r9_remarks" class="showtext" th:value="${(report.r9_remarks)}"
+													readonly />
+											</td>
+										</tr>
+
+										<tr>
+											<td style="text-align: center">10</td>
+											<td style="text-align: center" th:text="${report.r10_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r10_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r10_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW110"
+												th:text="${#numbers.formatDecimal(report.r10_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r10_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r10_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r10_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r10_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r10_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r10_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r10_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r10_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r10_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r10_remarks" class="showtext"
+													th:value="${(report.r10_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">11</td>
+											<td style="text-align: center" th:text="${report.r11_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r11_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r11_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW111"
+												th:text="${#numbers.formatDecimal(report.r11_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r11_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r11_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r11_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r11_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r11_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r1_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r11_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r11_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r11_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r11_remarks" class="showtext"
+													th:value="${(report.r11_remarks)}" readonly />
+											</td>
+
+										</tr>
+										<tr>
+											<td style="text-align: center">12</td>
+											<td style="text-align: center" th:text="${report.r12_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r12_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r12_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW112"
+												th:text="${#numbers.formatDecimal(report.r12_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r12_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r12_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r12_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r12_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r12_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r12_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r12_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r12_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r12_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r12_remarks" class="showtext"
+													th:value="${(report.r12_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">13</td>
+											<td style="text-align: center" th:text="${report.r13_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r13_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r13_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW113"
+												th:text="${#numbers.formatDecimal(report.r13_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r13_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r13_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r13_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r13_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r13_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r13_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r13_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r13_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r13_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r13_remarks" class="showtext"
+													th:value="${(report.r13_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">14</td>
+											<td style="text-align: center" th:text="${report.r14_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r14_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r14_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW114"
+												th:text="${#numbers.formatDecimal(report.r14_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r14_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r14_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r14_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r14_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r14_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r14_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r14_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r14_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r14_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r14_remarks" class="showtext"
+													th:value="${(report.r14_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">15</td>
+											<td style="text-align: center" th:text="${report.r15_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r15_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r15_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW115"
+												th:text="${#numbers.formatDecimal(report.r15_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r15_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r15_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r15_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r15_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r15_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r15_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r15_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r15_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r15_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r15_remarks" class="showtext"
+													th:value="${(report.r15_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr style="background-color: #b3b6b9; font-weight: bold">
+											<td style="text-align: center"></td>
+											<td></td>
+											<td></td>
+											<td style="text-align: left" th:text="${report.r16_emirate}">CHENNAI</td>
+											<td th:text="${#numbers.formatDecimal(report.r16_outstanding_amount,0,'COMMA',0,'POINT')}"
+												style="text-align: right" onclick="resident(this)" id="ROW116">CHENNAI
+											</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r16_specific_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r16_allocated_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td></td>
+
+											<td></td>
+										</tr>
+
+										<tr>
+											<th colspan="9" style="background-color: #b3b6b9">Top 15
+												sub-standard accounts</th>
+										</tr>
+
+										<tr>
+											<td style="text-align: center">1</td>
+											<td style="text-align: center" th:text="${report.r17_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r17_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r17_emirate}">CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r17_outstanding_amount,0,'COMMA',0,'POINT')}"
+												onclick="resident(this)" id="ROW118">CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r17_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r17_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r17_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r17_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r17_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r17_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r17_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r17_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r17_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r17_remarks" class="showInputBox"
+													th:value="${(report.r17_remarks)}" readonly /></td>
+										</tr>
+										<tr>
+											<td style="text-align: center">2</td>
+											<td style="text-align: center" th:text="${report.r18_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r18_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r18_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW119"
+												th:text="${#numbers.formatDecimal(report.r18_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r18_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r18_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r18_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r18_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r18_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r18_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r18_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r18_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r18_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r18_remarks" class="showtext"
+													th:value="${(report.r18_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">3</td>
+											<td style="text-align: center" th:text="${report.r19_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r19_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r19_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW120"
+												th:text="${#numbers.formatDecimal(report.r19_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r19_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r19_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r19_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r19_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r19_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r19_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r19_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r19_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r19_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r19_remarks" class="showtext"
+													th:value="${(report.r19_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">4</td>
+											<td style="text-align: center" th:text="${report.r20_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r20_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r20_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW121"
+												th:text="${#numbers.formatDecimal(report.r20_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r20_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r20_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r20_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r20_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r20_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r20_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r20_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r20_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r20_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r20_remarks" class="showtext"
+													th:value="${(report.r20_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">5</td>
+											<td style="text-align: center" th:text="${report.r21_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r21_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r21_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW122"
+												th:text="${#numbers.formatDecimal(report.r21_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r21_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r21_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r21_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r21_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r21_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r21_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r21_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r21_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r21_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r21_remarks" class="showtext"
+													th:value="${(report.r21_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">6</td>
+											<td style="text-align: center" th:text="${report.r22_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r22_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r22_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW123"
+												th:text="${#numbers.formatDecimal(report.r22_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r22_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r22_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r22_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r22_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r22_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r22_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r22_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r22_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r22_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r22_remarks" class="showtext"
+													th:value="${(report.r22_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">7</td>
+											<td style="text-align: center" th:text="${report.r23_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r23_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r23_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW124"
+												th:text="${#numbers.formatDecimal(report.r23_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r23_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r23_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r23_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r23_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r23_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r23_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r23_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r23_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r23_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r23_remarks" class="showtext"
+													th:value="${(report.r23_remarks)}" readonly />
+											</td>
+										</tr>
+
+										<tr>
+											<td style="text-align: center">8</td>
+											<td style="text-align: center" th:text="${report.r24_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r24_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r24_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW125"
+												th:text="${#numbers.formatDecimal(report.r24_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r24_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r24_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r24_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r24_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r24_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r24_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r24_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r24_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r24_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r24_remarks" class="showtext"
+													th:value="${(report.r24_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">9</td>
+											<td style="text-align: center" th:text="${report.r25_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r25_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r25_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW126"
+												th:text="${#numbers.formatDecimal(report.r25_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r25_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r25_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r25_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r25_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r25_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r25_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r25_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r25_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r25_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r25_remarks" class="showtext"
+													th:value="${(report.r25_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">10</td>
+											<td style="text-align: center" th:text="${report.r26_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r26_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r26_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW127"
+												th:text="${#numbers.formatDecimal(report.r26_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r26_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r26_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r26_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r26_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r26_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r26_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r26_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r26_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r26_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r26_remarks" class="showtext"
+													th:value="${(report.r26_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">11</td>
+											<td style="text-align: center" th:text="${report.r27_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r27_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r27_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW128"
+												th:text="${#numbers.formatDecimal(report.r27_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r27_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r27_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r27_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r27_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r27_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r27_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r27_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r27_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r27_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r27_remarks" class="showtext"
+													th:value="${(report.r27_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">12</td>
+											<td style="text-align: center" th:text="${report.r28_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r28_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r28_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW129"
+												th:text="${#numbers.formatDecimal(report.r28_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r28_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r28_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r28_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r28_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r28_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r28_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r28_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r28_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r28_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r28_remarks" class="showtext"
+													th:value="${(report.r28_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">13</td>
+											<td style="text-align: center" th:text="${report.r29_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r29_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r29_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW130"
+												th:text="${#numbers.formatDecimal(report.r29_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r29_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r29_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r29_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r29_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r29_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r29_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r29_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r29_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r29_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r29_remarks" class="showtext"
+													th:value="${(report.r29_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">14</td>
+											<td style="text-align: center" th:text="${report.r30_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r30_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r30_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW131"
+												th:text="${#numbers.formatDecimal(report.r30_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r30_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r30_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r30_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r30_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r30_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r30_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r30_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r30_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r30_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r30_remarks" class="showtext"
+													th:value="${(report.r30_remarks)}" readonly />
+											</td>
+										</tr>
+
+										<tr>
+											<td style="text-align: center">15</td>
+											<td style="text-align: center" th:text="${report.r31_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r31_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r31_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW132"
+												th:text="${#numbers.formatDecimal(report.r31_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r31_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r31_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r31_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r31_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r31_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r31_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r31_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r31_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r31_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r31_remarks" class="showtext"
+													th:value="${(report.r31_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr style="background-color: #b3b6b9; font-weight: bold">
+											<td></td>
+											<td></td>
+											<td></td>
+											<td style="text-align: left" th:text="${report.r32_emirate}">CHENNAI</td>
+											<td th:text="${#numbers.formatDecimal(report.r32_outstanding_amount,0,'COMMA',0,'POINT')}"
+												style="text-align: right">CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r32_specific_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r32_allocated_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td></td>
+											<td></td>
+
+										</tr>
+										<tr>
+											<th colspan="9" style="background-color: #b3b6b9">Top 15
+												doubtful accounts</th>
+										</tr>
+
+										<tr>
+											<td style="text-align: center">1</td>
+											<td style="text-align: center" th:text="${report.r33_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r33_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r33_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW135"
+												th:text="${#numbers.formatDecimal(report.r33_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r33_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r33_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r33_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r33_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r33_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r33_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r33_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r33_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r33_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r33_remarks" class="showtext"
+													th:value="${(report.r33_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">2</td>
+											<td style="text-align: center" th:text="${report.r34_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r34_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r34_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW136"
+												th:text="${#numbers.formatDecimal(report.r34_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r34_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r34_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r34_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r34_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r34_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r34_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r34_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r34_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r34_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r34_remarks" class="showtext"
+													th:value="${(report.r34_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">3</td>
+											<td style="text-align: center" th:text="${report.r35_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r35_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r35_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW137"
+												th:text="${#numbers.formatDecimal(report.r35_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r35_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r35_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r35_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r35_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r35_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r35_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r35_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r35_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r35_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r35_remarks" class="showtext"
+													th:value="${(report.r35_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">4</td>
+											<td style="text-align: center" th:text="${report.r36_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r36_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r36_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW138"
+												th:text="${#numbers.formatDecimal(report.r36_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r36_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r36_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r36_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r36_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r36_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r36_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r36_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r36_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r36_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r36_remarks" class="showtext"
+													th:value="${(report.r36_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">5</td>
+											<td style="text-align: center" th:text="${report.r37_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r37_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r37_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW139"
+												th:text="${#numbers.formatDecimal(report.r37_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r37_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r37_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r37_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r37_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r37_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r37_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r37_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r37_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r37_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r37_remarks" class="showtext"
+													th:value="${(report.r37_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">6</td>
+											<td style="text-align: center" th:text="${report.r38_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r38_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r38_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW140"
+												th:text="${#numbers.formatDecimal(report.r38_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r38_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r38_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r38_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r38_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r38_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r38_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r38_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r38_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r38_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r38_remarks" class="showtext"
+													th:value="${(report.r38_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">7</td>
+											<td style="text-align: center" th:text="${report.r39_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r39_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r39_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW141"
+												th:text="${#numbers.formatDecimal(report.r39_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r39_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r39_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r39_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r39_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r39_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r39_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r39_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r39_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r39_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r39_remarks" class="showtext"
+													th:value="${(report.r39_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">8</td>
+											<td style="text-align: center" th:text="${report.r40_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r40_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r40_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW142"
+												th:text="${#numbers.formatDecimal(report.r40_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r40_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r40_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r40_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r40_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r40_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r40_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r40_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r40_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r40_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r40_remarks" class="showtext"
+													th:value="${(report.r40_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">9</td>
+											<td style="text-align: center" th:text="${report.r41_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r41_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r41_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW143"
+												th:text="${#numbers.formatDecimal(report.r41_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r41_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r41_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r41_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r41_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r41_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r41_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r41_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r41_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r41_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r41_remarks" class="showtext"
+													th:value="${(report.r41_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">10</td>
+											<td style="text-align: center" th:text="${report.r42_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r42_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r42_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW144"
+												th:text="${#numbers.formatDecimal(report.r42_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r42_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r42_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r42_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r42_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r42_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r42_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r42_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r42_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r42_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r42_remarks" class="showtext"
+													th:value="${(report.r42_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">11</td>
+											<td style="text-align: center" th:text="${report.r43_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r43_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r43_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW145"
+												th:text="${#numbers.formatDecimal(report.r43_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r43_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r43_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r43_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r43_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r43_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r43_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r43_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r43_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r43_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r43_remarks" class="showtext"
+													th:value="${(report.r43_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">12</td>
+											<td style="text-align: center" th:text="${report.r44_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r44_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r44_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW146"
+												th:text="${#numbers.formatDecimal(report.r44_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r44_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r44_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r44_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r44_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r44_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r44_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r44_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r44_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r44_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r44_remarks" class="showtext"
+													th:value="${(report.r44_remarks)}" readonly />
+											</td>
+										</tr>
+
+										<tr>
+											<td style="text-align: center">13</td>
+											<td style="text-align: center" th:text="${report.r45_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r45_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r45_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW147"
+												th:text="${#numbers.formatDecimal(report.r45_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r45_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r45_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r45_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r45_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r45_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r45_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r45_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r45_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r45_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r45_remarks" class="showtext"
+													th:value="${(report.r45_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">14</td>
+											<td style="text-align: center" th:text="${report.r46_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r46_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r46_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW148"
+												th:text="${#numbers.formatDecimal(report.r46_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r46_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r46_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r46_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r46_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r46_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r46_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r46_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r46_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r46_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r46_remarks" class="showtext"
+													th:value="${(report.r46_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">15</td>
+											<td style="text-align: center" th:text="${report.r47_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r47_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r47_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW149"
+												th:text="${#numbers.formatDecimal(report.r47_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text" style="text-align: right"
+													name="r47_specific_provisions" class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r47_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r47_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r47_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r47_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r47_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r47_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r47_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r47_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r47_remarks" class="showtext"
+													th:value="${(report.r47_remarks)}" readonly />
+											</td>
+										</tr>
+
+										<tr style="background-color: #b3b6b9; font-weight: bold">
+											<td></td>
+											<td></td>
+											<td></td>
+											<td style="text-align: left" th:text="${report.r48_emirate}">CHENNAI</td>
+											<td th:text="${#numbers.formatDecimal(report.r48_outstanding_amount,0,'COMMA',0,'POINT')}"
+												style="text-align: right">CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r48_specific_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r48_allocated_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td></td>
+											<td></td>
+
+										</tr>
+										<tr>
+											<th colspan="9" style="background-color: #b3b6b9">Top 15
+												loss accounts</th>
+										</tr>
+										<tr>
+											<td style="text-align: center">1</td>
+											<td style="text-align: center" th:text="${report.r49_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r49_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r49_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW151"
+												th:text="${#numbers.formatDecimal(report.r49_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r49_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r49_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r49_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r49_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r49_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r49_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r49_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r49_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r49_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r49_remarks" class="showtext"
+													th:value="${(report.r49_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">2</td>
+											<td style="text-align: center" th:text="${report.r50_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r50_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r50_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW152"
+												th:text="${#numbers.formatDecimal(report.r50_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r50_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r50_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r50_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r50_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r50_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r50_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r50_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r50_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r50_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r50_remarks" class="showtext"
+													th:value="${(report.r50_remarks)}" readonly />
+											</td>
+										</tr>
+
+										<tr>
+											<td style="text-align: center">3</td>
+											<td style="text-align: center" th:text="${report.r51_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r51_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r51_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW153"
+												th:text="${#numbers.formatDecimal(report.r51_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r51_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r51_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r51_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r51_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r51_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r51_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r51_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r51_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r51_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r51_remarks" class="showtext"
+													th:value="${(report.r51_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">4</td>
+											<td style="text-align: center" th:text="${report.r52_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r52_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r52_emirate}">CHENNAI</td>
+											<td onclick="resident(this)" id="ROW154" style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r52_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r52_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r52_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r52_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r52_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r52_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r52_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r52_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r52_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r52_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r52_remarks" class="showtext"
+													th:value="${(report.r52_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">5</td>
+											<td style="text-align: center" th:text="${report.r53_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r53_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r53_emirate}">CHENNAI</td>
+											<td onclick="resident(this)" id="ROW155" style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r53_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r53_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r53_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r53_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r53_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r53_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r53_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r53_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r53_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r53_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r53_remarks" class="showtext"
+													th:value="${(report.r53_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">6</td>
+											<td style="text-align: center" th:text="${report.r54_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r54_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r54_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW156"
+												th:text="${#numbers.formatDecimal(report.r54_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r54_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r54_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r54_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r54_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r54_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r54_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r54_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r54_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r54_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r54_remarks" class="showtext"
+													th:value="${(report.r54_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">7</td>
+											<td style="text-align: center" th:text="${report.r55_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r55_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r55_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW157"
+												th:text="${#numbers.formatDecimal(report.r55_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r55_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r55_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r55_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r55_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r55_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r55_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r55_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r55_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r55_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r55_remarks" class="showtext"
+													th:value="${(report.r55_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">8</td>
+											<td style="text-align: center" th:text="${report.r56_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r56_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r56_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW158"
+												th:text="${#numbers.formatDecimal(report.r56_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r56_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r56_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r56_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r56_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r56_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r56_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r56_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r56_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r56_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r56_remarks" class="showtext"
+													th:value="${(report.r56_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">9</td>
+											<td style="text-align: center" th:text="${report.r57_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r57_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r57_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW159"
+												th:text="${#numbers.formatDecimal(report.r57_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r57_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r57_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r57_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r57_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r57_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r57_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r57_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r57_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r57_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r57_remarks" class="showtext"
+													th:value="${(report.r57_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">10</td>
+											<td style="text-align: center" th:text="${report.r58_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r58_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r58_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW160"
+												th:text="${#numbers.formatDecimal(report.r58_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r58_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r58_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r58_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r58_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r58_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r58_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r58_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r58_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r58_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r58_remarks" class="showtext"
+													th:value="${(report.r58_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">11</td>
+											<td style="text-align: center" th:text="${report.r59_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r59_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r59_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW161"
+												th:text="${#numbers.formatDecimal(report.r59_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r59_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r59_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r59_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r59_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r59_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r59_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r59_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r59_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r59_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r59_remarks" class="showtext"
+													th:value="${(report.r59_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">12</td>
+											<td style="text-align: center" th:text="${report.r60_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r60_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r60_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW162"
+												th:text="${#numbers.formatDecimal(report.r60_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r60_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r60_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r60_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r60_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r60_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r60_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r60_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r60_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r60_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r60_remarks" class="showtext"
+													th:value="${(report.r60_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">13</td>
+											<td style="text-align: center" th:text="${report.r61_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r61_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r61_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW163"
+												th:text="${#numbers.formatDecimal(report.r61_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r61_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r61_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r61_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r62_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r61_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r61_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r61_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r61_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r61_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r61_remarks" class="showtext"
+													th:value="${(report.r61_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">14</td>
+											<td style="text-align: center" th:text="${report.r62_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r62_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r62_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW164"
+												th:text="${#numbers.formatDecimal(report.r62_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r62_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r62_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r62_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r62_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r62_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r62_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r62_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r62_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r62_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r62_remarks" class="showtext"
+													th:value="${(report.r62_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center">15</td>
+											<td style="text-align: center" th:text="${report.r63_borrower_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r63_group_name}">CHENNAI
+											</td>
+											<td style="text-align: center" th:text="${report.r63_emirate}">CHENNAI</td>
+											<td style="text-align: right" onclick="resident(this)" id="ROW165"
+												th:text="${#numbers.formatDecimal(report.r63_outstanding_amount,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"><input type="text"
+													name="r63_specific_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r63_specific_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: right"><input type="text"
+													name="r63_allocated_provisions" style="text-align: right"
+													class="showInputBox"
+													th:value="${#numbers.formatDecimal(report.r63_allocated_provisions, 0, 'COMMA', 0, 'POINT')}"
+													readonly /></td>
+											<td style="text-align: center"><select id="LEGALCASE" name="r63_legal_case"
+													class="form-control form-control-sm"
+													th:value="${report.r63_legal_case}">
+
+													<option
+														th:selected="${report != null && report.r63_legal_case == 'NA'}"
+														value="NA">NA</option>
+													<option
+														th:selected="${report != null && report.r63_legal_case == 'YES'}"
+														value="YES">YES</option>
+													<option
+														th:selected="${report != null && report.r63_legal_case == 'NO'}"
+														value="NO">NO</option>
+												</select></td>
+
+											<td style="text-align: right"><input type="text" style="text-align: center"
+													name="r63_remarks" class="showtext"
+													th:value="${(report.r63_remarks)}" readonly />
+											</td>
+										</tr>
+										<tr style="background-color: #b3b6b9; font-weight: bold">
+											<td style="text-align: center"></td>
+											<td></td>
+											<td></td>
+											<td style="text-align: left">Total</td>
+											<td onclick="resident(this)" id="ROW166"
+												th:text="${#numbers.formatDecimal(report.r64_outstanding_amount,0,'COMMA',0,'POINT')}"
+												style="text-align: right">CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r64_specific_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td style="text-align: right"
+												th:text="${#numbers.formatDecimal(report.r64_allocated_provisions,0,'COMMA',0,'POINT')}">
+												CHENNAI</td>
+											<td></td>
+											<td></td>
+
+										</tr>
+										<tr>
+											<td rowspan="4"></td>
+											<td colspan="2" style="background-color: #b3b6b9">Notes</td>
+											<td colspan="6" rowspan="4"></td>
+										</tr>
+										<tr>
+											<td colspan="2" style="background-color: #b3b6b9">Reporting
+												is done on an individual entity basis (borrower).</td>
+										</tr>
+										<tr>
+											<td colspan="2" style="background-color: #b3b6b9">If an
+												entity is part of a group, the name of the group will be
+												indicated alongwith the name of entity concerned.</td>
+										</tr>
+										<tr>
+											<th colspan="2">FORM NO: BSD/BRF 32-CL ACCTS/MAR13</th>
+										</tr>
+
+									</tbody>
+
+								</table>
+
+							</div>
+							<div class="card-footer text-center"
+								th:if="${displaymode}=='summary' or ${displaymode}==null"
+								style="background-color: #386276">
+								<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+									onclick="home();">Home</button>
+								<button type="button" class="btn btn-xs btn-primary ModifySubmitBtn"
+									form="Report_Detail_Edit" style="display: none;"
+									th:attr="data-fromDate =${asondate}" onclick="ModifySubmit(this);">Submit</button>
+								<button type="button" class="btn btn-xs btn-primary" id="btnBack_edit"
+									style="display: none;" onclick="CancelEdit(event)">Back</button>
+								<button type="button" class="btn btn-xs btn-primary" id="verify_btn"
+									style="display: none;" th:attr="data-fromDate =${asondate}"
+									onclick="verifySubmit(this);">Verify</button>
+								<button type="button" class="btn btn-primary text-white" onclick="back(this);"
+									title="Click to EDIT Records"
+									th:attr="data-reportcode=${reportid}, data-todate=${todate}"
+									id="btnBack">Back</button>
+							</div>
+						</div>
+			</form>
+		</div>
+
+	</div>
+	<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+	<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+	<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+		<div style="overflow-x: inherit; border-right: 1px solid #dee2e6" th:class="${searchmsg == null}?'inner'">
+			<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+				id="detailtb">
+				<thead class="thead-light">
+					<tr style="text-align: center">
+						<th></th>
+
+						<th>CUST ID</th>
+						<th>ACCT NO</th>
+						<th>ACCT NAME</th>
+						<th>ACT BALANCE AMT LC</th>
+						<!-- <th>IND</th> -->
+						<th>REPORT NAME 1</th>
+						<th>REPORT LABEL 1</th>
+						<th>REPORT ADDL CRITERIA 1</th>
+						<th>REPORT DATE</th>
+
+					</tr>
+
+				</thead>
+				<tbody th:each="report,iterator : ${reportdetails}">
+
+
+					<tr style="text-align: center: font-weight: bold;">
+						<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+						<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+									th:classappend="${session.PERMISSIONS == 'W'}  ? addedit " class="fas fa-edit"
+									th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+						<td th:text="${report.cust_id}"></td>
+						<td th:text="${report.foracid}"></td>
+						<td th:text="${report.acct_name}">CHENNAI</td>
+						<td style="text-align: right;"
+							th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+							CHENNAI</td>
+						<!-- 	<td th:text="${report.remarks}"></td> -->
+						<td th:text="${report.report_name_1}"></td>
+						<td th:text="${report.report_label_1}">CHENNAI</td>
+						<td th:text="${report.report_addl_criteria_1}"></td>
+						<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="card-footer text-center" style="background-color: #386276" ;>
+			<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+			<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+		</div>
+		<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+		<div class="modal fade" id="addedit" th:fragment="dataedit">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">Add/Edit Records</h4>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+					<div class="modal-body" style="text-align: center">
+						<form id="dataedit" method="post">
+							<div class="form-group">
+
+								<div class="row">
+									<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+										id="cust_id" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+										id="foracid" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">Acct Name</label> <input class="form-control col-sm-5"
+										id="acct_name" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">ACCR BALANCE LC</label> <input class="form-control col-sm-5"
+										id="act_balance_amt_lc" />
+								</div>
+								<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+								<div class="row">
+									<label class="col-sm-5">REPORT NAME_1</label> <input class="form-control col-sm-5"
+										id=report_name_1 name="report_name_1" />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">REPORT LABEL 1</label> <input class="form-control col-sm-5"
+										id="report_label_1" />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">REPORT ADDL CRITERIA 1</label> <input
+										class="form-control col-sm-5" id="report_addl_criteria_1" />
+								</div>
+
+								<div class="row">
+									<label class="col-sm-5">REPORT DATE</label> <input class="form-control col-sm-5"
+										id="report_date" readonly />
+								</div>
+							</div>
+						</form>
+						<div class="modal-footer">
+
+							<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+								id="edit">Submit</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!-------------------------------------Details edit modal form----------------------------------------------------->
+			<div class="modal fade" id="datadelete">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="modal-body" style="text-align: center">
+							<button type="button" class="close" data-dismiss="modal">×</button>
+							Are you Sure want to delete?
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary"
+								onclick="submitdataformdelete(this);">Submit</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- -----------------------------------Search modal form----------------------------------------------------->
+		<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+		<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+		<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+	</div>
+	<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+	</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_cancel">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Do you want to cancel the process?</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Yes</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_Modify">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Modified records can be verified.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_verify_mod">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Same user can not verify.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<script>
+		$(document).ready(function () {
+			// Numeric input sanitization
+			$('input.showInputBox[type="text"]').on('input', function () {
+				var sanitizedValue = $(this).val().replace(/[^0-9]/g, '');
+				var numericValue = parseInt(sanitizedValue) || 0;
+				$(this).val(numericValue);
+			});
+
+			// Alphabetic input sanitization
+			$('input.showtext[type="text"]').on('input', function () {
+				var sanitizedValue = $(this).val().replace(/[^a-zA-Z]/g, '');
+				$(this).val(sanitizedValue);
+			});
+
+			// Save original values
+			$(".showInputBox, .showtext").each(function () {
+				$(this).attr("originalValue", $(this).val());
+			});
+		});
+	</script>
+</body>
+
+
+</html>

@@ -1,0 +1,1728 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			// Show loader
+			$('#loader1').modal('show');
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function(data) {
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					tablepagination();
+					// Hide loader
+					$('#loader1').modal('hide');
+				},
+				error: function() {
+					// Hide loader on error too
+					$('#loader1').modal('hide');
+					alert("Failed to load details.");
+				}
+			});
+		}
+
+		function bindNavigationButtons() {
+			$('#homebtn').off('click').on('click', function () {
+				home(this);
+			});
+
+			$('#btnBack').off('click').on('click', function () {
+				back(this);
+			});
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode = 'samepage', num = 0, maxpage = 0) {
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+
+		var Callurl = /*[[@{'/Reports/' + ${reportid} + '/Summary'(asondate=${asondate}, fromdate=${fromdate}, todate=${todate}, currency=${currency}, dtltype=${dtltype})}]]*/"";
+		Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+
+		switch (mode) {
+			case "nextpage":
+				n = n + 1;
+				if (n > max) return;
+				Callurl += "&page=" + n;
+				break;
+			case "prevpage":
+				n = n - 1;
+				if (n < 0) return;
+				Callurl += "&page=" + n;
+				break;
+			case "givenpage":
+				n = parseInt($("#pageno").val()) - 1;
+				if (n > max || n < 0) return;
+				Callurl += "&page=" + n;
+				break;
+			default:
+				// samepage or initial load
+				break;
+		}
+
+
+			$('#loader1').modal('show');
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function(data) {
+					$('#loader1').modal('hide');
+					$('#summaryContainer').html($(data).find('#summaryContainer').html());
+					$("#summarybtn").addClass("active");
+					// Hide loader
+					$('#loader1').modal('hide');
+					bindNavigationButtons();
+				},
+				error: function() {
+					// Hide loader on error too
+					$('#loader1').modal('hide');
+					alert("Failed to load summary.");
+				}
+			});
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home(a) {
+			var userid = a.getAttribute("data-loginUser");
+			var roleid = a.getAttribute("data-roleId");
+
+			if (roleid === "ADM" || roleid === "GEN") {
+				location.href = "/BRBS/yearly";
+			} else if (roleid === "OP") {
+				location.href = "/BRBS/opmodel";
+			}
+		}
+
+		function back(a) {
+			var reportcode = a.getAttribute("data-reportcode");
+			var todate = a.getAttribute("data-todate");
+			/* alert(reportcode);
+			alert(todate); */
+			location.href = "/BRBS/BRFValidations?rptcode=" + reportcode
+				+ "&todate=" + todate;
+		}
+
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+
+		input {
+			background: transparent;
+			border: unset;
+			width: 120px;
+			height: 28px;
+		}
+
+		input:focus {
+			outline: none;
+			border: unset;
+		}
+
+		.scroll {
+			max-height: 200vh;
+			overflow-y: scroll;
+			overflow-x: scroll;
+		}
+
+		input[type="date"]::placeholder {
+			color: transparent !important;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen1(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+		function addRecord() {
+			$("#edit").hide();
+			if (permission == 'W') {
+				//var url1 = /*[[@{'/customeradd/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				//Callurl = Callurl+"&instancecode="+instancecode;
+				document.getElementById("dataedit").reset();
+
+				//make readonly false to unique fields
+				//Make readonly fields
+				$("#custid").attr("readonly", false);
+				$("#custname").attr("readonly", false);
+				$("#custtype").attr("readonly", false);
+				$("#custrating").attr("readonly", false);
+				$("#accnum").attr("readonly", false);
+				$("#tratype").attr("readonly", false);
+				$("#trasubtype").attr("readonly", false);
+				$("#tradate").attr("readonly", false);
+				$("#partialtraid").attr("readonly", false);
+				$("#partialtratype").attr("readonly", false);
+				$("#tracurr").attr("readonly", false);
+				$("#traamount").attr("readonly", false);
+				$("#tracat").attr("readonly", false);
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editRecord(a) {
+			$("#add").hide();
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-custrating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+				$("#addedit").modal("toggle");
+
+				//Make readonly fields
+				$("#tradate").attr("readonly", true);
+
+			}
+
+		};
+
+		function deleteRecord(a) {
+			$("#add").hide();
+			$("#edit").hide();
+
+			alert(a.getAttribute("data-custid"));
+			if (permission == 'W') {
+				var url3 = "/customerdelete?";
+				$("#dataedit").attr('action', url3);
+
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-custrating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+
+				$("#datadelete").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataform(a) {
+			$("#edit").hide();
+
+			var url4 = "./customeradd?";
+
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+		function submitdataformedit(a) {
+			//$("#add").hide();
+			var url = "./customeredit?";
+
+			$("#dataedit").attr('action', url);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+		function submitdataformdelete(a) {
+
+			var url4 = "./customerdelete?";
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+		/*]]>*/
+		// 	document
+		// 			.addEventListener(
+		// 					"DOMContentLoaded",
+		// 					function() {
+		// 						// Add onchange event listener to existing table data
+		// 						var existingRows = document
+		// 								.querySelectorAll("#AddRows td input[name='r1_annual_con']");
+		// 						existingRows.forEach(function(input) {
+		// 							input.addEventListener("change",
+		// 									calculateAnnualContract);
+		// 						});
+		// 						// Add onchange event listener to newly added rows
+		// 						var addRowButton = document
+		// 								.getElementById("addRowButton");
+		// 						addRowButton
+		// 								.addEventListener(
+		// 										"click",
+		// 										function() {
+		// 											// Your code to add a new row here
+		// 											// Get the newly added row
+		// 											var newlyAddedRow = document
+		// 													.querySelector("#AddRows tr:last-child td input[name='r1_annual_con']");
+		// 											newlyAddedRow
+		// 													.addEventListener("change",
+		// 															calculateAnnualContract);
+		// 										});
+		// 					});
+		// 	function calculateAnnualContract() {
+		// 		var totalAnnualContract = 0;
+		// 		// Calculate total from existing table data
+		// 		var existingRows = document
+		// 				.querySelectorAll("#AddRows td input[name='r1_annual_con']");
+		// 		existingRows.forEach(function(input) {
+		// 			var value = parseFloat(input.value) || 0;
+		// 			totalAnnualContract += value;
+		// 		});
+		// 		// Display the total in the respective input field
+		// 		var totalAnnualContractField = document
+		// 				.getElementById("st_annual_con");
+		// 		if (totalAnnualContractField) {
+		// 			totalAnnualContractField.value = totalAnnualContract;
+		// 		}
+		// 	}
+		function addTableRows() {
+			event.preventDefault();
+			var tbody = document.getElementById("AddRows");
+			var lastTr = tbody.querySelector("tr:last-child");
+			if (lastTr) {
+				var dataLastIndex = lastTr.getAttribute("data-last-index");
+				var dataIndex = lastTr.getAttribute("data-index");
+				console.log("Data Last Index:", dataLastIndex);
+			} else {
+				var dataLastIndex = 0;
+				var dataIndex = 0;
+				console
+					.log("No <tr> elements found in the tbody with id 'AddRows'");
+			}
+			var rowCount = tbody.rows.length;
+			var row = tbody.insertRow(rowCount);
+			row.setAttribute("data-last-index", parseFloat(dataLastIndex) + 1);
+			row.setAttribute("data-index", parseFloat(dataIndex) + 1);
+			var cell1 = row.insertCell();
+			var cell2 = row.insertCell();
+			var cell3 = row.insertCell();
+			var cell4 = row.insertCell();
+			var cell5 = row.insertCell();
+			var cell6 = row.insertCell();
+			var cell7 = row.insertCell();
+			var cell8 = row.insertCell();
+			var cell9 = row.insertCell();
+			var cell10 = row.insertCell();
+			var cell11 = row.insertCell();
+			var cell12 = row.insertCell();
+			var cell13 = row.insertCell();
+			var cell14 = row.insertCell();
+			var cell15 = row.insertCell();
+			var cell16 = row.insertCell();
+			var cell17 = row.insertCell();
+			var cell18 = row.insertCell();
+			var cell19 = row.insertCell();
+			var cell20 = row.insertCell();
+			var cell21 = row.insertCell();
+			var cell22 = row.insertCell();
+			var cell23 = row.insertCell();
+			var cell24 = row.insertCell();
+			var cell25 = row.insertCell();
+			var cell26 = row.insertCell();
+			var cell27 = row.insertCell();
+			var cell28 = row.insertCell();
+			var cell29 = row.insertCell();
+
+			cell1.innerHTML = '<input type="text" id="r1_s_no" name="r1_s_no" value="'
+				+ (parseFloat(dataLastIndex) + 1) + '" readonly/>';
+			cell1.setAttribute("align", "right");
+			cell2.innerHTML = '<input type="text" class="showInput" id="r1_domain" name="r1_domain"/>';
+			cell3.innerHTML = '<input type="text" class="showInput" id="r1_description" name="r1_description"/>';
+			cell4.innerHTML = '<input type="text" class="showInput" id="r1_receiver" name="r1_receiver"/>';
+			cell5.innerHTML = '<input type="text" class="showInput" id="r1_material" name="r1_material"/>';
+			cell6.innerHTML = '<input type="text" class="showInput" id="r1_cbuae" name="r1_cbuae" />';
+			cell7.innerHTML = '<input type="text" class="showInput" id="r1_out_jobs" name="r1_out_jobs"/>';
+			cell8.innerHTML = '<input type="text" class="showInput" id="r1_critical_jobs" name="r1_critical_jobs"/>';
+			cell9.innerHTML = '<input type="text" class="showInput" id="r1_third_parties" name="r1_third_parties"/>';
+			cell10.innerHTML = '<input type="text" class="showInput" id="r1_nature_data" name="r1_nature_data"/>';
+			cell11.innerHTML = '<input type="text" class="showInput" id="r1_service" name="r1_service"/>';
+			cell12.innerHTML = '<input type="text" class="showInput" id="r1_vendor" name="r1_vendor"/>';
+			cell13.innerHTML = '<input type="text" class="showInput" id="r1_country_reg" name="r1_country_reg" />';
+			cell14.innerHTML = '<input type="text" class="showInput" id="r1_lei" name="r1_lei" />';
+			cell15.innerHTML = '<input type="text" class="showInput" id="r1_company" name="r1_company"/>';
+			cell16.innerHTML = '<input type="text" class="showInput" id="r1_country_service" name="r1_country_service"/>';
+			cell17.innerHTML = '<input type="text" class="showInput" id="r1_country_data" name="r1_country_data"/>';
+			cell18.innerHTML = '<input type="text" class="showInput" id="r1_gov_law" name="r1_gov_law"/>';
+			cell19.innerHTML = '<input type="text" class="showInput" id="r1_annual_con" name="r1_annual_con"/>';
+			cell19.setAttribute("align", "right");
+			cell20.innerHTML = '<input type="text" class="showInput" id="r1_total_con" name="r1_total_con"/>';
+			cell20.setAttribute("align", "right");
+			cell21.innerHTML = '<input type="Date" class="showInput" id="r1_ser_date" name="r1_ser_date"/>';
+			cell22.innerHTML = '<input type="Date" class="showInput" id="r1_exp_date" name="r1_exp_date"/>';
+			cell23.innerHTML = '<input type="text" class="showInput" id="r1_risk" name="r1_risk"/>';
+			cell24.innerHTML = '<input type="text" class="showInput" id="r1_sub1" name="r1_sub1"/>';
+			cell25.innerHTML = '<input type="text" class="showInput" id="r1_sub2" name="r1_sub2"/>';
+			cell26.innerHTML = '<input type="Date" class="showInput" id="r1_last_date" name="r1_last_date"/>';
+			cell27.innerHTML = '<input type="text" class="showInput" id="r1_comments" name="r1_comments"/>';
+			cell28.innerHTML = '<input type="text" class="showInput" id="r1_reserve1" name="r1_reserve1"/>';
+			cell29.innerHTML = '<input type="text" class="showInput" id="r1_reserve2" name="r1_reserve2"/>';
+		}
+
+		function deleterow5(ele) {
+			event.preventDefault();
+			var table = $('#AddRows')[0];
+			var rowCount = table.rows.length;
+			console.log(rowCount);
+			if (rowCount <= 1) {
+				alert("There is no row available to delete!");
+				return;
+			}
+			if (ele) {
+				$(ele).parent().parent().remove();
+			} else {
+				table.deleteRow(rowCount - 1);
+			}
+		}
+
+		function clickToModify() {
+			$(".showInput").removeAttr("readonly");
+			$('#cancelRecord').prop("disabled", false);
+			$("#addRecord").show();
+			$(".Modify").show();
+			$(".summary").hide();
+			$("#ModifySubmitShow").show();
+			$("#btnBack_edit").show();
+			$(".displayshow").show();
+			$("#deletebtn").show();
+			$("#btnBack").hide();
+		}
+
+		function CancelEdit() {
+			$(".showInput").prop("readonly", true);
+			$('#cancelRecord').prop("disabled", true);
+			$("#ModifySubmitShow").hide();
+			$("#addRecord").hide();
+			$("#btnBack_edit").hide();
+			$("#btnBack").show();
+		}
+
+		function removevalue(a) {
+
+			alert("Are you sure want to Delete....");
+
+			var r1_s_no = a.getAttribute("data-sl_no");
+
+			alert(r1_s_no); // Uncomment this line for debugging
+
+			$.ajax({
+				url: './Deletetobrf301',
+				method: 'POST',
+				data: {r1_s_no: r1_s_no},
+				contentType: "application/x-www-form-urlencoded",
+				success: function (data) {
+					alert(data);
+
+					window.location.reload()
+				},
+				error: function (xhr, status, error) {
+					alert("Error occurred while deleting: " + error);
+				}
+			});
+		}
+
+		function ModifySubmit(a) {
+			event.preventDefault();
+			var asondate = a.getAttribute("data-fromDate");
+			var formData = {
+				brf301_entity: [],
+			};
+
+			$("#getTable tbody tr")
+				.each(
+					function () {
+						var row = {};
+						row.r1_s_no = $(this).find("input[name='r1_s_no']")
+							.val();
+						row.r1_domain = $(this).find(
+							"input[name='r1_domain']").val();
+						row.r1_description = $(this).find(
+							"input[name='r1_description']").val();
+						row.r1_receiver = $(this).find(
+							"input[name='r1_receiver']").val();
+						row.r1_material = $(this).find(
+							"input[name='r1_material']").val();
+						row.r1_cbuae = $(this).find(
+							"input[name='r1_cbuae']").val();
+						row.r1_out_jobs = $(this).find(
+							"input[name='r1_out_jobs']").val();
+						row.r1_critical_jobs = $(this).find(
+							"input[name='r1_critical_jobs']").val();
+						row.r1_third_parties = $(this).find(
+							"input[name='r1_third_parties']").val();
+						row.r1_nature_data = $(this).find(
+							"input[name='r1_nature_data']").val();
+						row.r1_service = $(this).find(
+							"input[name='r1_service']").val();
+						row.r1_vendor = $(this).find(
+							"input[name='r1_vendor']").val();
+						row.r1_country_reg = $(this).find(
+							"input[name='r1_country_reg']").val();
+						row.r1_lei = $(this).find("input[name='r1_lei']")
+							.val();
+						row.r1_company = $(this).find(
+							"input[name='r1_company']").val();
+						row.r1_country_service = $(this).find(
+							"input[name='r1_country_service']").val();
+						row.r1_country_data = $(this).find(
+							"input[name='r1_country_data']").val();
+						row.r1_gov_law = $(this).find(
+							"input[name='r1_gov_law']").val();
+						row.r1_annual_con = $(this).find(
+							"input[name='r1_annual_con']").val();
+						row.r1_total_con = $(this).find(
+							"input[name='r1_total_con']").val();
+						row.r1_ser_date = $(this).find(
+							"input[name='r1_ser_date']").val();
+						row.r1_exp_date = $(this).find(
+							"input[name='r1_exp_date']").val();
+						row.r1_risk = $(this).find("input[name='r1_risk']")
+							.val();
+						row.r1_sub1 = $(this).find("input[name='r1_sub1']")
+							.val();
+						row.r1_sub2 = $(this).find("input[name='r1_sub2']")
+							.val();
+						row.r1_last_date = $(this).find(
+							"input[name='r1_last_date']").val();
+						row.r1_comments = $(this).find(
+							"input[name='r1_comments']").val();
+						row.r1_reserve1 = $(this).find(
+							"input[name='r1_reserve1']").val();
+						row.r1_reserve2 = $(this).find(
+							"input[name='r1_reserve2']").val();
+						formData.brf301_entity.push(row);
+					});
+
+			console.log(formData);
+
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: './modifyBrf301?asondate=' + asondate,
+				data: JSON.stringify(formData),
+				success: function (responseText) {
+					alert("Success");
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+					showButton();
+				}
+			});
+		}
+
+		$(function () {
+			$("#report_to_date").datepicker({
+				dateFormat: "dd-mm-yy",
+				changeMonth: true,
+				numberOfMonths: 1,
+				gotoCurrent: true,
+				yearRange: '-80:+1000',
+				onSelect: function (dateText) {
+					// Convert selected date to JSON format (ISO 8601)
+					var parts = dateText.split("-");
+					var selectedDate = new Date(parts[2], parts[1] - 1, parts[0]);
+					var jsonDate = selectedDate.toJSON(); // Convert to JSON format
+					console.log(jsonDate); // Output the JSON formatted date
+				}
+			});
+		});
+	</script>
+	<script>
+		function verifySubmit(a) {
+			var asondate = a.getAttribute("data-fromDate");
+			$.ajax({
+				url: './verifyBRF301Report?asondate=' + asondate,
+				type: 'POST',
+				success: function (responseText, statusText, xhr, $form) {
+					alert("Success");
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+				},
+				error: function (error) {
+					console.log("Error fetching data: ", error);
+				}
+			});
+		}
+		function verifyscreen(a) {
+			var modFlag = a.getAttribute("data-mofifyFlag");
+			var modUser = a.getAttribute("data-mofifyUser");
+			var loginUser = a.getAttribute("data-loginUser");
+			if (modFlag == "" || modFlag == "N") {
+				$('#alert_Modify').modal("toggle");
+			} else if (modUser == "" || loginUser == "" || modUser == loginUser) {
+				$('#alert_verify_mod').modal("toggle");
+			} else {
+
+				$("#verify_btn").show();
+				$('#cancelRecord').removeAttr("disabled");
+			}
+		}
+	</script>
+	<script>
+		function showAlertMessage() {
+			alert("Details page not available for Manual Report");
+		}
+	</script>
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+			/* alert(filetype); */
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: './' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-301-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+					} else if (filetype == "BRF") {
+						a.download = '011-BRF-301-A' + ".xls"; // assuming .pdf extension for PDF files
+					} else {
+						a.download = '011-BRF-301-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+
+					// Set the appropriate message based on the downloaded filetype
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-301 ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text('Downloaded BRF-301 Detail Excel' + ".xlsx");
+					} else if (filetype == "BRF") {
+						$('#customAlertBody').text('Downloaded BRF 301 ' + ".xls"); // assuming .pdf extension for PDF files
+					} else {
+						$('#customAlertBody').text('Downloaded BRF-301 ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+	</script>
+
+	<style>
+/* Your existing CSS - this is the correct approach */
+.scrollable-table-container {
+    /* This is the key: it creates the scroll context */
+    max-height: 620px; /* Or a suitable height like 80vh for responsive design */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+/* Your existing sticky header CSS, targeting the tr elements within the thead */
+.scrollable-table-container thead tr:nth-child(1) {
+    position: sticky;
+    top: 0;
+    background-color: #b3b6b9;
+    z-index: 4;
+}
+
+.scrollable-table-container thead tr:nth-child(2) {
+    position: sticky;
+    top: 36px; /* adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 3;
+}
+
+
+
+.scrollable-table-container thead tr:nth-child(3) {
+    position: sticky;
+    top: 72px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 2;
+}
+
+.scrollable-table-container thead tr:nth-child(4) {
+    position: sticky;
+    top: 108px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 1;
+}
+
+
+</style>
+<script>
+$(document).ready(function () {
+	 
+});
+function tablepagination(){
+    $('#loader1').modal("hide");
+    $('#detailtable').DataTable({
+        "pageLength": 100,
+        "lengthChange": false,
+        "ordering": false,
+        "info": true,
+        "autoWidth": false,
+        "searching": true,
+        "language": {
+            "emptyTable": "No records available"
+        },
+        // --- ADD THIS LINE BELOW ---
+        "dom": '<"top"f>rt<"bottom"ip>'
+        // --- ADD THIS LINE ABOVE ---
+    });
+}
+</script>
+<style>
+/* Styles for the search box (from previous answer) */
+.dataTables_filter {
+    float: right;
+    text-align: right; /* Ensures the label and input align well within the floated div */
+}
+
+/* Clearfix to prevent layout issues from floating elements above the table */
+.dataTables_wrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Styles for the info and pagination controls */
+.dataTables_info {
+    float: left; /* Keep info text on the left */
+}
+
+.dataTables_paginate {
+    float: right; /* Move pagination to the right */
+}
+
+/* Clearfix for the bottom section (info and pagination) */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    /* Ensures they are on the same line if space allows */
+    display: inline-block;
+}
+
+/* You might want a clear div if your bottom section also has other elements */
+.clear {
+    clear: both;
+}
+
+body {
+    overflow: hidden;
+}
+   
+.container {
+max-width: 1275px;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto ;
+    margin-left: auto;
+}
+
+</style>
+<title>BCDRS</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+				<b style="color: white;"> BRF 301 - BANKING AND MONETARY STATISTICS- LIST OF OUTSOURCING CONTRACTS </b>
+
+				<b style="color: white; margin-left: 20%;">Report Date - <span th:text="${todate}"></span></b>
+
+				<div class="btn-group nav-buttons">
+					<button style="color: black;" type="button" class="btn btn-primary" onclick="showAlertMessage();"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" id="summarybtn" onclick="showsummary('samepage');">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary"
+									th:attr="data-reportid=${reportid}, data-asondate=${asondate}, data-fromdate=${fromdate}, data-todate=${todate}, data-currency=${currency}, data-subreportid=${subreportid}, data-secid=${secid}, data-dtltype=${dtltype}, data-filetype='pdf'"
+									onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+									th:attr="data-reportid=${reportid}, data-asondate=${asondate}, data-fromdate=${fromdate}, data-todate=${todate}, data-currency=${currency}, data-subreportid=${subreportid}, data-secid=${secid}, data-dtltype=${dtltype}, data-filetype='excel'"
+									onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+									th:attr="data-reportid=${reportid}, data-asondate=${asondate}, data-fromdate=${fromdate}, data-todate=${todate}, data-currency=${currency}, data-subreportid=${subreportid}, data-secid=${secid}, data-dtltype=${dtltype}, data-filetype='BRF'"
+									onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'">
+								<a th:attr="data-reportid=${reportid}, data-asondate=${asondate}, data-fromdate=${fromdate}, data-todate=${todate}, data-currency=${currency}, data-subreportid=${subreportid}, data-secid=${secid}, data-dtltype=${dtltype}, data-filetype='detailexcel'"
+									onclick="downloadexcel(this)">Excel</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- Download Message -->
+				<span id="downloadMessage"></span>
+				<!-- Download Processing Modal -->
+				<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+					aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="downloadProcessingModalLabel">Download Processing...</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download Message -->
+				<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+					aria-labelledby="customAlertModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+							</div>
+							<div class="modal-body" id="customAlertBody"></div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary pr-2 pl-2" onclick="addTableRows(this);"
+						style="padding: 3px; display: none; color: white;" title="Click to Add	 Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit"
+						id="addRecord">Add</button>
+					<button type="button" class="btn btn-primary" onclick="clickToModify(this);"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="modifyRecord" style="color: white;">Modify</button>
+					<button type="button" class="btn btn-primary text-white" onclick="verifyscreen(this);"
+						title="Click to EDIT Records"
+						th:attr="data-mofifyFlag = ${modify_flg == null ? '' : modify_flg},data-mofifyUser = ${modify_user == null ? '' : modify_user},data-loginUser = ${UserId}"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="verifyBtn">Verify</button>
+					<button type="button" class="btn btn-primary text-white" title="Click to EDIT Records"
+						id="cancelRecord" data-toggle="modal" data-target="#alert_cancel" disabled>Cancel</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- ------------------------------------------------------------- Report title ends ----------------------------------------------- -->
+
+		<!-- ---------------------------- Report summary section starts it will shown only if summary button clicked----------------------- -->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+					<div class="col-sm-12">
+
+						<div  class="table-responsive scrollable-table-container"  style="border-right: 1px; max-height: 100vh;">
+
+							<table class="sticky-header-table table table-bordered table-hover table-sm table-condensed"
+								style="width: 1500px" id="getTable">
+								<thead class="thead-light">
+									<tr class="text-left font-weight-bold">
+										<td style="background-color: #b3b6b9">S.No</td>
+										<td style="background-color: #b3b6b9">Outsourced Activity
+											Domain</td>
+										<td style="background-color: #b3b6b9">Description of
+											Outsourced Activity</td>
+										<td style="background-color: #b3b6b9">Receiver of third
+											party service</td>
+										<td style="background-color: #b3b6b9">Material
+											OutsourcingA Y/N</td>
+										<td style="background-color: #b3b6b9">CBUAE No Objection
+											reference number, if any</td>
+										<td style="background-color: #b3b6b9">Total Numbered of
+											Outsourced Jobs</td>
+										<td style="background-color: #b3b6b9">Number of Critical
+											Outsourced Jobs</td>
+										<td style="background-color: #b3b6b9">Data Access by
+											Third Parties</td>
+										<td style="background-color: #b3b6b9">Nature of Data
+											Involved (highest category of sensitivity to be highlighted
+											in case multiple sets of data are involved)</td>
+										<td style="background-color: #b3b6b9">Is the Service
+											provider Owned by the Bank?</td>
+										<td style="background-color: #b3b6b9">Name of the Vendor</td>
+										<td style="background-color: #b3b6b9">Country of
+											Registration of the Vendor (Country of the parent)</td>
+										<td style="background-color: #b3b6b9">LEI or Registration
+											Number of the Vendor</td>
+										<td style="background-color: #b3b6b9">Holding / Parent
+											Company (If any)</td>
+										<td style="background-color: #b3b6b9">Countries where the
+											Service is to be Performed (refer country code list) (incase
+											multiple countries are involved, report the country based on
+											the materiality of the operation)</td>
+										<td style="background-color: #b3b6b9">Countries where
+											Data is or may be Stored(refer country code list)(incase
+											multiple countries are involved, report the country based on
+											the materiality of the operation)</td>
+										<td style="background-color: #b3b6b9">Governing Law</td>
+										<td style="background-color: #b3b6b9">Annual Contract
+											Value/ Estimated Budget (AED in '000)</td>
+										<td style="background-color: #b3b6b9">Total Contract
+											value (AED '000)</td>
+										<td style="background-color: #b3b6b9">The service
+											commencement / last contract renewal date (DD/MM/YYY)</td>
+										<td style="background-color: #b3b6b9">The service expiry
+											date / next contract renewal date (DD/MM/YYYY)</td>
+										<td style="background-color: #b3b6b9">Outcome of the Risk
+											Assessment</td>
+										<td style="background-color: #b3b6b9">Substitutability</td>
+										<td style="background-color: #b3b6b9">Time Critical
+											Operation</td>
+										<td style="background-color: #b3b6b9">Last Audit Date
+											(DD/MM/YYYY)</td>
+										<td style="background-color: #b3b6b9">Comments (Please
+											advise percentage of Annual cost allocated for salary,
+											infrastructure etc.)</td>
+										<td style="background-color: #b3b6b9">Reserve 1</td>
+										<td style="background-color: #b3b6b9">Reserve 2</td>
+										<td id="deletebtn" style="background-color: #b3b6b9;display:none;"></td>
+									</tr>
+								</thead>
+								<tbody id="AddRows">
+									<tr th:if="${report.del_flg=='N'}" th:each="report, reportIndex : ${list}"
+										th:attr="data-last-index=${#lists.size(list)},data-index=${reportIndex.index + 1}">
+										<td><input type="text" id="r1_s_no" name="r1_s_no" th:value="${report.r1_s_no}"
+												readonly style="text-align: right;" /></td>
+
+
+										<td><input class="showInput" type="text" id="r1_domain" name="r1_domain"
+												th:value="${report.r1_domain}" readonly /></td>
+										<td><input class="showInput" type="text" id="r1_description"
+												name="r1_description" th:value="${report.r1_description}" readonly />
+										</td>
+										<td><input class="showInput" type="text" id="r1_receiver" name="r1_receiver"
+												th:value="${report.r1_receiver}" readonly /></td>
+										<td><input class="showInput" type="text" id="r1_material" name="r1_material"
+												th:value="${report.r1_material}" readonly /></td>
+										<td><input class="showInput" type="text" id="r1_cbuae" name="r1_cbuae"
+												th:value="${(report.r1_cbuae)}" readonly /></td>
+										<td><input type="text" id="r1_out_jobs" name="r1_out_jobs" class="showInput"
+												th:value="${report.r1_out_jobs}" readonly /></td>
+										<td><input type="text" id="r1_critical_jobs" class="showInput"
+												name="r1_critical_jobs" th:value="${report.r1_critical_jobs}"
+												readonly /></td>
+										<td><input type="text" id="r1_third_parties" name="r1_third_parties"
+												class="showInput" th:value="${report.r1_third_parties}" readonly /></td>
+										<td><input type="text" id="r1_nature_data" name="r1_nature_data"
+												class="showInput" th:value="${report.r1_nature_data}" readonly /></td>
+										<td><input type="text" id="r1_service" class="showInput" name="r1_service"
+												th:value="${report.r1_service}" readonly /></td>
+										<td><input type="text" id="r1_vendor" name="r1_vendor" class="showInput"
+												th:value="${report.r1_vendor}" readonly /></td>
+										<td><input type="text" class="showInput" id="r1_country_reg"
+												name="r1_country_reg" th:value="${report.r1_country_reg}" readonly />
+										</td>
+										<td><input type="text" id="r1_lei" class="showInput" name="r1_lei"
+												th:value="${report.r1_lei}" readonly /></td>
+										<td><input type="text" id="r1_company" name="r1_company" class="showInput"
+												th:value="${report.r1_company}" readonly /></td>
+										<td><input type="text" id="r1_country_service" name="r1_country_service"
+												class="showInput" th:value="${report.r1_country_service}" readonly />
+										</td>
+										<td><input type="text" id="r1_country_data" name="r1_country_data"
+												class="showInput" th:value="${report.r1_country_data}" readonly /></td>
+										<td><input type="text" id="r1_gov_law" name="r1_gov_law" class="showInput"
+												th:value="${report.r1_gov_law}" readonly /></td>
+										<td><input type="text" id="r1_annual_con" name="r1_annual_con" class="showInput"
+												th:value="${report.r1_annual_con}" readonly
+												style="text-align: right;" /></td>
+										<td><input type="text" id="r1_total_con" name="r1_total_con" class="showInput"
+												th:value="${report.r1_total_con}" readonly style="text-align: right;" />
+										</td>
+
+										<td><input class="showInput" type="Date" id="r1_ser_date" name="r1_ser_date"
+												th:value="${#dates.format(report.r1_ser_date, 'yyyy-MM-dd')}"
+												readonly /></td>
+										<td><input class="showInput" type="Date" id="r1_exp_date" name="r1_exp_date"
+												th:value="${#dates.format(report.r1_exp_date, 'yyyy-MM-dd')}"
+												readonly /></td>
+										<td><input type="text" id="r1_risk" name="r1_risk" class="showInput"
+												th:value="${report.r1_risk}" readonly /></td>
+										<td><input type="text" id="r1_sub1" name="r1_sub1" class="showInput"
+												th:value="${report.r1_sub1}" readonly /></td>
+										<td><input type="text" id="r1_sub2" name="r1_sub2" class="showInput"
+												th:value="${report.r1_sub2}" readonly /></td>
+										<td><input class="showInput" type="Date" id="r1_last_date" name="r1_last_date"
+												th:value="${#dates.format(report.r1_last_date, 'yyyy-MM-dd')}"
+												readonly /></td>
+										<td><input type="text" id="r1_comments" name="r1_comments" class="showInput"
+												th:value="${report.r1_comments}" readonly /></td>
+										<td><input type="text" id="r1_reserve1" name="r1_reserve1" class="showInput"
+												th:value="${report.r1_reserve1}" readonly /></td>
+										<td><input type="text" class="showInput" id="r1_reserve2" name="r1_reserve2"
+												th:value="${report.r1_reserve2}" readonly /></td>
+										<td style="display:none;" class="displayshow"><i class="fa fa-trash"
+												aria-hidden="true" id="deletefunction" onclick="removevalue(this);"
+												th:attr="data-sl_no=${report.r1_s_no}"></i></td>
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+
+							<button type="button" class="btn btn-primary text-white" onclick="home(this);"
+								title="Click to EDIT Records" th:attr="data-loginUser=${UserId}, data-roleId=${RoleId}"
+								id="homebtn">Home</button>
+
+							<button type="button" class="btn btn-xs btn-primary" style="display: none;"
+								id="ModifySubmitShow" th:attr="data-fromDate =${asondate}"
+								onclick="ModifySubmit(this);">Submit</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack_edit"
+								style="display: none;" onclick="CancelEdit();">Back</button>
+							<button type="button" class="btn btn-xs btn-primary" id="verify_btn" style="display: none;"
+								th:attr="data-fromDate =${asondate}" onclick="verifySubmit(this);">Verify</button>
+							<button type="button" class="btn btn-primary text-white" onclick="back(this);"
+								title="Click to EDIT Records"
+								th:attr="data-reportcode=${reportid}, data-todate=${todate}" id="btnBack">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail" style="width: 1430px">
+    <div style="overflow-x: auto; border-right: 1px solid #dee2e6; width: 1499px" th:class="${searchmsg == null}?'inner'" >
+      
+        <table id="detailtable" class="table table-bordered table-sm" style="width: 1499px">
+    <thead class="thead-light" >
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACCR BAL LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT_NAME_1</th>
+								<th>REPORT_LABLE_1</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody>
+            <tr th:each="report,iterator : ${reportdetails}">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">Ã—</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCR BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT_ADDL_CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">Ã—</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_cancel">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Do you want to cancel the process?</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Yes</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_Modify">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Modified records can be verified.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_verify_mod">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Same user can not verify.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+	<script>
+		$(document).ready(function () {
+			// Set the placeholder to an empty string
+			$("#r1_exp_date").attr("placeholder", "");
+		});
+	</script>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+<div class="modal fade" id="loader1" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+</body>
+
+<style>
+.inner {
+    max-height: 600px; /* Adjust height as needed */
+    overflow: auto;
+    border: 1px solid #dee2e6;
+}
+
+/* Sticky thead */
+#detailtable thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa; /* Match Bootstrap thead-light */
+    z-index: 2;
+}
+.pagination {
+    margin: 0;
+}
+
+.page-item.active .page-link {
+    background-color: #386276;
+    border-color: #386276;
+}
+
+.page-link {
+    color: #386276;
+}
+
+.page-link:hover {
+    color: #2a4a5c;
+}
+
+.form-select {
+    display: inline-block;
+    width: auto;
+}
+</style>
+
+</html>

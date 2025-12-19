@@ -1,0 +1,490 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+
+</head>
+<title>XBRL</title>
+<style>
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+table {
+	border-collapse: collapse;
+	border: 1px solid black;
+	border-color: #e9ecef;
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+.table-bordered td, .table-bordered th {
+    border: 1px solid #dee2e6;
+}
+.modal-backdrop {
+	background-color: +;
+	zoom: 1;
+}
+
+.addedit {
+	color: #007bff;
+}
+</style>
+
+
+<!----------------------------------------Scripts to edit report details-------------------------------------------->
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	$(function() {
+
+		$("#repDate").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate : new Date(),
+			dateFormat : "dd-mm-yy"
+		});
+
+	});
+
+	
+	function searchRecord(){			
+		$("#search").modal("toggle");
+
+	};
+	
+	function submitSearchRecord(){
+		
+		if($("#searchdtl").valid()){
+
+			var url = /*[[@{'/glsubheadsearch'}]]*/
+			
+			$("#searchdtl").attr('action', url);
+			
+			var options = { 
+			        success: showResponse  // post-submit callback 
+			    }; 
+			
+			 $('#searchdtl').ajaxSubmit(options);
+			 
+			 function showResponse(responseText, statusText, xhr, $form) { 
+				 $(".modal").modal("hide");
+				 $('.content').html(responseText);
+				 $(".modal-backdrop").remove();
+				 
+			 }	
+		}
+		
+	};
+	function addRecord() {
+
+		
+			//Assign action url for the edit/add form
+			var url = /*[[@{'bankmasteradds'}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			//make readonly false to unique fields
+			//Make readonly fields
+			$("#instanceCode").attr("readonly", false);
+			$("#countryName").attr("readonly", false);
+			$("#internalAMLRating").attr("readonly", false);
+			$("#correspondingRating").attr("readonly", false);
+			$("#noCorrespondingBank").attr("readonly", false);
+			$("#countryCode").attr("readonly", false);
+			
+			
+			$("#addedit").modal("toggle");
+
+		
+	};
+
+
+	function submitdataform() {
+
+		var options = {
+			success : showResponse
+		// post-submit callback 
+		};
+
+		$('#dataedit').ajaxSubmit(options);
+
+		function showResponse(responseText, statusText, xhr, $form) {
+
+			$("#alertmsg").text(responseText);
+
+			if ($('#addedit').is(':visible')) {
+				$('#addedit').modal("hide");
+
+			}
+			;
+			if ($('#datadelete').is(':visible')) {
+				$('#datadelete').modal("hide");
+
+			}
+			;
+			$('#alert').modal("toggle");
+
+		}
+
+	}
+
+
+	function editRecord(a) {
+
+			var url = /*[[@{'/bankmasteredits'}]]*/
+			$("#dataedit").attr('action', url);
+			//Assign selected values to the model box fields
+			$("#instanceCode").val(a.getAttribute("data-INSTANCE_CODE"));
+			$("#countryName").val(a.getAttribute("data-COUNTRY_NAME"));
+			$("#internalAMLRating").val(a.getAttribute("data-INTERNAL_AML_RATING"));
+			$("#correspondingRating").val(a.getAttribute("data-CORRESPONDING_RATING"));
+			$("#noCorrespondingBank").val(a.getAttribute("data-NO_CORRESPONDING_BANK"));
+			$("#countryCode").val(a.getAttribute("data-COUNTRY_CODE"));
+			
+			$("#addedit").modal("toggle");
+			
+	};
+	
+	
+	function deleteRecord(a) {
+		console.log("deleteRecord");
+			
+				//Assign action url for the edit/add form
+				var url = /*[[@{'bankmasterdeletes'}]]*/
+				$("#dataedit").attr('action', url);
+
+				//Assign selected values to the model box fields
+				$("#instanceCode").val(a.getAttribute("data-INSTANCE_CODE"));
+				$("#countryName").val(a.getAttribute("data-COUNTRY_NAME"));
+				$("#internalAMLRating").val(a.getAttribute("data-INTERNAL_AML_RATING"));
+				$("#correspondingRating").val(a.getAttribute("data-CORRESPONDING_RATING"));
+				$("#noCorrespondingBank").val(a.getAttribute("data-NO_CORRESPONDING_BANK"));
+				$("#countryCode").val(a.getAttribute("data-COUNTRY_CODE"));
+				
+
+				$("#datadelete").modal("toggle");
+
+		};
+	
+	
+	/*]]>*/
+</script>
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content" th:fragment="reportcontent">
+
+		<div class="row">
+			<div class="col-sm-12 customcol">
+				<div class="card">
+					<div class="card-header">
+						<div class="float-left">  
+							<h4>Country Risk Parameter</h4>
+						</div>
+					
+					</div>
+			<!--------------------- Header -------------------------------->
+					
+					<div class="card-body">
+					<div style="overflow-x: auto; border-right: 1px solid #dee2e6">
+						<table class="table  table-bordered  table-hover table-sm"  
+						style="margin-bottom: 0px; width: 2000px" id="CountryRiskParatb">
+						
+							<thead class="thead-light">
+								<tr>
+						    <th><a data-toggle="tooltip" class="editrec"
+											title="Click to add new Records"><i
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												class="fa fa-plus-circle" onclick="addRecord();"
+												aria-hidden="true"></i></a></th>
+										<th class="second_left"><a href="#" data-toggle="tooltip"
+											title="Click to Search Record"><i class="fa fa-search"
+												onclick="searchRecord();" aria-hidden="true"></i></a></th>
+						
+									<th width="30px">Country Instance Code</th>
+									<th width="30px">Country Name</th>
+									<th width="30px">Country Code</th>
+									<th>Internal AML Rating</th>
+									<th>Risk category</th>
+									<th>No of Correspondent Bank</th>
+								</tr>
+							</thead>
+							
+							<tbody>
+								
+                           	     <tr th:each="banks : ${CountryRiskPara}" class="CountryRiskPara">
+                                    <td class="first_left"><a data-toggle="tooltip"
+										class="editrec" title="Click to Edit this Record"><i
+											class="fas fa-edit"
+										    th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											th:attr="data-INSTANCE_CODE=${banks.INSTANCE_CODE},
+								            data-COUNTRY_NAME=${banks.COUNTRY_NAME},
+								            data-INTERNAL_AML_RATING=${banks.INTERNAL_AML_RATING},
+								            data-CORRESPONDING_RATING=${banks.CORRESPONDING_RATING},
+								            data-NO_CORRESPONDING_BANK=${banks.NO_CORRESPONDING_BANK},
+								            data-COUNTRY_CODE=${banks.COUNTRY_CODE}"
+											onclick="editRecord(this)"></i></a></td>
+											
+									<td class="second_left"><a data-toggle="tooltip"
+											class="editrec" title="Click to delete this Record"><i
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												class="fas fa-minus-circle"
+											th:attr="data-INSTANCE_CODE=${banks.INSTANCE_CODE},
+									        data-COUNTRY_NAME=${banks.COUNTRY_NAME},
+							     	        data-INTERNAL_AML_RATING=${banks.INTERNAL_AML_RATING},
+								            data-CORRESPONDING_RATING=${banks.CORRESPONDING_RATING},
+							     	        data-NO_CORRESPONDING_BANK=${banks.NO_CORRESPONDING_BANK},
+								            data-COUNTRY_CODE=${banks.COUNTRY_CODE}"
+											onclick="deleteRecord(this)"></i></a></td>
+											
+									<td th:text="${banks.INSTANCE_CODE}"></td>
+									<td th:text="${banks.COUNTRY_CODE}"></td>
+									<td th:text="${banks.COUNTRY_NAME}"></td>
+									<td th:text="${banks.INTERNAL_AML_RATING}"></td>
+									<td th:text="${banks.CORRESPONDING_RATING}"></td>
+									<td th:text="${banks.NO_CORRESPONDING_BANK}"></td>
+									
+									
+								</tr>
+							</tbody>
+						</table>
+						
+						<!--  -->
+						
+						<table th:if="${searchmsg} != null"
+							class="table  table-bordered  table-hover table-sm"
+								style="margin-bottom: 0px; width: 2000px" id="CountryRiskParatb">
+								<thead class="thead-light">
+									<tr>
+										<th><a data-toggle="tooltip" class="editrec"
+											title="Click to add new Records"><i
+												th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+												class="fa fa-plus-circle" onclick="addRecord();"
+												aria-hidden="true"></i></a></th>
+										<th class="second_left"><a href="#" data-toggle="tooltip"
+											title="Click to Search Record"><i class="fa fa-search"
+												onclick="searchRecord();" aria-hidden="true"></i></a></th>
+									   <th>Country Instance Code</th>
+									   <th>Country Code</th>
+									   <th>Country Name</th>
+									   <th>Internal AML Rating</th>
+									   <th>Risk category</th>
+									   <th>No of Correspondent Bank</th>
+									   
+									</tr>
+								</thead>
+						<tbody>
+							<tr>
+								<td colspan="10">No Data Available</td>
+							</tr>
+						</tbody>
+					</table>
+		       </div>
+			</div>
+		</div>
+	</div>
+</div>
+	<!-- <div class="float-right" th:if="${glsubhead.totalPages} gt 1">
+			<a href="#"><i class="fas fa-caret-left fa-2x"
+				th:onclick="|showdetails('prevpage',${glsubhead.number},${glsubhead.totalPages});|"></i></a>
+			<input type="text" id="pageno" style="width: 30px"
+				th:value="${glsubhead.number+1}"
+				th:onchange="|showdetails('givenpage',${glsubhead.number},${glsubhead.totalPages});|"></input>
+			of <font th:text="${glsubhead.totalPages}"></font> <a href="#"><i
+				class="fas fa-caret-right fa-2x"
+				th:onclick="|showdetails('nextpage',${glsubhead.number},${glsubhead.totalPages});|"></i></a>
+		</div> -->
+	</div>
+
+<!-- -----------------------------------Search modal form----------------------------------------------------->
+	<div class="modal fade" id="search" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Search
+						Record</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:object=${singledetail} id="searchdtl" method="post">
+			                  <div class="form-group">
+			                  <div class="row">
+								<label class="col-sm-5">Country Instance Code</label> <input
+									class="form-control col-sm-5" type="text"
+								 id="instanceCode"  />
+							</div>
+                           <div class="row">
+								<label class="col-sm-5">Country Name</label> <input
+									class="form-control col-sm-5" type="text"
+									 id="countryName"  />
+							</div>
+							 <div class="row">
+								<label class="col-sm-5">Country Code</label> <input
+									class="form-control col-sm-5" type="text"
+									 id="countryCode"  />
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Internal AML Rating</label> <input
+									class="form-control col-sm-5" type="text"
+									 id="internalAMLRating"  />
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Corresponding Rating</label> <input
+									class="form-control col-sm-5" type="text"
+									 id="correspondingRating"  />
+							</div>
+								<div class="row">
+								<label class="col-sm-5">No Corresponding Bank</label> <input
+									class="form-control col-sm-5" type="text"
+									 id="noCorrespondingBank"  />
+							</div>
+										</div>	           
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary"
+						onclick="submitSearchRecord();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Search modal form----------------------------------------------------->
+<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+						<div class="modal fade" id="addedit" th:fragment="dataedit">
+							<div
+								class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+								<div class="modal-content">
+
+									<!-- Modal Header -->
+									<div class="modal-header">
+										<h4 class="modal-title">Add/Edit Records</h4>
+										<button type="button" class="close" data-dismiss="modal">×</button>
+									</div>
+									<div class="modal-body" style="text-align: center">
+										<form th:object=${singledetails} id="dataedit" method="post">
+											<div class="form-group">
+												<div class="row">
+													<label class="col-sm-5">Instance Code</label> <input
+														class="form-control col-sm-5" type="number"
+														th:field="*{INSTANCE_CODE}" th:value="${INSTANCE_CODE}"
+														id="instanceCode" readonly />
+												</div>
+												
+												<div class="row">
+													<label class="col-sm-5">Country Name</label> <input
+														class="form-control col-sm-5" type="text"
+														th:field="*{COUNTRY_NAME}"
+														th:value="${COUNTRY_NAME}" id="countryName" readonly/>
+												</div>
+												<div class="row">
+													<label class="col-sm-5">Internal AML Rating</label> <input
+														class="form-control col-sm-5" type="text"
+														th:field="*{INTERNAL_AML_RATING}"
+														th:value="${INTERNAL_AML_RATING}" id="internalAMLRating" />
+												</div>
+												<div class="row">
+													<label class="col-sm-5">Corresponding Rating</label> <input
+														class="form-control col-sm-5" type="text"
+														th:field="*{CORRESPONDING_RATING}"
+														th:value="${CORRESPONDING_RATING}" id="correspondingRating"/>
+												</div>
+												
+												<div class="row">
+													<label class="col-sm-5">No Corresponding Bank</label> <input
+														class="form-control col-sm-5" type="number"
+														th:field="*{NO_CORRESPONDING_BANK}"
+														th:value="${NO_CORRESPONDING_BANK}" id="noCorrespondingBank" />
+												</div>
+												
+
+											</div>
+										</form>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-primary"
+											onclick="submitdataform();">Submit</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-------------------------------------Details edit modal form----------------------------------------------------->
+						<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+						<div class="modal fade" id="datadelete">
+							<div
+								class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+								<div class="modal-content">
+									<div class="modal-body" style="text-align: center">
+										<button type="button" class="close" data-dismiss="modal">×</button>
+										Are you Sure want to delete?
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-primary"
+											onclick="submitdataform();">Submit</button>
+										<button type="button" class="btn btn-primary"
+											data-dismiss="modal">Cancel</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary"
+						onclick="location.reload();" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+</html>

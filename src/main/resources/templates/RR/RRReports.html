@@ -1,0 +1,541 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+
+<style>
+.row1 {
+	padding: 7px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+.underline {
+	text-decoration: underline;
+	color: #08a6f1;
+	cursor: pointer;
+}
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+</style>
+<script th:inline="javascript">
+
+function back() {
+	window.history.back();
+}
+	/*<![CDATA[*/
+	var reportlist = /*[[${reportlist}]]*/null;
+	var frequency;
+
+	$(function() {
+		
+		$("#reportTimediv").hide();
+		
+		$.validator.addMethod("valueNotEquals", function(value, element, arg){
+			  return arg !== value;
+			 }, "Please Select");
+		
+		 $("#reportform").validate({
+			 rules: {
+				 reportid: { valueNotEquals: "Select" },
+		 		 function: { valueNotEquals: "Select" },
+		 		reportingTime: { valueNotEquals: "Select" }
+				  },
+				  messages: {
+				   reportid : { valueNotEquals: "Please Select a Report Id" },
+				   function :  { valueNotEquals: "Please Select a function" },
+				   reportingTime : { valueNotEquals : "Please Select Reporting Time" },
+				   asondate : "Please Select Report Date",
+				   fromdate : "Plese Select From Date",
+				   todate	: "Plesae Select To Date",
+				   currency : "Plesae Select Reporting currency"
+				  }  ,
+			  submitHandler: function(form) {
+					var fun = $('#function :selected').val();
+					var selectedIndex = $("#reportlist option:selected").index();
+					var report = reportlist[selectedIndex - 1];
+
+					if (fun == "view") {
+
+						$("#reportform").attr('action', "Reports/" + report.reportid+"?dtltype=report");
+						var reportid = $('#reportlist :selected').text();
+						var asondate = $('#asonDate').val();
+						var fromdate = $('#dt1').val();
+						var todate = $('#dt2').val();
+						var reportingTime = $('#reportingTime :selected').text();
+						
+						var Callurl;
+						
+						if(reportid=="FIM0500"){
+							
+							Callurl = './Reports/' + reportid + '/Precheck?asondate='
+							+ asondate + '&fromdate=' + fromdate + '&todate=' + todate + '&reportingTime='+reportingTime;
+							
+						}else {
+							
+							Callurl =  './Reports/' + reportid + '/Precheck?asondate='
+							+ asondate + '&fromdate=' + fromdate + '&todate=' + todate;
+						};
+
+						$.ajax({
+							type : 'get',
+							url : Callurl,
+							success : function(data) {
+
+								if (data == 'success') {									
+									form.submit();
+								} else {
+									$("#alertmsg").text(data);
+									$("#alert").modal("toggle");
+								}
+
+							}
+						});
+					} else if (fun == "nil"){
+						
+						var reportid = $('#reportlist :selected').text();
+						var asondate = $('#asonDate').val();
+						var fromdate = $('#dt1').val();
+						var todate = $('#dt2').val();
+						var reportingTime = $('#reportingTime :selected').text();
+						
+						Callurl = './Reports/' + reportid + '/nilReport?asondate='
+						+ asondate + '&fromdate=' + fromdate + '&todate=' + todate + '&reportingTime='+reportingTime;
+						
+						
+						$.ajax({
+							type : 'get',
+							url : Callurl,
+							success : function(data) {
+								
+								$("#alertmsg").text(data);
+								$("#alert").modal("toggle");
+
+							}
+						});
+						
+					}
+					
+					else {
+						$("#reportform").attr('action',
+								"Reports/" + report.reportid + "/verify");				
+						var reportid = $('#reportlist :selected').text();
+						var asondate = $('#asonDate').val();
+						var fromdate = $('#dt1').val();
+						var todate = $('#dt2').val();
+						var reportingTime = $('#reportingTime :selected').text();
+
+						var Callurl;
+						
+						if(reportid=="FIM0500"){
+							
+							Callurl = './Reports/' + reportid + '/Precheck?asondate='
+							+ asondate + '&fromdate=' + fromdate + '&todate=' + todate + '&reportingTime='+reportingTime;
+							
+						}else {
+							
+							Callurl =  './Reports/' + reportid + '/Precheck?asondate='
+							+ asondate + '&fromdate=' + fromdate + '&todate=' + todate;
+						};
+
+						$.ajax({
+							type : 'get',
+							url : Callurl,
+							success : function(data) {
+
+								if (data != 'Records Pending for Verification For the Report') {									
+									$("#alertmsg").text("No data Available for Verification");
+									$("#alert").modal("toggle");
+									
+								} else {
+									
+									form.submit();
+									
+								}
+
+							}
+						});
+						
+						
+						
+					}
+				  }
+				});	 
+		
+		$("#asonDate").datepicker(
+				{
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : "dd-mm-yy",
+					maxDate: new Date(),
+					onClose : function() {
+						var asondate = $(this).datepicker('getDate');
+
+						if (asondate) {
+							
+							if (frequency == "Monthly") {
+								
+								asondate = new Date(asondate.getFullYear(),asondate.getMonth() + 1, 0);
+								$(this).datepicker("setDate", asondate);
+								$('#dt2').datepicker("setDate", asondate);
+								asondate.setDate(1);
+								$('#dt1').datepicker("setDate", asondate);
+								
+							} else if (frequency == "Daily") {
+												
+					            $("#dt2").datepicker("setDate", asondate);
+					            $('#dt1').datepicker("setDate", asondate);
+
+							} else if (frequency == "Fortnightly") {
+								
+								$("#dt2").datepicker('setDate', asondate);
+								asondate.setDate(asondate.getDate()-13);
+								$('#dt1').datepicker("setDate", asondate);
+								 
+							} else if (frequency == "Half Yearly") {
+								
+								asondate.setMonth((Math.trunc(asondate.getMonth()/6)*6)+5);
+								asondate = new Date(asondate.getFullYear(), asondate.getMonth() + 1, 0);
+					            $(this).datepicker('setDate', asondate);
+					            $("#dt2").datepicker('setDate', asondate);
+
+					            asondate.setDate(1);
+					            asondate.setMonth(Math.trunc(asondate.getMonth()/6)*6);
+					            $("#dt1").datepicker('setDate', asondate);
+
+							} else if (frequency == "Yearly") {
+								
+								asondate.setDate(31);
+								asondate.setMonth(11);
+								$('#dt2').datepicker("setDate",asondate);
+								$(this).datepicker('setDate', asondate);
+								 
+								asondate.setDate(1);
+								asondate.setMonth(0);
+						        $( "#dt1" ).datepicker("setDate", asondate);
+								
+								
+							} else if (frequency == "Quarterly") {
+								
+								
+								asondate.setMonth((Math.trunc(asondate.getMonth()/3)*3)+2);
+								asondate = new Date(asondate.getFullYear(), asondate.getMonth() + 1, 0);
+						        $(this).datepicker('setDate', asondate);
+						        $("#dt2").datepicker('setDate', asondate);
+
+						        asondate.setDate(1);
+						        asondate.setMonth(Math.trunc(asondate.getMonth()/3)*3);
+						         	
+						        $("#dt1").datepicker('setDate', asondate);
+								
+
+							} else if (frequency == "Weekly") {
+								
+
+							};
+
+						}
+					}
+
+				});
+		$("#dt1").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate: new Date(),
+			dateFormat : "dd-mm-yy"
+		});
+		$("#dt2").datepicker({
+			changeMonth : true,
+			changeYear : true,
+			maxDate: new Date(),
+			dateFormat : "dd-mm-yy"
+		});
+	});
+
+	
+	function getVali(a) {
+	    var reportid = a.getAttribute("data-rptcode");
+	    var todate = a.getAttribute("data-todate");
+
+	    // Show loader
+	    $('#loader1').modal('show');
+
+	    fetch('/BRBS/checkDomainFlag?rptcode=' + reportid)
+	        .then(response => response.text())
+	        .then(result => {
+	            // Hide loader
+	            $('#loader1').modal('hide');
+
+	            if (result === 'ENABLED') {
+	                location.href = '/BRBS/BRFValidations?rptcode=' + reportid + '&todate=' + todate;
+	            } else if (result === 'DISABLED') {
+	                alert('This report is disabled.');
+	            } else {
+	                alert('Report not found.');
+	            }
+	        })
+	        .catch(error => {
+	            console.error('Error checking domain flag:', error);
+	            alert('An error occurred while checking report status.');
+	            // Hide loader in case of error
+	            $('#loader1').modal('hide');
+	        });
+	}
+
+
+
+	function showReportName() {
+		var fun = $('#function :selected').val();
+		var selectedIndex = $("#reportlist option:selected").index();
+		
+		var report = reportlist[selectedIndex - 1];
+		var reportId = report.reportid;
+		frequency = report.report_frequency;
+		
+		$("#repname").text(report.report_name);
+		$("#reportTimediv").hide();
+		
+		if(reportId=='FIM0500'){
+			
+			$("#reportTimediv").show();
+			$("#reportingTime").addAttr("required");
+		}
+
+	};
+	
+	
+	
+	/*function getReport1(a){
+		
+		
+		
+		 var fromdate =a.getAttribute("data-fromdate");
+		var todate =a.getAttribute("data-todate");
+		var asondate =a.getAttribute("data-todate");
+	
+		var reportid = a.getAttribute("data-rptcode");
+		  var selectedIndex = $("#reportlist option:selected").index();
+		  var report = reportlist[selectedIndex - 1];
+		  
+		  var Callurl;
+		 
+		  var form = $('#reportform')[0];
+
+		
+			$("#reportform").attr('action', 'Reports/' + reportid +'?dtltype=report' +'&fromdate=' + fromdate + '&todate=' + todate +'&asondate=' +asondate);
+		  
+			Callurl =  './Reports/' + reportid + '/PrecheckRR?fromdate=' + fromdate + '&todate=' + todate;
+			
+			$.ajax({
+				type : 'get',
+				url : Callurl,
+				success : function(data) {
+					if (data == 'success') {
+						var type='RBS'
+						$("#reportform").attr('action', 'Reports/' + reportid +'?dtltype=report' +'&fromdate=' + fromdate + '&todate=' + todate + '&type=' +type + '&asondate=' +asondate);
+
+						form.submit();
+					} else {
+						$("#alertmsg").text(data);
+						$("#alert").modal("toggle");
+					}
+
+				}
+			}); 
+
+	  }*/
+	
+
+	/*]]>*/
+	
+		function home() {
+		location.href = "/BRBS/Dashboard";
+
+	}
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const statusCells = document.querySelectorAll(".rpt-status");
+
+    statusCells.forEach(cell => {
+        const rptCode = cell.getAttribute("data-rptcode");
+
+        fetch('/BRBS/checkDomainFlag?rptcode=' + rptCode)
+            .then(response => response.text())
+            .then(result => {
+                if (result === 'ENABLED') {
+                    cell.textContent = 'Enabled';
+                    cell.style.color = 'green';
+                } else if (result === 'DISABLED') {
+                    cell.textContent = 'Disabled';
+                    cell.style.color = 'red';
+                } else {
+                    cell.textContent = 'Unknown';
+                    cell.style.color = 'gray';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching status for', rptCode, error);
+                cell.textContent = 'Error';
+                cell.style.color = 'orange';
+            });
+    });
+});
+</script>
+
+</head>
+<title>BCDRS</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<!-- <i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i> -->
+	<div class="container content">
+	<form class="form-horizontal" method="post" name="CriteriaForm"
+					id="reportform">
+		<div class="card" style="width: 1325px" >
+			<div class="card-header" style="background-color: #376275;">
+				<div class="float-left">
+					<h5 th:text="${menu}" style="color: white;"></h5>
+				</div>
+				
+				
+				
+			</div>
+
+				<div class="row">
+					<div class="col-sm-12">
+						<div style="overflow-x: auto; max-height: 650px; overflow-y: auto;">
+							<table
+								class="table  table-bordered table-hover table-condensed table-sm"
+								style="width: 1325px" id="detailtb">
+								<thead class="thead-light">
+									<tr>
+										<!-- <th></th> -->
+										<th style="width: 8%;">Report Code</th>
+										<th style="width: 46%;">Report Name</th>
+										<th style="width: 9%;">Start Date</th>
+										<th style="width: 9%;">End Date</th>
+										<!-- <th style="width: 10%;">Report Type</th>
+										<th style="width: 8%;">Detail Flag</th> -->
+										<th style="width: 10%;">Status</th>
+
+
+									</tr>
+								</thead>
+								<tbody>
+
+
+									<tr th:if="${COUNT} == '0'">
+										<td colspan="9" style="text-align: center; color: red">No
+											Data Found</td>
+									</tr>
+									<tr th:each="userProfile : ${reportlist}"
+	th:attr="data-cust_id=${userProfile.srl_no}"
+	th:id="${userProfile.srl_no}" class="userlist">
+
+	<td class="underline" onclick="getVali(this);"
+		th:attr="data-rptcode=${userProfile.rpt_code},data-fromdate=${#dates.format(userProfile.start_date, 'dd/MM/yyyy')},data-todate=${#dates.format(userProfile.end_date, 'dd/MM/yyyy')}"
+		th:text="${userProfile.rpt_code}"></td>
+
+	<td th:text="${userProfile.rpt_description}"></td>
+	<td th:text="${#dates.format(userProfile.start_date, 'dd/MM/yyyy')}"></td>
+	<td th:text="${#dates.format(userProfile.end_date, 'dd/MM/yyyy')}"></td>
+
+	<!-- Add an empty status column with rpt_code as data attr -->
+	<td class="rpt-status" th:attr="data-rptcode=${userProfile.rpt_code}">Loading...</td>
+</tr>
+
+
+								</tbody>
+							</table>
+
+						</div>
+						<div class="card-footer text-center"
+							th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276";>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home </button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</form>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+<div class="modal fade" id="loader1" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+</body>
+</body>
+</html>

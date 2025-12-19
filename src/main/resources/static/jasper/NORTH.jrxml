@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NORTH" pageWidth="1555" pageHeight="802" columnWidth="1535" leftMargin="20" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bb0f8978-dc0b-4cf2-ada8-09d222c74df0">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="XBRL"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="REPORT_DATE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{REPORT_DATE}]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT country_break_down, (CASE
+WHEN country_break_down in ('North American Countries') THEN north_american_countries
+WHEN country_break_down in ('European Countries') THEN european_countries
+WHEN country_break_down in ('GCC Countries') THEN gcc_countries
+WHEN country_break_down in ('Mena Countries') THEN mena_countries
+WHEN country_break_down in ('Sub-Saharan Countries') THEN sub_saharan_countries
+WHEN country_break_down in ('Asian Countries') THEN asian_countries
+WHEN country_break_down in ('Latin American Countries') THEN latin_american_countries1
+WHEN country_break_down in ('Oceania Countries') THEN oceania_countries
+WHEN country_break_down in ('Remaining Countries') THEN remaining_countries
+END) as country_break_down, outward_family, outward_investment, outward_trade, outward_other, (CASE
+WHEN outward_total is NULL THEN outward_family+outward_investment+outward_trade+outward_other
+END) as out_total, inward_family, inward_investment, inward_trade, inward_other, (CASE
+WHEN inward_total is NULL THEN inward_family+inward_investment+inward_trade+inward_other
+END) as in_total FROM BRF38_SUMMARYTABLE1
+WHERE REPORT_DATE =$P{REPORT_DATE} AND 
+COUNTRY_BREAK_DOWN  in ('North American Countries') union SELECT country_break_down, (CASE
+WHEN country_break_down in ('North American Countries') THEN north_american_countries
+WHEN country_break_down in ('European Countries') THEN european_countries
+WHEN country_break_down in ('GCC Countries') THEN gcc_countries
+WHEN country_break_down in ('Mena Countries') THEN mena_countries
+WHEN country_break_down in ('Sub-Saharan Countries') THEN sub_saharan_countries
+WHEN country_break_down in ('Asian Countries') THEN asian_countries
+WHEN country_break_down in ('Latin American Countries') THEN latin_american_countries1
+WHEN country_break_down in ('Oceania Countries') THEN oceania_countries
+WHEN country_break_down in ('Remaining Countries') THEN remaining_countries
+END) as country_break_down, outward_family, outward_investment, outward_trade, outward_other, (CASE
+WHEN outward_total is NULL THEN outward_family+outward_investment+outward_trade+outward_other
+END) as out_total, inward_family, inward_investment, inward_trade, inward_other, (CASE
+WHEN inward_total is NULL THEN inward_family+inward_investment+inward_trade+inward_other
+END) as in_total FROM BRF38_SUMMARYTABLE1
+WHERE REPORT_DATE =$P{REPORT_DATE} AND 
+COUNTRY_BREAK_DOWN  in ('European Countries')]]>
+	</queryString>
+	<field name="COUNTRY_BREAK_DOWN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="COUNTRY_BREAK_DOWN"/>
+		<property name="com.jaspersoft.studio.field.label" value="COUNTRY_BREAK_DOWN"/>
+	</field>
+	<field name="COLUMN_2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="COUNTRY_BREAK_DOWN"/>
+		<property name="com.jaspersoft.studio.field.label" value="COUNTRY_BREAK_DOWN"/>
+	</field>
+	<field name="OUTWARD_FAMILY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OUTWARD_FAMILY"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTWARD_FAMILY"/>
+	</field>
+	<field name="OUTWARD_INVESTMENT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OUTWARD_INVESTMENT"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTWARD_INVESTMENT"/>
+	</field>
+	<field name="OUTWARD_TRADE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OUTWARD_TRADE"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTWARD_TRADE"/>
+	</field>
+	<field name="OUTWARD_OTHER" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OUTWARD_OTHER"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTWARD_OTHER"/>
+	</field>
+	<field name="OUT_TOTAL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OUT_TOTAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUT_TOTAL"/>
+	</field>
+	<field name="INWARD_FAMILY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="INWARD_FAMILY"/>
+		<property name="com.jaspersoft.studio.field.label" value="INWARD_FAMILY"/>
+	</field>
+	<field name="INWARD_INVESTMENT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="INWARD_INVESTMENT"/>
+		<property name="com.jaspersoft.studio.field.label" value="INWARD_INVESTMENT"/>
+	</field>
+	<field name="INWARD_TRADE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="INWARD_TRADE"/>
+		<property name="com.jaspersoft.studio.field.label" value="INWARD_TRADE"/>
+	</field>
+	<field name="INWARD_OTHER" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="INWARD_OTHER"/>
+		<property name="com.jaspersoft.studio.field.label" value="INWARD_OTHER"/>
+	</field>
+	<field name="IN_TOTAL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="IN_TOTAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="IN_TOTAL"/>
+	</field>
+	<variable name="NORTH_OUTWARD_TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OUTWARD_FAMILY}.add($F{OUTWARD_INVESTMENT}) .add($F{OUTWARD_TRADE}).add($F{OUTWARD_OTHER})]]></variableExpression>
+	</variable>
+	<variable name="NORTH_INWARD_TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{INWARD_FAMILY}.add($F{INWARD_INVESTMENT}) .add($F{INWARD_TRADE}).add($F{INWARD_OTHER})]]></variableExpression>
+	</variable>
+	<variable name="NORTH_OUTWARD_FAMILY" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OUTWARD_FAMILY}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_OUTWARD_INVESTMENT" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OUTWARD_INVESTMENT}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_OUTWARD_TRADE" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OUTWARD_TRADE}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_OUTWARD_OTHER" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OUTWARD_OTHER}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_INWARD_FAMILY" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{INWARD_FAMILY}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_INWARD_INVESTMENT" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{INWARD_INVESTMENT}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_INWARD_TRADE" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{INWARD_TRADE}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_INWARD_OTHER" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{INWARD_OTHER}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_OUTWARD_TOTAL_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{NORTH_OUTWARD_FAMILY} + $V{NORTH_OUTWARD_INVESTMENT} + $V{NORTH_OUTWARD_TRADE} + $V{NORTH_OUTWARD_OTHER}]]></variableExpression>
+	</variable>
+	<variable name="NORTH_INWARD_TOTAL_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{NORTH_INWARD_FAMILY} + $V{NORTH_INWARD_INVESTMENT} + $V{NORTH_INWARD_TRADE} + $V{NORTH_INWARD_OTHER}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="828" y="0" width="42" height="40" backcolor="#B3B6B9" uuid="ddafffc9-72b8-472c-9f6d-01a9854b0f48">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{NORTH_INWARD_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="588" y="0" width="60" height="40" backcolor="#C7C5C5" uuid="523bae6e-8d4f-47f2-9faa-e6c2fbd9a80f">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INWARD_FAMILY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="568" y="0" width="20" height="40" uuid="0fa976ab-3d39-4749-b124-9a583c21895c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="718" y="0" width="50" height="40" backcolor="#C7C5C5" uuid="0fe4a48f-035a-475d-95ae-6223bf683793">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INWARD_TRADE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="50" height="40" uuid="95f1f357-36f2-433f-b029-a46477131047"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Opaque" x="508" y="0" width="60" height="40" backcolor="#B3B6B9" uuid="26168b78-d99b-4f5f-a6d6-d61778b9a291">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{NORTH_OUTWARD_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="270" y="0" width="58" height="40" backcolor="#C7C5C5" uuid="fbedfe52-44fd-4255-9900-6526e1d9fdbe">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTWARD_INVESTMENT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="768" y="0" width="60" height="40" backcolor="#C7C5C5" uuid="f0c255e5-2086-4c0d-8693-66e80eece714">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INWARD_OTHER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="398" y="0" width="50" height="40" backcolor="#C7C5C5" uuid="d5617ae3-5779-4711-9144-d3f990d481af">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTWARD_TRADE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="50" y="0" width="220" height="40" backcolor="#C7C5C5" uuid="29e39d0b-1b74-4e36-8a49-43d5c5c2a621">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COUNTRY_BREAK_DOWN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="448" y="0" width="60" height="40" backcolor="#C7C5C5" uuid="0c9731c9-cf08-4728-a4d3-c2777498349b">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTWARD_OTHER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="328" y="0" width="70" height="40" backcolor="#C7C5C5" uuid="ab1cd16f-8795-42bf-96b4-fefca6556f84">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTWARD_INVESTMENT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="648" y="0" width="70" height="40" backcolor="#C7C5C5" uuid="76fb3e90-e706-4bbb-aa93-66b784c39680">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INWARD_INVESTMENT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

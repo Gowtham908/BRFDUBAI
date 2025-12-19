@@ -1,0 +1,438 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+<style>
+.btns {
+	float: right;
+	margin: 5px;
+}
+
+.col-sm-5 {
+	padding-bottom: 15px;
+}
+
+.list-body {
+	padding: 0px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.formline {
+	padding-bottom: 15px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+#finusertb {
+	width: 460px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	padding: 0px;
+}
+</style>
+
+<script th:inline="javascript">
+function home() {
+		location.href = 'Dashboard'
+	}
+
+	function back() {
+		window.history.back();
+	}
+
+	
+	
+//adding the report
+function submitform() {
+		//Creating Validating Rules
+		$('#rrRptMast').validate({
+			messages : {
+				rpt_code : "Please Provide User Id"
+			}
+		});
+
+		if ($("#rrRptMast").valid()) {
+
+			var formmode = /*[[${formmode}]]*/null;
+			
+			
+			var url = "./addreport?formmode=" + formmode;
+
+			$("#rrRptMast").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#rrRptMast").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+			    $("#loader1").modal("hide");
+			    $("#alertmsg").text(responseText);
+
+			    const urlParams = new URLSearchParams(window.location.search);
+			    const selectedFrequency = urlParams.get('frequency'); // get frequency from edit page URL
+
+			    $('#alert').modal("toggle");
+			    $('#alert').on('hidden.bs.modal', function () {
+			        if (selectedFrequency) {
+			            window.location.href = `Dashboard?frequency=${encodeURIComponent(selectedFrequency)}`;
+			        } else {
+			            window.location.href = 'Dashboard';
+			        }
+			    });
+			}
+
+			
+			}
+
+	};
+	
+	//init caps for frequency
+	
+function toInitCaps(str) {
+    return str.toLowerCase().replace(/\b\w/g, function(char) {
+        return char.toUpperCase();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('remarks_4');
+    if (input) {
+        input.addEventListener('blur', function() {
+            input.value = toInitCaps(input.value);
+        });
+    }
+});
+
+
+
+</script>
+
+<script>
+function deletereport() {
+    if (confirm('Are you sure you want to delete this User?')) {
+        $("#loader1").modal("toggle");
+        var rpt_code = document.getElementById("rpt_code").value;
+        
+        $.ajax({
+            type: 'POST',
+            url: './deletereport?formmode=' + rpt_code,
+            success: function(response) {
+                $("#loader1").modal("hide");
+                $("#alertmsg").text('Deleted');
+                $('#alert').modal("toggle");
+
+                // Move the redirection logic inside the success callback
+                $('#alert').on('hidden.bs.modal', function () {
+                    window.location.href = 'Dashboard';
+                });
+            },
+            error: function(xhr, status, error) {
+                $("#loader1").modal("hide");
+                alert('Not able to delete. Contact administrator.');
+            }
+        });
+    }
+}
+</script>
+
+</head>
+<title>BCDRS</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!-- -------------------User List Starts----------------------------------------------------- -->
+	<div class="container content">
+	<div th:if="${formmode}=='edit' OR ${formmode}=='add'" >
+		<div class="row">
+			<div class="col-sm-12 finuserapply" >
+				<form action="#" th:object="${rrRptMast}" method="post"
+					autocomplete="off" id="rrRptMast" th:fragment="finuserapply">
+					<div class="card" style="width: 1433px; margin-left: -26px;">
+						<div class="card-header"style="background-color: #376275;">
+							<div class="float-left">
+								<h3 th:if="${formmode}=='add'" style="font-family: verdana;color: white; font-size: 30px; font-weight: bold; padding-top: 10px;">REPORT MASTER - ADD</h3>
+								<h3 th:if="${formmode}=='edit'" style="font-family: verdana;color: white; font-size: 30px; font-weight: bold; padding-top: 10px;">REPORT MASTER - EDIT</h3>
+							</div>
+							
+						</div>
+						<div class="card-body">
+
+							<input autocomplete="false" name="hidden" type="text"
+								style="display: none;">
+							<div class="form-group">
+							<div class="row formline">
+
+									<label class="col-sm-2">SRL NO </label>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="text" 
+											id="srl_no" name="srl_no" value="" class="form-control form-control-sm"
+											autocomplete="off" required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+	<input type="text" th:field="*{srl_no}" id="srl_no"
+		class="form-control form-control-sm" autocomplete="off" required readonly/>
+</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">RPT start date</label>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="date" 
+											 id="rpt_start_date" name="rpt_start_date" value=""
+											class="form-control form-control-sm" required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+	<input type="date" th:field="*{rpt_start_date}" id="rpt_start_date" name="rpt_start_date"
+		class="form-control form-control-sm" autocomplete="off" required />
+</div>
+									<div class="col-sm-1"></div>
+									
+								</div>
+								<div class="row formline">
+									<div class="col-sm-2">
+										<label for="">RPT CODE<b style="color:red;">*</b></label>
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="text" 
+											id="rpt_code" class="form-control form-control-sm" placeholder="RPT CODE"
+											name="rpt_code" autocomplete="off" 
+											onkeyup="this.value = this.value.toUpperCase();"
+											 required />
+											<span id="feedbackuser"></span>
+											</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+	<input type="text" th:field="*{rpt_code}" id="rpt_code"
+		class="form-control form-control-sm" autocomplete="off" required readonly />
+									</div>
+								
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">
+										<label for="rpt_description">RPT DESCRIPTION<b style="color:red;">*</b></label>
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="text" 
+											id="rpt_description"  name="rpt_description"
+											class="form-control form-control-sm" autocomplete="new-text"
+											required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="text" th:field="*{rpt_description}"
+											id="rpt_description" name="rpt_description" value="" th:value="${rpt_description}" 
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+								</div>
+
+
+
+								<div class="row formline">
+
+									<label class="col-sm-2">start date<b style="color:red;">*</b></label>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="date" id="start_date" name="start_date" value=""
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="date" th:field="*{start_date}" 
+											id="start_date" name="start_date"
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">End date<b style="color:red;">*</b></label>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="date"  name="end_date" id="end_date" value=""
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="date" th:field="*{end_date}"
+											id="end_date" 
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+
+								<div class="row formline">
+
+									<label class="col-sm-2">RPT status <b style="color:red;">*</b></label>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="text"  id="rpt_status" name="rpt_status" value=""
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+										
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="text" th:field="*{rpt_status}"
+											id="rpt_status" 
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Frequency <b style="color:red;">*</b></label>
+									<div class="col-sm-3" th:if="${formmode}=='add'">
+										<input type="text"  id="remarks_4" name="remarks_4" value=""
+											class="form-control form-control-sm" autocomplete="off" 
+											required />
+									</div>
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+										<input type="text" th:field="*{remarks_4}"
+											id="remarks_4"  name="remarks_4"
+											class="form-control form-control-sm" autocomplete="false"
+											required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+								
+								<div class="row formline" th:if="${formmode}=='edit'">
+									<div class="col-sm-2">
+										<label for="">Enable/Disable<b style="color:red;">*</b></label>
+									</div>
+									
+									
+									<div class="col-sm-3" th:if="${formmode}=='edit'">
+									<select  th:field="*{DOMAIN}"
+											th:value="${DOMAIN}" id="DOMAIN" name="DOMAIN" class="form-control form-control-sm"
+											autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="Y">Enabled</option>
+											<option value="N">Disabled</option>
+									</select>
+									</div>
+									
+									</div>
+								
+								
+								 
+
+
+						</div>
+						<div class="card-footer text-center"style="background-color: #376275;">
+									<button type="button" class="btn btn-xs btn-primary"
+										id="btnHome" onclick="home();">Home</button>
+									
+									
+								<button
+										type="button"  th:if="${formmode}=='add'" class="btn btn-xs btn-primary"
+										form="rrRptMast" id="btnSubmit" onclick="submitform();"
+										th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
+
+								<button
+										type="button"  th:if="${formmode}=='edit'" class="btn btn-xs btn-primary"
+										form="rrRptMast" id="btnSubmit" onclick="submitform();"
+										th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Submit</button>
+	
+								<button
+										type="button"  th:if="${formmode}=='edit'" class="btn btn-xs btn-primary"
+										form="rrRptMast" id="btnSubmit" onclick="deletereport();"
+										th:attr="data-formmode=${formmode},data-entity=${entity_flg}">Delete</button>
+	
+									<button type="button" class="btn btn-xs btn-primary"
+										id="btnBack" onclick="back();">Back</button>
+
+								</div>
+					</div>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+			<div class="menu-title-header">
+					<div class="modal-title" id="exampleModalLabel"
+						style="text-align: center; color: white;background-color: orange;">BANK OF BARODA</div>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" onclick="list()"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="loader1" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>

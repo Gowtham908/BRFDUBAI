@@ -1,0 +1,3224 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			// Show loader
+			$('#loader1').modal('show');
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function(data) {
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					tablepagination();
+					// Hide loader
+					$('#loader1').modal('hide');
+				},
+				error: function() {
+					// Hide loader on error too
+					$('#loader1').modal('hide');
+					alert("Failed to load details.");
+				}
+			});
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$('#loader1').modal('show');
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function(data) {
+					$('#loader1').modal('hide');
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+					// Hide loader
+					$('#loader1').modal('hide');
+				},
+				error: function() {
+					// Hide loader on error too
+					$('#loader1').modal('hide');
+					alert("Failed to load summary.");
+				}
+			});
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+
+			location.href = "/BRBS/monthly2";
+
+
+		}
+
+
+		function back() {
+			window.history.back();
+		}
+
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("Record are not available given criteria")
+			}
+
+		}
+
+
+
+	</script>
+
+
+	<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_addl_criteria_2").val(a.getAttribute("data-report_addl_criteria_2"));
+				$("#purpose_of_rem").val(a.getAttribute("data-purpose_of_rem"));
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+
+
+
+
+	</script>
+	<script>
+		function submitdataformdetailedit(a) {
+
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+			var report_addl_criteria_2 = document.getElementById('report_addl_criteria_2').value;
+			var purpose_of_rem = document.getElementById('purpose_of_rem').value;
+			alert(foracid);
+			alert(report_label_1);
+			alert(act_balance_amt_lc);
+			alert(report_name_1);
+			alert(report_addl_criteria_1);
+			alert(report_addl_criteria_2);
+			alert(purpose_of_rem);
+
+			$.ajax({
+				url: './CustomerDetailEditBrf38',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1,
+					report_addl_criteria_2: report_addl_criteria_2,
+					purpose_of_rem: purpose_of_rem
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-38 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 3000);
+		}
+
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: './' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-038-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+					}
+					else if (filetype == "BRF") {
+						a.download = '011-BRF-038-A' + ".xls";
+					}
+					else {
+						a.download = '011-BRF-038-A' + ".pdf"; // assuming .pdf extension for PDF files
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+
+					// Set the appropriate message based on the downloaded filetype
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-38 ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text('Downloaded BRF-38 Detail Excel' + ".xlsx");
+					}
+					else if (filetype == "BRF") {
+						$('#customAlertBody').text('Downloaded BRF-38 ' + ".xls"); // assuming .pdf extension for PDF files
+					}
+					else {
+						$('#customAlertBody').text('Downloaded BRF-38 ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+	</script>
+
+
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+	<style>
+/* Your existing CSS - this is the correct approach */
+.scrollable-table-container {
+    /* This is the key: it creates the scroll context */
+    max-height: 620px; /* Or a suitable height like 80vh for responsive design */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+/* Your existing sticky header CSS, targeting the tr elements within the thead */
+.scrollable-table-container thead tr:nth-child(1) {
+    position: sticky;
+    top: 0;
+    background-color: #b3b6b9;
+    z-index: 4;
+}
+
+.scrollable-table-container thead tr:nth-child(2) {
+    position: sticky;
+    top: 36px; /* adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 3;
+}
+
+
+
+.scrollable-table-container thead tr:nth-child(3) {
+    position: sticky;
+    top: 72px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 2;
+}
+
+.scrollable-table-container thead tr:nth-child(4) {
+    position: sticky;
+    top: 108px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 1;
+}
+
+
+</style>
+<script>
+$(document).ready(function () {
+	 
+});
+function tablepagination(){
+    $('#loader1').modal("hide");
+    $('#detailtable').DataTable({
+        "pageLength": 100,
+        "lengthChange": false,
+        "ordering": false,
+        "info": true,
+        "autoWidth": false,
+        "searching": true,
+        "language": {
+            "emptyTable": "No records available"
+        },
+        // --- ADD THIS LINE BELOW ---
+        "dom": '<"top"f>rt<"bottom"ip>'
+        // --- ADD THIS LINE ABOVE ---
+    });
+}
+</script>
+<style>
+/* Styles for the search box (from previous answer) */
+.dataTables_filter {
+    float: right;
+    text-align: right; /* Ensures the label and input align well within the floated div */
+}
+
+/* Clearfix to prevent layout issues from floating elements above the table */
+.dataTables_wrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Styles for the info and pagination controls */
+.dataTables_info {
+    float: left; /* Keep info text on the left */
+}
+
+.dataTables_paginate {
+    float: right; /* Move pagination to the right */
+}
+
+/* Clearfix for the bottom section (info and pagination) */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    /* Ensures they are on the same line if space allows */
+    display: inline-block;
+}
+
+/* You might want a clear div if your bottom section also has other elements */
+.clear {
+    clear: both;
+}</style>
+<title>BCDRS</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BRF 38-BANKING AND MONETARY
+					STATISTICS- COUNTRY-WISE REMITTANCES REPORT</b>
+				<th><b style="color: white; margin-left: 20%;">Report Date
+						- <span th:text="${todate}"></span>
+					</b></th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showdetails('firstpage','1','0');"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'" onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<!-- <button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button> -->
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!-- ---------------------------- Report summary section starts it will shown only if summary button clicked----------------------- -->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive scrollable-table-container" style="border-right: 1px solid #dee2e6">
+
+							<table style="width: 1500px;"
+								class="sticky-header-table table  table-bordered table-hover table-sm table-condensed">
+								<thead style="background-color: #b3b6b9; font-size: 18px;">
+									<tr style="text-align: center">
+
+										<th></th>
+										<th></th>
+										<th colspan="5" class="align-bottom">OUTWARD</th>
+
+										<th colspan="5" class="align-bottom">INWARD</th>
+
+									</tr>
+									<tr style="text-align: center">
+										<th></th>
+										<th class="align-bottom">Country Break Down</th>
+										<th class="align-bottom">Family</th>
+										<th class="align-bottom">Investment</th>
+										<th class="align-bottom">Trade</th>
+										<th class="align-bottom">Other</th>
+										<th class="align-bottom">TOTAL</th>
+
+										<th class="align-bottom">Family</th>
+										<th class="align-bottom">Investment</th>
+										<th class="align-bottom">Trade</th>
+										<th class="align-bottom">Other</th>
+										<th class="align-bottom">TOTAL</th>
+
+									</tr>
+
+
+
+								</thead>
+
+								<tbody th:each="report: ${reportsummary1}" style="font-size: 16px;">
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">1</th>
+										<th th:text="${report.r10_north_american_countries}" style="text-align: center">
+											CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r10_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r10_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r10_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">1.1</td>
+										<td th:text="${report.r11_north_american_countries1}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r11_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+
+									</tr>
+									<tr>
+										<td align="right">1.2</td>
+										<td th:text="${report.r12_north_american_countries2	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r12_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">2</th>
+										<th th:text="${report.r13_european_countries}" style="text-align: center">
+											CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r13_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r13_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.1</td>
+										<td th:text="${report.r14_european_countries1}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r14_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.2</td>
+										<td th:text="${report.r15_european_countries2}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r15_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.3</td>
+										<td th:text="${report.r16_european_countries3}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r16_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.4</td>
+										<td th:text="${report.r17_european_countries4}	" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r17_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.5</td>
+										<td th:text="${report.r18_european_countries5}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r18_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+
+									</tr>
+									<tr>
+										<td align="right">2.6</td>
+										<td th:text="${report.r19_european_countries6	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r19_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<td align="right">2.7</td>
+										<td th:text="${report.r20_european_countries7}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r20_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.8</td>
+										<td th:text="${report.r21_european_countries8	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r21_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<td align="right">2.9</td>
+										<td th:text="${report.r22_european_countries9}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r22_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.10</td>
+										<td th:text="${report.r23_european_countries10	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r23_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.11</td>
+										<td th:text="${report.r24_european_countries11	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r24_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+
+									</tr>
+									<tr>
+										<td align="right">2.12</td>
+										<td th:text="${report.r25_european_countries12	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r25_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td align="right">2.13</td>
+										<td th:text="${report.r26_european_countries13}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r26_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.14</td>
+										<td th:text="${report.r27_european_countries14}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r27_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.15</td>
+										<td th:text="${report.r28_european_countries15	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r28_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.16</td>
+										<td th:text="${report.r29_european_countries16	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.17</td>
+										<td th:text="${report.r30_european_countries17	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r30_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.18</td>
+										<td th:text="${report.r31_european_countries18}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r31_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.19</td>
+										<td th:text="${report.r32_european_countries19}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r32_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.20</td>
+										<td th:text="${report.r33_european_countries20	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r33_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW124">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">2.21</td>
+										<td th:text="${report.r34_european_countries21}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r34_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW125">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">3</th>
+										<th th:text="${report.r35_gcc_countries	}" style="text-align: center">CHENNAI
+										</th>
+
+
+										<td th:text="${#numbers.formatDecimal(report.r35_outward_family,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r35_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">3.1</td>
+										<td th:text="${report.r36_gcc_countries1	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r36_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">3.2</td>
+										<td th:text="${report.r37_gcc_countries2	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r37_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">3.3</td>
+										<td th:text="${report.r38_gcc_countries3	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r38_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">3.4</td>
+										<td th:text="${report.r39_gcc_countries4}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r39_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">3.5</td>
+										<td th:text="${report.r40_gcc_countries5	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r40_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">4</th>
+										<th th:text="${report.r41_mena_countries	}" style="text-align: center">CHENNAI
+										</th>
+										<td th:text="${#numbers.formatDecimal(report.r41_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r41_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r41_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r41_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r41_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r41_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r41_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r41_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r41_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r41_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+
+									</tr>
+									<tr>
+										<td align="right">4.1</td>
+										<td th:text="${report.r42_mena_countries1	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r42_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+
+									</tr>
+									<tr>
+										<td align="right">4.2</td>
+										<td th:text="${report.r43_mena_countries2}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r43_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+
+
+									</tr>
+									<tr>
+										<td align="right">4.3</td>
+										<td th:text="${report.r44_mena_countries3	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r44_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">4.4</td>
+										<td th:text="${report.r45_mena_countries4	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r45_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">4.5</td>
+										<td th:text="${report.r46_mena_countries5	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r46_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">4.6</td>
+
+										<td th:text="${report.r47_mena_countries6	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r47_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">4.7</td>
+										<td th:text="${report.r48_mena_countries7}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r48_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">4.8</td>
+										<td th:text="${report.r49_mena_countries8}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r49_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">4.9</td>
+										<td th:text="${report.r50_mena_countries9}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r50_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">4.10</td>
+										<td th:text="${report.r51_mena_countries10}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">onclick="resident(this)"
+											id="ROW142"CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r51_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">5</th>
+										<th th:text="${report.r52_sub_saharan_countries}" style="text-align: center">
+											CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r52_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r52_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">5.1</td>
+
+										<td th:text="${report.r53_sub_saharan_countries1}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r53_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">5.2</td>
+										<td th:text="${report.r54_sub_saharan_countries2	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r54_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">5.3</td>
+										<td th:text="${report.r55_sub_saharan_countries3}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r55_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">5.4</td>
+										<td th:text="${report.r56_sub_saharan_countries4	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r56_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">5.5</td>
+										<td th:text="${report.r57_sub_saharan_countries5}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r57_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">6</th>
+										<th th:text="${report.r58_asian_countries	}" style="text-align: center">CHENNAI
+										</th>
+										<td th:text="${#numbers.formatDecimal(report.r58_outward_family	,1,'COMMA',0,'POINT')}"
+											style="text-align: center">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r58_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.1</td>
+										<td th:text="${report.r59_asian_countries1	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW150">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r59_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.2</td>
+										<td th:text="${report.r60_asian_countries2	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r60_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.3</td>
+										<td th:text="${report.r61_asian_countries3	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW152">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r61_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.4</td>
+										<td th:text="${report.r62_asian_countries4}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r62_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.5</td>
+										<td th:text="${report.r63_asian_countries5	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r63_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.6</td>
+										<td th:text="${report.r64_asian_countries6	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r64_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.7</td>
+										<td th:text="${report.r65_asian_countries7	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r65_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.8</td>
+										<td th:text="${report.r66_asian_countries8}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r66_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.9</td>
+										<td th:text="${report.r67_asian_countries9	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r67_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.10</td>
+										<td th:text="${report.r68_asian_countries10}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW159">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r68_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.11</td>
+										<td th:text="${report.r69_asian_countries11}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW160">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r69_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.12</td>
+										<td th:text="${report.r70_asian_countries12	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW161">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r70_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.13</td>
+										<td th:text="${report.r71_asian_countries13	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW162">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r71_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.14</td>
+										<td th:text="${report.r72_asian_countries14	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW163">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r72_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.15</td>
+										<td th:text="${report.r73_asian_countries15	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW164">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r73_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.16</td>
+										<td th:text="${report.r74_asian_countries16}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW165">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r74_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.17</td>
+										<td th:text="${report.r75_asian_countries17	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW166">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r75_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">6.18</td>
+										<td th:text="${report.r76_asian_countries18}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW167">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r76_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">7</th>
+										<th th:text="${report.r77_latin_american_countries}" style="text-align: center">
+											CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r77_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r77_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">7.1</td>
+										<td th:text="${report.r78_latin_american_countries1}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW169">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r78_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">7.2</td>
+										<td th:text="${report.r79_latin_american_countries2	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW170">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r79_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">7.3</td>
+										<td th:text="${report.r80_latin_american_countries3}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW171">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r80_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">7.4</td>
+										<td th:text="${report.r81_latin_american_countries4	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW172">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r81_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">7.5</td>
+										<td th:text="${report.r82_latin_american_countries5	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW173">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r82_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">7.6</td>
+										<td th:text="${report.r83_latin_american_countries6}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW174">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r83_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th style="text-align: right">8</th>
+										<th th:text="${report.r84_oceania_countries	}" style="text-align: center">
+											CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.r84_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r84_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">8.1</td>
+										<td th:text="${report.r85_oceania_countries1	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW176">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r85_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">8.2</td>
+										<td th:text="${report.r86_oceania_countries2	}" align="left">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_outward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_outward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r86_inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+
+								</tbody>
+								<tbody>
+									<tr style="background-color: #b3b6b9; text-align: right;">
+										<th class="align-bottom">9</th>
+										<th class="align-bottom" style="text-align: center">Remaining
+											Countries</th>
+										<td class="align-bottom" th:text="${getremainoutwardfam}">0</td>
+										<td class="align-bottom" th:text="${getremainoutwardinvest}">0</td>
+										<td class="align-bottom" th:text="${getremainoutwardtrade}">0</td>
+										<td class="align-bottom" th:text="${getremainoutwardother}">0</td>
+										<td class="align-bottom" th:text="${getreaminingamouttotal}">0</td>
+										<td class="align-bottom" th:text="${getremaininwardfam}">0</td>
+										<td class="align-bottom" th:text="${getremaininwardinvest}">0</td>
+										<td class="align-bottom" th:text="${getremaininwardtrade}">0</td>
+										<td class="align-bottom" th:text="${getremaininwardother}">0</td>
+										<td class="align-bottom" th:text="${getreaminingamintotal}">0</td>
+
+									</tr>
+								</tbody>
+								<tbody style="font-size: 16px;">
+
+									<tr th:each="report,iterStat8: ${Remaining}" th:id="${report.row_label}"
+										onclick="resident(this)">
+										<td th:text="${'9.' + iterStat8.count}" style="text-align: right">CHENNAI</td>
+
+										<td th:text="${report.remaining_countries}" style="text-align: left">CHENNAI
+										</td>
+										<td th:text="${report.outward_family1}" style="text-align: right">CHENNAI</td>
+										<td th:text="${report.outward_investment1}" style="text-align: right">CHENNAI
+										</td>
+										<td th:text="${report.outward_trade1}" style="text-align: right">CHENNAI</td>
+										<td th:text="${report.outward_other1}" style="text-align: right">CHENNAI</td>
+										<td style="background-color: #b3b6b9; text-align: right;"
+											th:text="${report.outward_total1}">CHENNAI</td>
+										<td th:text="${report.inward_family1}" style="text-align: right">CHENNAI</td>
+										<td th:text="${report.inward_investment1}" style="text-align: right">CHENNAI
+										</td>
+										<td th:text="${report.inward_trade1}" style="text-align: right">CHENNAI</td>
+										<td th:text="${report.inward_other1}" style="text-align: right">CHENNAI</td>
+										<td style="background-color: #b3b6b9; text-align: right;"
+											th:text="${report.inward_total1}">CHENNAI</td>
+										<td th:text="${report.row_label}" hidden></td>
+									</tr>
+
+								</tbody>
+								<tbody th:each="report: ${reportsummary1}"
+									style="font-size: 16px; background-color: #b3b6b9;">
+
+									<tr>
+										<td align="left"></td>
+										<th th:text="${report.product}" align="left">CHENNAI</th>
+										<td th:text="${#numbers.formatDecimal(report.outward_family,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.outward_investment,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.outward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.outward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.outward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9" onclick="resident(this)"
+											id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.inward_family	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.inward_investment	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.inward_trade	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.inward_other	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW177">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.inward_total	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b6b9">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td colspan="4" style="background-color: #b3b6b9">Note:
+											Banks are required to provide information on Family
+											remittances latest by the 1st of January 2014.</td>
+										<td colspan="8" rowspan="2"></td>
+
+									</tr>
+
+									<tr>
+										<td></td>
+										<td class="align-middle" colspan="4">FORM NO: BSD/BRF
+											38-REMITTANCES / OCT 13</td>
+									</tr>
+								</tbody>
+
+							</table>
+					</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+							
+					</div>
+				</div>
+
+			</div>
+
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<!-- <div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb"> -->
+	<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail" style="width: 1430px">
+    <div style="overflow-x: auto; border-right: 1px solid #dee2e6; width: 1499px" th:class="${searchmsg == null}?'inner'" >
+      
+        <table id="detailtable" class="table table-bordered table-sm" style="width: 1499px">
+    <thead class="thead-light" >
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACCT BAL LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT_NAME_1</th>
+								<th>REPORT_LABEL_1</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+
+							</tr>
+
+						</thead>
+						 <tbody>
+            <tr th:each="report,iterator : ${reportdetails}">	
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="data-cust_id=${report.cust_id},
+          data-foracid=${report.foracid},
+          data-acct_name=${report.acct_name},
+          data-act_balance_amt_lc=${report.act_balance_amt_lc},
+          data-report_name_1=${report.report_name_1},
+          data-report_label_1=${report.report_label_1},
+          data-report_addl_criteria_2=${report.report_addl_criteria_2},
+          data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')},
+          data-report_addl_criteria_1 = ${report.report_addl_criteria_1},
+          data-report_addl_criteria_2 = ${report.report_addl_criteria_2},
+          data-purpose_of_rem= ${report.purpose_of_rem} " onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 2, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td hidden th:text="${report.report_addl_criteria_2}"></td>
+								<td hidden th:text="${report.purpose_of_rem}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+					
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCT BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc"
+												name="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id="report_name_1" name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1"
+												name="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT_ADDL_CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1"
+												name="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" name="report_date"
+												readonly />
+										</div>
+										<div class="row" hidden>
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="purpose_of_rem" hidden
+												name="purpose_of_rem" />
+										</div>
+										<div class="row" hidden>
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_2" hidden
+												name="report_addl_criteria_2" />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdetailedit(this);" id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+<div class="modal fade" id="loader1" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+</body>
+
+<style>
+.inner {
+    max-height: 600px; /* Adjust height as needed */
+    overflow: auto;
+    border: 1px solid #dee2e6;
+}
+
+/* Sticky thead */
+#detailtable thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa; /* Match Bootstrap thead-light */
+    z-index: 2;
+}
+.pagination {
+    margin: 0;
+}
+
+.page-item.active .page-link {
+    background-color: #386276;
+    border-color: #386276;
+}
+
+.page-link {
+    color: #386276;
+}
+
+.page-link:hover {
+    color: #2a4a5c;
+}
+
+.form-select {
+    display: inline-block;
+    width: auto;
+}
+</style>
+
+
+
+
+</html>

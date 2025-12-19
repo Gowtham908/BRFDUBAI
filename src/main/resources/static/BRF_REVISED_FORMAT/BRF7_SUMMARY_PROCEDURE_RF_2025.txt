@@ -1,0 +1,210 @@
+create or replace PROCEDURE         "BRF7_SUMMARY_PROCEDURE_RF_2025" (Report_date VARCHAR2)
+IS
+----30-SEP-2020--
+---VARARIBLE DECLARE
+V_REPORT_DATE DATE := TO_DATE(Report_date,'DD-MM-YYYY');
+V_REPORT_DUE_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), +3);
+V_REPORT_DUE_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), -3)+1;
+
+V_R1_PRODUCT	varchar2(250 BYTE):='Net Lending (BRF1 Item 7+8) minus {Stage 3 for Loans and Advances (Principal) (BRF-2: item 25.1) + Provision for Interest 2 past due more than 90 days and Legacy Interest in Suspense (BRF-2 item: 25.3}';
+V_R1_AMOUNT	Number(24,4):=0;
+V_R2_PRODUCT	varchar2(100 BYTE):='Lending to NBFI (BRF 1, item 4) ';
+V_R2_AMOUNT	Number(24,4):=0;
+V_R3_PRODUCT	varchar2(100 BYTE):='Financial Guarantees & Stand-by LC Issued (BRF 3-Item 3.1)';
+V_R3_AMOUNT	Number(24,4):=0;
+V_R4_PRODUCT	varchar2(100 BYTE):='Financial Guarantees & Stand -by LCs Received ';
+V_R4_AMOUNT	Number(24,4):=0;
+V_R5_PRODUCT	varchar2(100 BYTE):='Interbank Placements with a remaining life of more than 3 months (BRF 9)';
+V_R5_AMOUNT	Number(24,4):=0;
+V_R6_PRODUCT	varchar2(100 BYTE):='Total Advances';
+V_R6_AMOUNT	Number(24,4):=0;
+V_R7_PRODUCT	varchar2(100 BYTE):='Total own funds (BRF2 Liab: item 28 + item 26.7)+ Gen provision (BRF-2 Liab: item 25.2.3)';
+V_R7_AMOUNT	Number(24,4):=0;
+V_R8_PRODUCT	varchar2(100 BYTE):='Goodwill and other intangible assets (BRF1 Assets: 11.3 and 11.4)';
+V_R8_AMOUNT	Number(24,4):=0;
+V_R9_PRODUCT	varchar2(100 BYTE):='Fixed Assets (BRF1 Assets: 9.1 + 9.2 + 9.3 + 9.5)';
+V_R9_AMOUNT	Number(24,4):=0;
+V_R10_PRODUCT	varchar2(100 BYTE):='Funds allocated to branches abroad (BRF1 Assets: 9.4)';
+V_R10_AMOUNT	Number(24,4):=0;
+V_R11_PRODUCT	varchar2(100 BYTE):='Treasury shares held  No INPUT required here';
+V_R11_AMOUNT	Number(24,4):=0;
+V_R12_PRODUCT	varchar2(100 BYTE):='Unquoted Investments (BRF 5- Applicable items)';
+V_R12_AMOUNT	Number(24,4):=0;
+V_R13_PRODUCT	varchar2(100 BYTE):='Investment in  subsidiaries, associates and affiliates ( BRF5- Applicable items)';
+V_R13_AMOUNT	Number(24,4):=0;
+V_R14_PRODUCT	varchar2(100 BYTE):='Total deduction';
+V_R14_AMOUNT	Number(24,4):=0;
+V_R15_PRODUCT	varchar2(100 BYTE):='Net Free Capital Funds';
+V_R15_AMOUNT	Number(24,4):=0;
+V_R16_PRODUCT	varchar2(100 BYTE):='Non repayable head office funds (BRF2 Liab- Item 26.5)';
+V_R16_AMOUNT	Number(24,4):=0;
+V_R17_PRODUCT	varchar2(100 BYTE):='Interbank deposits with remaining life of more than 6 months (BRF 9)';
+V_R17_AMOUNT	Number(24,4):=0;
+V_R18_PRODUCT	varchar2(100 BYTE):='Refinancing of Housing Loans';
+V_R18_AMOUNT	Number(24,4):=0;
+V_R19_PRODUCT	varchar2(100 BYTE):='Borrowing from non-Banking Financial Institutions remaining life of more than 6 months (BRF 9)';
+V_R19_AMOUNT	Number(24,4):=0;
+V_R20_PRODUCT	varchar2(100 BYTE):='85% of the rest of NBFI Deposits';
+V_R20_AMOUNT	Number(24,4):=0;
+V_R21_PRODUCT	varchar2(100 BYTE):='Customer Deposits with remaining life of more than 6 months (BRF 9)';
+V_R21_AMOUNT	Number(24,4):=0;
+V_R22_PRODUCT	varchar2(100 BYTE):='85% of the rest of Customer Deposits';
+V_R22_AMOUNT	Number(24,4):=0;
+V_R23_PRODUCT	varchar2(100 BYTE):='Capital market funding term borrowings maturing after 6 months from reporting date (BRF 9)';
+V_R23_AMOUNT	Number(24,4):=0;
+V_R24_PRODUCT	varchar2(100 BYTE):='Head Office loans towards meeting Large Exposure Funding ';
+V_R24_AMOUNT	Number(24,4):=0;
+V_R25_PRODUCT	varchar2(100 BYTE):='Total other stable resources';
+V_R25_AMOUNT	Number(24,4):=0;
+V_R26_PRODUCT	varchar2(100 BYTE):='Total Stable Resources';
+V_R26_AMOUNT	Number(24,4):=0;
+V_R27_PRODUCT	varchar2(100 BYTE):='LENDING TO STABLE RESOURCES RATIO ';
+V_R27_AMOUNT	Number(24,4):=0;
+
+
+BEGIN
+
+delete from BRF7_SUMMARYTABLE where report_date = V_REPORT_DATE;
+Commit;
+
+
+--BRF_SRNO:1.6 , COLUMN 'E', Total Advances ,BRBS_ROW106:= SUM(ROW101+ROW102+ROW103-ROW104+ROW105);
+V_R6_AMOUNT:= V_R1_AMOUNT+V_R2_AMOUNT+V_R3_AMOUNT-V_R4_AMOUNT+V_R5_AMOUNT;
+
+
+--BRF_SRNO:2.1.7 , COLUMN 'E', Total deduction ,BRBS_ROW116:= SUM(ROW110 : ROW115);
+V_R14_AMOUNT:= V_R8_AMOUNT+V_R9_AMOUNT+V_R10_AMOUNT+V_R11_AMOUNT+V_R12_AMOUNT+V_R13_AMOUNT;
+
+--BRF_SRNO:2.2 , COLUMN 'E', Net Free Capital Funds ,BRBS_ROW117:= ROW108-ROW116;
+V_R15_AMOUNT:= +(V_R7_AMOUNT-V_R14_AMOUNT);
+
+--BRF_SRNO:2.3.8 , COLUMN 'E', Total other stable resources ,BRBS_ROW128:= SUM(ROW119 : ROW127);
+V_R25_AMOUNT:= V_R16_AMOUNT+V_R17_AMOUNT+V_R18_AMOUNT+V_R19_AMOUNT+V_R20_AMOUNT+V_R21_AMOUNT+V_R22_AMOUNT+V_R23_AMOUNT+V_R24_AMOUNT;
+
+--BRF_SRNO:2.4 , COLUMN 'E', Total Stable Resources (2.2+2.3.8) ,BRBS_ROW129:=ROW117 + ROW128;
+V_R26_AMOUNT:= V_R15_AMOUNT+V_R25_AMOUNT;
+
+IF ( V_R26_AMOUNT = 0)
+   THEN V_R27_AMOUNT :=0 ;
+ ELSIF (V_R26_AMOUNT != 0 ) THEN 
+    V_R27_AMOUNT := (V_R6_AMOUNT/V_R26_AMOUNT*100);
+    end if;
+
+
+
+insert into BRF7_SUMMARYTABLE(
+R1_PRODUCT,
+R1_AMOUNT,
+R2_PRODUCT,
+R2_AMOUNT,
+R3_PRODUCT,
+R3_AMOUNT,
+R4_PRODUCT,
+R4_AMOUNT,
+R5_PRODUCT,
+R5_AMOUNT,
+R6_PRODUCT,
+R6_AMOUNT,
+R7_PRODUCT,
+R7_AMOUNT,
+R8_PRODUCT,
+R8_AMOUNT,
+R9_PRODUCT,
+R9_AMOUNT,
+R10_PRODUCT,
+R10_AMOUNT,
+R11_PRODUCT,
+R11_AMOUNT,
+R12_PRODUCT,
+R12_AMOUNT,
+R13_PRODUCT,
+R13_AMOUNT,
+R14_PRODUCT,
+R14_AMOUNT,
+R15_PRODUCT,
+R15_AMOUNT,
+R16_PRODUCT,
+R16_AMOUNT,
+R17_PRODUCT,
+R17_AMOUNT,
+R18_PRODUCT,
+R18_AMOUNT,
+R19_PRODUCT,
+R19_AMOUNT,
+R20_PRODUCT,
+R20_AMOUNT,
+R21_PRODUCT,
+R21_AMOUNT,
+R22_PRODUCT,
+R22_AMOUNT,
+R23_PRODUCT,
+R23_AMOUNT,
+R24_PRODUCT,
+R24_AMOUNT,
+R25_PRODUCT,
+R25_AMOUNT,
+R26_PRODUCT,
+R26_AMOUNT,
+R27_PRODUCT,
+R27_AMOUNT,
+REPORT_DATE)
+
+VALUES(
+V_R1_PRODUCT,
+V_R1_AMOUNT,
+V_R2_PRODUCT,
+V_R2_AMOUNT,
+V_R3_PRODUCT,
+V_R3_AMOUNT,
+V_R4_PRODUCT,
+V_R4_AMOUNT,
+V_R5_PRODUCT,
+V_R5_AMOUNT,
+V_R6_PRODUCT,
+V_R6_AMOUNT,
+V_R7_PRODUCT,
+V_R7_AMOUNT,
+V_R8_PRODUCT,
+V_R8_AMOUNT,
+V_R9_PRODUCT,
+V_R9_AMOUNT,
+V_R10_PRODUCT,
+V_R10_AMOUNT,
+V_R11_PRODUCT,
+V_R11_AMOUNT,
+V_R12_PRODUCT,
+V_R12_AMOUNT,
+V_R13_PRODUCT,
+V_R13_AMOUNT,
+V_R14_PRODUCT,
+V_R14_AMOUNT,
+V_R15_PRODUCT,
+V_R15_AMOUNT,
+V_R16_PRODUCT,
+V_R16_AMOUNT,
+V_R17_PRODUCT,
+V_R17_AMOUNT,
+V_R18_PRODUCT,
+V_R18_AMOUNT,
+V_R19_PRODUCT,
+V_R19_AMOUNT,
+V_R20_PRODUCT,
+V_R20_AMOUNT,
+V_R21_PRODUCT,
+V_R21_AMOUNT,
+V_R22_PRODUCT,
+V_R22_AMOUNT,
+V_R23_PRODUCT,
+V_R23_AMOUNT,
+V_R24_PRODUCT,
+V_R24_AMOUNT,
+V_R25_PRODUCT,
+V_R25_AMOUNT,
+V_R26_PRODUCT,
+V_R26_AMOUNT,
+V_R27_PRODUCT,
+V_R27_AMOUNT,
+V_REPORT_DATE);
+
+COMMIT;
+END;

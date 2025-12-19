@@ -1,0 +1,2624 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+<script th:inline="javascript">
+		/*<![CDATA[*/
+			
+function addTableRows() {
+    event.preventDefault();
+    var tbody = document.getElementById("cliks1");
+    var rowCount = tbody.rows.length;
+    var row = tbody.insertRow(rowCount);
+
+    var serialNumber = rowCount + 1;
+
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell();
+    var cell3 = row.insertCell();
+    var cell4 = row.insertCell();
+    var cell5 = row.insertCell();
+    var cell6 = row.insertCell();
+    var cell7 = row.insertCell();
+    var cell8 = row.insertCell();
+    var cell9 = row.insertCell();
+    var cell10 = row.insertCell();
+    var cell11 = row.insertCell();
+    var cell12 = row.insertCell();
+    var cell13 = row.insertCell();
+    var cell14 = row.insertCell();
+    var cell15 = row.insertCell();
+    var cell16 = row.insertCell();
+    var cell17 = row.insertCell();
+    var cell18 = row.insertCell();
+    var cell19 = row.insertCell();
+    var cell20 = row.insertCell();
+
+    var inputField = document.createElement("input");
+    inputField.setAttribute("id", "srl_no");
+    inputField.setAttribute("name", "srl_no");
+    inputField.setAttribute("style", "border: transparent; width: 20px;");
+    inputField.setAttribute("value", serialNumber);
+    inputField.setAttribute("readonly", "readonly");
+    cell1.appendChild(inputField);
+
+    cell2.innerHTML = '<input class="showInput" id="r1_network_in_uae" name="r1_network_in_uae" style="border: transparent;" />';
+    cell3.innerHTML = '<input class="showInput" id="r1_beginning_of_period" name="r1_beginning_of_period" style="border: transparent;" />';
+    cell4.innerHTML = '<input class="showInput" id="r1_opened_during_period" name="r1_opened_during_period" style="border: transparent;" />';
+    cell5.innerHTML = '<input class="showInput" id="r1_closed_during_period" name="r1_closed_during_period" style="border: transparent;" />';
+    cell6.innerHTML = '<input class="showInput" id="r1_end_of_period" name="r1_end_of_period" style="border: transparent;" />';
+    cell7.innerHTML = '<input class="showInput" id="r1_dubai" name="r1_dubai" style="border: transparent;" />';
+    cell8.innerHTML = '<input class="showInput" id="r1_abudhabi" name="r1_abudhabi" style="border: transparent;" />';
+    cell9.innerHTML = '<input class="showInput" id="r1_sharjah" name="r1_sharjah" style="border: transparent;" />';
+    cell10.innerHTML = '<input class="showInput" id="r1_ajman" name="r1_ajman" style="border: transparent;" />';
+    cell11.innerHTML = '<input class="showInput" id="r1_rak" name="r1_rak" style="border: transparent;" />';
+    cell12.innerHTML = '<input class="showInput" id="r1_fujairah" name="r1_fujairah" style="border: transparent;" />';
+    cell13.innerHTML = '<input class="showInput" id="r1_uaq" name="r1_uaq" style="border: transparent;" />';
+    cell14.style.backgroundColor = "#b3b6b9";
+    cell15.style.backgroundColor = "#b3b6b9";
+    cell16.style.backgroundColor = "#b3b6b9";
+    cell17.style.backgroundColor = "#b3b6b9";
+    cell18.style.backgroundColor = "#b3b6b9";
+    cell19.style.backgroundColor = "#b3b6b9";
+
+    // Total input field for each row
+    var totalInput = document.createElement("input");
+    totalInput.setAttribute("class", "showInput");
+    totalInput.setAttribute("id", "r1_total" + serialNumber); // Differentiate each total input with row number
+    totalInput.setAttribute("name", "r1_total" + serialNumber); // Differentiate each total input with row number
+    totalInput.setAttribute("style", "border: transparent;");
+    cell20.appendChild(totalInput);
+
+    cell20.style.backgroundColor = "#b3b6b9";
+}
+
+		
+		function addTableRows1() {
+			event.preventDefault();
+			var tbody = document.getElementById("cliks2");
+			var rowCount = tbody.rows.length;
+			var row = tbody.insertRow(rowCount);
+
+			var serialNumber = rowCount + 1;
+
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell();
+			var cell3 = row.insertCell();
+			var cell4 = row.insertCell();
+			var cell5 = row.insertCell();
+			var cell6 = row.insertCell();
+			var cell7 = row.insertCell();
+			var cell8 = row.insertCell();
+			var cell9 = row.insertCell();
+			var cell10 = row.insertCell();
+			var cell11 = row.insertCell();
+	        var cell12 = row.insertCell();
+	        var cell13 = row.insertCell();
+            var cell14 = row.insertCell();
+			var cell15 = row.insertCell();
+			var cell16 = row.insertCell();
+			var cell17 = row.insertCell();
+	        var cell18 = row.insertCell();
+	        var cell19 = row.insertCell();
+	        var cell20 = row.insertCell();
+
+
+			var inputField = document.createElement("input");
+			inputField.setAttribute("id", "srl_no");
+			inputField.setAttribute("name", "srl_no");
+			inputField.setAttribute("style", "border: transparent; width: 20px;");
+			inputField.setAttribute("value", serialNumber);
+			inputField.setAttribute("readonly", "readonly");
+
+			cell1.appendChild(inputField);
+	        cell2.innerHTML = '<input class="showInput" id="r1_rep_name" name="r1_rep_name" style="border:transparent;"/>';
+			cell3.innerHTML = '<input class="showInput" id="r1_rep_country_of_incorporation" name="r1_rep_country_of_incorporation" style="border:transparent;"/>';
+			cell4.innerHTML = '<input class="showInput" id="r1_rep_date_opened" name="r1_rep_date_opened" style="border:transparent;"/>';
+			cell5.innerHTML = '<input class="showInput" id="r1_rep_date_closed" name="r1_rep_date_closed" style="border:transparent;"/>';
+			cell6.innerHTML = '<input class="showInput" id="r1_rep_regulator" name="r1_rep_regulator" style="border:transparent;"/>';
+	        cell7.innerHTML = '<input class="showInput" id="r1_rep_ownership" name="r1_rep_ownership" style="border:transparent;"/>';
+			cell8.innerHTML = '<input class="showInput" id="r1_rep_nature_of_business" name="r1_rep_nature_of_business" style="border:transparent;"/>';
+			cell9.innerHTML = '<input class="showInput" id="r1_rep_share_capital" name="r1_rep_share_capital" style="border:transparent;"/>';
+			cell10.innerHTML = '<input class="showInput" id="r1_rep_share_premium" name="r1_rep_share_premium" style="border:transparent;"/>';
+			cell11.innerHTML = '<input class="showInput" id="r1_rep_reserves" name="r1_rep_reserves" style="border:transparent;"/>';
+			cell12.innerHTML = '<input class="showInput" id="r1_rep_accumulated_retained_earnings" name="r1_rep_accumulated_retained_earnings" style="border:transparent;"/>';
+	        cell13.innerHTML = '<input class="showInput" id="r1_rep_assets" name="r1_rep_assets" style="border:transparent;"/>';
+            cell14.innerHTML = '<input class="showInput" id="r1_rep_ceo_name" name="r1_rep_ceo_name" style="border:transparent;"/>';
+			cell15.innerHTML = '<input class="showInput" id="r1_rep_no_of_staff" name="r1_rep_no_of_staff" style="border:transparent;"/>';
+			cell16.innerHTML = '<input class="showInput" id="r1_rep_no_of_uae_nationals" name="r1_rep_no_of_uae_nationals" style="border:transparent;"/>';
+			cell17.innerHTML = '<input class="showInput" id="r1_rep_no_of_branches" name="r1_rep_no_of_branches" style="border:transparent;"/>';
+			cell18.innerHTML = '<input class="showInput" id="r1_rep_no_of_atm" name="r1_rep_no_of_atm" style="border:transparent;"/>';
+	        cell19.innerHTML = '<input class="showInput" id="r1_rep_cb_approval_ref_num" name="r1_rep_cb_approval_ref_num" style="border:transparent;"/>';
+	        cell20.style.backgroundColor = "#b3b6b9";
+		}
+		
+		function addTableRows2() {
+			event.preventDefault();
+			var tbody = document.getElementById("cliks3");
+			var rowCount = tbody.rows.length;
+			var row = tbody.insertRow(rowCount);
+
+			var serialNumber = rowCount + 1;
+
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell();
+			var cell3 = row.insertCell();
+			var cell4 = row.insertCell();
+			var cell5 = row.insertCell();
+			var cell6 = row.insertCell();
+			var cell7 = row.insertCell();
+			var cell8 = row.insertCell();
+			var cell9 = row.insertCell();
+			var cell10 = row.insertCell();
+			var cell11 = row.insertCell();
+	        var cell12 = row.insertCell();
+	        var cell13 = row.insertCell();
+            var cell14 = row.insertCell();
+			var cell15 = row.insertCell();
+			var cell16 = row.insertCell();
+			var cell17 = row.insertCell();
+	        var cell18 = row.insertCell();
+	        var cell19 = row.insertCell();
+	        var cell20 = row.insertCell();
+
+
+			var inputField = document.createElement("input");
+			inputField.setAttribute("id", "srl_no");
+			inputField.setAttribute("name", "srl_no");
+			inputField.setAttribute("style", "border: transparent; width: 20px;");
+			inputField.setAttribute("value", serialNumber);
+			inputField.setAttribute("readonly", "readonly");
+
+			cell1.appendChild(inputField);
+	        cell2.innerHTML = '<input class="showInput" id="r1_for_name" name="r1_for_name" style="border:transparent;"/>';
+			cell3.innerHTML = '<input class="showInput" id="r1_for_country_of_incorporation" name="r1_for_country_of_incorporation" style="border:transparent;"/>';
+			cell4.innerHTML = '<input class="showInput" id="r1_for_date_opened" name="r1_for_date_opened" style="border:transparent;"/>';
+			cell5.innerHTML = '<input class="showInput" id="r1_for_date_closed" name="r1_for_date_closed" style="border:transparent;"/>';
+			cell6.innerHTML = '<input class="showInput" id="r1_for_regulator" name="r1_for_regulator" style="border:transparent;"/>';
+	        cell7.innerHTML = '<input class="showInput" id="r1_for_ownership" name="r1_for_ownership" style="border:transparent;"/>';
+			cell8.innerHTML = '<input class="showInput" id="r1_for_nature_of_business" name="r1_for_nature_of_business" style="border:transparent;"/>';
+			cell9.innerHTML = '<input class="showInput" id="r1_for_share_capital" name="r1_for_share_capital" style="border:transparent;"/>';
+			cell10.innerHTML = '<input class="showInput" id="r1_for_share_premium" name="r1_for_share_premium" style="border:transparent;"/>';
+			cell11.innerHTML = '<input class="showInput" id="r1_for_reserves" name="r1_for_reserves" style="border:transparent;"/>';
+			cell12.innerHTML = '<input class="showInput" id="r1_for_accumulated_retained_earnings" name="r1_for_accumulated_retained_earnings" style="border:transparent;"/>';
+	        cell13.innerHTML = '<input class="showInput" id="r1_for_assets" name="r1_for_assets" style="border:transparent;"/>';
+            cell14.innerHTML = '<input class="showInput" id="r1_for_ceo_name" name="r1_for_ceo_name" style="border:transparent;"/>';
+			cell15.innerHTML = '<input class="showInput" id="r1_for_no_of_staff" name="r1_for_no_of_staff" style="border:transparent;"/>';
+			cell16.innerHTML = '<input class="showInput" id="r1_for_no_of_uae_nationals" name="r1_for_no_of_uae_nationals" style="border:transparent;"/>';
+			cell17.innerHTML = '<input class="showInput" id="r1_for_no_of_branches" name="r1_for_no_of_branches" style="border:transparent;"/>';
+			cell18.innerHTML = '<input class="showInput" id="r1_for_no_of_atm" name="r1_for_no_of_atm" style="border:transparent;"/>';
+	        cell19.innerHTML = '<input class="showInput" id="r1_for_cb_approval_ref_num" name="r1_for_cb_approval_ref_num" style="border:transparent;"/>';
+	        cell20.style.backgroundColor = "#b3b6b9";
+		}
+
+		
+		function addTableRows3() {
+			event.preventDefault();
+			var tbody = document.getElementById("cliks4");
+			var rowCount = tbody.rows.length;
+			var row = tbody.insertRow(rowCount);
+
+			var serialNumber = rowCount + 1;
+
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell();
+			var cell3 = row.insertCell();
+			var cell4 = row.insertCell();
+			var cell5 = row.insertCell();
+			var cell6 = row.insertCell();
+			var cell7 = row.insertCell();
+			var cell8 = row.insertCell();
+			var cell9 = row.insertCell();
+			var cell10 = row.insertCell();
+			var cell11 = row.insertCell();
+	        var cell12 = row.insertCell();
+	        var cell13 = row.insertCell();
+            var cell14 = row.insertCell();
+			var cell15 = row.insertCell();
+			var cell16 = row.insertCell();
+			var cell17 = row.insertCell();
+	        var cell18 = row.insertCell();
+	        var cell19 = row.insertCell();
+	        var cell20 = row.insertCell();
+
+
+			var inputField = document.createElement("input");
+			inputField.setAttribute("id", "srl_no");
+			inputField.setAttribute("name", "srl_no");
+			inputField.setAttribute("style", "border: transparent; width: 20px;");
+			inputField.setAttribute("value", serialNumber);
+			inputField.setAttribute("readonly", "readonly");
+
+			cell1.appendChild(inputField);
+	        cell2.innerHTML = '<input class="showInput" id="r1_ban_name" name="r1_ban_name" style="border:transparent;"/>';
+			cell3.innerHTML = '<input class="showInput" id="r1_ban_country_of_incorporation" name="r1_ban_country_of_incorporation" style="border:transparent;"/>';
+			cell4.innerHTML = '<input class="showInput" id="r1_ban_date_opened" name="r1_ban_date_opened" style="border:transparent;"/>';
+			cell5.innerHTML = '<input class="showInput" id="r1_ban_date_closed" name="r1_ban_date_closed" style="border:transparent;"/>';
+			cell6.innerHTML = '<input class="showInput" id="r1_ban_regulator" name="r1_ban_regulator" style="border:transparent;"/>';
+	        cell7.innerHTML = '<input class="showInput" id="r1_ban_ownership" name="r1_ban_ownership" style="border:transparent;"/>';
+			cell8.innerHTML = '<input class="showInput" id="r1_ban_nature_of_business" name="r1_ban_nature_of_business" style="border:transparent;"/>';
+			cell9.innerHTML = '<input class="showInput" id="r1_ban_share_capital" name="r1_ban_share_capital" style="border:transparent;"/>';
+			cell10.innerHTML = '<input class="showInput" id="r1_ban_share_premium" name="r1_ban_share_premium" style="border:transparent;"/>';
+			cell11.innerHTML = '<input class="showInput" id="r1_ban_reserves" name="r1_ban_reserves" style="border:transparent;"/>';
+			cell12.innerHTML = '<input class="showInput" id="r1_ban_accumulated_retained_earnings" name="r1_ban_accumulated_retained_earnings" style="border:transparent;"/>';
+	        cell13.innerHTML = '<input class="showInput" id="r1_ban_assets" name="r1_ban_assets" style="border:transparent;"/>';
+            cell14.innerHTML = '<input class="showInput" id="r1_ban_ceo_name" name="r1_ban_ceo_name" style="border:transparent;"/>';
+			cell15.innerHTML = '<input class="showInput" id="r1_ban_no_of_staff" name="r1_ban_no_of_staff" style="border:transparent;"/>';
+			cell16.innerHTML = '<input class="showInput" id="r1_ban_no_of_uae_nationals" name="r1_ban_no_of_uae_nationals" style="border:transparent;"/>';
+			cell17.innerHTML = '<input class="showInput" id="r1_ban_no_of_branches" name="r1_ban_no_of_branches" style="border:transparent;"/>';
+			cell18.innerHTML = '<input class="showInput" id="r1_ban_no_of_atm" name="r1_ban_no_of_atm" style="border:transparent;"/>';
+	        cell19.innerHTML = '<input class="showInput" id="r1_ban_cb_approval_ref_num" name="r1_ban_cb_approval_ref_num" style="border:transparent;"/>';
+	        cell20.style.backgroundColor = "#b3b6b9";
+		}
+
+		function addTableRows4() {
+			event.preventDefault();
+			var tbody = document.getElementById("cliks5");
+			var rowCount = tbody.rows.length;
+			var row = tbody.insertRow(rowCount);
+
+			var serialNumber = rowCount + 1;
+
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell();
+			var cell3 = row.insertCell();
+			var cell4 = row.insertCell();
+			var cell5 = row.insertCell();
+			var cell6 = row.insertCell();
+			var cell7 = row.insertCell();
+			var cell8 = row.insertCell();
+			var cell9 = row.insertCell();
+			var cell10 = row.insertCell();
+			var cell11 = row.insertCell();
+	        var cell12 = row.insertCell();
+	        var cell13 = row.insertCell();
+            var cell14 = row.insertCell();
+			var cell15 = row.insertCell();
+			var cell16 = row.insertCell();
+			var cell17 = row.insertCell();
+	        var cell18 = row.insertCell();
+	        var cell19 = row.insertCell();
+	        var cell20 = row.insertCell();
+
+
+			var inputField = document.createElement("input");
+			inputField.setAttribute("id", "srl_no");
+			inputField.setAttribute("name", "srl_no");
+			inputField.setAttribute("style", "border: transparent; width: 20px;");
+			inputField.setAttribute("value", serialNumber);
+			inputField.setAttribute("readonly", "readonly");
+
+			cell1.appendChild(inputField);
+	        cell2.innerHTML = '<input class="showInput" id="r1_fin_name" name="r1_fin_name" style="border:transparent;"/>';
+			cell3.innerHTML = '<input class="showInput" id="r1_fin_country_of_incorporation" name="r1_fin_country_of_incorporation" style="border:transparent;"/>';
+			cell4.innerHTML = '<input class="showInput" id="r1_fin_date_opened" name="r1_fin_date_opened" style="border:transparent;"/>';
+			cell5.innerHTML = '<input class="showInput" id="r1_fin_date_closed" name="r1_fin_date_closed" style="border:transparent;"/>';
+			cell6.innerHTML = '<input class="showInput" id="r1_fin_regulator" name="r1_fin_regulator" style="border:transparent;"/>';
+	        cell7.innerHTML = '<input class="showInput" id="r1_fin_ownership" name="r1_fin_ownership" style="border:transparent;"/>';
+			cell8.innerHTML = '<input class="showInput" id="r1_fin_nature_of_business" name="r1_fin_nature_of_business" style="border:transparent;"/>';
+			cell9.innerHTML = '<input class="showInput" id="r1_fin_share_capital" name="r1_fin_share_capital" style="border:transparent;"/>';
+			cell10.innerHTML = '<input class="showInput" id="r1_fin_share_premium" name="r1_fin_share_premium" style="border:transparent;"/>';
+			cell11.innerHTML = '<input class="showInput" id="r1_fin_reserves" name="r1_fin_reserves" style="border:transparent;"/>';
+			cell12.innerHTML = '<input class="showInput" id="r1_fin_accumulated_retained_earnings" name="r1_fin_accumulated_retained_earnings" style="border:transparent;"/>';
+	        cell13.innerHTML = '<input class="showInput" id="r1_fin_assets" name="r1_fin_assets" style="border:transparent;"/>';
+            cell14.innerHTML = '<input class="showInput" id="r1_fin_ceo_name" name="r1_fin_ceo_name" style="border:transparent;"/>';
+			cell15.innerHTML = '<input class="showInput" id="r1_fin_no_of_staff" name="r1_fin_no_of_staff" style="border:transparent;"/>';
+			cell16.innerHTML = '<input class="showInput" id="r1_fin_no_of_uae_nationals" name="r1_fin_no_of_uae_nationals" style="border:transparent;"/>';
+			cell17.innerHTML = '<input class="showInput" id="r1_fin_no_of_branches" name="r1_fin_no_of_branches" style="border:transparent;"/>';
+			cell18.innerHTML = '<input class="showInput" id="r1_fin_no_of_atm" name="r1_fin_no_of_atm" style="border:transparent;"/>';
+	        cell19.innerHTML = '<input class="showInput" id="r1_fin_cb_approval_ref_num" name="r1_fin_cb_approval_ref_num" style="border:transparent;"/>';
+	        cell20.style.backgroundColor = "#b3b6b9";
+		}
+		
+		function addTableRows5() {
+			event.preventDefault();
+			var tbody = document.getElementById("cliks6");
+			var rowCount = tbody.rows.length;
+			var row = tbody.insertRow(rowCount);
+
+			var serialNumber = rowCount + 1;
+
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell();
+			var cell3 = row.insertCell();
+			var cell4 = row.insertCell();
+			var cell5 = row.insertCell();
+			var cell6 = row.insertCell();
+			var cell7 = row.insertCell();
+			var cell8 = row.insertCell();
+			var cell9 = row.insertCell();
+			var cell10 = row.insertCell();
+			var cell11 = row.insertCell();
+	        var cell12 = row.insertCell();
+	        var cell13 = row.insertCell();
+            var cell14 = row.insertCell();
+			var cell15 = row.insertCell();
+			var cell16 = row.insertCell();
+			var cell17 = row.insertCell();
+	        var cell18 = row.insertCell();
+	        var cell19 = row.insertCell();
+	        var cell20 = row.insertCell();
+
+
+			var inputField = document.createElement("input");
+			inputField.setAttribute("id", "srl_no");
+			inputField.setAttribute("name", "srl_no");
+			inputField.setAttribute("style", "border: transparent; width: 20px;");
+			inputField.setAttribute("value", serialNumber);
+			inputField.setAttribute("readonly", "readonly");
+
+			cell1.appendChild(inputField);
+	        cell2.innerHTML = '<input class="showInput" id="r1_non_name" name="r1_non_name" style="border:transparent;"/>';
+			cell3.innerHTML = '<input class="showInput" id="r1_non_country_of_incorporation" name="r1_non_country_of_incorporation" style="border:transparent;"/>';
+			cell4.innerHTML = '<input class="showInput" id="r1_non_date_opened" name="r1_non_date_opened" style="border:transparent;"/>';
+			cell5.innerHTML = '<input class="showInput" id="r1_non_date_closed" name="r1_non_date_closed" style="border:transparent;"/>';
+			cell6.innerHTML = '<input class="showInput" id="r1_non_regulator" name="r1_non_regulator" style="border:transparent;"/>';
+	        cell7.innerHTML = '<input class="showInput" id="r1_non_ownership" name="r1_non_ownership" style="border:transparent;"/>';
+			cell8.innerHTML = '<input class="showInput" id="r1_non_nature_of_business" name="r1_non_nature_of_business" style="border:transparent;"/>';
+			cell9.innerHTML = '<input class="showInput" id="r1_non_share_capital" name="r1_non_share_capital" style="border:transparent;"/>';
+			cell10.innerHTML = '<input class="showInput" id="r1_non_share_premium" name="r1_non_share_premium" style="border:transparent;"/>';
+			cell11.innerHTML = '<input class="showInput" id="r1_non_reserves" name="r1_non_reserves" style="border:transparent;"/>';
+			cell12.innerHTML = '<input class="showInput" id="r1_non_accumulated_retained_earnings" name="r1_non_accumulated_retained_earnings" style="border:transparent;"/>';
+	        cell13.innerHTML = '<input class="showInput" id="r1_non_assets" name="r1_non_assets" style="border:transparent;"/>';
+            cell14.innerHTML = '<input class="showInput" id="r1_non_ceo_name" name="r1_non_ceo_name" style="border:transparent;"/>';
+			cell15.innerHTML = '<input class="showInput" id="r1_non_no_of_staff" name="r1_non_no_of_staff" style="border:transparent;"/>';
+			cell16.innerHTML = '<input class="showInput" id="r1_non_no_of_uae_nationals" name="r1_non_no_of_uae_nationals" style="border:transparent;"/>';
+			cell17.innerHTML = '<input class="showInput" id="r1_non_no_of_branches" name="r1_non_no_of_branches" style="border:transparent;"/>';
+			cell18.innerHTML = '<input class="showInput" id="r1_non_no_of_atm" name="r1_non_no_of_atm" style="border:transparent;"/>';
+	        cell19.innerHTML = '<input class="showInput" id="r1_non_cb_approval_ref_num" name="r1_non_cb_approval_ref_num" style="border:transparent;"/>';
+	        cell20.style.backgroundColor = "#b3b6b9";
+		}
+		
+		function addTableRows6() {
+			event.preventDefault();
+			var tbody = document.getElementById("cliks7");
+			var rowCount = tbody.rows.length;
+			var row = tbody.insertRow(rowCount);
+
+			var serialNumber = rowCount + 1;
+
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell();
+			var cell3 = row.insertCell();
+			var cell4 = row.insertCell();
+			var cell5 = row.insertCell();
+			var cell6 = row.insertCell();
+			var cell7 = row.insertCell();
+			var cell8 = row.insertCell();
+			var cell9 = row.insertCell();
+			var cell10 = row.insertCell();
+			var cell11 = row.insertCell();
+	        var cell12 = row.insertCell();
+	        var cell13 = row.insertCell();
+            var cell14 = row.insertCell();
+            var cell15 = row.insertCell();
+			var cell16 = row.insertCell();
+			var cell17 = row.insertCell();
+	        var cell18 = row.insertCell();
+	        var cell19 = row.insertCell();
+            var cell20 = row.insertCell();
+
+
+			var inputField = document.createElement("input");
+			inputField.setAttribute("id", "srl_no");
+			inputField.setAttribute("name", "srl_no");
+			inputField.setAttribute("style", "border: transparent; width: 20px;"); // Set width to 20 pixels
+			inputField.setAttribute("value", serialNumber);
+			inputField.setAttribute("readonly", "readonly");
+
+			cell1.appendChild(inputField);
+	        cell2.innerHTML = '<input class="showInput" id="r1_total_network_numbers" name="r1_total_network_numbers" style="border:transparent;"/>';
+			cell3.innerHTML = '<input class="showInput" id="r1_domestic_foreign_branches" name="r1_domestic_foreign_branches" style="border:transparent;"/>';
+			cell4.innerHTML = '<input class="showInput" id="r1_rep_offices" name="r1_rep_offices" style="border:transparent;"/>';
+			cell5.innerHTML = '<input class="showInput" id="r1_banking_subsidiaries" name="r1_banking_subsidiaries" style="border:transparent;"/>';
+			cell6.innerHTML = '<input class="showInput" id="r1_non_banking_financial_subsidiaries" name="r1_non_banking_financial_subsidiaries" style="border:transparent;"/>';
+	        cell7.innerHTML = '<input class="showInput" id="r1_non_financial_subsidiaries" name="r1_non_financial_subsidiaries" style="border:transparent;"/>';
+			cell8.innerHTML = '<input class="showInput" id="r1_pay_offices" name="r1_pay_offices" style="border:transparent;"/>';
+			cell9.innerHTML = '<input class="showInput" id="r1_elec_business_units" name="r1_elec_business_units" style="border:transparent;"/>';
+			cell10.innerHTML = '<input class="showInput" id="r1_atms" name="r1_atms" style="border:transparent;"/>';
+		    cell11.innerHTML = '<input class="showInput" id="r1_admins_office_uae" name="r1_admins_office_uae" style="border:transparent;"/>';
+		    cell12.innerHTML = '<input class="showInput" id="r1_admins_office_outside_uae" name="r1_admins_office_outside_uae" style="border:transparent;"/>';
+	        cell13.innerHTML = '<input class="showInput" id="r1_no_of_mobile_banking_user" name="r1_no_of_mobile_banking_user" style="border:transparent;"/>';
+            cell14.innerHTML = '<input class="showInput" id="r1_no_of_internet_banking_user" name="r1_no_of_internet_banking_user" style="border:transparent;"/>';
+            cell15.style.backgroundColor = "#b3b6b9";
+            cell16.style.backgroundColor = "#b3b6b9";
+            cell17.style.backgroundColor = "#b3b6b9";
+            cell18.style.backgroundColor = "#b3b6b9";
+            cell19.style.backgroundColor = "#b3b6b9";
+            cell20.style.backgroundColor = "#b3b6b9";
+		}
+		
+		function ModifySubmit(a) {
+		    var asondate = a.getAttribute("data-fromDate");
+		    alert(asondate);
+		    var formData = {
+		        brf201_SUMMARY_ENTITY_A: [],
+		        brf201_SUMMARY_ENTITY_B: [],
+		        brf201_SUMMARY_ENTITY_C: [],
+		        brf201_SUMMARY_ENTITY_D: [],
+		        brf201_SUMMARY_ENTITY_E: [],
+		        brf201_SUMMARY_ENTITY_F: [],
+		        brf201_SUMMARY_ENTITY_G: [],
+		    };
+
+		   $("#cliks1 tr").each(function() {
+				var row = {};
+				row.srl_no = $(this).find("input[name='srl_no']").val();
+				row.r1_network_in_uae = $(this).find("input[name='r1_network_in_uae']").val();
+				row.r1_beginning_of_period = $(this).find("input[name='r1_beginning_of_period']").val();
+				row.r1_opened_during_period = $(this).find("input[name='r1_opened_during_period']").val();
+				row.r1_closed_during_period = $(this).find("input[name='r1_closed_during_period']").val();
+				row.r1_end_of_period = $(this).find("input[name='r1_end_of_period']").val();
+				row.r1_abudhabi = $(this).find("input[name='r1_abudhabi']").val();
+				row.r1_dubai = $(this).find("input[name='r1_dubai']").val();
+				row.r1_sharjah = $(this).find("input[name='r1_sharjah']").val();
+				row.r1_ajman = $(this).find("input[name='r1_ajman']").val();
+				row.r1_rak = $(this).find("input[name='r1_rak']").val();
+				row.r1_fujairah = $(this).find("input[name='r1_fujairah']").val();
+		                    row.r1_uaq = $(this).find("input[name='r1_uaq']").val();
+				row.r1_total = $(this).find("input[name='r1_total']").val();
+				formData.brf201_SUMMARY_ENTITY_A .push(row);
+			});
+
+			$("#cliks2 tr").each(function() {
+				var row = {};
+				row.srl_no = $(this).find("input[name='srl_no']").val();
+				row.r1_rep_name = $(this).find("input[name='r1_rep_name']").val();
+				row.r1_rep_country_of_incorporation = $(this).find("input[name='r1_rep_country_of_incorporation']").val();
+				row.r1_rep_date_opened = $(this).find("input[name='r1_rep_date_opened']").val();
+				row.r1_rep_date_closed = $(this).find("input[name='r1_rep_date_closed']").val();
+				row.r1_rep_regulator = $(this).find("input[name='r1_rep_regulator']").val();
+				row.r1_rep_ownership = $(this).find("input[name='r1_rep_ownership']").val();
+				row.r1_rep_nature_of_business = $(this).find("input[name='r1_rep_nature_of_business']").val();
+				row.r1_rep_share_capital = $(this).find("input[name='r1_rep_share_capital']").val();
+		                    row.r1_rep_share_premium = $(this).find("input[name='r1_rep_share_premium']").val();
+		                    row.r1_rep_reserves = $(this).find("input[name='r1_rep_reserves']").val();
+				row.r1_rep_accumulated_retained_earnings = $(this).find("input[name='r1_rep_accumulated_retained_earnings']").val();
+				row.r1_rep_assets = $(this).find("input[name='r1_rep_assets']").val();
+				row.r1_rep_ceo_name = $(this).find("input[name='r1_rep_ceo_name']").val();
+				row.r1_rep_no_of_staff = $(this).find("input[name='r1_rep_no_of_staff']").val();
+				row.r1_rep_no_of_uae_nationals = $(this).find("input[name='r1_rep_no_of_uae_nationals']").val();
+				row.r1_rep_no_of_branches = $(this).find("input[name='r1_rep_no_of_branches']").val();
+				row.r1_rep_no_of_atm = $(this).find("input[name='r1_rep_no_of_atm']").val();
+		                    row.r1_rep_cb_approval_ref_num = $(this).find("input[name='r1_rep_cb_approval_ref_num']").val();
+				formData.brf201_SUMMARY_ENTITY_B.push(row);
+			});
+
+		        $("#cliks3 tr").each(function() {
+				var row = {};
+				row.srl_no = $(this).find("input[name='srl_no']").val();
+				row.r1_for_name = $(this).find("input[name='r1_for_name']").val();
+				row.r1_for_country_of_incorporation = $(this).find("input[name='r1_for_country_of_incorporation']").val();
+				row.r1_for_date_opened = $(this).find("input[name='r1_for_date_opened']").val();
+				row.r1_for_date_closed = $(this).find("input[name='r1_for_date_closed']").val();
+				row.r1_for_regulator = $(this).find("input[name='r1_for_regulator']").val();
+				row.r1_for_ownership = $(this).find("input[name='r1_for_ownership']").val();
+				row.r1_for_nature_of_business = $(this).find("input[name='r1_for_nature_of_business']").val();
+				row.r1_for_share_capital = $(this).find("input[name='r1_for_share_capital']").val();
+		                    row.r1_for_share_premium = $(this).find("input[name='r1_for_share_premium']").val();
+		                    row.r1_for_reserves = $(this).find("input[name='r1_for_reserves']").val();
+				row.r1_for_accumulated_retained_earnings = $(this).find("input[name='r1_for_accumulated_retained_earnings']").val();
+				row.r1_for_assets = $(this).find("input[name='r1_for_assets']").val();
+				row.r1_for_ceo_name = $(this).find("input[name='r1_for_ceo_name']").val();
+				row.r1_for_no_of_staff = $(this).find("input[name='r1_for_no_of_staff']").val();
+				row.r1_for_no_of_uae_nationals = $(this).find("input[name='r1_for_no_of_uae_nationals']").val();
+				row.r1_for_no_of_branches = $(this).find("input[name='r1_for_no_of_branches']").val();
+				row.r1_for_no_of_atm = $(this).find("input[name='r1_for_no_of_atm']").val();
+		                    row.r1_for_cb_approval_ref_num = $(this).find("input[name='r1_for_cb_approval_ref_num']").val();
+				formData.brf201_SUMMARY_ENTITY_C.push(row);
+			});
+
+			
+		                   $("#cliks4 tr").each(function() {
+				var row = {};
+				row.srl_no = $(this).find("input[name='srl_no']").val();
+				row.r1_ban_name = $(this).find("input[name='r1_ban_name']").val();
+				row.r1_ban_country_of_incorporation = $(this).find("input[name='r1_ban_country_of_incorporation']").val();
+				row.r1_ban_date_opened = $(this).find("input[name='r1_ban_date_opened']").val();
+				row.r1_ban_date_closed = $(this).find("input[name='r1_ban_date_closed']").val();
+				row.r1_ban_regulator = $(this).find("input[name='r1_ban_regulator']").val();
+				row.r1_ban_ownership = $(this).find("input[name='r1_ban_ownership']").val();
+				row.r1_ban_nature_of_business = $(this).find("input[name='r1_ban_nature_of_business']").val();
+				row.r1_ban_share_capital = $(this).find("input[name='r1_ban_share_capital']").val();
+		                    row.r1_ban_share_premium = $(this).find("input[name='r1_ban_share_premium']").val();
+		                    row.r1_ban_reserves = $(this).find("input[name='r1_ban_reserves']").val();
+				row.r1_ban_accumulated_retained_earnings = $(this).find("input[name='r1_ban_accumulated_retained_earnings']").val();
+				row.r1_ban_assets = $(this).find("input[name='r1_ban_assets']").val();
+				row.r1_ban_ceo_name = $(this).find("input[name='r1_ban_ceo_name']").val();
+				row.r1_ban_no_of_staff = $(this).find("input[name='r1_ban_no_of_staff']").val();
+				row.r1_ban_no_of_uae_nationals = $(this).find("input[name='r1_ban_no_of_uae_nationals']").val();
+				row.r1_ban_no_of_branches = $(this).find("input[name='r1_ban_no_of_branches']").val();
+				row.r1_ban_no_of_atm = $(this).find("input[name='r1_ban_no_of_atm']").val();
+		                    row.r1_ban_cb_approval_ref_num = $(this).find("input[name='r1_ban_cb_approval_ref_num']").val();
+				formData.brf201_SUMMARY_ENTITY_D.push(row);
+			});
+
+		                    $("#cliks5 tr").each(function() {
+				var row = {};
+				row.srl_no = $(this).find("input[name='srl_no']").val();
+				row.r1_fin_name = $(this).find("input[name='r1_fin_name']").val();
+				row.r1_fin_country_of_incorporation = $(this).find("input[name='r1_fin_country_of_incorporation']").val();
+				row.r1_fin_date_opened = $(this).find("input[name='r1_fin_date_opened']").val();
+				row.r1_fin_date_closed = $(this).find("input[name='r1_fin_date_closed']").val();
+				row.r1_fin_regulator = $(this).find("input[name='r1_fin_regulator']").val();
+				row.r1_fin_ownership = $(this).find("input[name='r1_fin_ownership']").val();
+				row.r1_fin_nature_of_business = $(this).find("input[name='r1_fin_nature_of_business']").val();
+				row.r1_fin_share_capital = $(this).find("input[name='r1_fin_share_capital']").val();
+		                    row.r1_fin_share_premium = $(this).find("input[name='r1_fin_share_premium']").val();
+		                    row.r1_fin_reserves = $(this).find("input[name='r1_fin_reserves']").val();
+				row.r1_fin_accumulated_retained_earnings = $(this).find("input[name='r1_fin_accumulated_retained_earnings']").val();
+				row.r1_fin_assets = $(this).find("input[name='r1_fin_assets']").val();
+				row.r1_fin_ceo_name = $(this).find("input[name='r1_fin_ceo_name']").val();
+				row.r1_fin_no_of_staff = $(this).find("input[name='r1_fin_no_of_staff']").val();
+				row.r1_fin_no_of_uae_nationals = $(this).find("input[name='r1_fin_no_of_uae_nationals']").val();
+				row.r1_fin_no_of_branches = $(this).find("input[name='r1_fin_no_of_branches']").val();
+				row.r1_fin_no_of_atm = $(this).find("input[name='r1_fin_no_of_atm']").val();
+		                    row.r1_fin_cb_approval_ref_num = $(this).find("input[name='r1_fin_cb_approval_ref_num']").val();
+				formData.brf201_SUMMARY_ENTITY_E.push(row);
+			});
+
+		        $("#cliks6 tr").each(function() {
+				var row = {};
+				row.srl_no = $(this).find("input[name='srl_no']").val();
+				row.r1_non_name = $(this).find("input[name='r1_non_name']").val();
+				row.r1_non_country_of_incorporation = $(this).find("input[name='r1_non_country_of_incorporation']").val();
+				row.r1_non_date_opened = $(this).find("input[name='r1_non_date_opened']").val();
+				row.r1_non_date_closed = $(this).find("input[name='r1_non_date_closed']").val();
+				row.r1_non_regulator = $(this).find("input[name='r1_non_regulator']").val();
+				row.r1_non_ownership = $(this).find("input[name='r1_non_ownership']").val();
+				row.r1_non_nature_of_business = $(this).find("input[name='r1_non_nature_of_business']").val();
+				row.r1_non_share_capital = $(this).find("input[name='r1_non_share_capital']").val();
+		                    row.r1_non_share_premium = $(this).find("input[name='r1_non_share_premium']").val();
+		                    row.r1_non_reserves = $(this).find("input[name='r1_non_reserves']").val();
+				row.r1_non_accumulated_retained_earnings = $(this).find("input[name='r1_non_accumulated_retained_earnings']").val();
+				row.r1_non_assets = $(this).find("input[name='r1_non_assets']").val();
+				row.r1_non_ceo_name = $(this).find("input[name='r1_non_ceo_name']").val();
+				row.r1_non_no_of_staff = $(this).find("input[name='r1_non_no_of_staff']").val();
+				row.r1_non_no_of_uae_nationals = $(this).find("input[name='r1_non_no_of_uae_nationals']").val();
+				row.r1_non_no_of_branches = $(this).find("input[name='r1_non_no_of_branches']").val();
+				row.r1_non_no_of_atm = $(this).find("input[name='r1_non_no_of_atm']").val();
+		                    row.r1_non_cb_approval_ref_num = $(this).find("input[name='r1_non_cb_approval_ref_num']").val();
+				formData.brf201_SUMMARY_ENTITY_F.push(row);
+			});
+
+		        $("#cliks7 tr").each(function() {
+				var row = {};
+				row.srl_no = $(this).find("input[name='srl_no']").val();
+				row.r1_total_network_numbers = $(this).find("input[name='r1_total_network_numbers']").val();
+				row.r1_domestic_foreign_branches = $(this).find("input[name='r1_domestic_foreign_branches']").val();
+				row.r1_rep_offices = $(this).find("input[name='r1_rep_offices']").val();
+				row.r1_banking_subsidiaries = $(this).find("input[name='r1_banking_subsidiaries']").val();
+				row.r1_non_banking_financial_subsidiaries = $(this).find("input[name='r1_non_banking_financial_subsidiaries']").val();
+				row.r1_non_financial_subsidiaries = $(this).find("input[name='r1_non_financial_subsidiaries']").val();
+				row.r1_pay_offices = $(this).find("input[name='r1_pay_offices']").val();
+				row.r1_elec_business_units = $(this).find("input[name='r1_elec_business_units']").val();
+		                    row.r1_atms = $(this).find("input[name='r1_atms']").val();
+		                    row.r1_admins_office_uae = $(this).find("input[name='r1_admins_office_uae']").val();
+				row.r1_admins_office_outside_uae = $(this).find("input[name='r1_admins_office_outside_uae']").val();
+				row.r1_no_of_mobile_banking_user = $(this).find("input[name='r1_no_of_mobile_banking_user']").val();
+				row.r1_no_of_internet_banking_user = $(this).find("input[name='r1_no_of_internet_banking_user']").val();
+				
+				formData.brf201_SUMMARY_ENTITY_G.push(row);
+			});
+
+		    console.log(formData);
+
+		    var url = './modifyRecord201?asondate=' + asondate;
+
+		    $.ajax({
+		        type: "POST",
+		        contentType: "application/json",
+		        url: url, // Corrected placement of the url variable
+		        data: JSON.stringify(formData),
+		        success: function(responseText) {
+		            $("#alertmsg").text(responseText);
+		            $('#alert').modal("toggle");
+		            showButton();
+		        }
+		    });
+		}
+			
+			 /* function ModifySubmit(a) {
+				var asondate = a.getAttribute("data-fromDate");
+				alert(asondate);
+				if ($("#Report_Detail_Edit").valid()) {
+					alert("hi");
+					var url = './modifyRecord201?asondate=' + asondate;
+					$("#Report_Detail_Edit").attr('action', url);
+					var options = {
+						success : showResponse
+					};
+					$("#Report_Detail_Edit").ajaxSubmit(options);
+					function showResponse(responseText, statusText, xhr, $form) {
+						alert("Success");
+						$("#alertmsg").text(responseText);
+						$('#alert').modal("toggle");
+						// Show the button again after the request is completed
+						showButton();
+					}
+
+				}
+			}  */
+
+			function updateTotal() {
+			    var total = 0;
+			    var rowCount = 0; // Assuming rows are numbered sequentially starting from 1
+
+			    // Iterate over each row
+			    while ($("#r" + rowCount + "_abudhabi").length) {
+			        // Calculate the total for the current row
+			        var rowTotal = (
+			            (parseFloat($("#r" + rowCount + "_abudhabi").val()) || 0) +
+			            (parseFloat($("#r" + rowCount + "_dubai").val()) || 0) +
+			            (parseFloat($("#r" + rowCount + "_sharjah").val()) || 0) +
+			            (parseFloat($("#r" + rowCount + "_ajman").val()) || 0) +
+			            (parseFloat($("#r" + rowCount + "_rak").val()) || 0) +
+			            (parseFloat($("#r" + rowCount + "_fujairah").val()) || 0) +
+			            (parseFloat($("#r" + rowCount + "_uaq").val()) || 0)
+			        );
+			        
+			        // Add the row total to the overall total
+			        total += rowTotal;
+
+			        rowCount++; // Move to the next row
+			    }
+			}
+
+			
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+
+		/* function showmodify(a) {
+			alert("Hi");
+			$(".Show_input").removeAttr("readonly");
+			$("#submitButton").show();
+		} */
+		
+		function home(a) {
+		    var userid = a.getAttribute("data-loginUser");
+		    var roleid = a.getAttribute("data-roleId");
+		    
+		    if (roleid === "ADM" || roleid === "GEN") {
+		        location.href = "/BRBS/halfyearly1";
+		    } else if (roleid === "IT") {
+		    	location.href = "/BRBS/itmodel";
+	        }
+		}
+		function home() {
+			location.href = "/BRBS/BRFArchival";
+
+		}
+		
+		function back(a) {
+		    var reportcode = a.getAttribute("data-reportcode");
+		    var todate = a.getAttribute("data-todate");
+		    alert(reportcode);
+		    alert(todate);
+		    location.href = "/BRBS/BRFValidations?rptcode=" + reportcode + "&todate=" + todate; 
+		}
+		
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+		/*]]>*/
+	</script>
+<script type="text/javascript">
+	function clickEdit(a) {
+			alert("edit");
+			$('.showInputBox').removeAttr("readonly");
+			$('#cancelRecord').prop("disabled", false);
+		    $('#verify_btn').hide();
+		    $('#btnBack_edit').show();
+			$('#submitBtn').show();
+		    $('#alter1').show();
+			$('#alter2').show();
+			$('#alter3').show();
+			$('#alter4').show();
+			$('#alter5').show();
+			$('#alter6').show();
+			$('#alter7').show();
+			$("#btnBack").hide();
+		    removeCommas();
+		}
+	
+	function CancelEdit() {
+		$(".showInput").prop("readonly", true);
+		$('#cancelRecord').prop("disabled", true);
+		$("#btnBack_edit").hide();
+		$('#submitBtn').hide();
+		$('#alter1').hide();
+		$('#alter2').hide();
+		$('#alter3').hide();
+		$('#alter4').hide();
+		$('#alter5').hide();
+		$('#alter6').hide();
+		$('#alter7').hide();
+		$("#btnBack").show();
+	}
+	
+	function removeCommas() {
+		$('.showInputBox').each(function () {
+			var inputValue = $(this).val();
+			var newValue = inputValue.replace(/,/g, '');
+			$(this).val(newValue);
+		});
+	}
+
+	function showtotal1() {
+		var Total1 = (
+				  (parseFloat($("#r1_abudhabi").val()) || 0) +
+				  (parseFloat($("#r1_dubai").val()) || 0) +
+				  (parseFloat($("#r1_sharjah").val()) || 0) +
+				  (parseFloat($("#r1_ajman").val()) || 0) +
+				  (parseFloat($("#r1_rak").val()) || 0) +
+				  (parseFloat($("#r1_fujairah").val()) || 0) +
+				  (parseFloat($("#r1_uaq").val()) || 0)
+				);
+
+		console.log(Total1);
+		$("#r1_total").val(Total1);
+	}
+	</script>
+<style>
+.nav-buttons {
+	float: right;
+}
+
+.reptitle {
+	float: left;
+}
+
+.reptitle>p {
+	margin-top: 0px;
+}
+
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+	min-width: 1500px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.first_left {
+	position: absolute;
+	position: relative;
+	/*ie7*/
+	left: 0;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.second_left {
+	position: absolute;
+	position: relative;
+	/*ie7*/
+	left: 30px;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.third_left {
+	position: absolute;
+	position: relative;
+	/*ie7*/
+	left: 60px;
+	width: 150px;
+	margin-top: -2px;
+}
+
+.inner {
+	overflow-x: scroll;
+	overflow-y: visible;
+	/* margin-left: 60px; */
+}
+
+.table-bordered thead td, .table-bordered thead th {
+	border-bottom-width: 0px;
+}
+
+.table-bordered {
+	border: 0px;
+}
+
+.addedit {
+	color: #007bff;
+}
+
+.addedit:hover {
+	color: #0056b3;
+}
+
+input {
+	background: transparent;
+	border: unset;
+	width: 120px;
+	height: 28px;
+}
+
+input:focus {
+	outline: none;
+	border: unset; . scroll { max-height : 200vh;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+
+input[type="date"]::placeholder {
+	color: transparent !important;
+}
+</style>
+<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function verifySubmit(a) {
+			var asondate = a.getAttribute("data-fromDate");
+			$.ajax({
+				url: './verifyBRF201Report?asondate=' + asondate,
+				type: 'POST',
+				success: function (responseText, statusText, xhr, $form) {
+					alert("Success");
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+				},
+				error: function (error) {
+					console.log("Error fetching data: ", error);
+				}
+			});
+		}
+		function verifyscreen(a) {
+			var modFlag = a.getAttribute("data-mofifyFlag");
+			var modUser = a.getAttribute("data-mofifyUser");
+			var loginUser = a.getAttribute("data-loginUser");
+			if (modFlag == "" || modFlag == "N") {
+				$('#alert_Modify').modal("toggle");
+			} else if (modUser == "" || loginUser == "" || modUser == loginUser) {
+				$('#alert_verify_mod').modal("toggle");
+			} else {
+				 
+				$("#verify_btn").show();
+				$('#cancelRecord').removeAttr("disabled");
+				$('#submitBtn').hide();		}
+		}
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+
+
+	</script>
+
+<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+
+				$("#addedit").modal("toggle");
+			}
+		};
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf201',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+
+
+	</script>
+<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-201 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 10000);
+		}
+	</script>
+<script>
+    function showAlertMessage() {
+        alert("Details page not available for Manual Report");
+    }
+</script>
+	
+	<script>
+function downloadexcel(button) {
+	var reportid = button.getAttribute('data-reportid');
+	var asondate = button.getAttribute('data-asondate');
+	var fromdate = button.getAttribute('data-fromdate');
+	var todate = button.getAttribute('data-todate');
+	var currency = button.getAttribute('data-currency');
+	var subreportid = button.getAttribute('data-subreportid');
+	var secid = button.getAttribute('data-secid');
+	var dtltype = button.getAttribute('data-dtltype');
+	var filetype = button.getAttribute('data-filetype');
+	
+	console.log(filetype);
+
+	$('#downloadProcessingModal').modal('show');
+
+	$.ajax({
+		url: '/BRBS/Reports/' + reportid + '/Download',
+		data : {
+			asondate : asondate,
+			fromdate : fromdate,
+			todate : todate,
+			currency : currency,
+			subreportid : subreportid,
+			secid : secid,
+			dtltype : dtltype,
+			filetype : filetype
+		},
+		type : 'POST',
+		xhrFields : {
+			responseType : 'blob'
+		},
+		success : function(data) {
+			$('#downloadProcessingModal').modal('hide');
+			var blob = new Blob([ data ], {
+				type : 'application/octet-stream'
+			});
+			var url = window.URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			a.href = url;
+			if(filetype == "excel" ||filetype == "detailexcel"){
+				a.download = '011-BRF-201-A' + ".xlsx";
+			}else{
+				a.download = '011-BRF-201-A' + ".pdf";
+			}
+			
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			if(filetype == "excel" ||filetype == "detailexcel"){
+				$('#customAlertBody').text('011-BRF-201-A ' + ".xlsx");
+			}else{
+				$('#customAlertBody').text('011-BRF-201-A ' + ".pdf");
+			}
+			$('#customAlertModal').modal('show');
+		}
+	});
+}
+ 
+</script>
+
+<title>XBRL</title>
+</head>
+<body>
+
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 20px; padding-bottom: 10px; padding-left: 5px;">
+				<b style="color: white;">BANKING AND MONETARY STATISTICS- BANK'S
+					NETWORK - BRF 201(AED IN 000s)</b> 
+				<div class="btn-group nav-buttons">
+					<button style="color: black;" type="button" class="btn btn-primary" 
+						onclick="showAlertMessage();" id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary"
+						onclick="showsummary();" id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button  type="button"
+							class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+														<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary"
+									th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'"
+									onclick="downloadexcel(this)">Pdf</a>
+								</li>
+								<li
+									th:if="${displaymode} == 'summary' or ${displaymode} == null">
+									<a class="text-primary"
+									th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'"
+									onclick="downloadexcel(this)">Excel</a>
+								</li>
+							<li th:if="${displaymode}=='detail'"><a
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'"
+									onclick="downloadexcel(this)"
+								>Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
+						role="dialog" aria-labelledby="downloadProcessingModalLabel"
+						aria-hidden="true">
+						<div
+							class="modal-dialog modal-dialog-centered d-flex align-items-center"
+							role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1"
+						role="dialog" aria-labelledby="customAlertModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+		    <div class="col-sm-12 customcol" style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+		        <div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+		            <button type="button" class="btn btn-primary" onclick="clickEdit()" title="Click to EDIT Records" th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit " id="addRecord" style="color: white;">Modify</button>
+		            <button type="button" class="btn btn-primary text-white" onclick="verifyscreen(this);" title="Click to EDIT Records" th:attr="data-mofifyFlag = ${modify_flg == null ? '' : modify_flg},data-mofifyUser = ${modify_user == null ? '' : modify_user},data-loginUser = ${UserId}" th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit " id="verifyBtn">Verify</button>
+		            <button type="button" class="btn btn-primary text-white" title="Click to EDIT Records" id="cancelRecord" data-toggle="modal" data-target="#alert_cancel" disabled>Cancel</button>
+		        </div>
+		    </div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<form action="#" th:object="${report}" method="post"
+					id="Report_Detail_Edit" autocomplete="off" name="report"
+					th:fragment="finuserapply">
+
+					<div class="table-responsive scroll"
+						style="border-right: 1px; max-height: 100vh;">
+						<table class="table  table-bordered">
+							<thead class="thead-light">
+								<tr class="text-left font-weight-bold">
+									<td style="background-color: #b3b6b9;">
+										<button type="button" id="alter1" class="align-middle"
+											onclick="addTableRows(this);"
+											style="display: none; background-color: #ffffff;">+</button>
+									</td>
+									<td style="background-color: #b3b6b9; white-space: nowrap;"
+										class="align-middle">Network in UAE (in numbers)</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Beginning of the period</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Opened during the period</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Closed during the period</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">End of the period</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Abu Dhabi</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Dubai</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Sharjah</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Ajman</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">RAK</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Fujairah</td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">UAQ</td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9; text-align: center;"
+										class="align-middle">Total</td>
+								</tr>
+							</thead>
+							<tbody id="cliks1">
+								<tr th:each="report: ${reportsummary}"
+									style="text-align: right;">
+									<td style="text-align: center"><input name="srl_no"
+										class="Show_input" id="srl_no" th:value="${report.srl_no}"
+										style="border: none; text-align: left;" readonly /></td>
+									<td style="text-align: left"><input class="Show_input"
+										id="r1_network_in_uae" name="r1_network_in_uae" type="text"
+										data-type="varchar" th:value="${report.r1_network_in_uae}"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										style="text-align: right;" id="r1_beginning_of_period"
+										name="r1_beginning_of_period"
+										th:value="${report.r1_beginning_of_period}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										style="text-align: right;" id="r1_opened_during_period"
+										name="r1_opened_during_period"
+										th:value="${report.r1_opened_during_period}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										style="text-align: right;" id="r1_closed_during_period"
+										name="r1_closed_during_period"
+										th:value="${report.r1_closed_during_period}" readonly /></td>
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" style="text-align: right;" id="r1_end_of_period"
+										name="r1_end_of_period" th:value="${report.r1_end_of_period}"
+										readonly /></td>
+
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" style="text-align: right;" id="r1_abudhabi"
+										name="r1_abudhabi" th:value="${report.r1_abudhabi}" readonly /></td>
+
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" id="r1_dubai" name="r1_dubai"
+										style="text-align: right;" th:value="${report.r1_dubai}"
+										readonly /></td>
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" id="r1_sharjah" name="r1_sharjah"
+										style="text-align: right;" th:value="${report.r1_sharjah}"
+										readonly /></td>
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" id="r1_ajman" name="r1_ajman"
+										style="text-align: right;" th:value="${report.r1_ajman}"
+										readonly /></td>
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" id="r1_rak" name="r1_rak"
+										style="text-align: right;" th:value="${report.r1_rak}"
+										readonly /></td>
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" id="r1_fujairah" name="r1_fujairah"
+										style="text-align: right;" th:value="${report.r1_fujairah}"
+										readonly /></td>
+									<td><input class="Show_input" oninput="showtotal1()"
+										type="text" id="r1_uaq" name="r1_uaq"
+										style="text-align: right;" th:value="${report.r1_uaq}"
+										readonly /></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"><input type="text"
+										class="Show_total" id="r1_total" name="r1_total"
+										style="text-align: right;" th:value="${report.r1_total}"
+										readonly /></td>
+								</tr>
+							</tbody>
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9" colspan="19">Representative
+									Offices,Foreign Branches and Subsidiaries</td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9" class="align-middle">S.No</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Name</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Country of Incorporation</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">"Date Opened (DD/MM/YYYY)"</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">"Date Closed (DD/MM/YYYY)"</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Regulator</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Ownership %</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Nature of Business</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">"Share Capital (AED '000)"</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">"Share Premium (AED ' 000)"</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">"Reserves (AED ' 000)"</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">"Accumulated Retained Earnings (AED
+									'000)"</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Assets (AED '000)</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">CEO's Name</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Number of Staff</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">Number of UAE Nationals</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Number of Branches</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Number of ATMs</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">CB Approval Reference number</td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9;"><button
+										type="button" id="alter2" class="align-middle"
+										onclick="addTableRows1(this);"
+										style="display: none; background-color: #ffffff;">+</button></td>
+								<td style="background-color: #b3b6b9">Representative
+									Offices</td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+							<tbody id="cliks2">
+								<tr th:each="report: ${reportsummary2}"
+									style="text-align: right;">
+									<td style="text-align: center"><input name="srl_no"
+										class="Show_input" id="srl_no" th:value="${report.srl_no}"
+										style="border: none; text-align: left; width: 20px;" readonly /></td>
+									<td style="text-align: left;"><input class="Show_input"
+										type="text" id="r1_rep_name" name="r1_rep_name"
+										data-type="varchar" th:value="${report.r1_rep_name}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_country_of_incorporation"
+										name="r1_rep_country_of_incorporation"
+										th:value="${report.r1_rep_country_of_incorporation}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_date_opened" name="r1_rep_date_opened"
+										th:value="${report.r1_rep_date_opened}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_date_closed" name="r1_rep_date_closed"
+										th:value="${report.r1_rep_date_closed}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_regulator" name="r1_rep_regulator"
+										th:value="${report.r1_rep_regulator}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_ownership" name="r1_rep_ownership"
+										th:value="${report.r1_rep_ownership}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_nature_of_business"
+										name="r1_rep_nature_of_business"
+										th:value="${report.r1_rep_nature_of_business}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_share_capital" name="r1_rep_share_capital"
+										th:value="${report.r1_rep_share_capital}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_share_premium" name="r1_rep_share_premium"
+										th:value="${report.r1_rep_share_premium}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_reserves" name="r1_rep_reserves"
+										th:value="${report.r1_rep_reserves}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_accumulated_retained_earnings"
+										name="r1_rep_accumulated_retained_earnings"
+										th:value="${report.r1_rep_accumulated_retained_earnings}"
+										readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_assets" name="r1_rep_assets"
+										th:value="${report.r1_rep_assets}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_ceo_name" name="r1_rep_ceo_name"
+										th:value="${report.r1_rep_ceo_name}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_no_of_staff" name="r1_rep_no_of_staff"
+										th:value="${report.r1_rep_no_of_staff}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_no_of_uae_nationals"
+										name="r1_rep_no_of_uae_nationals"
+										th:value="${report.r1_rep_no_of_uae_nationals}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_no_of_branches" name="r1_rep_no_of_branches"
+										th:value="${report.r1_rep_no_of_branches}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_no_of_atm" name="r1_rep_no_of_atm"
+										th:value="${report.r1_rep_no_of_atm}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_rep_cb_approval_ref_num"
+										name="r1_rep_cb_approval_ref_num"
+										th:value="${report.r1_rep_cb_approval_ref_num}" /></td>
+									<td style="background-color: #b3b6b9"></td>
+								</tr>
+							</tbody>
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9;"><button
+										type="button" id="alter3" class="align-middle"
+										onclick="addTableRows2(this);"
+										style="display: none; background-color: #ffffff;">+</button></td>
+								<td style="background-color: #b3b6b9">Foreign branches and
+									banking subsidiaries</td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+
+							<tbody id="cliks3">
+								<tr th:each="report: ${reportsummary3}"
+									style="text-align: right;">
+									<td style="text-align: center"><input name="srl_no"
+										class="Show_input" id="srl_no" th:value="${report.srl_no}"
+										style="border: none; text-align: left; width: 20px;" readonly /></td>
+									<td style="text-align: left;"><input class="Show_input"
+										type="text" id="r1_for_name" name="r1_for_name"
+										data-type="varchar" th:value="${report.r1_for_name}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_for_country_of_incorporation"
+										name="r1_for_country_of_incorporation"
+										th:value="${report.r1_for_country_of_incorporation}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_for_date_opened" name="r1_for_date_opened"
+										th:value="${report.r1_for_date_opened}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_date_closed" name="r1_for_date_closed"
+										th:value="${report.r1_for_date_closed}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_regulator" name="r1_for_regulator"
+										th:value="${report.r1_for_regulator}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_ownership" name="r1_for_ownership"
+										style="text-align: right;"
+										th:value="${report.r1_for_ownership}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_for_nature_of_business"
+										name="r1_for_nature_of_business"
+										th:value="${report.r1_for_nature_of_business}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_share_capital" name="r1_for_share_capital"
+										style="text-align: right;"
+										th:value="${report.r1_for_share_capital}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_share_premium" name="r1_for_share_premium"
+										style="text-align: right;"
+										th:value="${report.r1_for_share_premium}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_for_reserves" name="r1_for_reserves"
+										th:value="${report.r1_for_reserves}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_for_accumulated_retained_earnings"
+										name="r1_for_accumulated_retained_earnings"
+										style="text-align: right;"
+										th:value="${report.r1_for_accumulated_retained_earnings}"
+										readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_for_assets" name="r1_for_assets"
+										style="text-align: right;" th:value="${report.r1_for_assets}"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_ceo_name" name="r1_for_ceo_name"
+										style="text-align: right;"
+										th:value="${report.r1_for_ceo_name}" /></td>
+
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_no_of_staff" name="r1_for_no_of_staff"
+										th:value="${report.r1_for_no_of_staff}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_no_of_uae_nationals"
+										name="r1_for_no_of_uae_nationals"
+										th:value="${report.r1_for_no_of_uae_nationals}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_no_of_branches" name="r1_for_no_of_branches"
+										th:value="${report.r1_for_no_of_branches}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_no_of_atm" name="r1_for_no_of_atm"
+										th:value="${report.r1_for_no_of_atm}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_for_cb_approval_ref_num"
+										name="r1_for_cb_approval_ref_num"
+										th:value="${report.r1_for_cb_approval_ref_num}" /></td>
+									<td style="background-color: #b3b6b9"></td>
+								</tr>
+							</tbody>
+
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9;"><button
+										type="button" id="alter4" class="align-middle"
+										onclick="addTableRows3(this);"
+										style="display: none; background-color: #ffffff;">+</button></td>
+								<td style="background-color: #fffc04">Banking Subsidiaries</td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+							<tbody id="cliks4">
+								<tr th:each="report: ${reportsummary4}"
+									style="text-align: right;">
+									<td style="text-align: center"><input name="srl_no"
+										class="Show_input" id="srl_no" th:value="${report.srl_no}"
+										style="border: none; text-align: left; width: 20px;" readonly /></td>
+									<td style="text-align: left;"><input class="Show_input"
+										type="text" id="r1_ban_name" name="r1_ban_name"
+										data-type="varchar" th:value="${report.r1_ban_name}" readonly /></td>
+									<td><input class="Show_text" type="text"
+										id="r1_ban_country_of_incorporation"
+										name="r1_ban_country_of_incorporation"
+										th:value="${report.r1_ban_country_of_incorporation}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_date_opened" name="r1_ban_date_opened"
+										th:value="${report.r1_ban_date_opened}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_date_closed" name="r1_ban_date_closed"
+										th:value="${report.r1_ban_date_closed}" /></td>
+
+									<td><input class="Show_input" ` type="text"
+										id="r1_ban_regulator" name="r1_ban_regulator"
+										th:value="${report.r1_ban_regulator}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_ownership" name="r1_ban_ownership"
+										style="text-align: right;"
+										th:value="${report.r1_ban_ownership}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_ban_nature_of_business"
+										name="r1_ban_nature_of_business"
+										th:value="${report.r1_ban_nature_of_business}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_share_capital" name="r1_ban_share_capital"
+										style="text-align: right;"
+										th:value="${report.r1_ban_share_capital}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_share_premium" name="r1_ban_share_premium"
+										style="text-align: right;"
+										th:value="${report.r1_ban_share_premium}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_ban_reserves" name="r1_ban_reserves"
+										th:value="${report.r1_ban_reserves}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_ban_accumulated_retained_earnings"
+										name="r1_ban_accumulated_retained_earnings"
+										style="text-align: right;"
+										th:value="${report.r1_ban_accumulated_retained_earnings}"
+										readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_ban_assets" name="r1_ban_assets"
+										style="text-align: right;" th:value="${report.r1_ban_assets}"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_ceo_name" name="r1_ban_ceo_name"
+										style="text-align: right;"
+										th:value="${report.r1_ban_ceo_name}" /></td>
+
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_no_of_staff" name="r1_ban_no_of_staff"
+										th:value="${report.r1_ban_no_of_staff}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_no_of_uae_nationals"
+										name="r1_ban_no_of_uae_nationals"
+										th:value="${report.r1_ban_no_of_uae_nationals}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_no_of_branches" name="r1_ban_no_of_branches"
+										th:value="${report.r1_ban_no_of_branches}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_no_of_atm" name="r1_ban_no_of_atm"
+										th:value="${report.r1_ban_no_of_atm}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_ban_cb_approval_ref_num"
+										name="r1_ban_cb_approval_ref_num"
+										th:value="${report.r1_ban_cb_approval_ref_num}" /></td>
+									<td style="background-color: #b3b6b9"></td>
+								</tr>
+							</tbody>
+
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9;"><button
+										type="button" id="alter5" class="align-middle"
+										onclick="addTableRows4(this);"
+										style="display: none; background-color: #ffffff;">+</button></td>
+								<td style="background-color: #b3b6b9">Financial
+									subsidiaries (excluding banking subsidiaries)</td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+							<tbody id="cliks5">
+								<tr th:each="report: ${reportsummary5}"
+									style="text-align: right;">
+									<td style="text-align: center"><input name="srl_no"
+										class="Show_input" id="srl_no" th:value="${report.srl_no}"
+										style="border: none; text-align: left; width: 20px;" readonly /></td>
+									<td style="text-align: left;"><input class="Show_input"
+										type="text" id="r1_fin_name" name="r1_fin_name"
+										data-type="varchar" th:value="${report.r1_fin_name}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_fin_country_of_incorporation"
+										name="r1_fin_country_of_incorporation"
+										th:value="${report.r1_fin_country_of_incorporation}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_date_opened" name="r1_fin_date_opened"
+										th:value="${report.r1_fin_date_opened}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_date_closed" name="r1_fin_date_closed"
+										th:value="${report.r1_fin_date_closed}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_regulator" name="r1_fin_regulator"
+										th:value="${report.r1_fin_regulator}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_ownership" name="r1_fin_ownership"
+										style="text-align: right;"
+										th:value="${report.r1_fin_ownership}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_fin_nature_of_business"
+										name="r1_fin_nature_of_business"
+										th:value="${report.r1_fin_nature_of_business}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_share_capital" name="r1_fin_share_capital"
+										style="text-align: right;"
+										th:value="${report.r1_fin_share_capital}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_share_premium" name="r1_fin_share_premium"
+										style="text-align: right;"
+										th:value="${report.r1_fin_share_premium}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_fin_reserves" name="r1_fin_reserves"
+										th:value="${report.r1_fin_reserves}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_fin_accumulated_retained_earnings"
+										name="r1_fin_accumulated_retained_earnings"
+										style="text-align: right;"
+										th:value="${report.r1_fin_accumulated_retained_earnings}"
+										readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_fin_assets" name="r1_fin_assets"
+										style="text-align: right;" th:value="${report.r1_fin_assets}"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_ceo_name" name="r1_fin_ceo_name"
+										style="text-align: right;"
+										th:value="${report.r1_fin_ceo_name}" /></td>
+
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_no_of_staff" name="r1_fin_no_of_staff"
+										th:value="${report.r1_fin_no_of_staff}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_no_of_uae_nationals"
+										name="r1_fin_no_of_uae_nationals"
+										th:value="${report.r1_fin_no_of_uae_nationals}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_no_of_branches" name="r1_fin_no_of_branches"
+										th:value="${report.r1_fin_no_of_branches}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_no_of_atm" name="r1_fin_no_of_atm"
+										th:value="${report.r1_fin_no_of_atm}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_fin_cb_approval_ref_num"
+										name="r1_fin_cb_approval_ref_num"
+										th:value="${report.r1_fin_cb_approval_ref_num}" /></td>
+									<td style="background-color: #b3b6b9"></td>
+								</tr>
+							</tbody>
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9;"><button
+										type="button" id="alter6" class="align-middle"
+										onclick="addTableRows5(this);"
+										style="display: none; background-color: #ffffff;">+</button></td>
+								<td style="background-color: #b3b6b9">Non-financial
+									subsidiaries</td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+							<tbody id="cliks6">
+								<tr th:each="report: ${reportsummary6}"
+									style="text-align: right;">
+									<td style="text-align: center"><input name="srl_no"
+										class="Show_input" id="srl_no" th:value="${report.srl_no}"
+										style="border: none; text-align: left; width: 20px;" readonly /></td>
+									<td style="text-align: left;"><input class="Show_input"
+										type="text" id="r1_non_name" name="r1_non_name"
+										data-type="varchar" th:value="${report.r1_non_name}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_non_country_of_incorporation"
+										name="r1_non_country_of_incorporation"
+										th:value="${report.r1_non_country_of_incorporation}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_date_opened" name="r1_non_date_opened"
+										th:value="${report.r1_non_date_opened}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_date_closed" name="r1_non_date_closed"
+										th:value="${report.r1_non_date_closed}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_regulator" name="r1_non_regulator"
+										th:value="${report.r1_non_regulator}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_ownership" name="r1_non_ownership"
+										style="text-align: right;"
+										th:value="${report.r1_non_ownership}" /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_non_nature_of_business"
+										name="r1_non_nature_of_business"
+										th:value="${report.r1_non_nature_of_business}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_share_capital" name="r1_non_share_capital"
+										style="text-align: right;"
+										th:value="${report.r1_non_share_capital}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_share_premium" name="r1_non_share_premium"
+										style="text-align: right;"
+										th:value="${report.r1_non_share_premium}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_non_reserves" name="r1_non_reserves"
+										th:value="${report.r1_non_reserves}" readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_non_accumulated_retained_earnings"
+										name="r1_non_accumulated_retained_earnings"
+										style="text-align: right;"
+										th:value="${report.r1_non_accumulated_retained_earnings}"
+										readonly /></td>
+									<td><input class="Show_input" type="text"
+										id="r1_non_assets" name="r1_non_assets"
+										style="text-align: right;" th:value="${report.r1_non_assets}"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_ceo_name" name="r1_non_ceo_name"
+										style="text-align: right;"
+										th:value="${report.r1_non_ceo_name}" /></td>
+
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_no_of_staff" name="r1_non_no_of_staff"
+										th:value="${report.r1_non_no_of_staff}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_no_of_uae_nationals"
+										name="r1_non_no_of_uae_nationals"
+										th:value="${report.r1_non_no_of_uae_nationals}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_no_of_branches" name="r1_non_no_of_branches"
+										th:value="${report.r1_non_no_of_branches}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_no_of_atm" name="r1_non_no_of_atm"
+										th:value="${report.r1_non_no_of_atm}" /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_cb_approval_ref_num"
+										name="r1_non_cb_approval_ref_num"
+										th:value="${report.r1_non_cb_approval_ref_num}" /></td>
+									<td style="background-color: #b3b6b9"></td>
+								</tr>
+							</tbody>
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9" class="align-middle">S.No
+									<button type="button" id="alter7" class="align-middle"
+										onclick="addTableRows6(this);" style="display: none;">+</button>
+								</td>
+								<td
+									style="background-color: #fffc04; text-align: center; white-space: nowrap;"
+									class="align-middle">Total Network (Total of Column D to M
+									only)</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Domestic and foreign branches</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Representative offices</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Banking subsidiaries</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Non-banking financial subsidiaries</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Non-Financial subsidiaries</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Pay offices</td>
+								<td style="background-color: #b3b6b9; text-align: center;"
+									class="align-middle">Electronic Business Units</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">ATMs</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">Administrative Offices in UAE</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">Administrative Offices Outside UAE</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">Number of Mobile Banking Users</td>
+								<td style="background-color: #fffc04; text-align: center;"
+									class="align-middle">Number of Internet Banking Users</td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+							<tbody id="cliks7">
+								<tr th:each="report: ${reportsummary7}">
+									<td style="text-align: center"><input name="srl_no"
+										class="Show_input" id="srl_no" th:value="${report.srl_no}"
+										style="border: none; text-align: left; width: 20px;" readonly /></td>
+									<td style="text-align: left;"><input class="Show_input"
+										type="text" id="r1_total_network_numbers" data-type="varchar"
+										name="r1_total_network_numbers"
+										th:value="${report.r1_total_network_numbers}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_domestic_foreign_branches"
+										name="r1_domestic_foreign_branches" style="text-align: right;"
+										th:value="${report.r1_domestic_foreign_branches}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_rep_offices" name="r1_rep_offices"
+										style="text-align: right;" th:value="${report.r1_rep_offices}"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_banking_subsidiaries" name="r1_banking_subsidiaries"
+										style="text-align: right;"
+										th:value="${report.r1_banking_subsidiaries}"
+										onchange="showTotalForR1NonBankingFinancialSubsidiaries()"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_banking_financial_subsidiaries"
+										name="r1_non_banking_financial_subsidiaries"
+										style="text-align: right;"
+										th:value="${report.r1_non_banking_financial_subsidiaries}"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_non_financial_subsidiaries"
+										name="r1_non_financial_subsidiaries"
+										th:value="${report.r1_non_financial_subsidiaries}"
+										style="text-align: right;" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_pay_offices" name="r1_pay_offices"
+										th:value="${report.r1_pay_offices}" style="text-align: right;"
+										readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_elec_business_units" name="r1_elec_business_units"
+										style="text-align: right;"
+										th:value="${report.r1_elec_business_units}" readonly /></td>
+
+									<td><input class="Show_input" type="text" id="r1_atms"
+										name="r1_atms" style="text-align: right;"
+										th:value="${report.r1_atms}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_admins_office_uae" name="r1_admins_office_uae"
+										style="text-align: right;"
+										th:value="${report.r1_admins_office_uae}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_admins_office_outside_uae"
+										name="r1_admins_office_outside_uae" style="text-align: right;"
+										th:value="${report.r1_admins_office_outside_uae}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_no_of_mobile_banking_user"
+										name="r1_no_of_mobile_banking_user" style="text-align: right;"
+										th:value="${report.r1_no_of_mobile_banking_user}" readonly /></td>
+
+									<td><input class="Show_input" type="text"
+										id="r1_no_of_internet_banking_user"
+										name="r1_no_of_internet_banking_user"
+										style="text-align: right;"
+										th:value="${report.r1_no_of_internet_banking_user}" readonly /></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+									<td style="background-color: #b3b6b9"></td>
+								</tr>
+							</tbody>
+							<tr class="text-left font-weight-bold">
+								<td style="background-color: #b3b6b9" colspan="19">FORM NO:
+									BSD/BRF 201-BRANCH NETWORK/JAN24</td>
+								<td style="background-color: #b3b6b9"></td>
+							</tr>
+						</table>
+					</div>
+					<div class="card-footer text-center"
+						th:if="${displaymode}=='summary' or ${displaymode}==null"
+						style="background-color: #386276";>
+						<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+						<!-- <button type="button" class="btn btn-primary text-white"
+							onclick="home(this);" title="Click to EDIT Records"
+							th:attr="data-loginUser=${UserId}, data-roleId=${RoleId}"
+							id="homebtn">Home</button> -->
+						<button id="submitBtn" type="button"
+							class="btn btn-xs btn-primary" form="Report_Detail_Edit"
+							style="display: none;" th:attr="data-fromDate=${asondate}"
+							onclick="ModifySubmit(this);">Submit</button>
+						<button type="button" class="btn btn-xs btn-primary"
+							id="btnBack_edit" style="display: none;" onclick="CancelEdit();">Back</button>
+						<button type="button" class="btn btn-xs btn-primary"
+							id="verify_btn" style="display: none;"
+							th:attr="data-fromDate =${asondate}"
+							onclick="verifySubmit(this);">Verify</button>
+						<button type="button" class="btn btn-primary text-white"
+							onclick="back(this);" title="Click to EDIT Records"
+							th:attr="data-reportcode=${reportid}, data-todate=${todate}"
+							id="btnBack">Back</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+	<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+	<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'"
+		th:fragment="detail">
+		<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+			th:class="${searchmsg == null}?'inner'">
+			<table th:if="${searchmsg} == null"
+				class="table table-bordered table-sm" style="width: 1498px"
+				id="detailtb">
+				<thead class="thead-light">
+					<tr style="text-align: center">
+						<th></th>
+
+						<th>CUST ID</th>
+						<th>ACCT NO</th>
+						<th>ACCT NAME</th>
+						<th>ACT BAL LC</th>
+						<!-- <th>IND</th> -->
+						<th>REPORT_NAME_1</th>
+						<th>report_label_1</th>
+						<th>REPORT_ADDL_CRITERIA_1</th>
+						<th>REPORT_DATE</th>
+
+					</tr>
+
+				</thead>
+				<tbody th:each="report,iterator : ${reportdetails}">
+
+
+					<tr style="text-align: center: font-weight: bold;">
+						<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+						<!-- <td><a data-toggle="tooltip" class="editrec"
+							title="Click to Edit this Record"><i
+								th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+								class="fas fa-edit"
+								th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}"
+								onclick="editRecord(this)"></i></a></td> -->
+
+						<td th:text="${report.cust_id}"></td>
+						<td th:text="${report.foracid}"></td>
+						<td th:text="${report.acct_name}">CHENNAI</td>
+						<td style="text-align: right;"
+							th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">CHENNAI</td>
+						<!-- 	<td th:text="${report.remarks}"></td> -->
+						<td th:text="${report.report_name_1}"></td>
+						<td th:text="${report.report_label_1}">CHENNAI</td>
+						<td th:text="${report.report_addl_criteria_1}"></td>
+						<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="card-footer text-center" style="background-color: #386276";>
+			<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+				onclick="home();">Home</button>
+			<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+				onclick="back1();">Back</button>
+		</div>
+		<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+		<div class="modal fade" id="addedit" th:fragment="dataedit">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">Add/Edit Records</h4>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+					<div class="modal-body" style="text-align: center">
+						<form id="dataedit" method="post">
+							<div class="form-group">
+
+								<div class="row">
+									<label class="col-sm-5">CUST ID</label> <input
+										class="form-control col-sm-5" id="cust_id" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">Acct No</label> <input
+										class="form-control col-sm-5" id="foracid" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">Acct Name</label> <input
+										class="form-control col-sm-5" id="acct_name" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">ACT BALANCE LC</label> <input
+										class="form-control col-sm-5" id="act_balance_amt_lc" />
+								</div>
+								<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+								<div class="row">
+									<label class="col-sm-5">REPORT NAME_1</label> <input
+										class="form-control col-sm-5" id=report_name_1
+										name="report_name_1" />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">REPORT LABLE_1</label> <input
+										class="form-control col-sm-5" id="report_label_1" />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">REPORT_ADDL_CRITERIA_1</label> <input
+										class="form-control col-sm-5" id="report_addl_criteria_1" />
+								</div>
+
+								<div class="row">
+									<label class="col-sm-5">REPORT DATE</label> <input
+										class="form-control col-sm-5" id="report_date" readonly />
+								</div>
+							</div>
+						</form>
+						<div class="modal-footer">
+
+							<button type="button" class="btn btn-primary"
+								onclick="submitdataformedit(this);" id="edit">Submit</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+			<!-------------------------------------Details edit modal form----------------------------------------------------->
+			<div class="modal fade" id="datadelete">
+				<div
+					class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="modal-body" style="text-align: center">
+							<button type="button" class="close" data-dismiss="modal">×</button>
+							Are you Sure want to delete?
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary"
+								onclick="submitdataformdelete(this);">Submit</button>
+							<button type="button" class="btn btn-primary"
+								data-dismiss="modal">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- -----------------------------------Search modal form----------------------------------------------------->
+		<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+		<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+		<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+	</div>
+	<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_cancel">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Do you want to cancel the process?</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Yes</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_Modify">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Modified records can be verified.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="alert_verify_mod">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg">Same user can not verify.</p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<script>
+	$(document).ready(function () {
+	    $('.Show_input').on('input', function () {
+	        var dataType = $(this).attr('data-type');
+	        var inputValue = $(this).val();
+	        var sanitizedValue;
+
+	        if (dataType === 'varchar') {
+	            sanitizedValue = inputValue.replace(/[^A-Za-z0-9]/g, ''); 
+	        } else {
+	            sanitizedValue = inputValue.replace(/[^0-9]/g, ''); 
+	        }
+
+	        $(this).val(sanitizedValue);
+	    });
+	});
+</script>
+
+
+</body>
+
+
+</html>

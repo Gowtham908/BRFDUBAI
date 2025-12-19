@@ -1,0 +1,3442 @@
+create or replace PROCEDURE         "BRF9_SUMMARY_PROCEDURE_RF_2025" (Report_date VARCHAR2)
+IS
+----30-SEP-2020--
+---VARARIBLE DECLARE
+V_REPORT_DATE DATE := TO_DATE(Report_date,'DD-MM-YYYY');
+V_REPORT_DUE_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), +3);
+V_REPORT_FROM_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), -3)+1;
+
+V_RH_PRODUCT	varchar2(100 BYTE):='Highly Liquid Assets';
+V_RH_OVERDUE	Number(24,4):=0;
+V_RH_OVERDRAFT	Number(24,4):=0;
+V_RH_0_7_DAYS	Number(24,4):=0;
+V_RH_8_14_DAYS	Number(24,4):=0;
+V_RH_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH_1_3_MONTHS	Number(24,4):=0;
+V_RH_3_6_MONTHS	Number(24,4):=0;
+V_RH_6_12_MONTHS	Number(24,4):=0;
+V_RH_1_3_YEARS	Number(24,4):=0;
+V_RH_3_YEARS	Number(24,4):=0;
+V_RH_TOTAL	Number(24,4):=0;
+V_R1_PRODUCT	varchar2(100 BYTE):='Cash, reserves and balances with Central Bank';
+V_R1_OVERDUE	Number(24,4):=0;
+V_R1_OVERDRAFT	Number(24,4):=0;
+V_R1_0_7_DAYS	Number(24,4):=0;
+V_R1_8_14_DAYS	Number(24,4):=0;
+V_R1_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R1_1_3_MONTHS	Number(24,4):=0;
+V_R1_3_6_MONTHS	Number(24,4):=0;
+V_R1_6_12_MONTHS	Number(24,4):=0;
+V_R1_1_3_YEARS	Number(24,4):=0;
+V_R1_3_YEARS	Number(24,4):=0;
+V_R1_TOTAL	Number(24,4):=0;
+V_R2_PRODUCT	varchar2(100 BYTE):='Central Bank CDs';
+V_R2_OVERDUE	Number(24,4):=0;
+V_R2_OVERDRAFT	Number(24,4):=0;
+V_R2_0_7_DAYS	Number(24,4):=0;
+V_R2_8_14_DAYS	Number(24,4):=0;
+V_R2_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R2_1_3_MONTHS	Number(24,4):=0;
+V_R2_3_6_MONTHS	Number(24,4):=0;
+V_R2_6_12_MONTHS	Number(24,4):=0;
+V_R2_1_3_YEARS	Number(24,4):=0;
+V_R2_3_YEARS	Number(24,4):=0;
+V_R2_TOTAL	Number(24,4):=0;
+V_R3_PRODUCT	varchar2(100 BYTE):='UAE Federal and Emirate Governments debt securities (0% risk weighted)';
+V_R3_OVERDUE	Number(24,4):=0;
+V_R3_OVERDRAFT	Number(24,4):=0;
+V_R3_0_7_DAYS	Number(24,4):=0;
+V_R3_8_14_DAYS	Number(24,4):=0;
+V_R3_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R3_1_3_MONTHS	Number(24,4):=0;
+V_R3_3_6_MONTHS	Number(24,4):=0;
+V_R3_6_12_MONTHS	Number(24,4):=0;
+V_R3_1_3_YEARS	Number(24,4):=0;
+V_R3_3_YEARS	Number(24,4):=0;
+V_R3_TOTAL	Number(24,4):=0;
+V_RH2_PRODUCT	varchar2(100 BYTE):='Due from other banks/banking entities (BRF01 2 and 3)';
+V_RH2_OVERDUE	Number(24,4):=0;
+V_RH2_OVERDRAFT	Number(24,4):=0;
+V_RH2_0_7_DAYS	Number(24,4):=0;
+V_RH2_8_14_DAYS	Number(24,4):=0;
+V_RH2_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH2_1_3_MONTHS	Number(24,4):=0;
+V_RH2_3_6_MONTHS	Number(24,4):=0;
+V_RH2_6_12_MONTHS	Number(24,4):=0;
+V_RH2_1_3_YEARS	Number(24,4):=0;
+V_RH2_3_YEARS	Number(24,4):=0;
+V_RH2_TOTAL	Number(24,4):=0;
+V_R4_PRODUCT	varchar2(100 BYTE):='Placements Loans with and balances due from resident banks';
+V_R4_OVERDUE	Number(24,4):=0;
+V_R4_OVERDRAFT	Number(24,4):=0;
+V_R4_0_7_DAYS	Number(24,4):=0;
+V_R4_8_14_DAYS	Number(24,4):=0;
+V_R4_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R4_1_3_MONTHS	Number(24,4):=0;
+V_R4_3_6_MONTHS	Number(24,4):=0;
+V_R4_6_12_MONTHS	Number(24,4):=0;
+V_R4_1_3_YEARS	Number(24,4):=0;
+V_R4_3_YEARS	Number(24,4):=0;
+V_R4_TOTAL	Number(24,4):=0;
+V_R5_PRODUCT	varchar2(100 BYTE):='Interbank CDs held (from non resident banks only)';
+V_R5_OVERDUE	Number(24,4):=0;
+V_R5_OVERDRAFT	Number(24,4):=0;
+V_R5_0_7_DAYS	Number(24,4):=0;
+V_R5_8_14_DAYS	Number(24,4):=0;
+V_R5_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R5_1_3_MONTHS	Number(24,4):=0;
+V_R5_3_6_MONTHS	Number(24,4):=0;
+V_R5_6_12_MONTHS	Number(24,4):=0;
+V_R5_1_3_YEARS	Number(24,4):=0;
+V_R5_3_YEARS	Number(24,4):=0;
+V_R5_TOTAL	Number(24,4):=0;
+V_R6_PRODUCT	varchar2(100 BYTE):='Placements/ Loans with and balances due from overseas banks';
+V_R6_OVERDUE	Number(24,4):=0;
+V_R6_OVERDRAFT	Number(24,4):=0;
+V_R6_0_7_DAYS	Number(24,4):=0;
+V_R6_8_14_DAYS	Number(24,4):=0;
+V_R6_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R6_1_3_MONTHS	Number(24,4):=0;
+V_R6_3_6_MONTHS	Number(24,4):=0;
+V_R6_6_12_MONTHS	Number(24,4):=0;
+V_R6_1_3_YEARS	Number(24,4):=0;
+V_R6_3_YEARS	Number(24,4):=0;
+V_R6_TOTAL	Number(24,4):=0;
+V_RH3_PRODUCT	varchar2(100 BYTE):='Debt  Securities';
+V_RH3_OVERDUE	Number(24,4):=0;
+V_RH3_OVERDRAFT	Number(24,4):=0;
+V_RH3_0_7_DAYS	Number(24,4):=0;
+V_RH3_8_14_DAYS	Number(24,4):=0;
+V_RH3_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH3_1_3_MONTHS	Number(24,4):=0;
+V_RH3_3_6_MONTHS	Number(24,4):=0;
+V_RH3_6_12_MONTHS	Number(24,4):=0;
+V_RH3_1_3_YEARS	Number(24,4):=0;
+V_RH3_3_YEARS	Number(24,4):=0;
+V_RH3_TOTAL	Number(24,4):=0;
+V_R7_PRODUCT	varchar2(100 BYTE):='Foreign sovereign debt (rated AA- or higher)';
+V_R7_OVERDUE	Number(24,4):=0;
+V_R7_OVERDRAFT	Number(24,4):=0;
+V_R7_0_7_DAYS	Number(24,4):=0;
+V_R7_8_14_DAYS	Number(24,4):=0;
+V_R7_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R7_1_3_MONTHS	Number(24,4):=0;
+V_R7_3_6_MONTHS	Number(24,4):=0;
+V_R7_6_12_MONTHS	Number(24,4):=0;
+V_R7_1_3_YEARS	Number(24,4):=0;
+V_R7_3_YEARS	Number(24,4):=0;
+V_R7_TOTAL	Number(24,4):=0;
+V_R8_PRODUCT	varchar2(100 BYTE):='Foreign sovereign debt (rated A- to A+)';
+V_R8_OVERDUE	Number(24,4):=0;
+V_R8_OVERDRAFT	Number(24,4):=0;
+V_R8_0_7_DAYS	Number(24,4):=0;
+V_R8_8_14_DAYS	Number(24,4):=0;
+V_R8_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R8_1_3_MONTHS	Number(24,4):=0;
+V_R8_3_6_MONTHS	Number(24,4):=0;
+V_R8_6_12_MONTHS	Number(24,4):=0;
+V_R8_1_3_YEARS	Number(24,4):=0;
+V_R8_3_YEARS	Number(24,4):=0;
+V_R8_TOTAL	Number(24,4):=0;
+V_R9_PRODUCT	varchar2(100 BYTE):='Foreign sovereign debt (rated BBB- to BBB+)';
+V_R9_OVERDUE	Number(24,4):=0;
+V_R9_OVERDRAFT	Number(24,4):=0;
+V_R9_0_7_DAYS	Number(24,4):=0;
+V_R9_8_14_DAYS	Number(24,4):=0;
+V_R9_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R9_1_3_MONTHS	Number(24,4):=0;
+V_R9_3_6_MONTHS	Number(24,4):=0;
+V_R9_6_12_MONTHS	Number(24,4):=0;
+V_R9_1_3_YEARS	Number(24,4):=0;
+V_R9_3_YEARS	Number(24,4):=0;
+V_R9_TOTAL	Number(24,4):=0;
+V_R10_PRODUCT	varchar2(100 BYTE):='Foreign sovereign debt (Non rated or below BBB-)';
+V_R10_OVERDUE	Number(24,4):=0;
+V_R10_OVERDRAFT	Number(24,4):=0;
+V_R10_0_7_DAYS	Number(24,4):=0;
+V_R10_8_14_DAYS	Number(24,4):=0;
+V_R10_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R10_1_3_MONTHS	Number(24,4):=0;
+V_R10_3_6_MONTHS	Number(24,4):=0;
+V_R10_6_12_MONTHS	Number(24,4):=0;
+V_R10_1_3_YEARS	Number(24,4):=0;
+V_R10_3_YEARS	Number(24,4):=0;
+V_R10_TOTAL	Number(24,4):=0;
+V_R11_PRODUCT	varchar2(100 BYTE):='UAE Public sector enterprises debt/ Sukuks (non commercial, 0% risk weighted)';
+V_R11_OVERDUE	Number(24,4):=0;
+V_R11_OVERDRAFT	Number(24,4):=0;
+V_R11_0_7_DAYS	Number(24,4):=0;
+V_R11_8_14_DAYS	Number(24,4):=0;
+V_R11_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R11_1_3_MONTHS	Number(24,4):=0;
+V_R11_3_6_MONTHS	Number(24,4):=0;
+V_R11_6_12_MONTHS	Number(24,4):=0;
+V_R11_1_3_YEARS	Number(24,4):=0;
+V_R11_3_YEARS	Number(24,4):=0;
+V_R11_TOTAL	Number(24,4):=0;
+V_R12_PRODUCT	varchar2(100 BYTE):='Non-UAE Public sector enterprises debt/ Sukuks (non commercial, 20% risk weighted)';
+V_R12_OVERDUE	Number(24,4):=0;
+V_R12_OVERDRAFT	Number(24,4):=0;
+V_R12_0_7_DAYS	Number(24,4):=0;
+V_R12_8_14_DAYS	Number(24,4):=0;
+V_R12_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R12_1_3_MONTHS	Number(24,4):=0;
+V_R12_3_6_MONTHS	Number(24,4):=0;
+V_R12_6_12_MONTHS	Number(24,4):=0;
+V_R12_1_3_YEARS	Number(24,4):=0;
+V_R12_3_YEARS	Number(24,4):=0;
+V_R12_TOTAL	Number(24,4):=0;
+V_R13_PRODUCT	varchar2(100 BYTE):='Corporate bonds/ Sukuks (Rated AA- or higher)';
+V_R13_OVERDUE	Number(24,4):=0;
+V_R13_OVERDRAFT	Number(24,4):=0;
+V_R13_0_7_DAYS	Number(24,4):=0;
+V_R13_8_14_DAYS	Number(24,4):=0;
+V_R13_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R13_1_3_MONTHS	Number(24,4):=0;
+V_R13_3_6_MONTHS	Number(24,4):=0;
+V_R13_6_12_MONTHS	Number(24,4):=0;
+V_R13_1_3_YEARS	Number(24,4):=0;
+V_R13_3_YEARS	Number(24,4):=0;
+V_R13_TOTAL	Number(24,4):=0;
+V_R14_PRODUCT	varchar2(100 BYTE):='Corporate bonds/ Sukuks (Rated A- to A+)';
+V_R14_OVERDUE	Number(24,4):=0;
+V_R14_OVERDRAFT	Number(24,4):=0;
+V_R14_0_7_DAYS	Number(24,4):=0;
+V_R14_8_14_DAYS	Number(24,4):=0;
+V_R14_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R14_1_3_MONTHS	Number(24,4):=0;
+V_R14_3_6_MONTHS	Number(24,4):=0;
+V_R14_6_12_MONTHS	Number(24,4):=0;
+V_R14_1_3_YEARS	Number(24,4):=0;
+V_R14_3_YEARS	Number(24,4):=0;
+V_R14_TOTAL	Number(24,4):=0;
+V_R15_PRODUCT	varchar2(100 BYTE):='Corporate bonds/ Sukuks (Rated BBB- to BBB+)';
+V_R15_OVERDUE	Number(24,4):=0;
+V_R15_OVERDRAFT	Number(24,4):=0;
+V_R15_0_7_DAYS	Number(24,4):=0;
+V_R15_8_14_DAYS	Number(24,4):=0;
+V_R15_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R15_1_3_MONTHS	Number(24,4):=0;
+V_R15_3_6_MONTHS	Number(24,4):=0;
+V_R15_6_12_MONTHS	Number(24,4):=0;
+V_R15_1_3_YEARS	Number(24,4):=0;
+V_R15_3_YEARS	Number(24,4):=0;
+V_R15_TOTAL	Number(24,4):=0;
+V_R16_PRODUCT	varchar2(100 BYTE):='Corporate bonds/ Sukuks (Non rated or below BBB- )';
+V_R16_OVERDUE	Number(24,4):=0;
+V_R16_OVERDRAFT	Number(24,4):=0;
+V_R16_0_7_DAYS	Number(24,4):=0;
+V_R16_8_14_DAYS	Number(24,4):=0;
+V_R16_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R16_1_3_MONTHS	Number(24,4):=0;
+V_R16_3_6_MONTHS	Number(24,4):=0;
+V_R16_6_12_MONTHS	Number(24,4):=0;
+V_R16_1_3_YEARS	Number(24,4):=0;
+V_R16_3_YEARS	Number(24,4):=0;
+V_R16_TOTAL	Number(24,4):=0;
+V_RH4_PRODUCT	varchar2(100 BYTE):='Other investments';
+V_RH4_OVERDUE	Number(24,4):=0;
+V_RH4_OVERDRAFT	Number(24,4):=0;
+V_RH4_0_7_DAYS	Number(24,4):=0;
+V_RH4_8_14_DAYS	Number(24,4):=0;
+V_RH4_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH4_1_3_MONTHS	Number(24,4):=0;
+V_RH4_3_6_MONTHS	Number(24,4):=0;
+V_RH4_6_12_MONTHS	Number(24,4):=0;
+V_RH4_1_3_YEARS	Number(24,4):=0;
+V_RH4_3_YEARS	Number(24,4):=0;
+V_RH4_TOTAL	Number(24,4):=0;
+V_R17_PRODUCT	varchar2(100 BYTE):='Financial Institutions-Fixed Income Securities- Resident';
+V_R17_OVERDUE	Number(24,4):=0;
+V_R17_OVERDRAFT	Number(24,4):=0;
+V_R17_0_7_DAYS	Number(24,4):=0;
+V_R17_8_14_DAYS	Number(24,4):=0;
+V_R17_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R17_1_3_MONTHS	Number(24,4):=0;
+V_R17_3_6_MONTHS	Number(24,4):=0;
+V_R17_6_12_MONTHS	Number(24,4):=0;
+V_R17_1_3_YEARS	Number(24,4):=0;
+V_R17_3_YEARS	Number(24,4):=0;
+V_R17_TOTAL	Number(24,4):=0;
+V_R18_PRODUCT	varchar2(100 BYTE):='Financial Institutions- Fixed income securities- Non-Resident';
+V_R18_OVERDUE	Number(24,4):=0;
+V_R18_OVERDRAFT	Number(24,4):=0;
+V_R18_0_7_DAYS	Number(24,4):=0;
+V_R18_8_14_DAYS	Number(24,4):=0;
+V_R18_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R18_1_3_MONTHS	Number(24,4):=0;
+V_R18_3_6_MONTHS	Number(24,4):=0;
+V_R18_6_12_MONTHS	Number(24,4):=0;
+V_R18_1_3_YEARS	Number(24,4):=0;
+V_R18_3_YEARS	Number(24,4):=0;
+V_R18_TOTAL	Number(24,4):=0;
+V_R_18_PRODUCT	varchar2(100 BYTE):='Investment in Equities- Quoted';
+V_R_18_OVERDUE	Number(24,4):=0;
+V_R_18_OVERDRAFT	Number(24,4):=0;
+V_R_18_0_7_DAYS	Number(24,4):=0;
+V_R_18_8_14_DAYS	Number(24,4):=0;
+V_R_18_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R_18_1_3_MONTHS	Number(24,4):=0;
+V_R_18_3_6_MONTHS	Number(24,4):=0;
+V_R_18_6_12_MONTHS	Number(24,4):=0;
+V_R_18_1_3_YEARS	Number(24,4):=0;
+V_R_18_3_YEARS	Number(24,4):=0;
+V_R_18_TOTAL	Number(24,4):=0;
+V_R19_PRODUCT	varchar2(100 BYTE):='Investment in Equities- Unquoted';
+V_R19_OVERDUE	Number(24,4):=0;
+V_R19_OVERDRAFT	Number(24,4):=0;
+V_R19_0_7_DAYS	Number(24,4):=0;
+V_R19_8_14_DAYS	Number(24,4):=0;
+V_R19_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R19_1_3_MONTHS	Number(24,4):=0;
+V_R19_3_6_MONTHS	Number(24,4):=0;
+V_R19_6_12_MONTHS	Number(24,4):=0;
+V_R19_1_3_YEARS	Number(24,4):=0;
+V_R19_3_YEARS	Number(24,4):=0;
+V_R19_TOTAL	Number(24,4):=0;
+V_R20_PRODUCT	varchar2(100 BYTE):='Investment in subsidiaries, affiliates & associates';
+V_R20_OVERDUE	Number(24,4):=0;
+V_R20_OVERDRAFT	Number(24,4):=0;
+V_R20_0_7_DAYS	Number(24,4):=0;
+V_R20_8_14_DAYS	Number(24,4):=0;
+V_R20_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R20_1_3_MONTHS	Number(24,4):=0;
+V_R20_3_6_MONTHS	Number(24,4):=0;
+V_R20_6_12_MONTHS	Number(24,4):=0;
+V_R20_1_3_YEARS	Number(24,4):=0;
+V_R20_3_YEARS	Number(24,4):=0;
+V_R20_TOTAL	Number(24,4):=0;
+V_R21_PRODUCT	varchar2(100 BYTE):='Net Fixed Assets (Item 9 of BRF 1)';
+V_R21_OVERDUE	Number(24,4):=0;
+V_R21_OVERDRAFT	Number(24,4):=0;
+V_R21_0_7_DAYS	Number(24,4):=0;
+V_R21_8_14_DAYS	Number(24,4):=0;
+V_R21_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R21_1_3_MONTHS	Number(24,4):=0;
+V_R21_3_6_MONTHS	Number(24,4):=0;
+V_R21_6_12_MONTHS	Number(24,4):=0;
+V_R21_1_3_YEARS	Number(24,4):=0;
+V_R21_3_YEARS	Number(24,4):=0;
+V_R21_TOTAL	Number(24,4):=0;
+V_RH5_PRODUCT	varchar2(100 BYTE):='Loans and advances & other assets';
+V_RH5_OVERDUE	Number(24,4):=0;
+V_RH5_OVERDRAFT	Number(24,4):=0;
+V_RH5_0_7_DAYS	Number(24,4):=0;
+V_RH5_8_14_DAYS	Number(24,4):=0;
+V_RH5_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH5_1_3_MONTHS	Number(24,4):=0;
+V_RH5_3_6_MONTHS	Number(24,4):=0;
+V_RH5_6_12_MONTHS	Number(24,4):=0;
+V_RH5_1_3_YEARS	Number(24,4):=0;
+V_RH5_3_YEARS	Number(24,4):=0;
+V_RH5_TOTAL	Number(24,4):=0;
+V_R22_PRODUCT	varchar2(100 BYTE):='Government and Public Sector';
+V_R22_OVERDUE	Number(24,4):=0;
+V_R22_OVERDRAFT	Number(24,4):=0;
+V_R22_0_7_DAYS	Number(24,4):=0;
+V_R22_8_14_DAYS	Number(24,4):=0;
+V_R22_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R22_1_3_MONTHS	Number(24,4):=0;
+V_R22_3_6_MONTHS	Number(24,4):=0;
+V_R22_6_12_MONTHS	Number(24,4):=0;
+V_R22_1_3_YEARS	Number(24,4):=0;
+V_R22_3_YEARS	Number(24,4):=0;
+V_R22_TOTAL	Number(24,4):=0;
+V_R23_PRODUCT	varchar2(100 BYTE):='GREs ( Govt ownership of more than 50% )';
+V_R23_OVERDUE	Number(24,4):=0;
+V_R23_OVERDRAFT	Number(24,4):=0;
+V_R23_0_7_DAYS	Number(24,4):=0;
+V_R23_8_14_DAYS	Number(24,4):=0;
+V_R23_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R23_1_3_MONTHS	Number(24,4):=0;
+V_R23_3_6_MONTHS	Number(24,4):=0;
+V_R23_6_12_MONTHS	Number(24,4):=0;
+V_R23_1_3_YEARS	Number(24,4):=0;
+V_R23_3_YEARS	Number(24,4):=0;
+V_R23_TOTAL	Number(24,4):=0;
+V_R24_PRODUCT	varchar2(100 BYTE):='Private Sector (Corporate)';
+V_R24_OVERDUE	Number(24,4):=0;
+V_R24_OVERDRAFT	Number(24,4):=0;
+V_R24_0_7_DAYS	Number(24,4):=0;
+V_R24_8_14_DAYS	Number(24,4):=0;
+V_R24_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R24_1_3_MONTHS	Number(24,4):=0;
+V_R24_3_6_MONTHS	Number(24,4):=0;
+V_R24_6_12_MONTHS	Number(24,4):=0;
+V_R24_1_3_YEARS	Number(24,4):=0;
+V_R24_3_YEARS	Number(24,4):=0;
+V_R24_TOTAL	Number(24,4):=0;
+V_R25_PRODUCT	varchar2(100 BYTE):='Non Banking Financial Institutions';
+V_R25_OVERDUE	Number(24,4):=0;
+V_R25_OVERDRAFT	Number(24,4):=0;
+V_R25_0_7_DAYS	Number(24,4):=0;
+V_R25_8_14_DAYS	Number(24,4):=0;
+V_R25_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R25_1_3_MONTHS	Number(24,4):=0;
+V_R25_3_6_MONTHS	Number(24,4):=0;
+V_R25_6_12_MONTHS	Number(24,4):=0;
+V_R25_1_3_YEARS	Number(24,4):=0;
+V_R25_3_YEARS	Number(24,4):=0;
+V_R25_TOTAL	Number(24,4):=0;
+V_R26_PRODUCT	varchar2(100 BYTE):='HNIs, SMEs and Individuals more than AED 20 Mln';
+V_R26_OVERDUE	Number(24,4):=0;
+V_R26_OVERDRAFT	Number(24,4):=0;
+V_R26_0_7_DAYS	Number(24,4):=0;
+V_R26_8_14_DAYS	Number(24,4):=0;
+V_R26_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R26_1_3_MONTHS	Number(24,4):=0;
+V_R26_3_6_MONTHS	Number(24,4):=0;
+V_R26_6_12_MONTHS	Number(24,4):=0;
+V_R26_1_3_YEARS	Number(24,4):=0;
+V_R26_3_YEARS	Number(24,4):=0;
+V_R26_TOTAL	Number(24,4):=0;
+V_R27_PRODUCT	varchar2(100 BYTE):='HNIs, SMEs and Individuals- Up to AED 20 Mln';
+V_R27_OVERDUE	Number(24,4):=0;
+V_R27_OVERDRAFT	Number(24,4):=0;
+V_R27_0_7_DAYS	Number(24,4):=0;
+V_R27_8_14_DAYS	Number(24,4):=0;
+V_R27_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R27_1_3_MONTHS	Number(24,4):=0;
+V_R27_3_6_MONTHS	Number(24,4):=0;
+V_R27_6_12_MONTHS	Number(24,4):=0;
+V_R27_1_3_YEARS	Number(24,4):=0;
+V_R27_3_YEARS	Number(24,4):=0;
+V_R27_TOTAL	Number(24,4):=0;
+V_R28_PRODUCT	varchar2(100 BYTE):='Trade Bills- Gov & Public Sector Entities';
+V_R28_OVERDUE	Number(24,4):=0;
+V_R28_OVERDRAFT	Number(24,4):=0;
+V_R28_0_7_DAYS	Number(24,4):=0;
+V_R28_8_14_DAYS	Number(24,4):=0;
+V_R28_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R28_1_3_MONTHS	Number(24,4):=0;
+V_R28_3_6_MONTHS	Number(24,4):=0;
+V_R28_6_12_MONTHS	Number(24,4):=0;
+V_R28_1_3_YEARS	Number(24,4):=0;
+V_R28_3_YEARS	Number(24,4):=0;
+V_R28_TOTAL	Number(24,4):=0;
+V_R29_PRODUCT	varchar2(100 BYTE):='Trade Bills- Private Sector (Corporate)';
+V_R29_OVERDUE	Number(24,4):=0;
+V_R29_OVERDRAFT	Number(24,4):=0;
+V_R29_0_7_DAYS	Number(24,4):=0;
+V_R29_8_14_DAYS	Number(24,4):=0;
+V_R29_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R29_1_3_MONTHS	Number(24,4):=0;
+V_R29_3_6_MONTHS	Number(24,4):=0;
+V_R29_6_12_MONTHS	Number(24,4):=0;
+V_R29_1_3_YEARS	Number(24,4):=0;
+V_R29_3_YEARS	Number(24,4):=0;
+V_R29_TOTAL	Number(24,4):=0;
+V_R30_PRODUCT	varchar2(100 BYTE):='Stage 3 Loans';
+V_R30_OVERDUE	Number(24,4):=0;
+V_R30_OVERDRAFT	Number(24,4):=0;
+V_R30_0_7_DAYS	Number(24,4):=0;
+V_R30_8_14_DAYS	Number(24,4):=0;
+V_R30_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R30_1_3_MONTHS	Number(24,4):=0;
+V_R30_3_6_MONTHS	Number(24,4):=0;
+V_R30_6_12_MONTHS	Number(24,4):=0;
+V_R30_1_3_YEARS	Number(24,4):=0;
+V_R30_3_YEARS	Number(24,4):=0;
+V_R30_TOTAL	Number(24,4):=0;
+V_R31_PRODUCT	varchar2(100 BYTE):='Other Assets1';
+V_R31_OVERDUE	Number(24,4):=0;
+V_R31_OVERDRAFT	Number(24,4):=0;
+V_R31_0_7_DAYS	Number(24,4):=0;
+V_R31_8_14_DAYS	Number(24,4):=0;
+V_R31_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R31_1_3_MONTHS	Number(24,4):=0;
+V_R31_3_6_MONTHS	Number(24,4):=0;
+V_R31_6_12_MONTHS	Number(24,4):=0;
+V_R31_1_3_YEARS	Number(24,4):=0;
+V_R31_3_YEARS	Number(24,4):=0;
+V_R31_TOTAL	Number(24,4):=0;
+V_RTA_PRODUCT	varchar2(100 BYTE):='TOTAL ASSETS';
+V_RTA_OVERDUE	Number(24,4):=0;
+V_RTA_OVERDRAFT	Number(24,4):=0;
+V_RTA_0_7_DAYS	Number(24,4):=0;
+V_RTA_8_14_DAYS	Number(24,4):=0;
+V_RTA_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RTA_1_3_MONTHS	Number(24,4):=0;
+V_RTA_3_6_MONTHS	Number(24,4):=0;
+V_RTA_6_12_MONTHS	Number(24,4):=0;
+V_RTA_1_3_YEARS	Number(24,4):=0;
+V_RTA_3_YEARS	Number(24,4):=0;
+V_RTA_TOTAL	Number(24,4):=0;
+V_RH6_PRODUCT	varchar2(100 BYTE):='Interbank, Gov and CB';
+V_RH6_OVERDUE	Number(24,4):=0;
+V_RH6_OVERDRAFT	Number(24,4):=0;
+V_RH6_0_7_DAYS	Number(24,4):=0;
+V_RH6_8_14_DAYS	Number(24,4):=0;
+V_RH6_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH6_1_3_MONTHS	Number(24,4):=0;
+V_RH6_3_6_MONTHS	Number(24,4):=0;
+V_RH6_6_12_MONTHS	Number(24,4):=0;
+V_RH6_1_3_YEARS	Number(24,4):=0;
+V_RH6_3_YEARS	Number(24,4):=0;
+V_RH6_TOTAL	Number(24,4):=0;
+V_R32_PRODUCT	varchar2(100 BYTE):='Deposits from and balances due to resident banks';
+V_R32_OVERDUE	Number(24,4):=0;
+V_R32_OVERDRAFT	Number(24,4):=0;
+V_R32_0_7_DAYS	Number(24,4):=0;
+V_R32_8_14_DAYS	Number(24,4):=0;
+V_R32_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R32_1_3_MONTHS	Number(24,4):=0;
+V_R32_3_6_MONTHS	Number(24,4):=0;
+V_R32_6_12_MONTHS	Number(24,4):=0;
+V_R32_1_3_YEARS	Number(24,4):=0;
+V_R32_3_YEARS	Number(24,4):=0;
+V_R32_TOTAL	Number(24,4):=0;
+V_R33_PRODUCT	varchar2(100 BYTE):='Interbank CDs issued (to non resident banks only)';
+V_R33_OVERDUE	Number(24,4):=0;
+V_R33_OVERDRAFT	Number(24,4):=0;
+V_R33_0_7_DAYS	Number(24,4):=0;
+V_R33_8_14_DAYS	Number(24,4):=0;
+V_R33_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R33_1_3_MONTHS	Number(24,4):=0;
+V_R33_3_6_MONTHS	Number(24,4):=0;
+V_R33_6_12_MONTHS	Number(24,4):=0;
+V_R33_1_3_YEARS	Number(24,4):=0;
+V_R33_3_YEARS	Number(24,4):=0;
+V_R33_TOTAL	Number(24,4):=0;
+V_R34_PRODUCT	varchar2(100 BYTE):='Deposits from and balances due to overseas banks';
+V_R34_OVERDUE	Number(24,4):=0;
+V_R34_OVERDRAFT	Number(24,4):=0;
+V_R34_0_7_DAYS	Number(24,4):=0;
+V_R34_8_14_DAYS	Number(24,4):=0;
+V_R34_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R34_1_3_MONTHS	Number(24,4):=0;
+V_R34_3_6_MONTHS	Number(24,4):=0;
+V_R34_6_12_MONTHS	Number(24,4):=0;
+V_R34_1_3_YEARS	Number(24,4):=0;
+V_R34_3_YEARS	Number(24,4):=0;
+V_R34_TOTAL	Number(24,4):=0;
+V_R35_PRODUCT	varchar2(100 BYTE):='Refinancing under Govt. Housing scheme';
+V_R35_OVERDUE	Number(24,4):=0;
+V_R35_OVERDRAFT	Number(24,4):=0;
+V_R35_0_7_DAYS	Number(24,4):=0;
+V_R35_8_14_DAYS	Number(24,4):=0;
+V_R35_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R35_1_3_MONTHS	Number(24,4):=0;
+V_R35_3_6_MONTHS	Number(24,4):=0;
+V_R35_6_12_MONTHS	Number(24,4):=0;
+V_R35_1_3_YEARS	Number(24,4):=0;
+V_R35_3_YEARS	Number(24,4):=0;
+V_R35_TOTAL	Number(24,4):=0;
+V_R36_PRODUCT	varchar2(100 BYTE):='Due to Central Bank';
+V_R36_OVERDUE	Number(24,4):=0;
+V_R36_OVERDRAFT	Number(24,4):=0;
+V_R36_0_7_DAYS	Number(24,4):=0;
+V_R36_8_14_DAYS	Number(24,4):=0;
+V_R36_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R36_1_3_MONTHS	Number(24,4):=0;
+V_R36_3_6_MONTHS	Number(24,4):=0;
+V_R36_6_12_MONTHS	Number(24,4):=0;
+V_R36_1_3_YEARS	Number(24,4):=0;
+V_R36_3_YEARS	Number(24,4):=0;
+V_R36_TOTAL	Number(24,4):=0;
+V_RH7_PRODUCT	varchar2(100 BYTE):='Deposits';
+V_RH7_OVERDUE	Number(24,4):=0;
+V_RH7_OVERDRAFT	Number(24,4):=0;
+V_RH7_0_7_DAYS	Number(24,4):=0;
+V_RH7_8_14_DAYS	Number(24,4):=0;
+V_RH7_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH7_1_3_MONTHS	Number(24,4):=0;
+V_RH7_3_6_MONTHS	Number(24,4):=0;
+V_RH7_6_12_MONTHS	Number(24,4):=0;
+V_RH7_1_3_YEARS	Number(24,4):=0;
+V_RH7_3_YEARS	Number(24,4):=0;
+V_RH7_TOTAL	Number(24,4):=0;
+V_R37_PRODUCT	varchar2(100 BYTE):='Government and Public Sector';
+V_R37_OVERDUE	Number(24,4):=0;
+V_R37_OVERDRAFT	Number(24,4):=0;
+V_R37_0_7_DAYS	Number(24,4):=0;
+V_R37_8_14_DAYS	Number(24,4):=0;
+V_R37_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R37_1_3_MONTHS	Number(24,4):=0;
+V_R37_3_6_MONTHS	Number(24,4):=0;
+V_R37_6_12_MONTHS	Number(24,4):=0;
+V_R37_1_3_YEARS	Number(24,4):=0;
+V_R37_3_YEARS	Number(24,4):=0;
+V_R37_TOTAL	Number(24,4):=0;
+V_R38_PRODUCT	varchar2(100 BYTE):='GREs ( Govt ownership of more than 50% )';
+V_R38_OVERDUE	Number(24,4):=0;
+V_R38_OVERDRAFT	Number(24,4):=0;
+V_R38_0_7_DAYS	Number(24,4):=0;
+V_R38_8_14_DAYS	Number(24,4):=0;
+V_R38_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R38_1_3_MONTHS	Number(24,4):=0;
+V_R38_3_6_MONTHS	Number(24,4):=0;
+V_R38_6_12_MONTHS	Number(24,4):=0;
+V_R38_1_3_YEARS	Number(24,4):=0;
+V_R38_3_YEARS	Number(24,4):=0;
+V_R38_TOTAL	Number(24,4):=0;
+V_R39_PRODUCT	varchar2(100 BYTE):='Private Sector (Corporate)';
+V_R39_OVERDUE	Number(24,4):=0;
+V_R39_OVERDRAFT	Number(24,4):=0;
+V_R39_0_7_DAYS	Number(24,4):=0;
+V_R39_8_14_DAYS	Number(24,4):=0;
+V_R39_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R39_1_3_MONTHS	Number(24,4):=0;
+V_R39_3_6_MONTHS	Number(24,4):=0;
+V_R39_6_12_MONTHS	Number(24,4):=0;
+V_R39_1_3_YEARS	Number(24,4):=0;
+V_R39_3_YEARS	Number(24,4):=0;
+V_R39_TOTAL	Number(24,4):=0;
+V_R40_PRODUCT	varchar2(100 BYTE):='Non Banking Financial Institutions';
+V_R40_OVERDUE	Number(24,4):=0;
+V_R40_OVERDRAFT	Number(24,4):=0;
+V_R40_0_7_DAYS	Number(24,4):=0;
+V_R40_8_14_DAYS	Number(24,4):=0;
+V_R40_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R40_1_3_MONTHS	Number(24,4):=0;
+V_R40_3_6_MONTHS	Number(24,4):=0;
+V_R40_6_12_MONTHS	Number(24,4):=0;
+V_R40_1_3_YEARS	Number(24,4):=0;
+V_R40_3_YEARS	Number(24,4):=0;
+V_R40_TOTAL	Number(24,4):=0;
+V_R41_PRODUCT	varchar2(100 BYTE):='HNIs, SMEs and Individuals more than AED 20 Mln';
+V_R41_OVERDUE	Number(24,4):=0;
+V_R41_OVERDRAFT	Number(24,4):=0;
+V_R41_0_7_DAYS	Number(24,4):=0;
+V_R41_8_14_DAYS	Number(24,4):=0;
+V_R41_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R41_1_3_MONTHS	Number(24,4):=0;
+V_R41_3_6_MONTHS	Number(24,4):=0;
+V_R41_6_12_MONTHS	Number(24,4):=0;
+V_R41_1_3_YEARS	Number(24,4):=0;
+V_R41_3_YEARS	Number(24,4):=0;
+V_R41_TOTAL	Number(24,4):=0;
+V_R42_PRODUCT	varchar2(100 BYTE):='HNIs, SMEs and Individuals- Up to AED 20 Mln';
+V_R42_OVERDUE	Number(24,4):=0;
+V_R42_OVERDRAFT	Number(24,4):=0;
+V_R42_0_7_DAYS	Number(24,4):=0;
+V_R42_8_14_DAYS	Number(24,4):=0;
+V_R42_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R42_1_3_MONTHS	Number(24,4):=0;
+V_R42_3_6_MONTHS	Number(24,4):=0;
+V_R42_6_12_MONTHS	Number(24,4):=0;
+V_R42_1_3_YEARS	Number(24,4):=0;
+V_R42_3_YEARS	Number(24,4):=0;
+V_R42_TOTAL	Number(24,4):=0;
+V_RH8_PRODUCT	varchar2(100 BYTE):='Other Liabilities and Equity';
+V_RH8_OVERDUE	Number(24,4):=0;
+V_RH8_OVERDRAFT	Number(24,4):=0;
+V_RH8_0_7_DAYS	Number(24,4):=0;
+V_RH8_8_14_DAYS	Number(24,4):=0;
+V_RH8_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RH8_1_3_MONTHS	Number(24,4):=0;
+V_RH8_3_6_MONTHS	Number(24,4):=0;
+V_RH8_6_12_MONTHS	Number(24,4):=0;
+V_RH8_1_3_YEARS	Number(24,4):=0;
+V_RH8_3_YEARS	Number(24,4):=0;
+V_RH8_TOTAL	Number(24,4):=0;
+V_R43_PRODUCT	varchar2(100 BYTE):='Capital Market instruments';
+V_R43_OVERDUE	Number(24,4):=0;
+V_R43_OVERDRAFT	Number(24,4):=0;
+V_R43_0_7_DAYS	Number(24,4):=0;
+V_R43_8_14_DAYS	Number(24,4):=0;
+V_R43_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R43_1_3_MONTHS	Number(24,4):=0;
+V_R43_3_6_MONTHS	Number(24,4):=0;
+V_R43_6_12_MONTHS	Number(24,4):=0;
+V_R43_1_3_YEARS	Number(24,4):=0;
+V_R43_3_YEARS	Number(24,4):=0;
+V_R43_TOTAL	Number(24,4):=0;
+V_R44_PRODUCT	varchar2(100 BYTE):='Other liabilities (refer note: 1)';
+V_R44_OVERDUE	Number(24,4):=0;
+V_R44_OVERDRAFT	Number(24,4):=0;
+V_R44_0_7_DAYS	Number(24,4):=0;
+V_R44_8_14_DAYS	Number(24,4):=0;
+V_R44_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R44_1_3_MONTHS	Number(24,4):=0;
+V_R44_3_6_MONTHS	Number(24,4):=0;
+V_R44_6_12_MONTHS	Number(24,4):=0;
+V_R44_1_3_YEARS	Number(24,4):=0;
+V_R44_3_YEARS	Number(24,4):=0;
+V_R44_TOTAL	Number(24,4):=0;
+V_R45_PRODUCT	varchar2(200 BYTE):='Provisions (Stage 1, Stage 2, Stage 3, Provision for Interest and Fees past due more than 90 days and Legacy Interest in Suspense)';
+V_R45_OVERDUE	Number(24,4):=0;
+V_R45_OVERDRAFT	Number(24,4):=0;
+V_R45_0_7_DAYS	Number(24,4):=0;
+V_R45_8_14_DAYS	Number(24,4):=0;
+V_R45_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R45_1_3_MONTHS	Number(24,4):=0;
+V_R45_3_6_MONTHS	Number(24,4):=0;
+V_R45_6_12_MONTHS	Number(24,4):=0;
+V_R45_1_3_YEARS	Number(24,4):=0;
+V_R45_3_YEARS	Number(24,4):=0;
+V_R45_TOTAL	Number(24,4):=0;
+V_R46_PRODUCT	varchar2(100 BYTE):='Capital and Reserves';
+V_R46_OVERDUE	Number(24,4):=0;
+V_R46_OVERDRAFT	Number(24,4):=0;
+V_R46_0_7_DAYS	Number(24,4):=0;
+V_R46_8_14_DAYS	Number(24,4):=0;
+V_R46_15_DAYS_1_MONTH	Number(24,4):=0;
+V_R46_1_3_MONTHS	Number(24,4):=0;
+V_R46_3_6_MONTHS	Number(24,4):=0;
+V_R46_6_12_MONTHS	Number(24,4):=0;
+V_R46_1_3_YEARS	Number(24,4):=0;
+V_R46_3_YEARS	Number(24,4):=0;
+V_R46_TOTAL	Number(24,4):=0;
+V_RTL_PRODUCT	varchar2(100 BYTE):='TOTAL LIABILITIES AND EQUITY';
+V_RTL_OVERDUE	Number(24,4):=0;
+V_RTL_OVERDRAFT	Number(24,4):=0;
+V_RTL_0_7_DAYS	Number(24,4):=0;
+V_RTL_8_14_DAYS	Number(24,4):=0;
+V_RTL_15_DAYS_1_MONTH	Number(24,4):=0;
+V_RTL_1_3_MONTHS	Number(24,4):=0;
+V_RTL_3_6_MONTHS	Number(24,4):=0;
+V_RTL_6_12_MONTHS	Number(24,4):=0;
+V_RTL_1_3_YEARS	Number(24,4):=0;
+V_RTL_3_YEARS	Number(24,4):=0;
+V_RTL_TOTAL	Number(24,4):=0;
+
+BEGIN
+delete from BRF9_SUMMARYTABLE where report_date = V_REPORT_DATE;
+Commit;
+
+-- CALCULATIONS --
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets  - > Overdue (COLUMN-D) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_OVERDUE := 
+    V_R1_OVERDUE + 
+    V_R2_OVERDUE + 
+    V_R3_OVERDUE;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > Overdraft (COLUMN-E) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_OVERDRAFT := 
+    V_R1_OVERDRAFT + 
+    V_R2_OVERDRAFT + 
+    V_R3_OVERDRAFT;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > 0 to 7 days (COLUMN-F) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_0_7_DAYS := 
+    V_R1_0_7_DAYS + 
+    V_R2_0_7_DAYS + 
+    V_R3_0_7_DAYS;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - >  8 to 14 days (COLUMN-G) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_8_14_DAYS := 
+    V_R1_8_14_DAYS + 
+    V_R2_8_14_DAYS + 
+    V_R3_8_14_DAYS;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_15_DAYS_1_MONTH := 
+    V_R1_15_DAYS_1_MONTH + 
+    V_R2_15_DAYS_1_MONTH + 
+    V_R3_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > 1 to 3 months (COLUMN-I) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_1_3_MONTHS := 
+    V_R1_1_3_MONTHS + 
+    V_R2_1_3_MONTHS + 
+    V_R3_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > 3 to 6 months (COLUMN-J) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_3_6_MONTHS := 
+    V_R1_3_6_MONTHS + 
+    V_R2_3_6_MONTHS + 
+    V_R3_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > 6 to 12 months (COLUMN-K) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_6_12_MONTHS := 
+    V_R1_6_12_MONTHS + 
+    V_R2_6_12_MONTHS + 
+    V_R3_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > 1 to 3 years (COLUMN-L) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_1_3_YEARS := 
+    V_R1_1_3_YEARS + 
+    V_R2_1_3_YEARS + 
+    V_R3_1_3_YEARS;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets - > More than 3 years (COLUMN-M) - BRBS - ROW 101 := ROW 102 + ROW 103 + ROW 104
+
+V_RH_3_YEARS := 
+    V_R1_3_YEARS + 
+    V_R2_3_YEARS + 
+    V_R3_3_YEARS;
+
+-- EXCEL ROW_NO: 8 - Highly Liquid Assets  
+-- Total (COLUMN-N) - BRBS - ROW 101K := SUM(ROW 101A + ROW 101J)  
+-- NOTE: ROW 101K = SUM(ROW 101A + ROW 101J) is NOT mentioned in the HTML  
+
+V_RH_TOTAL :=  
+      V_RH_OVERDUE  
+    + V_RH_OVERDRAFT  
+    + V_RH_0_7_DAYS  
+    + V_RH_8_14_DAYS  
+    + V_RH_15_DAYS_1_MONTH  
+    + V_RH_1_3_MONTHS
+    + V_RH_3_6_MONTHS
+    + V_RH_6_12_MONTHS
+    + V_RH_1_3_YEARS
+    + V_RH_3_YEARS;
+
+-- EXCEL ROW_NO: 9 - Cash, Reserves, and Balances with Central Bank  
+-- Total (COLUMN-N) - BRBS - ROW 102K = SUM(ROW 102A + ROW 102J)  
+-- NOTE: ROW 102K = SUM(ROW 102A + ROW 102J) is NOT mentioned in the HTML  
+
+V_R1_TOTAL :=  
+    V_R1_OVERDUE +  
+    V_R1_OVERDRAFT +  
+    V_R1_0_7_DAYS +  
+    V_R1_8_14_DAYS +  
+    V_R1_15_DAYS_1_MONTH +  
+    V_R1_1_3_MONTHS +  
+    V_R1_3_6_MONTHS +  
+    V_R1_6_12_MONTHS +  
+    V_R1_1_3_YEARS +  
+    V_R1_3_YEARS;  
+
+-- EXCEL ROW_NO: 10 - Central Bank CDs  
+-- Total (COLUMN-N) - BRBS - ROW 103K = SUM(ROW 103A + ROW 103J)  
+-- NOTE: ROW 103K = SUM(ROW 103A + ROW 103J) is NOT mentioned in the HTML  
+
+V_R2_TOTAL :=  
+      V_R2_OVERDUE  
+    + V_R2_OVERDRAFT  
+    + V_R2_0_7_DAYS  
+    + V_R2_8_14_DAYS  
+    + V_R2_15_DAYS_1_MONTH  
+    + V_R2_1_3_MONTHS  
+    + V_R2_3_6_MONTHS  
+    + V_R2_6_12_MONTHS  
+    + V_R2_1_3_YEARS  
+    + V_R2_3_YEARS;  
+
+-- EXCEL ROW_NO: 11 - UAE Federal and Emirate Governments debt securities (0% risk weighted)  
+-- Total (COLUMN-N) - BRBS - ROW 104K = SUM(ROW 104A + ROW 104J)  
+-- NOTE: ROW 104K = SUM(ROW 104A + ROW 104J) is NOT mentioned in the HTML  
+
+V_R3_TOTAL :=  
+      V_R3_OVERDUE  
+    + V_R3_OVERDRAFT  
+    + V_R3_0_7_DAYS  
+    + V_R3_8_14_DAYS  
+    + V_R3_15_DAYS_1_MONTH  
+    + V_R3_1_3_MONTHS  
+    + V_R3_3_6_MONTHS  
+    + V_R3_6_12_MONTHS  
+    + V_R3_1_3_YEARS  
+    + V_R3_3_YEARS;  
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > Overdue (COLUMN-D) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_OVERDUE := 
+    V_R4_OVERDUE + 
+    V_R5_OVERDUE + 
+    V_R6_OVERDUE;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > Overdraft (COLUMN-E) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_OVERDRAFT := 
+    V_R4_OVERDRAFT + 
+    V_R5_OVERDRAFT + 
+    V_R6_OVERDRAFT;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > 0 to 7 days (COLUMN-F) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_0_7_DAYS := 
+    V_R4_0_7_DAYS + 
+    V_R5_0_7_DAYS + 
+    V_R6_0_7_DAYS;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > 8 to 14 days (COLUMN-G) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_8_14_DAYS := 
+    V_R4_8_14_DAYS + 
+    V_R5_8_14_DAYS + 
+    V_R6_8_14_DAYS;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_15_DAYS_1_MONTH := 
+    V_R4_15_DAYS_1_MONTH + 
+    V_R5_15_DAYS_1_MONTH + 
+    V_R6_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > 1 to 3 months (COLUMN-I) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_1_3_MONTHS := 
+    V_R4_1_3_MONTHS + 
+    V_R5_1_3_MONTHS + 
+    V_R6_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > 3 to 6 months (COLUMN-J) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_3_6_MONTHS := 
+    V_R4_3_6_MONTHS + 
+    V_R5_3_6_MONTHS + 
+    V_R6_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > 6 to 12 months (COLUMN-K) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_6_12_MONTHS := 
+    V_R4_6_12_MONTHS + 
+    V_R5_6_12_MONTHS + 
+    V_R6_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > 1 to 3 years (COLUMN-L) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_1_3_YEARS := 
+    V_R4_1_3_YEARS + 
+    V_R5_1_3_YEARS + 
+    V_R6_1_3_YEARS;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3) - > More than 3 years (COLUMN-M) - BRBS - ROW 105 := ROW 106 + ROW 107 + ROW 108
+
+V_RH2_3_YEARS := 
+    V_R4_3_YEARS + 
+    V_R5_3_YEARS + 
+    V_R6_3_YEARS;
+
+-- EXCEL ROW_NO: 12 - Due from other banks/banking entities (BRF01 2 and 3)  
+-- Total (COLUMN-N) - BRBS - ROW 105K = SUM(ROW 105A + ROW 105J)  
+-- NOTE: ROW 105K = SUM(ROW 105A + ROW 105J) is NOT mentioned in the HTML  
+
+V_RH2_TOTAL :=  
+      V_RH2_OVERDUE  
+    + V_RH2_OVERDRAFT  
+    + V_RH2_0_7_DAYS  
+    + V_RH2_8_14_DAYS  
+    + V_RH2_15_DAYS_1_MONTH  
+    + V_RH2_1_3_MONTHS  
+    + V_RH2_3_6_MONTHS  
+    + V_RH2_6_12_MONTHS  
+    + V_RH2_1_3_YEARS  
+    + V_RH2_3_YEARS;  
+
+-- EXCEL ROW_NO: 13 - Placements/ Loans with and balances due from resident banks
+-- Total (COLUMN-N) - BRBS - ROW 106K = SUM(ROW 106A + ROW 106J)  
+-- NOTE: ROW 106K = SUM(ROW 106A + ROW 106J) is NOT mentioned in the HTML  
+
+V_R4_TOTAL :=  
+      V_R4_OVERDUE  
+    + V_R4_OVERDRAFT  
+    + V_R4_0_7_DAYS  
+    + V_R4_8_14_DAYS  
+    + V_R4_15_DAYS_1_MONTH  
+    + V_R4_1_3_MONTHS  
+    + V_R4_3_6_MONTHS  
+    + V_R4_6_12_MONTHS  
+    + V_R4_1_3_YEARS  
+    + V_R4_3_YEARS;  
+
+-- EXCEL ROW_NO: 14 - Interbank CDs held (from non resident banks only)
+-- Total (COLUMN-N) - BRBS - ROW 107K = SUM(ROW 107A + ROW 107J)  
+-- NOTE: ROW 107K = SUM(ROW 107A + ROW 107J) is NOT mentioned in the HTML  
+
+V_R5_TOTAL :=  
+      V_R5_OVERDUE  
+    + V_R5_OVERDRAFT  
+    + V_R5_0_7_DAYS  
+    + V_R5_8_14_DAYS  
+    + V_R5_15_DAYS_1_MONTH  
+    + V_R5_1_3_MONTHS  
+    + V_R5_3_6_MONTHS  
+    + V_R5_6_12_MONTHS  
+    + V_R5_1_3_YEARS  
+    + V_R5_3_YEARS;  
+
+-- EXCEL ROW_NO: 15 - Placements/ Loans with and balances due from overseas banks
+-- Total (COLUMN-N) - BRBS - ROW 108K = SUM(ROW 108A + ROW 108J)  
+-- NOTE: ROW 108K = SUM(ROW 108A + ROW 108J) is NOT mentioned in the HTML  
+
+V_R6_TOTAL :=  
+      V_R6_OVERDUE  
+    + V_R6_OVERDRAFT  
+    + V_R6_0_7_DAYS  
+    + V_R6_8_14_DAYS  
+    + V_R6_15_DAYS_1_MONTH  
+    + V_R6_1_3_MONTHS  
+    + V_R6_3_6_MONTHS  
+    + V_R6_6_12_MONTHS  
+    + V_R6_1_3_YEARS  
+    + V_R6_3_YEARS;  
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > Overdue (COLUMN-D) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_OVERDUE := 
+    V_R7_OVERDUE + 
+    V_R8_OVERDUE + 
+    V_R9_OVERDUE + 
+    V_R10_OVERDUE + 
+    V_R11_OVERDUE + 
+    V_R12_OVERDUE + 
+    V_R13_OVERDUE + 
+    V_R14_OVERDUE + 
+    V_R15_OVERDUE + 
+    V_R16_OVERDUE;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > Overdraft (COLUMN-E) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_OVERDRAFT := 
+    V_R7_OVERDRAFT + 
+    V_R8_OVERDRAFT + 
+    V_R9_OVERDRAFT + 
+    V_R10_OVERDRAFT + 
+    V_R11_OVERDRAFT + 
+    V_R12_OVERDRAFT + 
+    V_R13_OVERDRAFT + 
+    V_R14_OVERDRAFT + 
+    V_R15_OVERDRAFT + 
+    V_R16_OVERDRAFT;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > 0 to 7 days (COLUMN-F) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_0_7_DAYS := 
+    V_R7_0_7_DAYS + 
+    V_R8_0_7_DAYS + 
+    V_R9_0_7_DAYS + 
+    V_R10_0_7_DAYS + 
+    V_R11_0_7_DAYS + 
+    V_R12_0_7_DAYS + 
+    V_R13_0_7_DAYS + 
+    V_R14_0_7_DAYS + 
+    V_R15_0_7_DAYS + 
+    V_R16_0_7_DAYS;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > 8 to 14 days (COLUMN-G) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_8_14_DAYS := 
+    V_R7_8_14_DAYS + 
+    V_R8_8_14_DAYS + 
+    V_R9_8_14_DAYS + 
+    V_R10_8_14_DAYS + 
+    V_R11_8_14_DAYS + 
+    V_R12_8_14_DAYS + 
+    V_R13_8_14_DAYS + 
+    V_R14_8_14_DAYS + 
+    V_R15_8_14_DAYS + 
+    V_R16_8_14_DAYS;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_15_DAYS_1_MONTH := 
+    V_R7_15_DAYS_1_MONTH + 
+    V_R8_15_DAYS_1_MONTH + 
+    V_R9_15_DAYS_1_MONTH + 
+    V_R10_15_DAYS_1_MONTH + 
+    V_R11_15_DAYS_1_MONTH + 
+    V_R12_15_DAYS_1_MONTH + 
+    V_R13_15_DAYS_1_MONTH + 
+    V_R14_15_DAYS_1_MONTH + 
+    V_R15_15_DAYS_1_MONTH + 
+    V_R16_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > 1 to 3 months (COLUMN-I) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_1_3_MONTHS := 
+    V_R7_1_3_MONTHS + 
+    V_R8_1_3_MONTHS + 
+    V_R9_1_3_MONTHS + 
+    V_R10_1_3_MONTHS + 
+    V_R11_1_3_MONTHS + 
+    V_R12_1_3_MONTHS + 
+    V_R13_1_3_MONTHS + 
+    V_R14_1_3_MONTHS + 
+    V_R15_1_3_MONTHS + 
+    V_R16_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > 3 to 6 months (COLUMN-J) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_3_6_MONTHS := 
+    V_R7_3_6_MONTHS + 
+    V_R8_3_6_MONTHS + 
+    V_R9_3_6_MONTHS + 
+    V_R10_3_6_MONTHS + 
+    V_R11_3_6_MONTHS + 
+    V_R12_3_6_MONTHS + 
+    V_R13_3_6_MONTHS + 
+    V_R14_3_6_MONTHS + 
+    V_R15_3_6_MONTHS + 
+    V_R16_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > 6 to 12 months (COLUMN-K) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_6_12_MONTHS := 
+    V_R7_6_12_MONTHS + 
+    V_R8_6_12_MONTHS + 
+    V_R9_6_12_MONTHS + 
+    V_R10_6_12_MONTHS + 
+    V_R11_6_12_MONTHS + 
+    V_R12_6_12_MONTHS + 
+    V_R13_6_12_MONTHS + 
+    V_R14_6_12_MONTHS + 
+    V_R15_6_12_MONTHS + 
+    V_R16_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > 1 to 3 years (COLUMN-L) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_1_3_YEARS := 
+    V_R7_1_3_YEARS + 
+    V_R8_1_3_YEARS + 
+    V_R9_1_3_YEARS + 
+    V_R10_1_3_YEARS + 
+    V_R11_1_3_YEARS + 
+    V_R12_1_3_YEARS + 
+    V_R13_1_3_YEARS + 
+    V_R14_1_3_YEARS + 
+    V_R15_1_3_YEARS + 
+    V_R16_1_3_YEARS;
+
+-- EXCEL ROW_NO: 16 - Debt Securities - > More than 3 years (COLUMN-M) - BRBS - ROW 109 := SUM(ROW 110 + ROW 119)
+
+V_RH3_3_YEARS := 
+    V_R7_3_YEARS + 
+    V_R8_3_YEARS + 
+    V_R9_3_YEARS + 
+    V_R10_3_YEARS + 
+    V_R11_3_YEARS + 
+    V_R12_3_YEARS + 
+    V_R13_3_YEARS + 
+    V_R14_3_YEARS + 
+    V_R15_3_YEARS + 
+    V_R16_3_YEARS;
+
+-- EXCEL ROW_NO: 16 - Debt Securities
+-- Total (COLUMN-N) - BRBS - ROW 109K = SUM(ROW 109A + ROW 109J)  
+-- NOTE: ROW 109K = SUM(ROW 109A + ROW 109J) is NOT mentioned in the HTML  
+
+V_RH3_TOTAL :=  
+      V_RH3_OVERDUE  
+    + V_RH3_OVERDRAFT  
+    + V_RH3_0_7_DAYS  
+    + V_RH3_8_14_DAYS  
+    + V_RH3_15_DAYS_1_MONTH  
+    + V_RH3_1_3_MONTHS  
+    + V_RH3_3_6_MONTHS  
+    + V_RH3_6_12_MONTHS  
+    + V_RH3_1_3_YEARS  
+    + V_RH3_3_YEARS;  
+
+-- EXCEL ROW_NO: 17 - Foreign sovereign debt (rated AA- or higher)
+-- Total (COLUMN-N) - BRBS - ROW 110K = SUM(ROW 110A + ROW 110J)  
+-- NOTE: ROW 110K = SUM(ROW 110A + ROW 110J) is NOT mentioned in the HTML  
+V_R7_TOTAL :=  
+      V_R7_OVERDUE  
+    + V_R7_OVERDRAFT  
+    + V_R7_0_7_DAYS  
+    + V_R7_8_14_DAYS  
+    + V_R7_15_DAYS_1_MONTH  
+    + V_R7_1_3_MONTHS  
+    + V_R7_3_6_MONTHS  
+    + V_R7_6_12_MONTHS  
+    + V_R7_1_3_YEARS  
+    + V_R7_3_YEARS;  -- Total for Foreign sovereign debt (rated AA- or higher)
+
+-- EXCEL ROW_NO: 18 - Foreign sovereign debt (rated A- to A+)
+-- Total (COLUMN-N) - BRBS - ROW 111K = SUM(ROW 111A + ROW 111J)  
+-- NOTE: ROW 111K = SUM(ROW 111A + ROW 111J) is NOT mentioned in the HTML  
+V_R8_TOTAL :=  
+      V_R8_OVERDUE  
+    + V_R8_OVERDRAFT  
+    + V_R8_0_7_DAYS  
+    + V_R8_8_14_DAYS  
+    + V_R8_15_DAYS_1_MONTH  
+    + V_R8_1_3_MONTHS  
+    + V_R8_3_6_MONTHS  
+    + V_R8_6_12_MONTHS  
+    + V_R8_1_3_YEARS  
+    + V_R8_3_YEARS;  -- Total for Foreign sovereign debt (rated A- to A+)
+
+-- EXCEL ROW_NO: 19 - Foreign sovereign debt (rated BBB- to BBB+)
+-- Total (COLUMN-N) - BRBS - ROW 112K = SUM(ROW 112A + ROW 112J)  
+-- NOTE: ROW 112K = SUM(ROW 112A + ROW 112J) is NOT mentioned in the HTML  
+V_R9_TOTAL :=  
+      V_R9_OVERDUE  
+    + V_R9_OVERDRAFT  
+    + V_R9_0_7_DAYS  
+    + V_R9_8_14_DAYS  
+    + V_R9_15_DAYS_1_MONTH  
+    + V_R9_1_3_MONTHS  
+    + V_R9_3_6_MONTHS  
+    + V_R9_6_12_MONTHS  
+    + V_R9_1_3_YEARS  
+    + V_R9_3_YEARS;  -- Total for Foreign sovereign debt (rated BBB- to BBB+)
+
+-- EXCEL ROW_NO: 20 - Foreign sovereign debt (Non rated or below BBB-)
+-- Total (COLUMN-N) - BRBS - ROW 113K = SUM(ROW 113A + ROW 113J)  
+-- NOTE: ROW 113K = SUM(ROW 113A + ROW 113J) is NOT mentioned in the HTML  
+V_R10_TOTAL :=  
+      V_R10_OVERDUE  
+    + V_R10_OVERDRAFT  
+    + V_R10_0_7_DAYS  
+    + V_R10_8_14_DAYS  
+    + V_R10_15_DAYS_1_MONTH  
+    + V_R10_1_3_MONTHS  
+    + V_R10_3_6_MONTHS  
+    + V_R10_6_12_MONTHS  
+    + V_R10_1_3_YEARS  
+    + V_R10_3_YEARS;  -- Total for Foreign sovereign debt (Non rated or below BBB-)
+
+-- EXCEL ROW_NO: 21 - UAE Public sector enterprises debt/ Sukuks (non commercial, 0% risk weighted)
+-- Total (COLUMN-N) - BRBS - ROW 114K = SUM(ROW 114A + ROW 114J)  
+-- NOTE: ROW 114K = SUM(ROW 114A + ROW 114J) is NOT mentioned in the HTML  
+V_R11_TOTAL :=  
+      V_R11_OVERDUE  
+    + V_R11_OVERDRAFT  
+    + V_R11_0_7_DAYS  
+    + V_R11_8_14_DAYS  
+    + V_R11_15_DAYS_1_MONTH  
+    + V_R11_1_3_MONTHS  
+    + V_R11_3_6_MONTHS  
+    + V_R11_6_12_MONTHS  
+    + V_R11_1_3_YEARS  
+    + V_R11_3_YEARS;  -- Total for UAE Public sector enterprises debt/ Sukuks (non commercial, 0% risk weighted)
+
+-- EXCEL ROW_NO: 22 - Non-UAE Public sector enterprises debt/ Sukuks (non commercial, 20% risk weighted)
+-- Total (COLUMN-N) - BRBS - ROW 115K = SUM(ROW 115A + ROW 115J)  
+-- NOTE: ROW 115K = SUM(ROW 115A + ROW 115J) is NOT mentioned in the HTML  
+V_R12_TOTAL :=  
+      V_R12_OVERDUE  
+    + V_R12_OVERDRAFT  
+    + V_R12_0_7_DAYS  
+    + V_R12_8_14_DAYS  
+    + V_R12_15_DAYS_1_MONTH  
+    + V_R12_1_3_MONTHS  
+    + V_R12_3_6_MONTHS  
+    + V_R12_6_12_MONTHS  
+    + V_R12_1_3_YEARS  
+    + V_R12_3_YEARS;  -- Total for Non-UAE Public sector enterprises debt/ Sukuks (non commercial, 20% risk weighted)
+
+-- EXCEL ROW_NO: 23 - Corporate bonds/ Sukuks (Rated AA- or higher)
+-- Total (COLUMN-N) - BRBS - ROW 116K = SUM(ROW 116A + ROW 116J)  
+-- NOTE: ROW 116K = SUM(ROW 116A + ROW 116J) is NOT mentioned in the HTML  
+V_R13_TOTAL :=  
+      V_R13_OVERDUE  
+    + V_R13_OVERDRAFT  
+    + V_R13_0_7_DAYS  
+    + V_R13_8_14_DAYS  
+    + V_R13_15_DAYS_1_MONTH  
+    + V_R13_1_3_MONTHS  
+    + V_R13_3_6_MONTHS  
+    + V_R13_6_12_MONTHS  
+    + V_R13_1_3_YEARS  
+    + V_R13_3_YEARS;  -- Total for Corporate bonds/ Sukuks (Rated AA- or higher)
+
+-- EXCEL ROW_NO: 24 - Corporate bonds/ Sukuks (Rated A- to A+)
+-- Total (COLUMN-N) - BRBS - ROW 117K = SUM(ROW 117A + ROW 117J)  
+-- NOTE: ROW 117K = SUM(ROW 117A + ROW 117J) is NOT mentioned in the HTML  
+V_R14_TOTAL :=  
+      V_R14_OVERDUE  
+    + V_R14_OVERDRAFT  
+    + V_R14_0_7_DAYS  
+    + V_R14_8_14_DAYS  
+    + V_R14_15_DAYS_1_MONTH  
+    + V_R14_1_3_MONTHS  
+    + V_R14_3_6_MONTHS  
+    + V_R14_6_12_MONTHS  
+    + V_R14_1_3_YEARS  
+    + V_R14_3_YEARS;  -- Total for Corporate bonds/ Sukuks (Rated A- to A+)
+
+-- EXCEL ROW_NO: 25 - Corporate bonds/ Sukuks (Rated BBB- to BBB+)
+-- Total (COLUMN-N) - BRBS - ROW 118K = SUM(ROW 118A + ROW 118J)  
+-- NOTE: ROW 118K = SUM(ROW 118A + ROW 118J) is NOT mentioned in the HTML  
+V_R15_TOTAL :=  
+      V_R15_OVERDUE  
+    + V_R15_OVERDRAFT  
+    + V_R15_0_7_DAYS  
+    + V_R15_8_14_DAYS  
+    + V_R15_15_DAYS_1_MONTH  
+    + V_R15_1_3_MONTHS  
+    + V_R15_3_6_MONTHS  
+    + V_R15_6_12_MONTHS  
+    + V_R15_1_3_YEARS  
+    + V_R15_3_YEARS;  -- Total for Corporate bonds/ Sukuks (Rated BBB- to BBB+)
+
+-- EXCEL ROW_NO: 26 - Corporate bonds/ Sukuks (Non rated or below BBB-)
+-- Total (COLUMN-N) - BRBS - ROW 119K = SUM(ROW 119A + ROW 119J)  
+-- NOTE: ROW 119K = SUM(ROW 119A + ROW 119J) is NOT mentioned in the HTML  
+V_R16_TOTAL :=  
+      V_R16_OVERDUE  
+    + V_R16_OVERDRAFT  
+    + V_R16_0_7_DAYS  
+    + V_R16_8_14_DAYS  
+    + V_R16_15_DAYS_1_MONTH  
+    + V_R16_1_3_MONTHS  
+    + V_R16_3_6_MONTHS  
+    + V_R16_6_12_MONTHS  
+    + V_R16_1_3_YEARS  
+    + V_R16_3_YEARS;  -- Total for Corporate bonds/ Sukuks (Non rated or below BBB-)
+
+-- EXCEL ROW_NO: 27 - Other Investments - > Overdue (COLUMN-D) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_OVERDUE := 
+    V_R17_OVERDUE + 
+    V_R18_OVERDUE + 
+    V_R_18_OVERDUE + 
+    V_R19_OVERDUE + 
+    V_R20_OVERDUE + 
+    V_R21_OVERDUE;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > Overdraft (COLUMN-E) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_OVERDRAFT := 
+    V_R17_OVERDRAFT + 
+    V_R18_OVERDRAFT + 
+    V_R_18_OVERDRAFT + 
+    V_R19_OVERDRAFT + 
+    V_R20_OVERDRAFT + 
+    V_R21_OVERDRAFT;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > 0 to 7 days (COLUMN-F) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_0_7_DAYS := 
+    V_R17_0_7_DAYS + 
+    V_R18_0_7_DAYS + 
+    V_R_18_0_7_DAYS + 
+    V_R19_0_7_DAYS + 
+    V_R20_0_7_DAYS + 
+    V_R21_0_7_DAYS;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > 8 to 14 days (COLUMN-G) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_8_14_DAYS := 
+    V_R17_8_14_DAYS + 
+    V_R18_8_14_DAYS + 
+    V_R_18_8_14_DAYS + 
+    V_R19_8_14_DAYS + 
+    V_R20_8_14_DAYS + 
+    V_R21_8_14_DAYS;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_15_DAYS_1_MONTH := 
+    V_R17_15_DAYS_1_MONTH + 
+    V_R18_15_DAYS_1_MONTH + 
+    V_R_18_15_DAYS_1_MONTH + 
+    V_R19_15_DAYS_1_MONTH + 
+    V_R20_15_DAYS_1_MONTH + 
+    V_R21_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > 1 to 3 months (COLUMN-I) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_1_3_MONTHS := 
+    V_R17_1_3_MONTHS + 
+    V_R18_1_3_MONTHS + 
+    V_R_18_1_3_MONTHS + 
+    V_R19_1_3_MONTHS + 
+    V_R20_1_3_MONTHS + 
+    V_R21_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > 3 to 6 months (COLUMN-J) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_3_6_MONTHS := 
+    V_R17_3_6_MONTHS + 
+    V_R18_3_6_MONTHS + 
+    V_R_18_3_6_MONTHS + 
+    V_R19_3_6_MONTHS + 
+    V_R20_3_6_MONTHS + 
+    V_R21_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > 6 to 12 months (COLUMN-K) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_6_12_MONTHS := 
+    V_R17_6_12_MONTHS + 
+    V_R18_6_12_MONTHS + 
+    V_R_18_6_12_MONTHS + 
+    V_R19_6_12_MONTHS + 
+    V_R20_6_12_MONTHS + 
+    V_R21_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > 1 to 3 years (COLUMN-L) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_1_3_YEARS := 
+    V_R17_1_3_YEARS + 
+    V_R18_1_3_YEARS + 
+    V_R_18_1_3_YEARS + 
+    V_R19_1_3_YEARS + 
+    V_R20_1_3_YEARS + 
+    V_R21_1_3_YEARS;
+
+-- EXCEL ROW_NO: 27 - Other Investments - > More than 3 years (COLUMN-M) - BRBS - ROW 120 := SUM(ROW 121 + ROW 126)
+
+V_RH4_3_YEARS := 
+    V_R17_3_YEARS + 
+    V_R18_3_YEARS + 
+    V_R_18_3_YEARS + 
+    V_R19_3_YEARS + 
+    V_R20_3_YEARS + 
+    V_R21_3_YEARS;
+
+-- EXCEL ROW_NO: 27 - Other Investments
+-- Total (COLUMN-N) - BRBS - ROW 120K = SUM(ROW 120A + ROW 120J)
+-- NOTE: ROW 120K = SUM(ROW 120A + ROW 120J) is NOT mentioned in the HTML
+V_R17_TOTAL := V_R17_OVERDUE + V_R17_OVERDRAFT + V_R17_0_7_DAYS + V_R17_8_14_DAYS + V_R17_15_DAYS_1_MONTH + V_R17_1_3_MONTHS + V_R17_3_6_MONTHS + V_R17_6_12_MONTHS + V_R17_1_3_YEARS + V_R17_3_YEARS;
+
+-- EXCEL ROW_NO: 28 - Financial Institutions - Fixed Income Securities - Resident
+-- Total (COLUMN-N) - BRBS - ROW 121K = SUM(ROW 121A + ROW 121J)
+-- NOTE: ROW 121K = SUM(ROW 121A + ROW 121J) is NOT mentioned in the HTML
+V_R18_TOTAL := V_R18_OVERDUE + V_R18_OVERDRAFT + V_R18_0_7_DAYS + V_R18_8_14_DAYS + V_R18_15_DAYS_1_MONTH + V_R18_1_3_MONTHS + V_R18_3_6_MONTHS + V_R18_6_12_MONTHS + V_R18_1_3_YEARS + V_R18_3_YEARS;
+
+-- EXCEL ROW_NO: 29 - Financial Institutions - Fixed Income Securities - Non-Resident
+-- Total (COLUMN-N) - BRBS - ROW 122K = SUM(ROW 122A + ROW 122J)
+-- NOTE: ROW 122K = SUM(ROW 122A + ROW 122J) is NOT mentioned in the HTML
+V_R_18_TOTAL := V_R_18_OVERDUE + V_R_18_OVERDRAFT + V_R_18_0_7_DAYS + V_R_18_8_14_DAYS + V_R_18_15_DAYS_1_MONTH + V_R_18_1_3_MONTHS + V_R_18_3_6_MONTHS + V_R_18_6_12_MONTHS + V_R_18_1_3_YEARS + V_R_18_3_YEARS;
+
+-- EXCEL ROW_NO: 30 - Investment in Equities - Quoted
+-- Total (COLUMN-N) - BRBS - ROW 123K = SUM(ROW 123A + ROW 123J)
+-- NOTE: ROW 123K = SUM(ROW 123A + ROW 123J) is NOT mentioned in the HTML
+V_R19_TOTAL := V_R19_OVERDUE + V_R19_OVERDRAFT + V_R19_0_7_DAYS + V_R19_8_14_DAYS + V_R19_15_DAYS_1_MONTH + V_R19_1_3_MONTHS + V_R19_3_6_MONTHS + V_R19_6_12_MONTHS + V_R19_1_3_YEARS + V_R19_3_YEARS;
+
+-- EXCEL ROW_NO: 31 - Investment in Equities - Unquoted
+-- Total (COLUMN-N) - BRBS - ROW 124K = SUM(ROW 124A + ROW 124J)
+-- NOTE: ROW 124K = SUM(ROW 124A + ROW 124J) is NOT mentioned in the HTML
+V_R20_TOTAL := V_R20_OVERDUE + V_R20_OVERDRAFT + V_R20_0_7_DAYS + V_R20_8_14_DAYS + V_R20_15_DAYS_1_MONTH + V_R20_1_3_MONTHS + V_R20_3_6_MONTHS + V_R20_6_12_MONTHS + V_R20_1_3_YEARS + V_R20_3_YEARS;
+
+-- EXCEL ROW_NO: 32 - Investment in Subsidiaries, Affiliates & Associates
+-- Total (COLUMN-N) - BRBS - ROW 125K = SUM(ROW 125A + ROW 125J)
+-- NOTE: ROW 125K = SUM(ROW 125A + ROW 125J) is NOT mentioned in the HTML
+V_R21_TOTAL := V_R21_OVERDUE + V_R21_OVERDRAFT + V_R21_0_7_DAYS + V_R21_8_14_DAYS + V_R21_15_DAYS_1_MONTH + V_R21_1_3_MONTHS + V_R21_3_6_MONTHS + V_R21_6_12_MONTHS + V_R21_1_3_YEARS + V_R21_3_YEARS;
+
+-- EXCEL ROW_NO: 33 - Net Fixed Assets (Item 9 of BRF 1)
+-- Total (COLUMN-N) - BRBS - ROW 126K = SUM(ROW 126A + ROW 126J)
+-- NOTE: ROW 126K = SUM(ROW 126A + ROW 126J) is NOT mentioned in the HTML
+V_R22_TOTAL := V_R22_OVERDUE + V_R22_OVERDRAFT + V_R22_0_7_DAYS + V_R22_8_14_DAYS + V_R22_15_DAYS_1_MONTH + V_R22_1_3_MONTHS + V_R22_3_6_MONTHS + V_R22_6_12_MONTHS + V_R22_1_3_YEARS + V_R22_3_YEARS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > Overdue (COLUMN-D) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_OVERDUE := 
+    V_R22_OVERDUE + 
+    V_R23_OVERDUE + 
+    V_R24_OVERDUE + 
+    V_R25_OVERDUE + 
+    V_R26_OVERDUE + 
+    V_R27_OVERDUE + 
+    V_R28_OVERDUE + 
+    V_R29_OVERDUE + 
+    V_R30_OVERDUE + 
+    V_R31_OVERDUE;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > Overdraft (COLUMN-E) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_OVERDRAFT := 
+    V_R22_OVERDRAFT + 
+    V_R23_OVERDRAFT + 
+    V_R24_OVERDRAFT + 
+    V_R25_OVERDRAFT + 
+    V_R26_OVERDRAFT + 
+    V_R27_OVERDRAFT + 
+    V_R28_OVERDRAFT + 
+    V_R29_OVERDRAFT + 
+    V_R30_OVERDRAFT + 
+    V_R31_OVERDRAFT;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > 0 to 7 days (COLUMN-F) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_0_7_DAYS := 
+    V_R22_0_7_DAYS + 
+    V_R23_0_7_DAYS + 
+    V_R24_0_7_DAYS + 
+    V_R25_0_7_DAYS + 
+    V_R26_0_7_DAYS + 
+    V_R27_0_7_DAYS + 
+    V_R28_0_7_DAYS + 
+    V_R29_0_7_DAYS + 
+    V_R30_0_7_DAYS + 
+    V_R31_0_7_DAYS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > 8 to 14 days (COLUMN-G) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_8_14_DAYS := 
+    V_R22_8_14_DAYS + 
+    V_R23_8_14_DAYS + 
+    V_R24_8_14_DAYS + 
+    V_R25_8_14_DAYS + 
+    V_R26_8_14_DAYS + 
+    V_R27_8_14_DAYS + 
+    V_R28_8_14_DAYS + 
+    V_R29_8_14_DAYS + 
+    V_R30_8_14_DAYS + 
+    V_R31_8_14_DAYS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_15_DAYS_1_MONTH := 
+    V_R22_15_DAYS_1_MONTH + 
+    V_R23_15_DAYS_1_MONTH + 
+    V_R24_15_DAYS_1_MONTH + 
+    V_R25_15_DAYS_1_MONTH + 
+    V_R26_15_DAYS_1_MONTH + 
+    V_R27_15_DAYS_1_MONTH + 
+    V_R28_15_DAYS_1_MONTH + 
+    V_R29_15_DAYS_1_MONTH + 
+    V_R30_15_DAYS_1_MONTH + 
+    V_R31_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > 1 to 3 months (COLUMN-I) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_1_3_MONTHS := 
+    V_R22_1_3_MONTHS + 
+    V_R23_1_3_MONTHS + 
+    V_R24_1_3_MONTHS + 
+    V_R25_1_3_MONTHS + 
+    V_R26_1_3_MONTHS + 
+    V_R27_1_3_MONTHS + 
+    V_R28_1_3_MONTHS + 
+    V_R29_1_3_MONTHS + 
+    V_R30_1_3_MONTHS + 
+    V_R31_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > 3 to 6 months (COLUMN-J) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_3_6_MONTHS := 
+    V_R22_3_6_MONTHS + 
+    V_R23_3_6_MONTHS + 
+    V_R24_3_6_MONTHS + 
+    V_R25_3_6_MONTHS + 
+    V_R26_3_6_MONTHS + 
+    V_R27_3_6_MONTHS + 
+    V_R28_3_6_MONTHS + 
+    V_R29_3_6_MONTHS + 
+    V_R30_3_6_MONTHS + 
+    V_R31_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > 6 to 12 months (COLUMN-K) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_6_12_MONTHS := 
+    V_R22_6_12_MONTHS + 
+    V_R23_6_12_MONTHS + 
+    V_R24_6_12_MONTHS + 
+    V_R25_6_12_MONTHS + 
+    V_R26_6_12_MONTHS + 
+    V_R27_6_12_MONTHS + 
+    V_R28_6_12_MONTHS + 
+    V_R29_6_12_MONTHS + 
+    V_R30_6_12_MONTHS + 
+    V_R31_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > 1 to 3 years (COLUMN-L) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_1_3_YEARS := 
+    V_R22_1_3_YEARS + 
+    V_R23_1_3_YEARS + 
+    V_R24_1_3_YEARS + 
+    V_R25_1_3_YEARS + 
+    V_R26_1_3_YEARS + 
+    V_R27_1_3_YEARS + 
+    V_R28_1_3_YEARS + 
+    V_R29_1_3_YEARS + 
+    V_R30_1_3_YEARS + 
+    V_R31_1_3_YEARS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets - > More than 3 years (COLUMN-M) - BRBS - ROW 127 := SUM(ROW 128 + ROW 137)
+
+V_RH5_3_YEARS := 
+    V_R22_3_YEARS + 
+    V_R23_3_YEARS + 
+    V_R24_3_YEARS + 
+    V_R25_3_YEARS + 
+    V_R26_3_YEARS + 
+    V_R27_3_YEARS + 
+    V_R28_3_YEARS + 
+    V_R29_3_YEARS + 
+    V_R30_3_YEARS + 
+    V_R31_3_YEARS;
+
+-- EXCEL ROW_NO: 34 - Loans and Advances & Other Assets
+-- Total (COLUMN-N) - BRBS - ROW 127K = SUM(ROW 127A + ROW 127J)
+-- NOTE: ROW 127K = SUM(ROW 127A + ROW 127J) is NOT mentioned in the HTML
+V_RH5_TOTAL := V_RH5_OVERDUE + V_RH5_OVERDRAFT + V_RH5_0_7_DAYS + V_RH5_8_14_DAYS + V_RH5_15_DAYS_1_MONTH + V_RH5_1_3_MONTHS + V_RH5_3_6_MONTHS + V_RH5_6_12_MONTHS + V_RH5_1_3_YEARS + V_RH5_3_YEARS;
+
+-- EXCEL ROW_NO: 35 - Government and Public Sector
+-- Total (COLUMN-N) - BRBS - ROW 128K = SUM(ROW 128A + ROW 128J)
+-- NOTE: ROW 128K = SUM(ROW 128A + ROW 128J) is NOT mentioned in the HTML
+V_R22_TOTAL := V_R22_OVERDUE + V_R22_OVERDRAFT + V_R22_0_7_DAYS + V_R22_8_14_DAYS + V_R22_15_DAYS_1_MONTH + V_R22_1_3_MONTHS + V_R22_3_6_MONTHS + V_R22_6_12_MONTHS + V_R22_1_3_YEARS + V_R22_3_YEARS;
+
+-- EXCEL ROW_NO: 36 - GREs (Govt ownership of more than 50%)
+-- Total (COLUMN-N) - BRBS - ROW 129K = SUM(ROW 129A + ROW 129J)
+-- NOTE: ROW 129K = SUM(ROW 129A + ROW 129J) is NOT mentioned in the HTML
+V_R23_TOTAL := V_R23_OVERDUE + V_R23_OVERDRAFT + V_R23_0_7_DAYS + V_R23_8_14_DAYS + V_R23_15_DAYS_1_MONTH + V_R23_1_3_MONTHS + V_R23_3_6_MONTHS + V_R23_6_12_MONTHS + V_R23_1_3_YEARS + V_R23_3_YEARS;
+
+-- EXCEL ROW_NO: 37 - Private Sector (Corporate)
+-- Total (COLUMN-N) - BRBS - ROW 130K = SUM(ROW 130A + ROW 130J)
+-- NOTE: ROW 130K = SUM(ROW 130A + ROW 130J) is NOT mentioned in the HTML
+V_R24_TOTAL := V_R24_OVERDUE + V_R24_OVERDRAFT + V_R24_0_7_DAYS + V_R24_8_14_DAYS + V_R24_15_DAYS_1_MONTH + V_R24_1_3_MONTHS + V_R24_3_6_MONTHS + V_R24_6_12_MONTHS + V_R24_1_3_YEARS + V_R24_3_YEARS;
+
+-- EXCEL ROW_NO: 38 - Non-Banking Financial Institutions
+-- Total (COLUMN-N) - BRBS - ROW 131K = SUM(ROW 131A + ROW 131J)
+-- NOTE: ROW 131K = SUM(ROW 131A + ROW 131J) is NOT mentioned in the HTML
+V_R25_TOTAL := V_R25_OVERDUE + V_R25_OVERDRAFT + V_R25_0_7_DAYS + V_R25_8_14_DAYS + V_R25_15_DAYS_1_MONTH + V_R25_1_3_MONTHS + V_R25_3_6_MONTHS + V_R25_6_12_MONTHS + V_R25_1_3_YEARS + V_R25_3_YEARS;
+
+-- EXCEL ROW_NO: 39 - HNIs, SMEs and Individuals more than AED 20 Mln
+-- Total (COLUMN-N) - BRBS - ROW 132K = SUM(ROW 132A + ROW 132J)
+-- NOTE: ROW 132K = SUM(ROW 132A + ROW 132J) is NOT mentioned in the HTML
+V_R26_TOTAL := V_R26_OVERDUE + V_R26_OVERDRAFT + V_R26_0_7_DAYS + V_R26_8_14_DAYS + V_R26_15_DAYS_1_MONTH + V_R26_1_3_MONTHS + V_R26_3_6_MONTHS + V_R26_6_12_MONTHS + V_R26_1_3_YEARS + V_R26_3_YEARS;
+
+-- EXCEL ROW_NO: 40 - HNIs, SMEs and Individuals - Up to AED 20 Mln
+-- Total (COLUMN-N) - BRBS - ROW 133K = SUM(ROW 133A + ROW 133J)
+-- NOTE: ROW 133K = SUM(ROW 133A + ROW 133J) is NOT mentioned in the HTML
+V_R27_TOTAL := V_R27_OVERDUE + V_R27_OVERDRAFT + V_R27_0_7_DAYS + V_R27_8_14_DAYS + V_R27_15_DAYS_1_MONTH + V_R27_1_3_MONTHS + V_R27_3_6_MONTHS + V_R27_6_12_MONTHS + V_R27_1_3_YEARS + V_R27_3_YEARS;
+
+-- EXCEL ROW_NO: 41 - Trade Bills - Gov & Public Sector Entities
+-- Total (COLUMN-N) - BRBS - ROW 134K = SUM(ROW 134A + ROW 134J)
+-- NOTE: ROW 134K = SUM(ROW 134A + ROW 134J) is NOT mentioned in the HTML
+V_R28_TOTAL := V_R28_OVERDUE + V_R28_OVERDRAFT + V_R28_0_7_DAYS + V_R28_8_14_DAYS + V_R28_15_DAYS_1_MONTH + V_R28_1_3_MONTHS + V_R28_3_6_MONTHS + V_R28_6_12_MONTHS + V_R28_1_3_YEARS + V_R28_3_YEARS;
+
+-- EXCEL ROW_NO: 42 - Trade Bills - Private Sector (Corporate)
+-- Total (COLUMN-N) - BRBS - ROW 135K = SUM(ROW 135A + ROW 135J)
+-- NOTE: ROW 135K = SUM(ROW 135A + ROW 135J) is NOT mentioned in the HTML
+V_R29_TOTAL := V_R29_OVERDUE + V_R29_OVERDRAFT + V_R29_0_7_DAYS + V_R29_8_14_DAYS + V_R29_15_DAYS_1_MONTH + V_R29_1_3_MONTHS + V_R29_3_6_MONTHS + V_R29_6_12_MONTHS + V_R29_1_3_YEARS + V_R29_3_YEARS;
+
+-- EXCEL ROW_NO: 43 - Non Performing Loans
+-- Total (COLUMN-N) - BRBS - ROW 136K = SUM(ROW 136A + ROW 136J)
+-- NOTE: ROW 136K = SUM(ROW 136A + ROW 136J) is NOT mentioned in the HTML
+V_R30_TOTAL := V_R30_OVERDUE + V_R30_OVERDRAFT + V_R30_0_7_DAYS + V_R30_8_14_DAYS + V_R30_15_DAYS_1_MONTH + V_R30_1_3_MONTHS + V_R30_3_6_MONTHS + V_R30_6_12_MONTHS + V_R30_1_3_YEARS + V_R30_3_YEARS;
+
+-- EXCEL ROW_NO: 44 - Other Assets1
+-- Total (COLUMN-N) - BRBS - ROW 137K = SUM(ROW 137A + ROW 137J)
+-- NOTE: ROW 137K = SUM(ROW 137A + ROW 137J) is NOT mentioned in the HTML
+V_R31_TOTAL := V_R31_OVERDUE + V_R31_OVERDRAFT + V_R31_0_7_DAYS + V_R31_8_14_DAYS + V_R31_15_DAYS_1_MONTH + V_R31_1_3_MONTHS + V_R31_3_6_MONTHS + V_R31_6_12_MONTHS + V_R31_1_3_YEARS + V_R31_3_YEARS;
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - OVERDUE
+-- (COLUMN-D) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105  
+V_RTA_OVERDUE :=  
+      V_RH_OVERDUE  
+    + V_RH2_OVERDUE  
+    + V_RH3_OVERDUE  
+    + V_RH4_OVERDUE  
+    + V_RH5_OVERDUE;
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - OVERDRAFT
+-- (COLUMN-E) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_OVERDRAFT :=  
+      V_RH_OVERDRAFT  
+    + V_RH2_OVERDRAFT  
+    + V_RH3_OVERDRAFT  
+    + V_RH4_OVERDRAFT  
+    + V_RH5_OVERDRAFT;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 0_7_DAYS
+-- (COLUMN-F) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_0_7_DAYS :=  
+      V_RH_0_7_DAYS  
+    + V_RH2_0_7_DAYS  
+    + V_RH3_0_7_DAYS  
+    + V_RH4_0_7_DAYS  
+    + V_RH5_0_7_DAYS;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 8_14_DAYS
+-- (COLUMN-G) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_8_14_DAYS :=  
+      V_RH_8_14_DAYS  
+    + V_RH2_8_14_DAYS  
+    + V_RH3_8_14_DAYS  
+    + V_RH4_8_14_DAYS  
+    + V_RH5_8_14_DAYS;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 15_DAYS_1_MONTH
+-- (COLUMN-H) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_15_DAYS_1_MONTH :=  
+      V_RH_15_DAYS_1_MONTH  
+    + V_RH2_15_DAYS_1_MONTH  
+    + V_RH3_15_DAYS_1_MONTH  
+    + V_RH4_15_DAYS_1_MONTH  
+    + V_RH5_15_DAYS_1_MONTH;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 1_3_MONTHS
+-- (COLUMN-I) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_1_3_MONTHS :=  
+      V_RH_1_3_MONTHS  
+    + V_RH2_1_3_MONTHS  
+    + V_RH3_1_3_MONTHS  
+    + V_RH4_1_3_MONTHS  
+    + V_RH5_1_3_MONTHS;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 3_6_MONTHS
+-- (COLUMN-J) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_3_6_MONTHS :=  
+      V_RH_3_6_MONTHS  
+    + V_RH2_3_6_MONTHS  
+    + V_RH3_3_6_MONTHS  
+    + V_RH4_3_6_MONTHS  
+    + V_RH5_3_6_MONTHS;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 6_12_MONTHS
+-- (COLUMN-K) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_6_12_MONTHS :=  
+      V_RH_6_12_MONTHS  
+    + V_RH2_6_12_MONTHS  
+    + V_RH3_6_12_MONTHS  
+    + V_RH4_6_12_MONTHS  
+    + V_RH5_6_12_MONTHS;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 1_3_YEARS
+-- (COLUMN-L) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_1_3_YEARS :=  
+      V_RH_1_3_YEARS  
+    + V_RH2_1_3_YEARS  
+    + V_RH3_1_3_YEARS  
+    + V_RH4_1_3_YEARS  
+    + V_RH5_1_3_YEARS;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS - 3_YEARS
+-- (COLUMN-M) - BRBS - ROW 138 = ROW 101 + ROW 109 + ROW 120 + ROW 127 + ROW 105 
+V_RTA_3_YEARS :=  
+      V_RH_3_YEARS  
+    + V_RH2_3_YEARS  
+    + V_RH3_3_YEARS  
+    + V_RH4_3_YEARS  
+    + V_RH5_3_YEARS;  
+
+-- EXCEL ROW_NO: 45 - TOTAL ASSETS
+-- Total (COLUMN-N) - BRBS - ROW 138K = SUM(ROW 138A + ROW 138J)
+-- NOTE: ROW 138K = SUM(ROW 138A + ROW 138J) is NOT mentioned in the HTML
+V_RTA_TOTAL := V_RTA_OVERDUE + V_RTA_OVERDRAFT + V_RTA_0_7_DAYS + V_RTA_8_14_DAYS + V_RTA_15_DAYS_1_MONTH + V_RTA_1_3_MONTHS + V_RTA_3_6_MONTHS + V_RTA_6_12_MONTHS + V_RTA_3_YEARS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > Overdue (COLUMN-F) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_0_7_DAYS := 
+    V_R32_0_7_DAYS + 
+    V_R33_0_7_DAYS + 
+    V_R34_0_7_DAYS + 
+    V_R35_0_7_DAYS + 
+    V_R36_0_7_DAYS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > 8 to 14 days (COLUMN-G) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_8_14_DAYS := 
+    V_R32_8_14_DAYS + 
+    V_R33_8_14_DAYS + 
+    V_R34_8_14_DAYS + 
+    V_R35_8_14_DAYS + 
+    V_R36_8_14_DAYS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_15_DAYS_1_MONTH := 
+    V_R32_15_DAYS_1_MONTH + 
+    V_R33_15_DAYS_1_MONTH + 
+    V_R34_15_DAYS_1_MONTH + 
+    V_R35_15_DAYS_1_MONTH + 
+    V_R36_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > 1 to 3 months (COLUMN-I) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_1_3_MONTHS := 
+    V_R32_1_3_MONTHS + 
+    V_R33_1_3_MONTHS + 
+    V_R34_1_3_MONTHS + 
+    V_R35_1_3_MONTHS + 
+    V_R36_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > 3 to 6 months (COLUMN-J) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_3_6_MONTHS := 
+    V_R32_3_6_MONTHS + 
+    V_R33_3_6_MONTHS + 
+    V_R34_3_6_MONTHS + 
+    V_R35_3_6_MONTHS + 
+    V_R36_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > 6 to 12 months (COLUMN-K) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_6_12_MONTHS := 
+    V_R32_6_12_MONTHS + 
+    V_R33_6_12_MONTHS + 
+    V_R34_6_12_MONTHS + 
+    V_R35_6_12_MONTHS + 
+    V_R36_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > 1 to 3 years (COLUMN-L) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_1_3_YEARS := 
+    V_R32_1_3_YEARS + 
+    V_R33_1_3_YEARS + 
+    V_R34_1_3_YEARS + 
+    V_R35_1_3_YEARS + 
+    V_R36_1_3_YEARS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB - > More than 3 years (COLUMN-M) - BRBS - ROW 140 := SUM(ROW 141 + ROW 145)
+
+V_RH6_3_YEARS := 
+    V_R32_3_YEARS + 
+    V_R33_3_YEARS + 
+    V_R34_3_YEARS + 
+    V_R35_3_YEARS + 
+    V_R36_3_YEARS;
+
+-- EXCEL ROW_NO: 47 - Interbank, Gov and CB
+-- Total (COLUMN-N) - BRBS - ROW 140K = SUM(ROW 140A + ROW 140J)
+-- NOTE: ROW 140K = SUM(ROW 140A + ROW 140J) is NOT mentioned in the HTML
+V_RH6_TOTAL := V_RH6_0_7_DAYS + V_RH6_8_14_DAYS + V_RH6_15_DAYS_1_MONTH + V_RH6_1_3_MONTHS + V_RH6_3_6_MONTHS + V_RH6_6_12_MONTHS + V_RH6_1_3_YEARS + V_RH6_3_YEARS;  -- Total for Interbank, Gov and CB
+
+-- EXCEL ROW_NO: 48 - Deposits from and balances due to resident banks
+-- Total (COLUMN-N) - BRBS - ROW 141K = SUM(ROW 141A + ROW 141J)
+-- NOTE: ROW 141K = SUM(ROW 141A + ROW 141J) is NOT mentioned in the HTML
+V_R32_TOTAL := V_R32_0_7_DAYS + V_R32_8_14_DAYS + V_R32_15_DAYS_1_MONTH + V_R32_1_3_MONTHS + V_R32_3_6_MONTHS + V_R32_6_12_MONTHS + V_R32_1_3_YEARS + V_R32_3_YEARS ;
+
+-- EXCEL ROW_NO: 49 - Interbank CDs issued (to non resident banks only)
+-- Total (COLUMN-N) - BRBS - ROW 142K = SUM(ROW 142A + ROW 142J)
+-- NOTE: ROW 142K = SUM(ROW 142A + ROW 142J) is NOT mentioned in the HTML
+V_R33_TOTAL:= V_R33_0_7_DAYS+V_R33_8_14_DAYS+V_R33_15_DAYS_1_MONTH+V_R33_1_3_MONTHS+V_R33_3_6_MONTHS+V_R33_6_12_MONTHS+V_R33_1_3_YEARS+V_R33_3_YEARS  ;
+
+-- EXCEL ROW_NO: 50 - Deposits from and balances due to overseas banks
+-- Total (COLUMN-N) - BRBS - ROW 143K = SUM(ROW 143A + ROW 143J)
+-- NOTE: ROW 143K = SUM(ROW 143A + ROW 143J) is NOT mentioned in the HTML
+V_R34_TOTAL := V_R34_0_7_DAYS + V_R34_8_14_DAYS + V_R34_15_DAYS_1_MONTH + V_R34_1_3_MONTHS + V_R34_3_6_MONTHS + V_R34_6_12_MONTHS + V_R34_1_3_YEARS + V_R34_3_YEARS ;
+
+-- EXCEL ROW_NO: 51 - Refinancing under Govt. Housing scheme
+-- Total (COLUMN-N) - BRBS - ROW 144K = SUM(ROW 144A + ROW 144J)
+-- NOTE: ROW 144K = SUM(ROW 144A + ROW 144J) is NOT mentioned in the HTML
+V_R35_TOTAL := V_R35_0_7_DAYS + V_R35_8_14_DAYS + V_R35_15_DAYS_1_MONTH + V_R35_1_3_MONTHS + V_R35_3_6_MONTHS + V_R35_6_12_MONTHS + V_R35_1_3_YEARS + V_R35_3_YEARS ;
+
+-- EXCEL ROW_NO: 52 - Due to Central Bank
+-- Total (COLUMN-N) - BRBS - ROW 145K = SUM(ROW 145A + ROW 145J)
+-- NOTE: ROW 145K = SUM(ROW 145A + ROW 145J) is NOT mentioned in the HTML
+V_R36_TOTAL := V_R36_0_7_DAYS + V_R36_8_14_DAYS + V_R36_15_DAYS_1_MONTH + V_R36_1_3_MONTHS + V_R36_3_6_MONTHS + V_R36_6_12_MONTHS + V_R36_1_3_YEARS + V_R36_3_YEARS ;
+
+-- EXCEL ROW_NO: 53 - Deposits - > Overdue (COLUMN-F) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_0_7_DAYS := 
+    V_R37_0_7_DAYS + 
+    V_R38_0_7_DAYS + 
+    V_R39_0_7_DAYS + 
+    V_R40_0_7_DAYS + 
+    V_R41_0_7_DAYS + 
+    V_R42_0_7_DAYS;
+
+-- EXCEL ROW_NO: 53 - Deposits - > 8 to 14 days (COLUMN-G) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_8_14_DAYS := 
+    V_R37_8_14_DAYS + 
+    V_R38_8_14_DAYS + 
+    V_R39_8_14_DAYS + 
+    V_R40_8_14_DAYS + 
+    V_R41_8_14_DAYS + 
+    V_R42_8_14_DAYS;
+
+-- EXCEL ROW_NO: 53 - Deposits - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_15_DAYS_1_MONTH := 
+    V_R37_15_DAYS_1_MONTH + 
+    V_R38_15_DAYS_1_MONTH + 
+    V_R39_15_DAYS_1_MONTH + 
+    V_R40_15_DAYS_1_MONTH + 
+    V_R41_15_DAYS_1_MONTH + 
+    V_R42_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 53 - Deposits - > 1 to 3 months (COLUMN-I) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_1_3_MONTHS := 
+    V_R37_1_3_MONTHS + 
+    V_R38_1_3_MONTHS + 
+    V_R39_1_3_MONTHS + 
+    V_R40_1_3_MONTHS + 
+    V_R41_1_3_MONTHS + 
+    V_R42_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 53 - Deposits - > 3 to 6 months (COLUMN-J) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_3_6_MONTHS := 
+    V_R37_3_6_MONTHS + 
+    V_R38_3_6_MONTHS + 
+    V_R39_3_6_MONTHS + 
+    V_R40_3_6_MONTHS + 
+    V_R41_3_6_MONTHS + 
+    V_R42_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 53 - Deposits - > 6 to 12 months (COLUMN-K) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_6_12_MONTHS := 
+    V_R37_6_12_MONTHS + 
+    V_R38_6_12_MONTHS + 
+    V_R39_6_12_MONTHS + 
+    V_R40_6_12_MONTHS + 
+    V_R41_6_12_MONTHS + 
+    V_R42_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 53 - Deposits - > 1 to 3 years (COLUMN-L) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_1_3_YEARS := 
+    V_R37_1_3_YEARS + 
+    V_R38_1_3_YEARS + 
+    V_R39_1_3_YEARS + 
+    V_R40_1_3_YEARS + 
+    V_R41_1_3_YEARS + 
+    V_R42_1_3_YEARS;
+
+-- EXCEL ROW_NO: 53 - Deposits - > More than 3 years (COLUMN-M) - BRBS - ROW 146 := SUM(ROW 147 + ROW 152)
+
+V_RH7_3_YEARS := 
+    V_R37_3_YEARS + 
+    V_R38_3_YEARS + 
+    V_R39_3_YEARS + 
+    V_R40_3_YEARS + 
+    V_R41_3_YEARS + 
+    V_R42_3_YEARS;
+
+-- EXCEL ROW_NO: 53 - Deposits
+-- Total (COLUMN-N) - BRBS - ROW 146K = SUM(ROW 146A + ROW 146J)
+-- NOTE: ROW 146K = SUM(ROW 146A + ROW 146J) is NOT mentioned in the HTML
+V_RH7_TOTAL := V_RH7_0_7_DAYS + V_RH7_8_14_DAYS + V_RH7_15_DAYS_1_MONTH + V_RH7_1_3_MONTHS + V_RH7_3_6_MONTHS + V_RH7_6_12_MONTHS + V_RH7_1_3_YEARS + V_RH7_3_YEARS ;
+
+-- EXCEL ROW_NO: 54 - Government and Public Sector
+-- Total (COLUMN-N) - BRBS - ROW 147K = SUM(ROW 147A + ROW 147J)
+-- NOTE: ROW 147K = SUM(ROW 147A + ROW 147J) is NOT mentioned in the HTML
+V_R37_TOTAL := V_R37_0_7_DAYS + V_R37_8_14_DAYS + V_R37_15_DAYS_1_MONTH + V_R37_1_3_MONTHS + V_R37_3_6_MONTHS + V_R37_6_12_MONTHS + V_R37_1_3_YEARS + V_R37_3_YEARS ;
+
+-- EXCEL ROW_NO: 55 - GREs (Govt ownership of more than 50%)
+-- Total (COLUMN-N) - BRBS - ROW 148K = SUM(ROW 148A + ROW 148J)
+-- NOTE: ROW 148K = SUM(ROW 148A + ROW 148J) is NOT mentioned in the HTML
+V_R38_TOTAL := V_R38_0_7_DAYS + V_R38_8_14_DAYS + V_R38_15_DAYS_1_MONTH + V_R38_1_3_MONTHS + V_R38_3_6_MONTHS + V_R38_6_12_MONTHS + V_R38_1_3_YEARS + V_R38_3_YEARS ;
+
+-- EXCEL ROW_NO: 56 - Private Sector (Corporate)
+-- Total (COLUMN-N) - BRBS - ROW 149K = SUM(ROW 149A + ROW 149J)
+-- NOTE: ROW 149K = SUM(ROW 149A + ROW 149J) is NOT mentioned in the HTML
+V_R39_TOTAL := V_R39_0_7_DAYS + V_R39_8_14_DAYS + V_R39_15_DAYS_1_MONTH + V_R39_1_3_MONTHS + V_R39_3_6_MONTHS + V_R39_6_12_MONTHS + V_R39_1_3_YEARS + V_R39_3_YEARS ;
+
+-- EXCEL ROW_NO: 57 - Non Banking Financial Institutions
+-- Total (COLUMN-N) - BRBS - ROW 150K = SUM(ROW 150A + ROW 150J)
+-- NOTE: ROW 150K = SUM(ROW 150A + ROW 150J) is NOT mentioned in the HTML
+V_R40_TOTAL := V_R40_0_7_DAYS + V_R40_8_14_DAYS + V_R40_15_DAYS_1_MONTH + V_R40_1_3_MONTHS + V_R40_3_6_MONTHS + V_R40_6_12_MONTHS + V_R40_1_3_YEARS + V_R40_3_YEARS ;
+
+-- EXCEL ROW_NO: 58 - HNIs, SMEs and Individuals more than AED 20 Mln
+-- Total (COLUMN-N) - BRBS - ROW 151K = SUM(ROW 151A + ROW 151J)
+-- NOTE: ROW 151K = SUM(ROW 151A + ROW 151J) is NOT mentioned in the HTML
+V_R41_TOTAL := V_R41_0_7_DAYS + V_R41_8_14_DAYS + V_R41_15_DAYS_1_MONTH + V_R41_1_3_MONTHS + V_R41_3_6_MONTHS + V_R41_6_12_MONTHS + V_R41_1_3_YEARS + V_R41_3_YEARS ;
+
+-- EXCEL ROW_NO: 59 - HNIs, SMEs and Individuals - Up to AED 20 Mln
+-- Total (COLUMN-N) - BRBS - ROW 152K = SUM(ROW 152A + ROW 152J)
+-- NOTE: ROW 152K = SUM(ROW 152A + ROW 152J) is NOT mentioned in the HTML
+V_R42_TOTAL := V_R42_0_7_DAYS + V_R42_8_14_DAYS + V_R42_15_DAYS_1_MONTH + V_R42_1_3_MONTHS + V_R42_3_6_MONTHS + V_R42_6_12_MONTHS + V_R42_1_3_YEARS + V_R42_3_YEARS ;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > 0 to 7 days (COLUMN-F) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_0_7_DAYS := 
+    V_R43_0_7_DAYS + 
+    V_R44_0_7_DAYS + 
+    V_R45_0_7_DAYS + 
+    V_R46_0_7_DAYS;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > 8 to 14 days (COLUMN-G) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_8_14_DAYS := 
+    V_R43_8_14_DAYS + 
+    V_R44_8_14_DAYS + 
+    V_R45_8_14_DAYS + 
+    V_R46_8_14_DAYS;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > 15 days to 1 month (COLUMN-H) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_15_DAYS_1_MONTH := 
+    V_R43_15_DAYS_1_MONTH + 
+    V_R44_15_DAYS_1_MONTH + 
+    V_R45_15_DAYS_1_MONTH + 
+    V_R46_15_DAYS_1_MONTH;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > 1 to 3 months (COLUMN-I) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_1_3_MONTHS := 
+    V_R43_1_3_MONTHS + 
+    V_R44_1_3_MONTHS + 
+    V_R45_1_3_MONTHS + 
+    V_R46_1_3_MONTHS;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > 3 to 6 months (COLUMN-J) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_3_6_MONTHS := 
+    V_R43_3_6_MONTHS + 
+    V_R44_3_6_MONTHS + 
+    V_R45_3_6_MONTHS + 
+    V_R46_3_6_MONTHS;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > 6 to 12 months (COLUMN-K) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_6_12_MONTHS := 
+    V_R43_6_12_MONTHS + 
+    V_R44_6_12_MONTHS + 
+    V_R45_6_12_MONTHS + 
+    V_R46_6_12_MONTHS;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > 1 to 3 years (COLUMN-L) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_1_3_YEARS := 
+    V_R43_1_3_YEARS + 
+    V_R44_1_3_YEARS + 
+    V_R45_1_3_YEARS + 
+    V_R46_1_3_YEARS;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity - > More than 3 years (COLUMN-M) - BRBS - ROW 153 := ROW 154 + ROW 155 + ROW 156 + ROW 157
+
+V_RH8_3_YEARS := 
+    V_R43_3_YEARS + 
+    V_R44_3_YEARS + 
+    V_R45_3_YEARS + 
+    V_R46_3_YEARS;
+
+-- EXCEL ROW_NO: 60 - Other Liabilities and Equity
+-- Total (COLUMN-N) - BRBS - ROW 153K = SUM(ROW 153A + ROW 153J)
+-- NOTE: ROW 153K = SUM(ROW 153A + ROW 153J) is NOT mentioned in the HTML
+V_RH8_TOTAL := V_RH8_0_7_DAYS + V_RH8_8_14_DAYS + V_RH8_15_DAYS_1_MONTH + V_RH8_1_3_MONTHS + V_RH8_3_6_MONTHS + V_RH8_6_12_MONTHS + V_RH8_1_3_YEARS + V_RH8_3_YEARS ;
+
+-- EXCEL ROW_NO: 61 - Capital Market instruments
+-- Total (COLUMN-N) - BRBS - ROW 154K = SUM(ROW 154A + ROW 154J)
+-- NOTE: ROW 154K = SUM(ROW 154A + ROW 154J) is NOT mentioned in the HTML
+V_R43_TOTAL := V_R43_0_7_DAYS + V_R43_8_14_DAYS + V_R43_15_DAYS_1_MONTH + V_R43_1_3_MONTHS + V_R43_3_6_MONTHS + V_R43_6_12_MONTHS + V_R43_1_3_YEARS + V_R43_3_YEARS ;
+
+-- EXCEL ROW_NO: 62 - Other liabilities (refer note: 1)
+-- Total (COLUMN-N) - BRBS - ROW 155K = SUM(ROW 155A + ROW 155J)
+-- NOTE: ROW 155K = SUM(ROW 155A + ROW 155J) is NOT mentioned in the HTML
+V_R44_TOTAL := V_R44_0_7_DAYS + V_R44_8_14_DAYS + V_R44_15_DAYS_1_MONTH + V_R44_1_3_MONTHS + V_R44_3_6_MONTHS + V_R44_6_12_MONTHS + V_R44_1_3_YEARS + V_R44_3_YEARS ;
+
+-- EXCEL ROW_NO: 63 - Provisions (Stage 1, Stage 2, Stage 3, Provision for Interest and Fees past due more than 90 days and Legacy Interest in Suspense)
+-- Total (COLUMN-N) - BRBS - ROW 156K = SUM(ROW 156A + ROW 156J)
+-- NOTE: ROW 156K = SUM(ROW 156A + ROW 156J) is NOT mentioned in the HTML
+V_R45_TOTAL := V_R45_0_7_DAYS + V_R45_8_14_DAYS + V_R45_15_DAYS_1_MONTH + V_R45_1_3_MONTHS + V_R45_3_6_MONTHS + V_R45_6_12_MONTHS + V_R45_1_3_YEARS + V_R45_3_YEARS ;
+
+-- EXCEL ROW_NO: 64 - Capital and Reserves
+-- Total (COLUMN-N) - BRBS - ROW 157K = SUM(ROW 157A + ROW 157J)
+-- NOTE: ROW 157K = SUM(ROW 157A + ROW 157J) is NOT mentioned in the HTML
+V_R46_TOTAL := V_R46_0_7_DAYS + V_R46_8_14_DAYS + V_R46_15_DAYS_1_MONTH + V_R46_1_3_MONTHS + V_R46_3_6_MONTHS + V_R46_6_12_MONTHS + V_R46_1_3_YEARS + V_R46_3_YEARS ;
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 0 TO 7 DAYS  
+-- (COLUMN-F) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153  
+V_RTL_0_7_DAYS :=  
+      V_RH6_0_7_DAYS  
+    + V_RH7_0_7_DAYS  
+    + V_RH8_0_7_DAYS;  
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 8_14_DAYS  
+-- (COLUMN-G) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153
+V_RTL_8_14_DAYS :=  
+      V_RH6_8_14_DAYS  
+    + V_RH7_8_14_DAYS  
+    + V_RH8_8_14_DAYS;
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 15_DAYS_1_MONTH  
+-- (COLUMN-H) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153
+V_RTL_15_DAYS_1_MONTH :=  
+      V_RH6_15_DAYS_1_MONTH  
+    + V_RH7_15_DAYS_1_MONTH  
+    + V_RH8_15_DAYS_1_MONTH;  
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 1_3_MONTHS  
+-- (COLUMN-I) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153
+V_RTL_1_3_MONTHS :=  
+      V_RH6_1_3_MONTHS  
+    + V_RH7_1_3_MONTHS  
+    + V_RH8_1_3_MONTHS; 
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 3_6_MONTHS  
+-- (COLUMN-J) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153
+V_RTL_3_6_MONTHS :=  
+      V_RH6_3_6_MONTHS  
+    + V_RH7_3_6_MONTHS  
+    + V_RH8_3_6_MONTHS; 
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 6_12_MONTHS  
+-- (COLUMN-K) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153
+V_RTL_6_12_MONTHS :=  
+      V_RH6_6_12_MONTHS  
+    + V_RH7_6_12_MONTHS  
+    + V_RH8_6_12_MONTHS;  
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 1_3_YEARS  
+-- (COLUMN-L) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153
+V_RTL_1_3_YEARS :=  
+      V_RH6_1_3_YEARS  
+    + V_RH7_1_3_YEARS  
+    + V_RH8_1_3_YEARS; 
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY - 3_YEARS  
+-- (COLUMN-M) - BRBS - ROW 158 = ROW 140 + ROW 146 + ROW 153
+V_RTL_3_YEARS :=  
+      V_RH6_3_YEARS  
+    + V_RH7_3_YEARS  
+    + V_RH8_3_YEARS;
+
+-- EXCEL ROW_NO: 65 - TOTAL LIABILITIES AND EQUITY  
+-- Total (COLUMN-N) - BRBS - ROW 158K = SUM(ROW 158A + ROW 158J)  
+-- NOTE: ROW 158K = SUM(ROW 158A + ROW 158J) is NOT mentioned in the HTML  
+V_RTL_TOTAL := V_RTL_0_7_DAYS + V_RTL_8_14_DAYS + V_RTL_15_DAYS_1_MONTH + V_RTL_1_3_MONTHS + V_RTL_3_6_MONTHS + V_RTL_6_12_MONTHS + V_RTL_1_3_YEARS + V_RTL_3_YEARS ;
+
+
+
+insert into BRF9_SUMMARYTABLE(
+RH_PRODUCT,
+RH_OVERDUE,
+RH_OVERDRAFT,
+RH_0_7_DAYS,
+RH_8_14_DAYS,
+RH_15_DAYS_1_MONTH,
+RH_1_3_MONTHS,
+RH_3_6_MONTHS,
+RH_6_12_MONTHS,
+RH_1_3_YEARS,
+RH_3_YEARS,
+RH_TOTAL,
+R1_PRODUCT,
+R1_OVERDUE,
+R1_OVERDRAFT,
+R1_0_7_DAYS,
+R1_8_14_DAYS,
+R1_15_DAYS_1_MONTH,
+R1_1_3_MONTHS,
+R1_3_6_MONTHS,
+R1_6_12_MONTHS,
+R1_1_3_YEARS,
+R1_3_YEARS,
+R1_TOTAL,
+R2_PRODUCT,
+R2_OVERDUE,
+R2_OVERDRAFT,
+R2_0_7_DAYS,
+R2_8_14_DAYS,
+R2_15_DAYS_1_MONTH,
+R2_1_3_MONTHS,
+R2_3_6_MONTHS,
+R2_6_12_MONTHS,
+R2_1_3_YEARS,
+R2_3_YEARS,
+R2_TOTAL,
+R3_PRODUCT,
+R3_OVERDUE,
+R3_OVERDRAFT,
+R3_0_7_DAYS,
+R3_8_14_DAYS,
+R3_15_DAYS_1_MONTH,
+R3_1_3_MONTHS,
+R3_3_6_MONTHS,
+R3_6_12_MONTHS,
+R3_1_3_YEARS,
+R3_3_YEARS,
+R3_TOTAL,
+RH2_PRODUCT,
+RH2_OVERDUE,
+RH2_OVERDRAFT,
+RH2_0_7_DAYS,
+RH2_8_14_DAYS,
+RH2_15_DAYS_1_MONTH,
+RH2_1_3_MONTHS,
+RH2_3_6_MONTHS,
+RH2_6_12_MONTHS,
+RH2_1_3_YEARS,
+RH2_3_YEARS,
+RH2_TOTAL,
+R4_PRODUCT,
+R4_OVERDUE,
+R4_OVERDRAFT,
+R4_0_7_DAYS,
+R4_8_14_DAYS,
+R4_15_DAYS_1_MONTH,
+R4_1_3_MONTHS,
+R4_3_6_MONTHS,
+R4_6_12_MONTHS,
+R4_1_3_YEARS,
+R4_3_YEARS,
+R4_TOTAL,
+R5_PRODUCT,
+R5_OVERDUE,
+R5_OVERDRAFT,
+R5_0_7_DAYS,
+R5_8_14_DAYS,
+R5_15_DAYS_1_MONTH,
+R5_1_3_MONTHS,
+R5_3_6_MONTHS,
+R5_6_12_MONTHS,
+R5_1_3_YEARS,
+R5_3_YEARS,
+R5_TOTAL,
+R6_PRODUCT,
+R6_OVERDUE,
+R6_OVERDRAFT,
+R6_0_7_DAYS,
+R6_8_14_DAYS,
+R6_15_DAYS_1_MONTH,
+R6_1_3_MONTHS,
+R6_3_6_MONTHS,
+R6_6_12_MONTHS,
+R6_1_3_YEARS,
+R6_3_YEARS,
+R6_TOTAL,
+RH3_PRODUCT,
+RH3_OVERDUE,
+RH3_OVERDRAFT,
+RH3_0_7_DAYS,
+RH3_8_14_DAYS,
+RH3_15_DAYS_1_MONTH,
+RH3_1_3_MONTHS,
+RH3_3_6_MONTHS,
+RH3_6_12_MONTHS,
+RH3_1_3_YEARS,
+RH3_3_YEARS,
+RH3_TOTAL,
+R7_PRODUCT,
+R7_OVERDUE,
+R7_OVERDRAFT,
+R7_0_7_DAYS,
+R7_8_14_DAYS,
+R7_15_DAYS_1_MONTH,
+R7_1_3_MONTHS,
+R7_3_6_MONTHS,
+R7_6_12_MONTHS,
+R7_1_3_YEARS,
+R7_3_YEARS,
+R7_TOTAL,
+R8_PRODUCT,
+R8_OVERDUE,
+R8_OVERDRAFT,
+R8_0_7_DAYS,
+R8_8_14_DAYS,
+R8_15_DAYS_1_MONTH,
+R8_1_3_MONTHS,
+R8_3_6_MONTHS,
+R8_6_12_MONTHS,
+R8_1_3_YEARS,
+R8_3_YEARS,
+R8_TOTAL,
+R9_PRODUCT,
+R9_OVERDUE,
+R9_OVERDRAFT,
+R9_0_7_DAYS,
+R9_8_14_DAYS,
+R9_15_DAYS_1_MONTH,
+R9_1_3_MONTHS,
+R9_3_6_MONTHS,
+R9_6_12_MONTHS,
+R9_1_3_YEARS,
+R9_3_YEARS,
+R9_TOTAL,
+R10_PRODUCT,
+R10_OVERDUE,
+R10_OVERDRAFT,
+R10_0_7_DAYS,
+R10_8_14_DAYS,
+R10_15_DAYS_1_MONTH,
+R10_1_3_MONTHS,
+R10_3_6_MONTHS,
+R10_6_12_MONTHS,
+R10_1_3_YEARS,
+R10_3_YEARS,
+R10_TOTAL,
+R11_PRODUCT,
+R11_OVERDUE,
+R11_OVERDRAFT,
+R11_0_7_DAYS,
+R11_8_14_DAYS,
+R11_15_DAYS_1_MONTH,
+R11_1_3_MONTHS,
+R11_3_6_MONTHS,
+R11_6_12_MONTHS,
+R11_1_3_YEARS,
+R11_3_YEARS,
+R11_TOTAL,
+R12_PRODUCT,
+R12_OVERDUE,
+R12_OVERDRAFT,
+R12_0_7_DAYS,
+R12_8_14_DAYS,
+R12_15_DAYS_1_MONTH,
+R12_1_3_MONTHS,
+R12_3_6_MONTHS,
+R12_6_12_MONTHS,
+R12_1_3_YEARS,
+R12_3_YEARS,
+R12_TOTAL,
+R13_PRODUCT,
+R13_OVERDUE,
+R13_OVERDRAFT,
+R13_0_7_DAYS,
+R13_8_14_DAYS,
+R13_15_DAYS_1_MONTH,
+R13_1_3_MONTHS,
+R13_3_6_MONTHS,
+R13_6_12_MONTHS,
+R13_1_3_YEARS,
+R13_3_YEARS,
+R13_TOTAL,
+R14_PRODUCT,
+R14_OVERDUE,
+R14_OVERDRAFT,
+R14_0_7_DAYS,
+R14_8_14_DAYS,
+R14_15_DAYS_1_MONTH,
+R14_1_3_MONTHS,
+R14_3_6_MONTHS,
+R14_6_12_MONTHS,
+R14_1_3_YEARS,
+R14_3_YEARS,
+R14_TOTAL,
+R15_PRODUCT,
+R15_OVERDUE,
+R15_OVERDRAFT,
+R15_0_7_DAYS,
+R15_8_14_DAYS,
+R15_15_DAYS_1_MONTH,
+R15_1_3_MONTHS,
+R15_3_6_MONTHS,
+R15_6_12_MONTHS,
+R15_1_3_YEARS,
+R15_3_YEARS,
+R15_TOTAL,
+R16_PRODUCT,
+R16_OVERDUE,
+R16_OVERDRAFT,
+R16_0_7_DAYS,
+R16_8_14_DAYS,
+R16_15_DAYS_1_MONTH,
+R16_1_3_MONTHS,
+R16_3_6_MONTHS,
+R16_6_12_MONTHS,
+R16_1_3_YEARS,
+R16_3_YEARS,
+R16_TOTAL,
+RH4_PRODUCT,
+RH4_OVERDUE,
+RH4_OVERDRAFT,
+RH4_0_7_DAYS,
+RH4_8_14_DAYS,
+RH4_15_DAYS_1_MONTH,
+RH4_1_3_MONTHS,
+RH4_3_6_MONTHS,
+RH4_6_12_MONTHS,
+RH4_1_3_YEARS,
+RH4_3_YEARS,
+RH4_TOTAL,
+R17_PRODUCT,
+R17_OVERDUE,
+R17_OVERDRAFT,
+R17_0_7_DAYS,
+R17_8_14_DAYS,
+R17_15_DAYS_1_MONTH,
+R17_1_3_MONTHS,
+R17_3_6_MONTHS,
+R17_6_12_MONTHS,
+R17_1_3_YEARS,
+R17_3_YEARS,
+R17_TOTAL,
+R18_PRODUCT,
+R18_OVERDUE,
+R18_OVERDRAFT,
+R18_0_7_DAYS,
+R18_8_14_DAYS,
+R18_15_DAYS_1_MONTH,
+R18_1_3_MONTHS,
+R18_3_6_MONTHS,
+R18_6_12_MONTHS,
+R18_1_3_YEARS,
+R18_3_YEARS,
+R18_TOTAL,
+R_18_PRODUCT,
+R_18_OVERDUE,
+R_18_OVERDRAFT,
+R_18_0_7_DAYS,
+R_18_8_14_DAYS,
+R_18_15_DAYS_1_MONTH,
+R_18_1_3_MONTHS,
+R_18_3_6_MONTHS,
+R_18_6_12_MONTHS,
+R_18_1_3_YEARS,
+R_18_3_YEARS,
+R_18_TOTAL,
+R19_PRODUCT,
+R19_OVERDUE,
+R19_OVERDRAFT,
+R19_0_7_DAYS,
+R19_8_14_DAYS,
+R19_15_DAYS_1_MONTH,
+R19_1_3_MONTHS,
+R19_3_6_MONTHS,
+R19_6_12_MONTHS,
+R19_1_3_YEARS,
+R19_3_YEARS,
+R19_TOTAL,
+R20_PRODUCT,
+R20_OVERDUE,
+R20_OVERDRAFT,
+R20_0_7_DAYS,
+R20_8_14_DAYS,
+R20_15_DAYS_1_MONTH,
+R20_1_3_MONTHS,
+R20_3_6_MONTHS,
+R20_6_12_MONTHS,
+R20_1_3_YEARS,
+R20_3_YEARS,
+R20_TOTAL,
+R21_PRODUCT,
+R21_OVERDUE,
+R21_OVERDRAFT,
+R21_0_7_DAYS,
+R21_8_14_DAYS,
+R21_15_DAYS_1_MONTH,
+R21_1_3_MONTHS,
+R21_3_6_MONTHS,
+R21_6_12_MONTHS,
+R21_1_3_YEARS,
+R21_3_YEARS,
+R21_TOTAL,
+RH5_PRODUCT,
+RH5_OVERDUE,
+RH5_OVERDRAFT,
+RH5_0_7_DAYS,
+RH5_8_14_DAYS,
+RH5_15_DAYS_1_MONTH,
+RH5_1_3_MONTHS,
+RH5_3_6_MONTHS,
+RH5_6_12_MONTHS,
+RH5_1_3_YEARS,
+RH5_3_YEARS,
+RH5_TOTAL,
+R22_PRODUCT,
+R22_OVERDUE,
+R22_OVERDRAFT,
+R22_0_7_DAYS,
+R22_8_14_DAYS,
+R22_15_DAYS_1_MONTH,
+R22_1_3_MONTHS,
+R22_3_6_MONTHS,
+R22_6_12_MONTHS,
+R22_1_3_YEARS,
+R22_3_YEARS,
+R22_TOTAL,
+R23_PRODUCT,
+R23_OVERDUE,
+R23_OVERDRAFT,
+R23_0_7_DAYS,
+R23_8_14_DAYS,
+R23_15_DAYS_1_MONTH,
+R23_1_3_MONTHS,
+R23_3_6_MONTHS,
+R23_6_12_MONTHS,
+R23_1_3_YEARS,
+R23_3_YEARS,
+R23_TOTAL,
+R24_PRODUCT,
+R24_OVERDUE,
+R24_OVERDRAFT,
+R24_0_7_DAYS,
+R24_8_14_DAYS,
+R24_15_DAYS_1_MONTH,
+R24_1_3_MONTHS,
+R24_3_6_MONTHS,
+R24_6_12_MONTHS,
+R24_1_3_YEARS,
+R24_3_YEARS,
+R24_TOTAL,
+R25_PRODUCT,
+R25_OVERDUE,
+R25_OVERDRAFT,
+R25_0_7_DAYS,
+R25_8_14_DAYS,
+R25_15_DAYS_1_MONTH,
+R25_1_3_MONTHS,
+R25_3_6_MONTHS,
+R25_6_12_MONTHS,
+R25_1_3_YEARS,
+R25_3_YEARS,
+R25_TOTAL,
+R26_PRODUCT,
+R26_OVERDUE,
+R26_OVERDRAFT,
+R26_0_7_DAYS,
+R26_8_14_DAYS,
+R26_15_DAYS_1_MONTH,
+R26_1_3_MONTHS,
+R26_3_6_MONTHS,
+R26_6_12_MONTHS,
+R26_1_3_YEARS,
+R26_3_YEARS,
+R26_TOTAL,
+R27_PRODUCT,
+R27_OVERDUE,
+R27_OVERDRAFT,
+R27_0_7_DAYS,
+R27_8_14_DAYS,
+R27_15_DAYS_1_MONTH,
+R27_1_3_MONTHS,
+R27_3_6_MONTHS,
+R27_6_12_MONTHS,
+R27_1_3_YEARS,
+R27_3_YEARS,
+R27_TOTAL,
+R28_PRODUCT,
+R28_OVERDUE,
+R28_OVERDRAFT,
+R28_0_7_DAYS,
+R28_8_14_DAYS,
+R28_15_DAYS_1_MONTH,
+R28_1_3_MONTHS,
+R28_3_6_MONTHS,
+R28_6_12_MONTHS,
+R28_1_3_YEARS,
+R28_3_YEARS,
+R28_TOTAL,
+R29_PRODUCT,
+R29_OVERDUE,
+R29_OVERDRAFT,
+R29_0_7_DAYS,
+R29_8_14_DAYS,
+R29_15_DAYS_1_MONTH,
+R29_1_3_MONTHS,
+R29_3_6_MONTHS,
+R29_6_12_MONTHS,
+R29_1_3_YEARS,
+R29_3_YEARS,
+R29_TOTAL,
+R30_PRODUCT,
+R30_OVERDUE,
+R30_OVERDRAFT,
+R30_0_7_DAYS,
+R30_8_14_DAYS,
+R30_15_DAYS_1_MONTH,
+R30_1_3_MONTHS,
+R30_3_6_MONTHS,
+R30_6_12_MONTHS,
+R30_1_3_YEARS,
+R30_3_YEARS,
+R30_TOTAL,
+R31_PRODUCT,
+R31_OVERDUE,
+R31_OVERDRAFT,
+R31_0_7_DAYS,
+R31_8_14_DAYS,
+R31_15_DAYS_1_MONTH,
+R31_1_3_MONTHS,
+R31_3_6_MONTHS,
+R31_6_12_MONTHS,
+R31_1_3_YEARS,
+R31_3_YEARS,
+R31_TOTAL,
+RTA_PRODUCT,
+RTA_OVERDUE,
+RTA_OVERDRAFT,
+RTA_0_7_DAYS,
+RTA_8_14_DAYS,
+RTA_15_DAYS_1_MONTH,
+RTA_1_3_MONTHS,
+RTA_3_6_MONTHS,
+RTA_6_12_MONTHS,
+RTA_1_3_YEARS,
+RTA_3_YEARS,
+RTA_TOTAL,
+RH6_PRODUCT,
+RH6_OVERDUE,
+RH6_OVERDRAFT,
+RH6_0_7_DAYS,
+RH6_8_14_DAYS,
+RH6_15_DAYS_1_MONTH,
+RH6_1_3_MONTHS,
+RH6_3_6_MONTHS,
+RH6_6_12_MONTHS,
+RH6_1_3_YEARS,
+RH6_3_YEARS,
+RH6_TOTAL,
+R32_PRODUCT,
+R32_OVERDUE,
+R32_OVERDRAFT,
+R32_0_7_DAYS,
+R32_8_14_DAYS,
+R32_15_DAYS_1_MONTH,
+R32_1_3_MONTHS,
+R32_3_6_MONTHS,
+R32_6_12_MONTHS,
+R32_1_3_YEARS,
+R32_3_YEARS,
+R32_TOTAL,
+R33_PRODUCT,
+R33_OVERDUE,
+R33_OVERDRAFT,
+R33_0_7_DAYS,
+R33_8_14_DAYS,
+R33_15_DAYS_1_MONTH,
+R33_1_3_MONTHS,
+R33_3_6_MONTHS,
+R33_6_12_MONTHS,
+R33_1_3_YEARS,
+R33_3_YEARS,
+R33_TOTAL,
+R34_PRODUCT,
+R34_OVERDUE,
+R34_OVERDRAFT,
+R34_0_7_DAYS,
+R34_8_14_DAYS,
+R34_15_DAYS_1_MONTH,
+R34_1_3_MONTHS,
+R34_3_6_MONTHS,
+R34_6_12_MONTHS,
+R34_1_3_YEARS,
+R34_3_YEARS,
+R34_TOTAL,
+R35_PRODUCT,
+R35_OVERDUE,
+R35_OVERDRAFT,
+R35_0_7_DAYS,
+R35_8_14_DAYS,
+R35_15_DAYS_1_MONTH,
+R35_1_3_MONTHS,
+R35_3_6_MONTHS,
+R35_6_12_MONTHS,
+R35_1_3_YEARS,
+R35_3_YEARS,
+R35_TOTAL,
+R36_PRODUCT,
+R36_OVERDUE,
+R36_OVERDRAFT,
+R36_0_7_DAYS,
+R36_8_14_DAYS,
+R36_15_DAYS_1_MONTH,
+R36_1_3_MONTHS,
+R36_3_6_MONTHS,
+R36_6_12_MONTHS,
+R36_1_3_YEARS,
+R36_3_YEARS,
+R36_TOTAL,
+RH7_PRODUCT,
+RH7_OVERDUE,
+RH7_OVERDRAFT,
+RH7_0_7_DAYS,
+RH7_8_14_DAYS,
+RH7_15_DAYS_1_MONTH,
+RH7_1_3_MONTHS,
+RH7_3_6_MONTHS,
+RH7_6_12_MONTHS,
+RH7_1_3_YEARS,
+RH7_3_YEARS,
+RH7_TOTAL,
+R37_PRODUCT,
+R37_OVERDUE,
+R37_OVERDRAFT,
+R37_0_7_DAYS,
+R37_8_14_DAYS,
+R37_15_DAYS_1_MONTH,
+R37_1_3_MONTHS,
+R37_3_6_MONTHS,
+R37_6_12_MONTHS,
+R37_1_3_YEARS,
+R37_3_YEARS,
+R37_TOTAL,
+R38_PRODUCT,
+R38_OVERDUE,
+R38_OVERDRAFT,
+R38_0_7_DAYS,
+R38_8_14_DAYS,
+R38_15_DAYS_1_MONTH,
+R38_1_3_MONTHS,
+R38_3_6_MONTHS,
+R38_6_12_MONTHS,
+R38_1_3_YEARS,
+R38_3_YEARS,
+R38_TOTAL,
+R39_PRODUCT,
+R39_OVERDUE,
+R39_OVERDRAFT,
+R39_0_7_DAYS,
+R39_8_14_DAYS,
+R39_15_DAYS_1_MONTH,
+R39_1_3_MONTHS,
+R39_3_6_MONTHS,
+R39_6_12_MONTHS,
+R39_1_3_YEARS,
+R39_3_YEARS,
+R39_TOTAL,
+R40_PRODUCT,
+R40_OVERDUE,
+R40_OVERDRAFT,
+R40_0_7_DAYS,
+R40_8_14_DAYS,
+R40_15_DAYS_1_MONTH,
+R40_1_3_MONTHS,
+R40_3_6_MONTHS,
+R40_6_12_MONTHS,
+R40_1_3_YEARS,
+R40_3_YEARS,
+R40_TOTAL,
+R41_PRODUCT,
+R41_OVERDUE,
+R41_OVERDRAFT,
+R41_0_7_DAYS,
+R41_8_14_DAYS,
+R41_15_DAYS_1_MONTH,
+R41_1_3_MONTHS,
+R41_3_6_MONTHS,
+R41_6_12_MONTHS,
+R41_1_3_YEARS,
+R41_3_YEARS,
+R41_TOTAL,
+R42_PRODUCT,
+R42_OVERDUE,
+R42_OVERDRAFT,
+R42_0_7_DAYS,
+R42_8_14_DAYS,
+R42_15_DAYS_1_MONTH,
+R42_1_3_MONTHS,
+R42_3_6_MONTHS,
+R42_6_12_MONTHS,
+R42_1_3_YEARS,
+R42_3_YEARS,
+R42_TOTAL,
+RH8_PRODUCT,
+RH8_OVERDUE,
+RH8_OVERDRAFT,
+RH8_0_7_DAYS,
+RH8_8_14_DAYS,
+RH8_15_DAYS_1_MONTH,
+RH8_1_3_MONTHS,
+RH8_3_6_MONTHS,
+RH8_6_12_MONTHS,
+RH8_1_3_YEARS,
+RH8_3_YEARS,
+RH8_TOTAL,
+R43_PRODUCT,
+R43_OVERDUE,
+R43_OVERDRAFT,
+R43_0_7_DAYS,
+R43_8_14_DAYS,
+R43_15_DAYS_1_MONTH,
+R43_1_3_MONTHS,
+R43_3_6_MONTHS,
+R43_6_12_MONTHS,
+R43_1_3_YEARS,
+R43_3_YEARS,
+R43_TOTAL,
+R44_PRODUCT,
+R44_OVERDUE,
+R44_OVERDRAFT,
+R44_0_7_DAYS,
+R44_8_14_DAYS,
+R44_15_DAYS_1_MONTH,
+R44_1_3_MONTHS,
+R44_3_6_MONTHS,
+R44_6_12_MONTHS,
+R44_1_3_YEARS,
+R44_3_YEARS,
+R44_TOTAL,
+R45_PRODUCT,
+R45_OVERDUE,
+R45_OVERDRAFT,
+R45_0_7_DAYS,
+R45_8_14_DAYS,
+R45_15_DAYS_1_MONTH,
+R45_1_3_MONTHS,
+R45_3_6_MONTHS,
+R45_6_12_MONTHS,
+R45_1_3_YEARS,
+R45_3_YEARS,
+R45_TOTAL,
+R46_PRODUCT,
+R46_OVERDUE,
+R46_OVERDRAFT,
+R46_0_7_DAYS,
+R46_8_14_DAYS,
+R46_15_DAYS_1_MONTH,
+R46_1_3_MONTHS,
+R46_3_6_MONTHS,
+R46_6_12_MONTHS,
+R46_1_3_YEARS,
+R46_3_YEARS,
+R46_TOTAL,
+RTL_PRODUCT,
+RTL_OVERDUE,
+RTL_OVERDRAFT,
+RTL_0_7_DAYS,
+RTL_8_14_DAYS,
+RTL_15_DAYS_1_MONTH,
+RTL_1_3_MONTHS,
+RTL_3_6_MONTHS,
+RTL_6_12_MONTHS,
+RTL_1_3_YEARS,
+RTL_3_YEARS,
+RTL_TOTAL,
+REPORT_DATE
+)
+VALUES(V_RH_PRODUCT,
+V_RH_OVERDUE,
+V_RH_OVERDRAFT,
+V_RH_0_7_DAYS,
+V_RH_8_14_DAYS,
+V_RH_15_DAYS_1_MONTH,
+V_RH_1_3_MONTHS,
+V_RH_3_6_MONTHS,
+V_RH_6_12_MONTHS,
+V_RH_1_3_YEARS,
+V_RH_3_YEARS,
+V_RH_TOTAL,
+V_R1_PRODUCT,
+V_R1_OVERDUE,
+V_R1_OVERDRAFT,
+V_R1_0_7_DAYS,
+V_R1_8_14_DAYS,
+V_R1_15_DAYS_1_MONTH,
+V_R1_1_3_MONTHS,
+V_R1_3_6_MONTHS,
+V_R1_6_12_MONTHS,
+V_R1_1_3_YEARS,
+V_R1_3_YEARS,
+V_R1_TOTAL,
+V_R2_PRODUCT,
+V_R2_OVERDUE,
+V_R2_OVERDRAFT,
+V_R2_0_7_DAYS,
+V_R2_8_14_DAYS,
+V_R2_15_DAYS_1_MONTH,
+V_R2_1_3_MONTHS,
+V_R2_3_6_MONTHS,
+V_R2_6_12_MONTHS,
+V_R2_1_3_YEARS,
+V_R2_3_YEARS,
+V_R2_TOTAL,
+V_R3_PRODUCT,
+V_R3_OVERDUE,
+V_R3_OVERDRAFT,
+V_R3_0_7_DAYS,
+V_R3_8_14_DAYS,
+V_R3_15_DAYS_1_MONTH,
+V_R3_1_3_MONTHS,
+V_R3_3_6_MONTHS,
+V_R3_6_12_MONTHS,
+V_R3_1_3_YEARS,
+V_R3_3_YEARS,
+V_R3_TOTAL,
+V_RH2_PRODUCT,
+V_RH2_OVERDUE,
+V_RH2_OVERDRAFT,
+V_RH2_0_7_DAYS,
+V_RH2_8_14_DAYS,
+V_RH2_15_DAYS_1_MONTH,
+V_RH2_1_3_MONTHS,
+V_RH2_3_6_MONTHS,
+V_RH2_6_12_MONTHS,
+V_RH2_1_3_YEARS,
+V_RH2_3_YEARS,
+V_RH2_TOTAL,
+V_R4_PRODUCT,
+V_R4_OVERDUE,
+V_R4_OVERDRAFT,
+V_R4_0_7_DAYS,
+V_R4_8_14_DAYS,
+V_R4_15_DAYS_1_MONTH,
+V_R4_1_3_MONTHS,
+V_R4_3_6_MONTHS,
+V_R4_6_12_MONTHS,
+V_R4_1_3_YEARS,
+V_R4_3_YEARS,
+V_R4_TOTAL,
+V_R5_PRODUCT,
+V_R5_OVERDUE,
+V_R5_OVERDRAFT,
+V_R5_0_7_DAYS,
+V_R5_8_14_DAYS,
+V_R5_15_DAYS_1_MONTH,
+V_R5_1_3_MONTHS,
+V_R5_3_6_MONTHS,
+V_R5_6_12_MONTHS,
+V_R5_1_3_YEARS,
+V_R5_3_YEARS,
+V_R5_TOTAL,
+V_R6_PRODUCT,
+V_R6_OVERDUE,
+V_R6_OVERDRAFT,
+V_R6_0_7_DAYS,
+V_R6_8_14_DAYS,
+V_R6_15_DAYS_1_MONTH,
+V_R6_1_3_MONTHS,
+V_R6_3_6_MONTHS,
+V_R6_6_12_MONTHS,
+V_R6_1_3_YEARS,
+V_R6_3_YEARS,
+V_R6_TOTAL,
+V_RH3_PRODUCT,
+V_RH3_OVERDUE,
+V_RH3_OVERDRAFT,
+V_RH3_0_7_DAYS,
+V_RH3_8_14_DAYS,
+V_RH3_15_DAYS_1_MONTH,
+V_RH3_1_3_MONTHS,
+V_RH3_3_6_MONTHS,
+V_RH3_6_12_MONTHS,
+V_RH3_1_3_YEARS,
+V_RH3_3_YEARS,
+V_RH3_TOTAL,
+V_R7_PRODUCT,
+V_R7_OVERDUE,
+V_R7_OVERDRAFT,
+V_R7_0_7_DAYS,
+V_R7_8_14_DAYS,
+V_R7_15_DAYS_1_MONTH,
+V_R7_1_3_MONTHS,
+V_R7_3_6_MONTHS,
+V_R7_6_12_MONTHS,
+V_R7_1_3_YEARS,
+V_R7_3_YEARS,
+V_R7_TOTAL,
+V_R8_PRODUCT,
+V_R8_OVERDUE,
+V_R8_OVERDRAFT,
+V_R8_0_7_DAYS,
+V_R8_8_14_DAYS,
+V_R8_15_DAYS_1_MONTH,
+V_R8_1_3_MONTHS,
+V_R8_3_6_MONTHS,
+V_R8_6_12_MONTHS,
+V_R8_1_3_YEARS,
+V_R8_3_YEARS,
+V_R8_TOTAL,
+V_R9_PRODUCT,
+V_R9_OVERDUE,
+V_R9_OVERDRAFT,
+V_R9_0_7_DAYS,
+V_R9_8_14_DAYS,
+V_R9_15_DAYS_1_MONTH,
+V_R9_1_3_MONTHS,
+V_R9_3_6_MONTHS,
+V_R9_6_12_MONTHS,
+V_R9_1_3_YEARS,
+V_R9_3_YEARS,
+V_R9_TOTAL,
+V_R10_PRODUCT,
+V_R10_OVERDUE,
+V_R10_OVERDRAFT,
+V_R10_0_7_DAYS,
+V_R10_8_14_DAYS,
+V_R10_15_DAYS_1_MONTH,
+V_R10_1_3_MONTHS,
+V_R10_3_6_MONTHS,
+V_R10_6_12_MONTHS,
+V_R10_1_3_YEARS,
+V_R10_3_YEARS,
+V_R10_TOTAL,
+V_R11_PRODUCT,
+V_R11_OVERDUE,
+V_R11_OVERDRAFT,
+V_R11_0_7_DAYS,
+V_R11_8_14_DAYS,
+V_R11_15_DAYS_1_MONTH,
+V_R11_1_3_MONTHS,
+V_R11_3_6_MONTHS,
+V_R11_6_12_MONTHS,
+V_R11_1_3_YEARS,
+V_R11_3_YEARS,
+V_R11_TOTAL,
+V_R12_PRODUCT,
+V_R12_OVERDUE,
+V_R12_OVERDRAFT,
+V_R12_0_7_DAYS,
+V_R12_8_14_DAYS,
+V_R12_15_DAYS_1_MONTH,
+V_R12_1_3_MONTHS,
+V_R12_3_6_MONTHS,
+V_R12_6_12_MONTHS,
+V_R12_1_3_YEARS,
+V_R12_3_YEARS,
+V_R12_TOTAL,
+V_R13_PRODUCT,
+V_R13_OVERDUE,
+V_R13_OVERDRAFT,
+V_R13_0_7_DAYS,
+V_R13_8_14_DAYS,
+V_R13_15_DAYS_1_MONTH,
+V_R13_1_3_MONTHS,
+V_R13_3_6_MONTHS,
+V_R13_6_12_MONTHS,
+V_R13_1_3_YEARS,
+V_R13_3_YEARS,
+V_R13_TOTAL,
+V_R14_PRODUCT,
+V_R14_OVERDUE,
+V_R14_OVERDRAFT,
+V_R14_0_7_DAYS,
+V_R14_8_14_DAYS,
+V_R14_15_DAYS_1_MONTH,
+V_R14_1_3_MONTHS,
+V_R14_3_6_MONTHS,
+V_R14_6_12_MONTHS,
+V_R14_1_3_YEARS,
+V_R14_3_YEARS,
+V_R14_TOTAL,
+V_R15_PRODUCT,
+V_R15_OVERDUE,
+V_R15_OVERDRAFT,
+V_R15_0_7_DAYS,
+V_R15_8_14_DAYS,
+V_R15_15_DAYS_1_MONTH,
+V_R15_1_3_MONTHS,
+V_R15_3_6_MONTHS,
+V_R15_6_12_MONTHS,
+V_R15_1_3_YEARS,
+V_R15_3_YEARS,
+V_R15_TOTAL,
+V_R16_PRODUCT,
+V_R16_OVERDUE,
+V_R16_OVERDRAFT,
+V_R16_0_7_DAYS,
+V_R16_8_14_DAYS,
+V_R16_15_DAYS_1_MONTH,
+V_R16_1_3_MONTHS,
+V_R16_3_6_MONTHS,
+V_R16_6_12_MONTHS,
+V_R16_1_3_YEARS,
+V_R16_3_YEARS,
+V_R16_TOTAL,
+V_RH4_PRODUCT,
+V_RH4_OVERDUE,
+V_RH4_OVERDRAFT,
+V_RH4_0_7_DAYS,
+V_RH4_8_14_DAYS,
+V_RH4_15_DAYS_1_MONTH,
+V_RH4_1_3_MONTHS,
+V_RH4_3_6_MONTHS,
+V_RH4_6_12_MONTHS,
+V_RH4_1_3_YEARS,
+V_RH4_3_YEARS,
+V_RH4_TOTAL,
+V_R17_PRODUCT,
+V_R17_OVERDUE,
+V_R17_OVERDRAFT,
+V_R17_0_7_DAYS,
+V_R17_8_14_DAYS,
+V_R17_15_DAYS_1_MONTH,
+V_R17_1_3_MONTHS,
+V_R17_3_6_MONTHS,
+V_R17_6_12_MONTHS,
+V_R17_1_3_YEARS,
+V_R17_3_YEARS,
+V_R17_TOTAL,
+V_R18_PRODUCT,
+V_R18_OVERDUE,
+V_R18_OVERDRAFT,
+V_R18_0_7_DAYS,
+V_R18_8_14_DAYS,
+V_R18_15_DAYS_1_MONTH,
+V_R18_1_3_MONTHS,
+V_R18_3_6_MONTHS,
+V_R18_6_12_MONTHS,
+V_R18_1_3_YEARS,
+V_R18_3_YEARS,
+V_R18_TOTAL,
+V_R_18_PRODUCT,
+V_R_18_OVERDUE,
+V_R_18_OVERDRAFT,
+V_R_18_0_7_DAYS,
+V_R_18_8_14_DAYS,
+V_R_18_15_DAYS_1_MONTH,
+V_R_18_1_3_MONTHS,
+V_R_18_3_6_MONTHS,
+V_R_18_6_12_MONTHS,
+V_R_18_1_3_YEARS,
+V_R_18_3_YEARS,
+V_R_18_TOTAL,
+V_R19_PRODUCT,
+V_R19_OVERDUE,
+V_R19_OVERDRAFT,
+V_R19_0_7_DAYS,
+V_R19_8_14_DAYS,
+V_R19_15_DAYS_1_MONTH,
+V_R19_1_3_MONTHS,
+V_R19_3_6_MONTHS,
+V_R19_6_12_MONTHS,
+V_R19_1_3_YEARS,
+V_R19_3_YEARS,
+V_R19_TOTAL,
+V_R20_PRODUCT,
+V_R20_OVERDUE,
+V_R20_OVERDRAFT,
+V_R20_0_7_DAYS,
+V_R20_8_14_DAYS,
+V_R20_15_DAYS_1_MONTH,
+V_R20_1_3_MONTHS,
+V_R20_3_6_MONTHS,
+V_R20_6_12_MONTHS,
+V_R20_1_3_YEARS,
+V_R20_3_YEARS,
+V_R20_TOTAL,
+V_R21_PRODUCT,
+V_R21_OVERDUE,
+V_R21_OVERDRAFT,
+V_R21_0_7_DAYS,
+V_R21_8_14_DAYS,
+V_R21_15_DAYS_1_MONTH,
+V_R21_1_3_MONTHS,
+V_R21_3_6_MONTHS,
+V_R21_6_12_MONTHS,
+V_R21_1_3_YEARS,
+V_R21_3_YEARS,
+V_R21_TOTAL,
+V_RH5_PRODUCT,
+V_RH5_OVERDUE,
+V_RH5_OVERDRAFT,
+V_RH5_0_7_DAYS,
+V_RH5_8_14_DAYS,
+V_RH5_15_DAYS_1_MONTH,
+V_RH5_1_3_MONTHS,
+V_RH5_3_6_MONTHS,
+V_RH5_6_12_MONTHS,
+V_RH5_1_3_YEARS,
+V_RH5_3_YEARS,
+V_RH5_TOTAL,
+V_R22_PRODUCT,
+V_R22_OVERDUE,
+V_R22_OVERDRAFT,
+V_R22_0_7_DAYS,
+V_R22_8_14_DAYS,
+V_R22_15_DAYS_1_MONTH,
+V_R22_1_3_MONTHS,
+V_R22_3_6_MONTHS,
+V_R22_6_12_MONTHS,
+V_R22_1_3_YEARS,
+V_R22_3_YEARS,
+V_R22_TOTAL,
+V_R23_PRODUCT,
+V_R23_OVERDUE,
+V_R23_OVERDRAFT,
+V_R23_0_7_DAYS,
+V_R23_8_14_DAYS,
+V_R23_15_DAYS_1_MONTH,
+V_R23_1_3_MONTHS,
+V_R23_3_6_MONTHS,
+V_R23_6_12_MONTHS,
+V_R23_1_3_YEARS,
+V_R23_3_YEARS,
+V_R23_TOTAL,
+V_R24_PRODUCT,
+V_R24_OVERDUE,
+V_R24_OVERDRAFT,
+V_R24_0_7_DAYS,
+V_R24_8_14_DAYS,
+V_R24_15_DAYS_1_MONTH,
+V_R24_1_3_MONTHS,
+V_R24_3_6_MONTHS,
+V_R24_6_12_MONTHS,
+V_R24_1_3_YEARS,
+V_R24_3_YEARS,
+V_R24_TOTAL,
+V_R25_PRODUCT,
+V_R25_OVERDUE,
+V_R25_OVERDRAFT,
+V_R25_0_7_DAYS,
+V_R25_8_14_DAYS,
+V_R25_15_DAYS_1_MONTH,
+V_R25_1_3_MONTHS,
+V_R25_3_6_MONTHS,
+V_R25_6_12_MONTHS,
+V_R25_1_3_YEARS,
+V_R25_3_YEARS,
+V_R25_TOTAL,
+V_R26_PRODUCT,
+V_R26_OVERDUE,
+V_R26_OVERDRAFT,
+V_R26_0_7_DAYS,
+V_R26_8_14_DAYS,
+V_R26_15_DAYS_1_MONTH,
+V_R26_1_3_MONTHS,
+V_R26_3_6_MONTHS,
+V_R26_6_12_MONTHS,
+V_R26_1_3_YEARS,
+V_R26_3_YEARS,
+V_R26_TOTAL,
+V_R27_PRODUCT,
+V_R27_OVERDUE,
+V_R27_OVERDRAFT,
+V_R27_0_7_DAYS,
+V_R27_8_14_DAYS,
+V_R27_15_DAYS_1_MONTH,
+V_R27_1_3_MONTHS,
+V_R27_3_6_MONTHS,
+V_R27_6_12_MONTHS,
+V_R27_1_3_YEARS,
+V_R27_3_YEARS,
+V_R27_TOTAL,
+V_R28_PRODUCT,
+V_R28_OVERDUE,
+V_R28_OVERDRAFT,
+V_R28_0_7_DAYS,
+V_R28_8_14_DAYS,
+V_R28_15_DAYS_1_MONTH,
+V_R28_1_3_MONTHS,
+V_R28_3_6_MONTHS,
+V_R28_6_12_MONTHS,
+V_R28_1_3_YEARS,
+V_R28_3_YEARS,
+V_R28_TOTAL,
+V_R29_PRODUCT,
+V_R29_OVERDUE,
+V_R29_OVERDRAFT,
+V_R29_0_7_DAYS,
+V_R29_8_14_DAYS,
+V_R29_15_DAYS_1_MONTH,
+V_R29_1_3_MONTHS,
+V_R29_3_6_MONTHS,
+V_R29_6_12_MONTHS,
+V_R29_1_3_YEARS,
+V_R29_3_YEARS,
+V_R29_TOTAL,
+V_R30_PRODUCT,
+V_R30_OVERDUE,
+V_R30_OVERDRAFT,
+V_R30_0_7_DAYS,
+V_R30_8_14_DAYS,
+V_R30_15_DAYS_1_MONTH,
+V_R30_1_3_MONTHS,
+V_R30_3_6_MONTHS,
+V_R30_6_12_MONTHS,
+V_R30_1_3_YEARS,
+V_R30_3_YEARS,
+V_R30_TOTAL,
+V_R31_PRODUCT,
+V_R31_OVERDUE,
+V_R31_OVERDRAFT,
+V_R31_0_7_DAYS,
+V_R31_8_14_DAYS,
+V_R31_15_DAYS_1_MONTH,
+V_R31_1_3_MONTHS,
+V_R31_3_6_MONTHS,
+V_R31_6_12_MONTHS,
+V_R31_1_3_YEARS,
+V_R31_3_YEARS,
+V_R31_TOTAL,
+V_RTA_PRODUCT,
+V_RTA_OVERDUE,
+V_RTA_OVERDRAFT,
+V_RTA_0_7_DAYS,
+V_RTA_8_14_DAYS,
+V_RTA_15_DAYS_1_MONTH,
+V_RTA_1_3_MONTHS,
+V_RTA_3_6_MONTHS,
+V_RTA_6_12_MONTHS,
+V_RTA_1_3_YEARS,
+V_RTA_3_YEARS,
+V_RTA_TOTAL,
+V_RH6_PRODUCT,
+V_RH6_OVERDUE,
+V_RH6_OVERDRAFT,
+V_RH6_0_7_DAYS,
+V_RH6_8_14_DAYS,
+V_RH6_15_DAYS_1_MONTH,
+V_RH6_1_3_MONTHS,
+V_RH6_3_6_MONTHS,
+V_RH6_6_12_MONTHS,
+V_RH6_1_3_YEARS,
+V_RH6_3_YEARS,
+V_RH6_TOTAL,
+V_R32_PRODUCT,
+V_R32_OVERDUE,
+V_R32_OVERDRAFT,
+V_R32_0_7_DAYS,
+V_R32_8_14_DAYS,
+V_R32_15_DAYS_1_MONTH,
+V_R32_1_3_MONTHS,
+V_R32_3_6_MONTHS,
+V_R32_6_12_MONTHS,
+V_R32_1_3_YEARS,
+V_R32_3_YEARS,
+V_R32_TOTAL,
+V_R33_PRODUCT,
+V_R33_OVERDUE,
+V_R33_OVERDRAFT,
+V_R33_0_7_DAYS,
+V_R33_8_14_DAYS,
+V_R33_15_DAYS_1_MONTH,
+V_R33_1_3_MONTHS,
+V_R33_3_6_MONTHS,
+V_R33_6_12_MONTHS,
+V_R33_1_3_YEARS,
+V_R33_3_YEARS,
+V_R33_TOTAL,
+V_R34_PRODUCT,
+V_R34_OVERDUE,
+V_R34_OVERDRAFT,
+V_R34_0_7_DAYS,
+V_R34_8_14_DAYS,
+V_R34_15_DAYS_1_MONTH,
+V_R34_1_3_MONTHS,
+V_R34_3_6_MONTHS,
+V_R34_6_12_MONTHS,
+V_R34_1_3_YEARS,
+V_R34_3_YEARS,
+V_R34_TOTAL,
+V_R35_PRODUCT,
+V_R35_OVERDUE,
+V_R35_OVERDRAFT,
+V_R35_0_7_DAYS,
+V_R35_8_14_DAYS,
+V_R35_15_DAYS_1_MONTH,
+V_R35_1_3_MONTHS,
+V_R35_3_6_MONTHS,
+V_R35_6_12_MONTHS,
+V_R35_1_3_YEARS,
+V_R35_3_YEARS,
+V_R35_TOTAL,
+V_R36_PRODUCT,
+V_R36_OVERDUE,
+V_R36_OVERDRAFT,
+V_R36_0_7_DAYS,
+V_R36_8_14_DAYS,
+V_R36_15_DAYS_1_MONTH,
+V_R36_1_3_MONTHS,
+V_R36_3_6_MONTHS,
+V_R36_6_12_MONTHS,
+V_R36_1_3_YEARS,
+V_R36_3_YEARS,
+V_R36_TOTAL,
+V_RH7_PRODUCT,
+V_RH7_OVERDUE,
+V_RH7_OVERDRAFT,
+V_RH7_0_7_DAYS,
+V_RH7_8_14_DAYS,
+V_RH7_15_DAYS_1_MONTH,
+V_RH7_1_3_MONTHS,
+V_RH7_3_6_MONTHS,
+V_RH7_6_12_MONTHS,
+V_RH7_1_3_YEARS,
+V_RH7_3_YEARS,
+V_RH7_TOTAL,
+V_R37_PRODUCT,
+V_R37_OVERDUE,
+V_R37_OVERDRAFT,
+V_R37_0_7_DAYS,
+V_R37_8_14_DAYS,
+V_R37_15_DAYS_1_MONTH,
+V_R37_1_3_MONTHS,
+V_R37_3_6_MONTHS,
+V_R37_6_12_MONTHS,
+V_R37_1_3_YEARS,
+V_R37_3_YEARS,
+V_R37_TOTAL,
+V_R38_PRODUCT,
+V_R38_OVERDUE,
+V_R38_OVERDRAFT,
+V_R38_0_7_DAYS,
+V_R38_8_14_DAYS,
+V_R38_15_DAYS_1_MONTH,
+V_R38_1_3_MONTHS,
+V_R38_3_6_MONTHS,
+V_R38_6_12_MONTHS,
+V_R38_1_3_YEARS,
+V_R38_3_YEARS,
+V_R38_TOTAL,
+V_R39_PRODUCT,
+V_R39_OVERDUE,
+V_R39_OVERDRAFT,
+V_R39_0_7_DAYS,
+V_R39_8_14_DAYS,
+V_R39_15_DAYS_1_MONTH,
+V_R39_1_3_MONTHS,
+V_R39_3_6_MONTHS,
+V_R39_6_12_MONTHS,
+V_R39_1_3_YEARS,
+V_R39_3_YEARS,
+V_R39_TOTAL,
+V_R40_PRODUCT,
+V_R40_OVERDUE,
+V_R40_OVERDRAFT,
+V_R40_0_7_DAYS,
+V_R40_8_14_DAYS,
+V_R40_15_DAYS_1_MONTH,
+V_R40_1_3_MONTHS,
+V_R40_3_6_MONTHS,
+V_R40_6_12_MONTHS,
+V_R40_1_3_YEARS,
+V_R40_3_YEARS,
+V_R40_TOTAL,
+V_R41_PRODUCT,
+V_R41_OVERDUE,
+V_R41_OVERDRAFT,
+V_R41_0_7_DAYS,
+V_R41_8_14_DAYS,
+V_R41_15_DAYS_1_MONTH,
+V_R41_1_3_MONTHS,
+V_R41_3_6_MONTHS,
+V_R41_6_12_MONTHS,
+V_R41_1_3_YEARS,
+V_R41_3_YEARS,
+V_R41_TOTAL,
+V_R42_PRODUCT,
+V_R42_OVERDUE,
+V_R42_OVERDRAFT,
+V_R42_0_7_DAYS,
+V_R42_8_14_DAYS,
+V_R42_15_DAYS_1_MONTH,
+V_R42_1_3_MONTHS,
+V_R42_3_6_MONTHS,
+V_R42_6_12_MONTHS,
+V_R42_1_3_YEARS,
+V_R42_3_YEARS,
+V_R42_TOTAL,
+V_RH8_PRODUCT,
+V_RH8_OVERDUE,
+V_RH8_OVERDRAFT,
+V_RH8_0_7_DAYS,
+V_RH8_8_14_DAYS,
+V_RH8_15_DAYS_1_MONTH,
+V_RH8_1_3_MONTHS,
+V_RH8_3_6_MONTHS,
+V_RH8_6_12_MONTHS,
+V_RH8_1_3_YEARS,
+V_RH8_3_YEARS,
+V_RH8_TOTAL,
+V_R43_PRODUCT,
+V_R43_OVERDUE,
+V_R43_OVERDRAFT,
+V_R43_0_7_DAYS,
+V_R43_8_14_DAYS,
+V_R43_15_DAYS_1_MONTH,
+V_R43_1_3_MONTHS,
+V_R43_3_6_MONTHS,
+V_R43_6_12_MONTHS,
+V_R43_1_3_YEARS,
+V_R43_3_YEARS,
+V_R43_TOTAL,
+V_R44_PRODUCT,
+V_R44_OVERDUE,
+V_R44_OVERDRAFT,
+V_R44_0_7_DAYS,
+V_R44_8_14_DAYS,
+V_R44_15_DAYS_1_MONTH,
+V_R44_1_3_MONTHS,
+V_R44_3_6_MONTHS,
+V_R44_6_12_MONTHS,
+V_R44_1_3_YEARS,
+V_R44_3_YEARS,
+V_R44_TOTAL,
+V_R45_PRODUCT,
+V_R45_OVERDUE,
+V_R45_OVERDRAFT,
+V_R45_0_7_DAYS,
+V_R45_8_14_DAYS,
+V_R45_15_DAYS_1_MONTH,
+V_R45_1_3_MONTHS,
+V_R45_3_6_MONTHS,
+V_R45_6_12_MONTHS,
+V_R45_1_3_YEARS,
+V_R45_3_YEARS,
+V_R45_TOTAL,
+V_R46_PRODUCT,
+V_R46_OVERDUE,
+V_R46_OVERDRAFT,
+V_R46_0_7_DAYS,
+V_R46_8_14_DAYS,
+V_R46_15_DAYS_1_MONTH,
+V_R46_1_3_MONTHS,
+V_R46_3_6_MONTHS,
+V_R46_6_12_MONTHS,
+V_R46_1_3_YEARS,
+V_R46_3_YEARS,
+V_R46_TOTAL,
+V_RTL_PRODUCT,
+V_RTL_OVERDUE,
+V_RTL_OVERDRAFT,
+V_RTL_0_7_DAYS,
+V_RTL_8_14_DAYS,
+V_RTL_15_DAYS_1_MONTH,
+V_RTL_1_3_MONTHS,
+V_RTL_3_6_MONTHS,
+V_RTL_6_12_MONTHS,
+V_RTL_1_3_YEARS,
+V_RTL_3_YEARS,
+V_RTL_TOTAL,
+V_REPORT_DATE);
+
+COMMIT;
+END;

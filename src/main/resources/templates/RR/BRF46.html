@@ -1,0 +1,2277 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	var subreportid = /*[[${subreportid}]]*/null;
+
+	var secid = /*[[${secid}]]*/null;
+
+	var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+	var dtltype = /*[[${dtltype}]]*/null;
+
+	$(function() {
+
+		//to make the summary button active on load
+		$("#summarybtn").addClass("active");
+
+	});
+
+	//When report type change: set subreportid and secid and show summary.
+	function changeReptype() {
+
+		subreportid = $("#reporttype").find(':selected').val();
+
+		secid = "1";
+
+		showsummary();
+
+	};
+
+	/*to show details page - 3 parameters
+		mode - valid values are : nextpage, prevpage, givenpage, firstpage
+		num - page number to show to the user
+		maxpage - maximum number of pages avaialble in the data
+	 */
+	function showdetails(mode, num, maxpage) {
+		var filter = $("#filters").val();
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		if (filter != null) {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		} else {
+
+			var filter = null;
+
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//	Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		}
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		// Show loader
+		$('#loader1').modal('show');
+		$.ajax({
+			type: 'get',
+			url: Callurl,
+			success: function(data) {
+				$('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				tablepagination();
+				// Hide loader
+				$('#loader1').modal('hide');
+			},
+			error: function() {
+				// Hide loader on error too
+				$('#loader1').modal('hide');
+				alert("Failed to load details.");
+			}
+		});
+	}
+
+	//to fetch summary from the database - called from the summary button
+	function showsummary(mode, num, maxpage) {
+
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+		Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$('#loader1').modal('show');
+
+		$.ajax({
+			type: 'get',
+			url: Callurl,
+			success: function(data) {
+				$('#loader1').modal('hide');
+				$('.content').html(data);
+				$("#summarybtn").addClass("active");
+				// Hide loader
+				$('#loader1').modal('hide');
+			},
+			error: function() {
+				// Hide loader on error too
+				$('#loader1').modal('hide');
+				alert("Failed to load summary.");
+			}
+		});
+	}
+
+	function sectionChange(a) {
+
+		secid = a;
+
+		showsummary();
+
+	};
+
+	function home() {
+
+		location.href = "/BRBS/monthly2";
+
+
+	}
+	
+	
+	function back() {
+		window.history.back();
+	}
+	
+	function back1() {
+		  var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			
+			$.ajax({
+				type : 'get',
+				url : Callurl,
+				success : function(data) {
+ 
+					/*<![CDATA[*/
+ 
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+ 
+					/*]]>*/
+				}
+			})
+		}
+
+	/*]]>*/
+</script>
+
+<style>
+.nav-buttons {
+	float: right;
+}
+
+.reptitle {
+	float: left;
+}
+
+.reptitle>p {
+	margin-top: 0px;
+}
+
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+	min-width: 1500px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not(:disabled ):not(.disabled).active, .btn-primary:not(:disabled ):not(.disabled ):active,
+	.show>.btn-primary.dropdown-toggle {
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.first_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 0;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.second_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 30px;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.third_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 60px;
+	width: 150px;
+	margin-top: -2px;
+}
+
+.inner {
+	overflow-x: scroll;
+	overflow-y: visible;
+	/* margin-left: 60px; */
+}
+
+.table-bordered thead td, .table-bordered thead th {
+	border-bottom-width: 0px;
+}
+
+.table-bordered {
+	border: 0px;
+}
+
+.addedit {
+	color: #007bff;
+}
+
+.addedit:hover {
+	color: #0056b3;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var currlist = /*[[${currlist}]]*/null;
+	function editsum(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#addedit").modal("toggle");
+
+		}
+	};
+
+	function editsubmitform() {
+
+		var reportdate = $("#report_date").val();
+		//	alert(reportdate);
+
+		if ($("#dataedit").valid()) {
+
+			var url = "./T1Edit?";
+
+			$("#dataedit").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataedit").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		}
+	};
+	function verifyscreen(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#verify").modal("toggle");
+
+		}
+	};
+	function verifysubmitform(a) {
+
+		if ($("#dataverify").valid()) {
+			var entry = $("#ENTRY_USER").val();
+			var modify = $("#MODIFY_USER").val();
+			var verify = $("#VERIFY_USER").val();
+
+			//var formmode = a.getAttribute("data-formmode");
+			var url = "./T1Verify?";
+
+			$("#dataverify").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataverify").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		} else {
+			$("#alertmsg").text("Same User Cannot Verify!");
+			$('#alert').modal("toggle");
+
+		}
+
+	};
+	function refreshPage() {
+		window.location.reload();
+	}
+
+function resident(a){	
+		
+		var filter = a.id;
+		var cellValue = a.textContent || a.innerText;
+		if(cellValue != '0'){
+		//alert("rwo"+cellValue)
+		alert(filter);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+		Callurl = Callurl+"&filter="+filter;	
+		$.ajax({		
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+                 $('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+			}
+		})
+		}else{
+			alert("No Records available for this selected Criteria")
+		}
+
+	}
+
+	
+
+</script>
+
+<script type="text/javascript">
+function editRecord(a) {
+
+	if (permission == 'W') {
+
+		var url2 = "./customeredit?";
+		$("#dataedit").attr('action', url2);
+		//Assign selected values to the model box fields
+		$("#cust_id").val(a.getAttribute("data-cust_id"));
+		$("#foracid").val(a.getAttribute("data-foracid"));
+		$("#acct_name").val(a.getAttribute("data-acct_name"));
+		$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));		
+		$("#report_name_1").val(a.getAttribute("data-report_name_1"));	
+		$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+     	$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1")); 
+		$("#report_date").val(a.getAttribute("data-report_date"));
+		
+		$("#addedit").modal("toggle");
+
+	}
+
+};
+
+function submitdataformedit() {
+	    var foracid = document.getElementById('foracid').value;	    
+	    var report_label_1 = document.getElementById('report_label_1').value;  
+	    var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+	    var report_name_1 = document.getElementById('report_name_1').value;
+	    var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+    $.ajax({
+        url: './CustomerDetailEditBrf46',
+        type: 'POST',
+        data: {
+        	foracid: foracid,
+        	report_label_1: report_label_1,
+        	act_balance_amt_lc: act_balance_amt_lc,
+        	report_name_1: report_name_1,
+        	report_addl_criteria_1: report_addl_criteria_1
+        },
+        success: function (data) {
+            // Handle the response data as needed
+            alert(data);
+
+            // Reload the page
+            location.reload();
+        },
+        error: function (error) {
+            // Handle any errors that occur during the AJAX request
+            console.error("Error: " + JSON.stringify(error));
+        }
+    });
+}
+	
+	
+ </script>
+<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-46 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 3000);
+		}
+		
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+			
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url : './' + reportid + '/Download',
+				data : {
+					asondate : asondate,
+					fromdate : fromdate,
+					todate : todate,
+					currency : currency,
+					subreportid : subreportid,
+					secid : secid,
+					dtltype : dtltype,
+					filetype : filetype
+				},
+				type : 'POST',
+				xhrFields : {
+					responseType : 'blob'
+				},
+				success : function(data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([ data ], {
+						type : 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+		                a.download = '011-BRF-046-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+		            } else if(filetype == "BRF"){
+		                a.download = '011-BRF-046-A' + ".xls"; // assuming .pdf extension for PDF files
+		            }else{
+		            	a.download = '011-BRF-046-A' + ".pdf";
+		            }
+		            
+		            document.body.appendChild(a);
+		            a.click();
+		            window.URL.revokeObjectURL(url);
+		            
+		            // Set the appropriate message based on the downloaded filetype
+		            if (filetype == "excel") {
+		                $('#customAlertBody').text('Downloaded BRF-46 ' + ".xlsx");
+		            } else if (filetype == "detailexcel") {
+		                $('#customAlertBody').text('Downloaded BRF-46 Detail Excel' + ".xlsx");
+		            }else if(filetype == "BRF"){
+		            	$('#customAlertBody').text('Downloaded BRF 46 ' + ".xls"); // assuming .pdf extension for PDF files
+		            } else {
+		                $('#customAlertBody').text('Downloaded BRF-46 ' + ".pdf");
+		            }
+		            $('#customAlertModal').modal('show');
+				}
+			});
+		}
+	</script>
+
+
+
+<style>
+    .dropdown-menu li a:hover {
+        background-color: orange; /* Orange color for hover */
+        color: white; /* White text for better contrast */
+    }
+</style>
+	<style>
+/* Your existing CSS - this is the correct approach */
+.scrollable-table-container {
+    /* This is the key: it creates the scroll context */
+    max-height: 620px; /* Or a suitable height like 80vh for responsive design */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+/* Your existing sticky header CSS, targeting the tr elements within the thead */
+.scrollable-table-container thead tr:nth-child(1) {
+    position: sticky;
+    top: 0;
+    background-color: #b3b6b9;
+    z-index: 4;
+}
+
+.scrollable-table-container thead tr:nth-child(2) {
+    position: sticky;
+    top: 36px; /* adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 3;
+}
+
+
+
+.scrollable-table-container thead tr:nth-child(3) {
+    position: sticky;
+    top: 72px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 2;
+}
+
+.scrollable-table-container thead tr:nth-child(4) {
+    position: sticky;
+    top: 108px; /* Adjust based on row height */
+    background-color: #b3b6b9;
+    z-index: 1;
+}
+
+
+</style>
+<script>
+$(document).ready(function () {
+	 
+});
+function tablepagination(){
+    $('#loader1').modal("hide");
+    $('#detailtable').DataTable({
+        "pageLength": 100,
+        "lengthChange": false,
+        "ordering": false,
+        "info": true,
+        "autoWidth": false,
+        "searching": true,
+        "language": {
+            "emptyTable": "No records available"
+        },
+        // --- ADD THIS LINE BELOW ---
+        "dom": '<"top"f>rt<"bottom"ip>'
+        // --- ADD THIS LINE ABOVE ---
+    });
+}
+</script>
+<style>
+/* Styles for the search box (from previous answer) */
+.dataTables_filter {
+    float: right;
+    text-align: right; /* Ensures the label and input align well within the floated div */
+}
+
+/* Clearfix to prevent layout issues from floating elements above the table */
+.dataTables_wrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Styles for the info and pagination controls */
+.dataTables_info {
+    float: left; /* Keep info text on the left */
+}
+
+.dataTables_paginate {
+    float: right; /* Move pagination to the right */
+}
+
+/* Clearfix for the bottom section (info and pagination) */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    /* Ensures they are on the same line if space allows */
+    display: inline-block;
+}
+
+/* You might want a clear div if your bottom section also has other elements */
+.clear {
+    clear: both;
+}</style>
+<title>BCDRS</title>
+</head>
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BANKING AND MONETARY STATISTICS-
+					INVESTMENTS BY COUNTER PARTY - BRF 46</b>
+				<th><b style="color: white; margin-left: 1%;">Report Date -
+						<span th:text="${todate}"></span>
+				</b></th>
+				<!--  -->
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary"
+						onclick="showdetails('firstpage','1','0');" id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary"
+						onclick="showsummary();" id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle"
+							data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'"
+								onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'"
+								onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'"
+								onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+							<li th:if="${displaymode}== 'detail' or ${displaymode} == null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'"
+								onclick="downloadexcel(this)">Excel</a>
+							</li>
+
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
+						role="dialog" aria-labelledby="downloadProcessingModalLabel"
+						aria-hidden="true">
+						<div
+							class="modal-dialog modal-dialog-centered d-flex align-items-center"
+							role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1"
+						role="dialog" aria-labelledby="customAlertModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary"
+						onclick="editsum(this);" style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'"
+						onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive scrollable-table-container"
+							style="border-right: 1px solid #dee2e6">
+
+							<table style="width: 2500px;"
+								class="sticky-header-table table  table-bordered table-hover table-sm table-condensed">
+								<thead
+									style="background-color: #b3b6b9; text-align: center; font-size: 18px;">
+
+									<tr style="text-align: center">
+										<th colspan="15">UAE OPERATIONS</th>
+
+									</tr>
+									<tr style="text-align: center">
+										<th colspan="15">Investments & Financial Assets by
+											Counter Party</th>
+
+									</tr>
+									<tr>
+										<th rowspan="3" colspan="2" class="align-middle" WIDTH='150'>Item
+											Number</th>
+										<th rowspan="3" colspan="" class="align-middle" WIDTH='400'>INVESTMENTS
+											& FINANCIAL ASSETS</th>
+
+										<th colspan="10">RESIDENT</th>
+										<th rowspan="3" WIDTH='200'>Resident Total Amount</th>
+
+
+									</tr>
+									<tr>
+										<th rowspan="2" class="align-middle"
+											style="background-color: #ffff00;" WIDTH='145'>Central
+											Bank of the UAE</th>
+										<th rowspan="2" WIDTH='150'>Federal Govt</th>
+										<th rowspan="2" WIDTH='170'>Non Comm.Entity ( Fed.Govt )</th>
+										<th rowspan="2" WIDTH='150'>Emirates Govt</th>
+										<th rowspan="2" WIDTH='170'>Non Comm.Entity (
+											Emirates.Govt )</th>
+										<th rowspan="2" WIDTH='160'>GRE ( Govt Ownership >50% )</th>
+										<th colspan="4">Private Sector</th>
+									</tr>
+									<tr>
+										<th WIDTH='170'>GRE ( Govt Ownership < 50% )</th>
+										<th WIDTH='150' style="text-align: LEFT">Banks</th>
+										<th WIDTH='150' style="text-align: LEFT">Financial
+											Institutions</th>
+										<th WIDTH='150' style="text-align: LEFT">Other Private
+											Entities</th>
+
+									</tr>
+								</thead>
+								<tbody th:each="report: ${reportsummary}"
+									style="font-size: 16px;">
+									<tr style="background-color: #b3b3b3; text-align: right">
+										<th th:text="${ report.r1_investments_financial_assets}"
+											style="width: 250px; text-align: left" colspan="3">CHENNAI</th>
+
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_central_bank_uae_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r1_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+										<th rowspan="3" align="center"
+											style="background-color: #b3b3b3; text-align: center"
+											class="align-middle">1</th>
+										<td align="right" colspan="1">1.1</td>
+										<td th:text="${ report.r2_investments_financial_assets	 }"
+											style="text-align: left">CHENNAI</td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_central_bank_uae_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW102" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r2_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+
+										<td align="right">1.2</td>
+										<td th:text="${report.r3_investments_financial_assets}"
+											style="text-align: left">CHENNAI</td>
+										<td style="background-color: #b3b3b3"></td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW103" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r3_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+									</tr>
+									<tr style="text-align: right">
+
+										<td align="right">1.3</td>
+										<td th:text="${report.r4_investments_financial_assets}"
+											align="left">CHENNAI</td>
+										<td style="background-color: #b3b3b3"></td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW104" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r4_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<!--  -->
+
+
+									<tr style="background-color: #b3b3b3; text-align: right">
+
+										<th th:text="${report.r5_investments_financial_assets}"
+											colspan="3" style="text-align: left">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_central_bank_uae_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r5_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+
+										<th th:text="${report.r6_investments_financial_assets	}"
+											colspan="3" style="width: 100px; text-align: left">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_central_bank_uae_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r6_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+									</tr>
+									<tr style="text-align: right">
+										<th rowspan="2" align="center"
+											style="background-color: #b3b3b3; text-align: center"
+											class="align-middle">2.1</th>
+										<td align="right">2.1.1</td>
+
+										<td th:text="${report.r7_investments_financial_assets}"
+											style="text-align: left">CHENNAI</td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_central_bank_uae_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW107" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r7_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											style="background-color: #ffff00;">CHENNAI</th>
+
+
+									</tr>
+									<tr style="text-align: right">
+
+										<td align="right">2.1.2</td>
+										<td th:text="${report.r8_investments_financial_assets	}"
+											style="text-align: left">CHENNAI</td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_central_bank_uae_resident	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #b3b3b3">CHENNAI</th>
+
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW108" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r8_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+										<th th:text="${report.r9_investments_financial_assets}"
+											style="text-align: left" colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_central_bank_uae_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_federal_govt_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_non_comm_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_emirates_govt_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_non_comm_entity_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_gre_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_gre_private_sector_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_banks_private_sector_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_financial_private_sector_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r9_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+										<th th:text="${report.r10_investments_financial_assets}"
+											style="background-color: #b3b3b3; text-align: left"
+											colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_central_bank_uae_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_federal_govt_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_non_comm_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_emirates_govt_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_non_comm_entity_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_gre_resident	,1,'COMMA',0,'POINT')}">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r10_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+										<th rowspan="2"
+											style="background-color: #b3b3b3; text-align: center"
+											class="align-middle">3</th>
+										<td align="right">3.1</td>
+										<td th:text="${report.r11_investments_financial_assets}"
+											style="text-align: left">CHENNAI</td>
+										<!-- <td
+											th:text="${#numbers.formatDecimal(report.r11_central_bank_uae_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td> -->
+										<td style="background-color: #b3b3b3"></td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW111" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r11_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+										<td align="right">3.2</td>
+										<td th:text="${report.r12_investments_financial_assets}"
+											style="text-align: left">CHENNAI</td>
+										<td style="background-color: #b3b3b3"></td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW112" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r12_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+										<th th:text="${report.r13_investments_financial_assets}"
+											style="text-align: center" class="align-middle" colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_central_bank_uae_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_federal_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_non_comm_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_emirates_govt_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_non_comm_entity_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_gre_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_gre_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_banks_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_financial_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_otherprivate_private_sector_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r13_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+									</tr>
+									<tr
+										style="background-color: #b3b6b9; text-align: center; font-size: 19px;">
+										<th rowspan="3" colspan="2" class="align-middle">Item
+											Number</th>
+										<th rowspan="3" class="align-middle">INVESTMENTS &
+											FINANCIAL ASSETS</th>
+
+										<th colspan="10">NON - RESIDENT</th>
+										<th rowspan="3" class="align-bottom"
+											style="text-align: center">NON Resident Total Amount</th>
+									</tr>
+									<tr style="background-color: #b3b3b3">
+										<th rowspan="2" class="align-middle"
+											style="text-align: center">Other Central Banks
+											(Regulators)</th>
+										<th rowspan="2" class="align-bottom"
+											style="text-align: center">Federal Govt</th>
+										<th rowspan="2" class="align-bottom"
+											style="text-align: center">Non Comm.Entity ( Fed.Govt )</th>
+										<th rowspan="2" class="align-bottom"
+											style="text-align: center">Emirates Govt</th>
+										<th rowspan="2" class="align-bottom"
+											style="text-align: center">Non Comm.Entity (
+											Emirates.Govt )</th>
+										<th rowspan="2" class="align-bottom"
+											style="text-align: center">GRE ( Govt Ownership >50% )</th>
+										<th colspan="4" class="align-bottom"
+											style="text-align: center">Private Sector</th>
+									</tr>
+									<tr style="background-color: #b3b3b3">
+										<th class="align-bottom" style="text-align: center">GRE (
+											Govt Ownership < 50% )</th>
+										<th class="align-bottom" style="text-align: center">Banks</th>
+										<th class="align-bottom" style="text-align: center">Financial
+											Institutions</th>
+										<th class="align-bottom" style="text-align: center">Other
+											Private Entities</th>
+
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+										<th th:text="${report.r14_investments}" colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r14_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+										<th rowspan="3" align="center"
+											style="background-color: #b3b3b3; text-align: center"
+											class="align-middle">1</th>
+										<td align="right">1.1</td>
+										<td style="text-align: left">Debt Securities</td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_other_centralbank_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_federal_govt_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_non_comm_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI
+										</td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_emirates_govt_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_non_comm_entity_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_gre_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_gre_private_sector_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_banks_private_sector_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_financial_private_sector_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_otherprivate_private_sector_non_resident	,0,'COMMA',0,'POINT')}"
+											align="right" id="ROW115" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r15_non_resident_total_amount	,0,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									<tr style="text-align: right">
+
+										<td align="right">1.2</td>
+
+										<!-- <td style="background-color: #b3b3b3"></td> -->
+										<td th:text="${report.r16_investments	}"
+											style="text-align: left">CHENNAI</td>
+										<td style="background-color: #b3b3b3"></td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW116" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r16_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+
+										<td align="right">1.3</td>
+										<td th:text="${report.r17_investments	}"
+											style="text-align: left">CHENNAI</td>
+										<td style="background-color: #b3b3b3"></td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW117" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r17_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+
+
+									</tr>
+									<!--  -->
+
+
+									<tr style="background-color: #b3b3b3; text-align: right">
+
+										<th th:text="${report.r18_investments	}"
+											style="text-align: left" colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r18_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+
+										<th th:text="${report.r19_investments}" colspan="3"
+											style="text-align: left">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r19_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+										<th rowspan="2" align="center"
+											style="background-color: #b3b3b3; text-align: center"
+											class="align-middle">2.1</th>
+										<td align="right">2.1.1</td>
+
+										<td th:text="${report.r20_investments	}"
+											style="text-align: left">CHENNAI</td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW120" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r20_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="text-align: right">
+
+										<td align="right">2.1.2</td>
+										<td th:text="${report.r21_investments}"
+											style="text-align: left">CHENNAI</td>
+										<td style="background-color: #b3b3b3" align="right"></td>
+
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW121" onclick="resident(this);">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</td>
+
+									</tr>
+									<tr style="text-align: right">
+
+
+										<th th:text="${report.r22_investments	}"
+											style="text-align: left" colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r22_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+
+
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+										<th th:text="${report.r23_investments}" colspan="3"
+											style="background-color: #b3b3b3; text-align: left">
+											CHENNAI</th>
+										<td style="background-color: #b3b3b3"></td>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r23_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+									</tr>
+									<tr style="text-align: right">
+										<th rowspan="2"
+											style="background-color: #b3b3b3; text-align: center"
+											class="align-middle">3</th>
+										<td align="right">3.1</td>
+										<td th:text="${report.r24_investments	}"
+											style="text-align: left">CHENNAI</td>
+										<th style="background-color: #b3b3b3" align="right"></th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW124" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r24_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									<tr style="text-align: right">
+										<td align="right">3.2</td>
+										<td th:text="${report.r25_investments	}"
+											style="text-align: left">CHENNAI
+										</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);"
+											style="background-color: #b3b3b3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right" id="ROW125" onclick="resident(this);">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r25_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+										<th th:text="${report.r26_investments}"
+											style="text-align: center" class="align-middle" colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r26_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+									</tr>
+									<tr style="background-color: #b3b3b3; text-align: right">
+										<th th:text="${report.r27_investments}"
+											style="text-align: center" class="align-middle" colspan="3">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_other_centralbank_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_federal_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_non_comm_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_emirates_govt_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_non_comm_entity_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_gre_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_gre_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_banks_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_financial_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_otherprivate_private_sector_non_resident	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.r27_non_resident_total_amount	,1,'COMMA',0,'POINT')}"
+											align="right" style="background-color: #ffff00;">CHENNAI</th>
+
+									</tr>
+
+									<tr>
+										<td colspan="3">Form No: BSD/BRF 46 - INVST / JULY 2022</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+
+									</tr>
+
+
+								</tbody>
+
+							</table>
+
+						</div>
+						<div class="card-footer text-center"
+							th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276";>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+						</div>
+					</div>
+				</div>
+
+			
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail" style="width: 1430px">
+    <div style="overflow-x: auto; border-right: 1px solid #dee2e6; width: 1499px" th:class="${searchmsg == null}?'inner'" >
+      
+        <table id="detailtable" class="table table-bordered table-sm" style="width: 1499px">
+    <thead class="thead-light" >
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACCT BALANCE LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT_NAME_1</th>
+								<th>REPORT LABEL_1</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody>
+            <tr th:each="report,iterator : ${reportdetails}">	
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec"
+									title="Click to Edit this Record"><i
+										th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+										class="fas fa-edit"
+										th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}"
+										onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 2, 'POINT')}">CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center"
+					style="background-color: #386276";>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+						onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+						onclick="back();">Back</button>
+				</div>
+				
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div
+						class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input
+												class="form-control col-sm-5" id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input
+												class="form-control col-sm-5" id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCT BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1
+												name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABEL_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT_ADDL_CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformedit(this);" id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div
+							class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+<div class="modal fade" id="loader1" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+</body>
+
+<style>
+.inner {
+    max-height: 600px; /* Adjust height as needed */
+    overflow: auto;
+    border: 1px solid #dee2e6;
+}
+
+/* Sticky thead */
+#detailtable thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa; /* Match Bootstrap thead-light */
+    z-index: 2;
+}
+.pagination {
+    margin: 0;
+}
+
+.page-item.active .page-link {
+    background-color: #386276;
+    border-color: #386276;
+}
+
+.page-link {
+    color: #386276;
+}
+
+.page-link:hover {
+    color: #2a4a5c;
+}
+
+.form-select {
+    display: inline-block;
+    width: auto;
+}
+</style>
+
+</html>

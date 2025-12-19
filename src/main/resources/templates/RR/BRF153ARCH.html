@@ -1,0 +1,2986 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	var subreportid = /*[[${subreportid}]]*/null;
+
+	var secid = /*[[${secid}]]*/null;
+
+	var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+	var dtltype = /*[[${dtltype}]]*/null;
+
+	$(function() {
+
+		//to make the summary button active on load
+		$("#summarybtn").addClass("active");
+
+	});
+
+	//When report type change: set subreportid and secid and show summary.
+	function changeReptype() {
+
+		subreportid = $("#reporttype").find(':selected').val();
+
+		secid = "1";
+
+		showsummary();
+
+	};
+
+	/*to show details page - 3 parameters
+		mode - valid values are : nextpage, prevpage, givenpage, firstpage
+		num - page number to show to the user
+		maxpage - maximum number of pages avaialble in the data
+	 */
+	function showdetails(mode, num, maxpage) {
+		var filter = $("#filters").val();
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		if (filter != null) {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		} else {
+
+			var filter = null;
+
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			//	Callurl = Callurl+"&instancecode="+instancecode;
+			Callurl = Callurl + "&filter=" + filter;
+		}
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+
+			}
+		})
+	}
+
+	//to fetch summary from the database - called from the summary button
+	function showsummary(mode, num, maxpage) {
+		 // $("#date").css("display","none");
+		var n = parseInt(num);
+		var max = parseInt(maxpage);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+		Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+		switch (mode) {
+		case "nextpage":
+			n = n + 1;
+			if (n > max) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "prevpage":
+			n = n - 1;
+			if (n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+			break;
+		case "givenpage":
+			n = parseInt($("#pageno").val()) - 1;
+			if (n > max || n < 0) {
+				break;
+			}
+			Callurl = Callurl + "&page=" + n;
+		}
+
+		$.ajax({
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+
+				/*<![CDATA[*/
+
+				$('.content').html(data);
+				$("#summarybtn").addClass("active");
+
+				/*]]>*/
+			}
+		})
+	}
+
+	function sectionChange(a) {
+
+		secid = a;
+
+		showsummary();
+
+	};
+
+	function home() {
+		location.href = "/BRBS/BRFArchival";
+		
+
+	}
+
+function back() {
+		 window.history.back(); 
+	}
+
+	function back1() {
+		  var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+			$.ajax({
+				type : 'get',
+				url : Callurl,
+				success : function(data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+	/*]]>*/
+</script>
+
+<style>
+.nav-buttons {
+	float: right;
+}
+
+.reptitle {
+	float: left;
+}
+
+.reptitle>p {
+	margin-top: 0px;
+}
+
+.customcol {
+	padding-left: 0px;
+	padding-right: 0px;
+	min-width: 1500px;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.first_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 0;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.second_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 30px;
+	width: 30px;
+	margin-top: -2px;
+}
+
+.third_left {
+	position: absolute;
+	*position: relative; /*ie7*/
+	left: 60px;
+	width: 150px;
+	margin-top: -2px;
+}
+
+.inner {
+	overflow-x: scroll;
+	overflow-y: visible;
+	/* margin-left: 60px; */
+}
+
+.table-bordered thead td, .table-bordered thead th {
+	border-bottom-width: 0px;
+}
+
+.table-bordered {
+	border: 0px;
+}
+
+.addedit {
+	color: #007bff;
+}
+
+.addedit:hover {
+	color: #0056b3;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var currlist = /*[[${currlist}]]*/null;
+	function editsum(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#addedit").modal("toggle");
+
+		}
+	};
+
+	function editsubmitform() {
+
+		var reportdate = $("#report_date").val();
+		//	alert(reportdate);
+
+		if ($("#dataedit").valid()) {
+
+			var url = "./T1Edit?";
+
+			$("#dataedit").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataedit").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		}
+	};
+	function verifyscreen(a) {
+
+		if (permission == 'W' && dtltype == 'report') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+			$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			/* //make readonly false to unique fields
+			//Make readonly fields
+			$("#cntprty_code").attr("readonly",false);
+			$("#report_date").attr("readonly",false); */
+
+			//Reset errors
+			var validator = $("#dataedit").validate();
+			validator.resetForm();
+
+			$("#verify").modal("toggle");
+
+		}
+	};
+	
+	function resident(a){	
+		var filter = a.id;
+		var cellValue = a.textContent || a.innerText;
+		if(cellValue != '0'){
+		//alert("rwo"+cellValue)
+		alert(filter);
+		var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+		Callurl = Callurl+"&filter="+filter;	
+		$.ajax({		
+			type : 'get',
+			url : Callurl,
+			success : function(data) {
+ 
+				/*<![CDATA[*/
+                 $('.content').html(data);
+				$("#detailsbtn").addClass("active");
+				/*]]>*/
+			}
+		})
+		}else{
+			alert("No Records available for this selected Criteria")
+		}
+ 
+	}
+	function verifysubmitform(a) {
+
+		if ($("#dataverify").valid()) {
+			var entry = $("#ENTRY_USER").val();
+			var modify = $("#MODIFY_USER").val();
+			var verify = $("#VERIFY_USER").val();
+
+			//var formmode = a.getAttribute("data-formmode");
+			var url = "./T1Verify?";
+
+			$("#dataverify").attr('action', url);
+
+			var options = {
+				success : showResponse
+			// post-submit callback 
+			};
+
+			$("#dataverify").ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				$('#alert').modal("toggle");
+
+			}
+			;
+		} else {
+			$("#alertmsg").text("Same User Cannot Verify!");
+			$('#alert').modal("toggle");
+
+		}
+
+	};
+	function refreshPage() {
+		window.location.reload();
+	}
+
+	
+	function editRecord(a) {
+
+		if (permission == 'W') {
+
+			var url2 = "./customeredit?";
+			$("#dataedit").attr('action', url2);
+			//Assign selected values to the model box fields
+			$("#cust_id").val(a.getAttribute("data-cust_id"));
+			$("#foracid").val(a.getAttribute("data-foracid"));
+			$("#acct_name").val(a.getAttribute("data-acct_name"));
+			$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));	
+			$("#amt_ac").val(a.getAttribute("amt_ac"));	
+			$("#report_name_1").val(a.getAttribute("data-report_name_1"));	
+			$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+	     	$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1")); 
+			$("#report_date").val(a.getAttribute("data-report_date"));
+			
+			$("#addedit").modal("toggle");
+
+		}
+
+	};
+
+		</script>
+<script>
+	function submitdataformedit() {
+		alert("submit");
+		    var foracid = document.getElementById('foracid').value;	    
+		    var report_label_1 = document.getElementById('report_label_1').value;  
+		    var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+		    var amt_ac = document.getElementById('amt_ac').value;
+		    var report_name_1 = document.getElementById('report_name_1').value;
+		    var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+		    alert(foracid);
+		    alert(report_label_1);
+		    alert(act_balance_amt_lc);
+		    alert(amt_ac);
+		    alert(report_name_1);
+		    alert(report_addl_criteria_1);
+	    $.ajax({
+	        url: './CustomerDetailEditBrf153',
+	        type: 'POST',
+	        data: {
+	        	foracid: foracid,
+	        	report_label_1: report_label_1,
+	        	act_balance_amt_lc: act_balance_amt_lc,
+	        	amt_ac: amt_ac,
+	        	report_name_1: report_name_1,
+	        	report_addl_criteria_1: report_addl_criteria_1
+	        	
+	        },
+	        success: function (data) {
+	            // Handle the response data as needed
+	            alert(data);
+
+	            // Reload the page
+	            location.reload();
+	        },
+	        error: function (error) {
+	            // Handle any errors that occur during the AJAX request
+	            console.error("Error: " + JSON.stringify(error));
+	        }
+	    });
+	}
+	 
+</script>
+
+
+
+
+<script>
+    function downloadFile(filetype) {
+        // Show the download processing modal
+        $('#downloadProcessingModal').modal('show');
+
+        // Simulate a delay (3 seconds in this case) to mimic a download process
+        setTimeout(function () {
+             
+
+            // Display a centered custom alert
+            $('#customAlertBody').text('Downloaded BRF-153 ' + filetype);
+            $('#customAlertModal').modal('show');
+
+            // Hide the download processing modal
+            $('#downloadProcessingModal').modal('hide');
+        }, 4000);
+    }
+</script>
+
+<script>
+function downloadexcel(button) {
+	var reportid = button.getAttribute('data-reportid');
+	var asondate = button.getAttribute('data-asondate');
+	var fromdate = button.getAttribute('data-fromdate');
+	var todate = button.getAttribute('data-todate');
+	var currency = button.getAttribute('data-currency');
+	var subreportid = button.getAttribute('data-subreportid');
+	var secid = button.getAttribute('data-secid');
+	var dtltype = button.getAttribute('data-dtltype');
+	var filetype = button.getAttribute('data-filetype');
+	
+	console.log(filetype);
+
+	$('#downloadProcessingModal').modal('show');
+
+	$.ajax({
+		url: '/BRBS/Reports/' + reportid + '/Download',
+		data : {
+			asondate : asondate,
+			fromdate : fromdate,
+			todate : todate,
+			currency : currency,
+			subreportid : subreportid,
+			secid : secid,
+			dtltype : dtltype,
+			filetype : filetype
+		},
+		type : 'POST',
+		xhrFields : {
+			responseType : 'blob'
+		},
+		success : function(data) {
+			$('#downloadProcessingModal').modal('hide');
+			var blob = new Blob([ data ], {
+				type : 'application/octet-stream'
+			});
+			var url = window.URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			a.href = url;
+			if (filetype == "excel" || filetype == "detailexcel") {
+                a.download = '011-BRF-153-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+            } else if(filetype == "BRF"){
+                a.download = '011-BRF-153-A' + ".xls"; // assuming .pdf extension for PDF files
+            }else{
+            	a.download = '011-BRF-153-A' + ".pdf";
+            }
+			
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			if (filetype == "excel") {
+                $('#customAlertBody').text('Downloaded BRF-153 ' + ".xlsx");
+            } else if (filetype == "detailexcel") {
+                $('#customAlertBody').text('Downloaded BRF-153 Detail Excel' + ".xlsx");
+            }else if(filetype == "BRF"){
+            	$('#customAlertBody').text('Downloaded BRF 153 ' + ".xls"); // assuming .pdf extension for PDF files
+            } else {
+                $('#customAlertBody').text('Downloaded BRF-153 ' + ".pdf");
+            }
+            $('#customAlertModal').modal('show');
+		}
+	});
+}
+ 
+</script>
+<style>
+    .dropdown-menu li a:hover {
+        background-color: orange; /* Orange color for hover */
+        color: white; /* White text for better contrast */
+    }
+</style>
+<title>XBRL</title>
+</head>
+<body>
+
+
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BRF-153 Derivatives Expanded </b> </b>
+				</th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary"
+						onclick="showdetails('firstpage','1','0');" id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary"
+						onclick="showsummary();" id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle"
+							data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'"
+								onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'"
+								onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary"
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'"
+								onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+
+							<li th:if="${displaymode}=='detail'"><a
+								th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'"
+								onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1"
+						role="dialog" aria-labelledby="downloadProcessingModalLabel"
+						aria-hidden="true">
+						<div
+							class="modal-dialog modal-dialog-centered d-flex align-items-center"
+							role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1"
+						role="dialog" aria-labelledby="customAlertModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary"
+						onclick="editsum(this);" style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'"
+						onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;"
+						title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive"
+							style="border-right: 1px solid #dee2e6">
+							<table style="width: 1500px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead style="background-color: #b3b6b9">
+									<tr>
+										<th></th>
+										<th></th>
+										<th colspan="5">The sum of individual transactions must
+											match amounts reported in FR-3 (B) "Derivatives Base"</th>
+										<th colspan="2"></th>
+										<th colspan="2"></th>
+										<th colspan="2"></th>
+
+									</tr>
+									<tr>
+
+										<th colspan="2">1.FX Instruments and derivatives</th>
+
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th colspan="6" style="text-align: center">Net loss/gain
+											from change in the value of the underlying</th>
+									</tr>
+									<tr style="background-color: #b3b6b9; text-align: center">
+
+										<th colspan="4" style="text-align: left" class="align-middle">1.1
+											FX Derivatives with <u> positive market value at the end</u>
+											of the reporting period
+										</th>
+										<th colspan="3" class="align-middle">Closing market value
+											of which:</th>
+										<th colspan="2" class="align-middle">< 1 year</th>
+										<th colspan="2" class="align-middle">1 to 3 years</th>
+										<th colspan="2" class="align-middle">> 3 years</th>
+									</tr>
+
+									<tr style="background-color: #b3b6b9; text-align: center">
+										<th></th>
+										<th class="align-middle">Currencies*</th>
+										<th class="align-middle">Notional Amount</th>
+										<th class="align-middle">Gross market value</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term < 1 year</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term 1 to 3 years</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term > 3 years</th>
+										<th class="align-middle">+10%</th>
+										<th class="align-middle">-10%</th>
+										<th class="align-middle">+10%</th>
+										<th class="align-middle">-10%</th>
+										<th class="align-middle">+10%</th>
+										<th class="align-middle">-10%</th>
+									</tr>
+
+								</thead>
+
+								<tbody th:each="report: ${reportsummary}">
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r1_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r1_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r2_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r2_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r3_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r3_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r4_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r4_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r5_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r5_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r6_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r6_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r7_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r7_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r8_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r8_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r9_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r9_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r10_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r10_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW110">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r11_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r11_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r12_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r12_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r13_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r13_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW113">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r14_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r14_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r15_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r15_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+									</tr>
+
+
+									<tr style="background-color: #b3b6b9; text-align: center">
+
+										<th colspan="4" style="text-align: left" class="align-middle">1.2
+											FX Derivatives with <u> negative market value at the end
+										</u> of the reporting period
+										</th>
+										<th colspan="3" class="align-middle">Closing market value
+											of which:</th>
+										<th colspan="2" class="align-middle">1 year</th>
+										<th colspan="2" class="align-middle">1 to 3 years</th>
+										<th colspan="2" class="align-middle">> 3 years</th>
+									</tr>
+
+									<tr style="background-color: #b3b6b9; text-align: center">
+										<th></th>
+										<th class="align-middle">Currencies*</th>
+										<th class="align-middle">Notional Amount</th>
+										<th class="align-middle">Gross market value</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term < 1 year</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term 1 to 3 years</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term > 3 years</th>
+										<th class="align-middle">+10%</th>
+										<th class="align-middle">-10%</th>
+										<th class="align-middle">+10%</th>
+										<th class="align-middle">-10%</th>
+										<th class="align-middle">+10%</th>
+										<th class="align-middle">0</th>
+									</tr>
+								</thead>
+
+								<tbody th:each="report: ${reportsummary}">
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r16_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r16_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW116">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r17_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r17_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW117">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r18_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r18_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW118">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r19_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r19_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW119">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r20_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r20_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW120">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r21_currencies }">CHENNAI</th>
+
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r21_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r22_currencies }">CHENNAI</th>
+
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r22_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r23_currencies }">CHENNAI</th>
+
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r23_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW123">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r24_currencies }">CHENNAI</th>
+
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r24_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r25_currencies }">CHENNAI</th>
+
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r25_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r26_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r26_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r27_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r27_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r28_currencies }">CHENNAI</th>
+
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r28_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW128">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r29_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r29_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW129">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r30_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_notational_amount,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_gross_market,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r30_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW130">CHENNAI</td>
+									</tr>
+
+
+									<tr>
+
+										<th style="background-color: #b3b6b9" colspan="2">2.
+											Interest Rates</th>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"></th>
+										<th colspan="6"
+											style="text-align: center; background-color: #b3b6b9">Net
+											gain/loss from parallel shift in yield curve by:</th>
+									</tr>
+									<tr style="background-color: #b3b6b9; text-align: center">
+
+										<th colspan="4" style="text-align: left" class="align-middle">2.1
+											Interest Rate Derivatives with <u> positive market value
+										</u> at the end of the reporting period
+										</th>
+										<th colspan="3" class="align-middle">Closing market value
+											of which:</th>
+										<th colspan="2" class="align-middle">< 1 year</th>
+										<th colspan="2" class="align-middle">1 to 3 years</th>
+										<th colspan="2" class="align-middle">> 3 years</th>
+									</tr>
+
+									<tr style="background-color: #b3b6b9; text-align: center">
+										<th></th>
+										<th class="align-middle">Currencies*</th>
+										<th class="align-middle">Notional Amount</th>
+										<th class="align-middle">Gross market value</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term < 1 year</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term 1 to 3 years</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term > 3 years</th>
+										<th class="align-middle">+2bp</th>
+										<th class="align-middle">-2bp</th>
+										<th class="align-middle">+2bp</th>
+										<th class="align-middle">-2bp</th>
+										<th class="align-middle">+2bp</th>
+										<th class="align-middle">-2bp</th>
+									</tr>
+
+
+
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r31_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r31_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW131">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r32_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r32_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW132">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r33_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r33_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW133">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r34_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r34_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW134">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r35_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r35_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW135">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r36_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r36_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW136">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r37_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r37_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW137">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r38_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r38_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW138">CHENNAI</td>
+									</tr>
+									<tr>
+
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r39_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r39_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW139">CHENNAI</td>
+									</tr>
+
+
+									<tr style="background-color: #b3b6b9; text-align: center">
+
+										<th colspan="4" style="text-align: left" class="align-middle">2.2
+											Interest Rates Derivatives with <u>negative market value
+										</u> at the end of the reporting period
+										</th>
+										<th colspan="3" class="align-middle">Closing market value
+											of which:</th>
+										<th colspan="2" class="align-middle">< 1 year</th>
+										<th colspan="2" class="align-middle">1 to 3 years</th>
+										<th colspan="2" class="align-middle">> 3 years</th>
+									</tr>
+
+									<tr style="background-color: #b3b6b9; text-align: center">
+										<th></th>
+										<th class="align-middle">Currencies*</th>
+										<th class="align-middle">Notional Amount</th>
+										<th class="align-middle">Gross market value</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term < 1 year</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term 1 to 3 years</th>
+										<th class="align-middle" style="text-align: left">Residual
+											term > 3 years</th>
+										<th class="align-middle">+2 bp</th>
+										<th class="align-middle">-2 bp</th>
+										<th class="align-middle">+2 bp</th>
+										<th class="align-middle">-2 bp</th>
+										<th class="align-middle">+2 bp</th>
+										<th class="align-middle">-2 bp</th>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r40_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r40_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW140">CHENNAI</td>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r41_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r41_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW141">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r42_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r42_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW142">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r43_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r43_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW143">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r44_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r44_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW144">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r45_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r45_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW145">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r46_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r46_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW146">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r47_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r47_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW147">CHENNAI</td>
+									</tr>
+									<tr>
+										<th style="background-color: #b3b6b9"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${report. r48_currencies }">CHENNAI</th>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_notational_amount,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_gross_market,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_lessthan_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_onetothree_year,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_morethan_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_plusten_oneyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_minusten_oneyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_plusten_onetothreeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_minusten_onetothreeyear ,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_plusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+										<td
+											th:text="${#numbers.formatDecimal(report.r48_minusten_threeyear,0,'COMMA',0,'POINT')}"
+											align="center" onclick="resident(this)" id="ROW148">CHENNAI</td>
+
+
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center"
+							th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276";>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'"
+				th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null"
+						class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACCT BAL LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT NAME 1</th>
+								<th>REPORT LABLE 1</th>
+								<th>REPORT ADDL CRITERIA 1</th>
+								<th>REPORT DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center; font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec"
+									title="Click to Edit this Record"><i
+										th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+										class="fas fa-edit"
+										th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}"
+										onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center"
+					style="background-color: #386276";>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+						onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+						onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div
+						class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input
+												class="form-control col-sm-5" id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input
+												class="form-control col-sm-5" id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCR BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME 1</label> <input
+												class="form-control col-sm-5" id=report_name_1
+												name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE 1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA 1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformedit(this);" id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div
+							class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary"
+										data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

@@ -1,0 +1,4594 @@
+create or replace PROCEDURE         "BRF49_DETAIL_PROCEDURE" (REPORT_DATE DATE)
+IS
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+   V_FROM_DATE dATE :=  ADD_MONTHS (LAST_DAY (REPORT_DATE), -1) + 1;
+BEGIN
+
+delete from BRF49_DETAILTABLE where report_date = V_REPORT_DATE;
+Commit;
+
+INSERT INTO BRF49_DETAILTABLE
+(foracid, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_STATUS, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type,ACT_BALANCE_AMT_LC)
+SELECT ACCT_NUMBER, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_FLG, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type,ACT_BALANCE_AMT_LC
+FROM GENERAL_MASTER_TABLE
+WHERE report_date = '30-jun-2023'
+AND SCHM_CODE IN ('CA101', 'CA102', 'CA103', 'CA106', 'CA107', 'CA108', 'CA109', 'CA110', 'CA111', 'CA112', 'LA101', 'LA106', 'OD001', 'OD002',
+'OD003', 'OD028', 'OD651', 'SB105', 'SB107', 'TD115','SB101', 'SB102', 'SB103', 'SB106', 'SB110', 'SB201', 'SB203',
+'SB303', 'TD101', 'TD102', 'TD103', 'TD105', 'TD106', 'TD108', 'TD109', 'TD112', 'TD301');
+
+COMMIT;
+
+
+
+MERGE INTO BRF49_DETAILTABLE M
+USING (
+    SELECT distinct   b.REPORT_LABEL_1,b.cust_id,b.foracid,B.REPORT_ADDL_CRITERIA_1,B.REPORT_NAME_1
+    FROM BRF49_MAPPING_TABLE b
+    JOIN BRF49_DETAILTABLE a ON a.foracid = b.foracid
+    WHERE a.report_date = '30-JUN-2023'
+) S
+ON (M.foracid = S.foracid)
+WHEN MATCHED THEN UPDATE
+SET M.REPORT_LABEL_1 = S.REPORT_LABEL_1,
+M.REPORT_ADDL_CRITERIA_1 = S.REPORT_ADDL_CRITERIA_1,
+M.REPORT_NAME_1 = S.REPORT_NAME_1
+WHERE M.report_date =  '30-JUN-2023';
+COMMIT;
+
+MERGE INTO BRF48_DETAILTABLE M
+USING (
+    SELECT distinct   b.REPORT_LABEL_1,b.cust_id,b.foracid,B.REPORT_ADDL_CRITERIA_1,B.REPORT_NAME_1
+    FROM BRF48_MAPPING_TABLE b
+    JOIN BRF48_DETAILTABLE a ON a.foracid = b.foracid
+    WHERE a.report_date = '30-JUN-2023'
+) S
+ON (M.foracid = S.foracid)
+WHEN MATCHED THEN UPDATE
+SET M.REPORT_LABEL_1 = S.REPORT_LABEL_1,
+M.REPORT_ADDL_CRITERIA_1 = S.REPORT_ADDL_CRITERIA_1,
+M.REPORT_NAME_1 = S.REPORT_NAME_1
+WHERE M.report_date =  '30-JUN-2023';
+COMMIT;
+
+ DELETE FROM BRF49_DETAILTABLE WHERE REPORT_NAME_1 IS NULL;
+COMMIT;
+
+COMMIT;
+END;
+
+create or replace PROCEDURE "BRF49_MAPPING_PROCEDURE" (REPORT_DATE VARCHAR2) 
+
+IS 
+  V_REPORT_DATE DATE := To_date (REPORT_DATE, 'DD-MM-YYYY'); 
+BEGIN
+
+
+
+--INSERT VALUES
+
+INSERT INTO BRF49_MAPPING_TABLE
+(foracid, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_STATUS, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type)
+SELECT ACCT_NUMBER, cust_id, ACCT_NAME, GL_SUB_HEAD_CODE, GL_CODE, SCHM_CODE, NRE_FLG, ACCT_CRNCY_CODE, REPORT_DATE, CONSTITUTION_CODE, COUNTRY, HNI_NETWORTH, SOL_ID, legal_entity_type
+FROM GENERAL_MASTER_TABLE
+WHERE report_date = '30-jun-2023'
+AND SCHM_CODE IN ('CA101', 'CA102', 'CA103', 'CA106', 'CA107', 'CA108', 'CA109', 'CA110', 'CA111', 'CA112', 'LA101', 'LA106', 'OD001', 'OD002',
+'OD003', 'OD028', 'OD651', 'SB105', 'SB107', 'TD115','SB101', 'SB102', 'SB103', 'SB106', 'SB110', 'SB201', 'SB203',
+'SB303', 'TD101', 'TD102', 'TD103', 'TD105', 'TD106', 'TD108', 'TD109', 'TD112', 'TD301');
+COMMIT;
+
+
+---UPDATE QUERY
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW104' , report_addl_criteria_1 ='ROW104A'
+WHERE  SCHM_CODE IN  ( 'SB303','CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW105' , report_addl_criteria_1 ='ROW105A'
+WHERE  SCHM_CODE IN  ('SB203' ,'CA107');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW106' , report_addl_criteria_1 ='ROW106A'
+WHERE  SCHM_CODE IN  ('SB103', 'CA108');
+COMMIT;
+
+--102G
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW107' , report_addl_criteria_1 ='ROW107A'
+WHERE  SCHM_CODE IN  ('SB102', 'CA109');
+COMMIT;
+
+--102H
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW108' , report_addl_criteria_1 ='ROW108A'
+WHERE  SCHM_CODE IN  ( 'CA110', 'TD301');
+COMMIT;
+
+--102I
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW109' , report_addl_criteria_1 ='ROW109A'
+WHERE  SCHM_CODE IN  ( 'CA111','TD112');
+COMMIT;
+
+--102J
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW110' , report_addl_criteria_1 ='ROW110A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'TD109');
+COMMIT;
+
+--102K
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW111' , report_addl_criteria_1 ='ROW111A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'TD108');
+COMMIT;
+
+
+--ROW105A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW113' , report_addl_criteria_1 ='ROW113A'
+WHERE  SCHM_CODE IN  ( 'CA101', 'TD105');
+COMMIT;
+
+--ROW105B
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW114' , report_addl_criteria_1 ='ROW114A'
+WHERE  SCHM_CODE IN  ( 'CA102', 'TD103');
+COMMIT;
+
+
+--ROW105C
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW115' , report_addl_criteria_1 ='ROW115A'
+WHERE  SCHM_CODE IN  ( 'CA103', 'TD102');
+COMMIT;
+
+--102L
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW118' , report_addl_criteria_1 ='ROW118A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'TD106');
+COMMIT;
+
+--ROW105D
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW119' , report_addl_criteria_1 ='ROW119A'
+WHERE  SCHM_CODE IN  ( 'TD101','CA106');
+COMMIT;
+
+--ROW105E
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW120' , report_addl_criteria_1 ='ROW120A'
+WHERE  SCHM_CODE IN  ( 'SB107','CA107');
+COMMIT;
+
+--ROW105F
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW121' , report_addl_criteria_1 ='ROW121A'
+WHERE  SCHM_CODE IN  ('SB105', 'CA108');
+COMMIT;
+
+--ROW105G
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW122' , report_addl_criteria_1 ='ROW122A'
+WHERE  SCHM_CODE IN  ('OD651',  'CA109');
+COMMIT;
+
+
+
+--ROW105I
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW124' , report_addl_criteria_1 ='ROW124A'
+WHERE  SCHM_CODE IN  ( 'OD003','CA111');
+COMMIT;
+
+--ROW105J
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW125' , report_addl_criteria_1 ='ROW125A'
+WHERE  SCHM_CODE IN  ( 'OD002','CA112');
+COMMIT;
+
+--ROW105K
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW126' , report_addl_criteria_1 ='ROW126A'
+WHERE  SCHM_CODE IN  ( 'OD001','LA101');
+COMMIT;
+
+--ROW105L
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW127' , report_addl_criteria_1 ='ROW127A'
+WHERE  SCHM_CODE IN  ( 'LA106','LA106');
+COMMIT;
+
+
+
+--ROW107F
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW135' , report_addl_criteria_1 ='ROW135A'
+WHERE  SCHM_CODE IN  ( 'CA108', 'TD109');COMMIT;
+
+--ROW107G
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW136' , report_addl_criteria_1 ='ROW136A'
+WHERE  SCHM_CODE IN  ( 'CA109', 'TD108');COMMIT;
+
+--ROW107H
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW137' , report_addl_criteria_1 ='ROW137A'
+WHERE  SCHM_CODE IN  ( 'CA110', 'TD106');COMMIT;
+
+--ROW107I
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW138' , report_addl_criteria_1 ='ROW138A'
+WHERE  SCHM_CODE IN  ( 'CA111', 'TD105');COMMIT;
+
+--ROW107J
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW144' , report_addl_criteria_1 ='ROW144A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'TD103');COMMIT;
+
+--ROW107K
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW146' , report_addl_criteria_1 ='ROW146A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'TD102');COMMIT;
+
+--ROW107L
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW147' , report_addl_criteria_1 ='ROW147A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'TD101');COMMIT;
+
+
+--ROW109A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW148' , report_addl_criteria_1 ='ROW148A'
+WHERE  SCHM_CODE IN  ( 'CA101', 'SB303');COMMIT;
+
+--ROW109B
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW149' , report_addl_criteria_1 ='ROW149A'
+WHERE  SCHM_CODE IN  ( 'CA102','TD115');
+COMMIT;
+
+
+--ROW109C
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW150' , report_addl_criteria_1 ='ROW150A'
+WHERE  SCHM_CODE IN  ( 'CA103','SB101');
+COMMIT;
+
+--ROW109D
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW151' , report_addl_criteria_1 ='ROW151A'
+WHERE  SCHM_CODE IN  ( 'CA106','SB203');
+COMMIT;
+
+--ROW109E
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW154' , report_addl_criteria_1 ='ROW154A'
+WHERE  SCHM_CODE IN  ( 'CA107','SB203');
+COMMIT;
+
+
+--ROW109J
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW159' , report_addl_criteria_1 ='ROW159A'
+WHERE  SCHM_CODE IN  ( 'CA112''SB102');
+COMMIT;
+
+--ROW109K
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW164' , report_addl_criteria_1 ='ROW164A'
+WHERE  SCHM_CODE IN  ( 'TD106','LA101');
+COMMIT;
+
+
+--ROW111D
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW165' , report_addl_criteria_1 ='ROW165A'
+WHERE  SCHM_CODE IN  ( 'CA106','TD103');
+COMMIT;
+
+--ROW111E
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW171' , report_addl_criteria_1 ='ROW171A'
+WHERE  SCHM_CODE IN  ( 'TD102','CA107');
+COMMIT;
+
+--ROW109L
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW170' , report_addl_criteria_1 ='ROW170A'
+WHERE  SCHM_CODE IN  ('TD108',  'LA106');
+COMMIT;
+
+
+
+--ROW111A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW184' , report_addl_criteria_1 ='ROW184A'
+WHERE  SCHM_CODE IN  ( 'TD109','CA101');
+COMMIT;
+
+--ROW111B
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW185' , report_addl_criteria_1 ='ROW185A'
+WHERE  SCHM_CODE IN  ( 'TD112','CA102');
+COMMIT;
+
+--ROW111C
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW189' , report_addl_criteria_1 ='ROW189A'
+WHERE  SCHM_CODE IN  ( 'TD105',  'CA103');
+COMMIT;
+
+
+
+--ROW111F
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW200' , report_addl_criteria_1 ='ROW200A'
+WHERE  SCHM_CODE IN  ('TD101', 'CA108');
+COMMIT;
+
+--ROW111G
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW201' , report_addl_criteria_1 ='ROW201A'
+WHERE  SCHM_CODE IN  ( 'SB303','CA109');
+COMMIT;
+
+--ROW111H
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW204' , report_addl_criteria_1 ='ROW204A'
+WHERE  SCHM_CODE IN  ( 'SB203', 'CA110');
+COMMIT;
+
+--ROW111I
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW205' , report_addl_criteria_1 ='ROW205A'
+WHERE  SCHM_CODE IN  ( 'SB201','CA111');
+COMMIT;
+
+--ROW111J
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW208' , report_addl_criteria_1 ='ROW208A'
+WHERE  SCHM_CODE IN  ( 'SB110','CA112');
+COMMIT;
+
+--ROW111K
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW209' , report_addl_criteria_1 ='ROW209A'
+WHERE  SCHM_CODE IN  ( 'SB106','LA101');
+COMMIT;
+
+--ROW111L
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW214' , report_addl_criteria_1 ='ROW214A'
+WHERE  SCHM_CODE IN  (  'SB103','LA106');
+COMMIT;
+
+
+--ROW113A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW219' , report_addl_criteria_1 ='ROW219A'
+WHERE  SCHM_CODE IN  ( 'SB102','CA101');
+COMMIT;
+
+--ROW113B
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW224' , report_addl_criteria_1 ='ROW224A'
+WHERE  SCHM_CODE IN  ( 'SB101', 'CA102');
+COMMIT;
+
+
+--ROW113C
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW229' , report_addl_criteria_1 ='ROW229A'
+WHERE  SCHM_CODE IN  ('TD115',  'CA103');
+COMMIT;
+
+--ROW113D
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW234' , report_addl_criteria_1 ='ROW234A'
+WHERE  SCHM_CODE IN  ( 'SB207','CA106');
+COMMIT;
+
+--ROW113E
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW242' , report_addl_criteria_1 ='ROW242A'
+WHERE  SCHM_CODE IN  ( 'SB105',  'CA107');
+COMMIT;
+
+--ROW113F
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW246' , report_addl_criteria_1 ='ROW246A'
+WHERE  SCHM_CODE IN  ( 'OD651','CA108');
+COMMIT;
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW248' , report_addl_criteria_1 ='ROW248A'
+WHERE  SCHM_CODE IN  (  'OD028','CA109');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW249' , report_addl_criteria_1 ='ROW249A'
+WHERE  SCHM_CODE IN  (  'OD003','CA110');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW250' , report_addl_criteria_1 ='ROW250A'
+WHERE  SCHM_CODE IN  (  'OD002', 'CA111');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW251' , report_addl_criteria_1 ='ROW251A'
+WHERE  SCHM_CODE IN  ( 'CA112', 'LA106');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW252' , report_addl_criteria_1 ='ROW252A'
+WHERE  SCHM_CODE IN  ( 'LA101', 'LA101');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW253' , report_addl_criteria_1 ='ROW253A'
+WHERE  SCHM_CODE IN  ( 'LA106', 'CA112');
+COMMIT;
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW256' , report_addl_criteria_1 ='ROW256A'
+WHERE  SCHM_CODE IN  ( 'TD112','CA102');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW257' , report_addl_criteria_1 ='ROW257A'
+WHERE  SCHM_CODE IN  ( 'TD105',  'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW258' , report_addl_criteria_1 ='ROW258A'
+WHERE  SCHM_CODE IN  ( 'CA106','TD103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW259' , report_addl_criteria_1 ='ROW259A'
+WHERE  SCHM_CODE IN  ( 'TD102','CA107');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW260' , report_addl_criteria_1 ='ROW260A'
+WHERE  SCHM_CODE IN  ('TD101', 'CA108');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW104' , report_addl_criteria_1 ='ROW104B'
+WHERE  SCHM_CODE IN  ( 'LA106','CA102');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW105' , report_addl_criteria_1 ='ROW105B'
+WHERE  SCHM_CODE IN  ( 'SB201','CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW106' , report_addl_criteria_1 ='ROW106B'
+WHERE  SCHM_CODE IN  ( 'OD002','CA106');
+COMMIT; 
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW108' , report_addl_criteria_1 ='ROW108B'
+WHERE  SCHM_CODE IN  ('OD028', 'SB201');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW109' , report_addl_criteria_1 ='ROW109B'
+WHERE  SCHM_CODE IN  ('OD020', 'CA209');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW110' , report_addl_criteria_1 ='ROW110B'
+WHERE  SCHM_CODE IN  ( 'SB103','CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW113' , report_addl_criteria_1 ='ROW113B'
+WHERE  SCHM_CODE IN  ( 'SB105','CA102');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW114' , report_addl_criteria_1 ='ROW114B'
+WHERE  SCHM_CODE IN  ('TD115', 'CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW115' , report_addl_criteria_1 ='ROW115B'
+WHERE  SCHM_CODE IN  ('SB101', 'SB102');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW116' , report_addl_criteria_1 ='ROW116B'
+WHERE  SCHM_CODE IN  ('SB207', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW118' , report_addl_criteria_1 ='ROW118B'
+WHERE  SCHM_CODE IN  ( 'SB102','CA108');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW119' , report_addl_criteria_1 ='ROW119B'
+WHERE  SCHM_CODE IN  ('SB103', 'TD115');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW120' , report_addl_criteria_1 ='ROW120B'
+WHERE  SCHM_CODE IN  ('TD115', 'CA101');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW121' , report_addl_criteria_1 ='ROW121B'
+WHERE  SCHM_CODE IN  ( 'SB106', 'CA102');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW122' , report_addl_criteria_1 ='ROW122B'
+WHERE  SCHM_CODE IN  ('SB110', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW124' , report_addl_criteria_1 ='ROW124B'
+WHERE  SCHM_CODE IN  ( 'SB201','CA106');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW125' , report_addl_criteria_1 ='ROW125B'
+WHERE  SCHM_CODE IN  ('SB203', 'CA207');
+COMMIT;
+
+--ROW103A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW126' , report_addl_criteria_1 ='ROW126B'
+WHERE  SCHM_CODE IN  ( 'LA101','CA102');
+COMMIT;
+
+--ROW118 TO ROW171--
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW127' , report_addl_criteria_1 ='ROW127B'
+WHERE  SCHM_CODE IN  ( 'LA106','CA101');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW135' , report_addl_criteria_1 ='ROW135B'
+WHERE  SCHM_CODE IN  ('OD028', 'CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW136' , report_addl_criteria_1 ='ROW136B'
+WHERE  SCHM_CODE IN  ( 'OD003','CA207');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW137' , report_addl_criteria_1 ='ROW137B'
+WHERE  SCHM_CODE IN  ('OD651', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW148' , report_addl_criteria_1 ='ROW148B'
+WHERE  SCHM_CODE IN  ( 'SB105','CA101');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW149' , report_addl_criteria_1 ='ROW149B'
+WHERE  SCHM_CODE IN  ('SB207', 'CA102');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW150' , report_addl_criteria_1 ='ROW150B'
+WHERE  SCHM_CODE IN  ('TD115', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW153' , report_addl_criteria_1 ='ROW153B'
+WHERE  SCHM_CODE IN  ('SB101', 'CA106');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW155' , report_addl_criteria_1 ='ROW158B'
+WHERE  SCHM_CODE IN  ( 'SB102','CA207');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW159' , report_addl_criteria_1 ='ROW159B'
+WHERE  SCHM_CODE IN  ('SB103', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW161' , report_addl_criteria_1 ='ROW161B'
+WHERE  SCHM_CODE IN  ('SB203', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW164' , report_addl_criteria_1 ='ROW164B'
+WHERE  SCHM_CODE IN  ( 'SB106', 'CA109');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW166' , report_addl_criteria_1 ='ROW166B'
+WHERE  SCHM_CODE IN  ('SB110', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW170' , report_addl_criteria_1 ='ROW170B'
+WHERE  SCHM_CODE IN  ( 'SB201','CA106');
+COMMIT;
+
+--ROW103A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW172' , report_addl_criteria_1 ='ROW172B'
+WHERE  SCHM_CODE IN  ( 'LA101','TD103');
+COMMIT;
+
+--ROW118 TO ROW171--
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW184' , report_addl_criteria_1 ='ROW184B'
+WHERE  SCHM_CODE IN  ( 'LA106','SB110');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW185' , report_addl_criteria_1 ='ROW185B'
+WHERE  SCHM_CODE IN  ( 'OD001','TD103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW186' , report_addl_criteria_1 ='ROW186B'
+WHERE  SCHM_CODE IN  ( 'OD002','CA103');
+COMMIT; 
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW189' , report_addl_criteria_1 ='ROW189B'
+WHERE  SCHM_CODE IN  ('OD028', 'CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW190' , report_addl_criteria_1 ='ROW190B'
+WHERE  SCHM_CODE IN  ( 'OD003','CA207');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW191' , report_addl_criteria_1 ='ROW191B'
+WHERE  SCHM_CODE IN  ('OD651', 'CA108');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW194' , report_addl_criteria_1 ='ROW194B'
+WHERE  SCHM_CODE IN  ('OD651', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW196' , report_addl_criteria_1 ='ROW196B'
+WHERE  SCHM_CODE IN  ( 'SB105','SB110');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW200' , report_addl_criteria_1 ='ROW200B'
+WHERE  SCHM_CODE IN  ('SB207', 'TD103');
+COMMIT;
+
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW204' , report_addl_criteria_1 ='ROW204B'
+WHERE  SCHM_CODE IN  ('SB101', 'CA106');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW208' , report_addl_criteria_1 ='ROW208B'
+WHERE  SCHM_CODE IN  ( 'SB102','CA207');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW215' , report_addl_criteria_1 ='ROW215B'
+WHERE  SCHM_CODE IN  ('SB103', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW220' , report_addl_criteria_1 ='ROW220B'
+WHERE  SCHM_CODE IN  ('SB203', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW225' , report_addl_criteria_1 ='ROW225B'
+WHERE  SCHM_CODE IN  ( 'SB106', 'CA109');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW230' , report_addl_criteria_1 ='ROW230B'
+WHERE  SCHM_CODE IN  ('SB110', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW235' , report_addl_criteria_1 ='ROW235B'
+WHERE  SCHM_CODE IN  ( 'SB201','CA106');
+COMMIT;
+
+--ROW103A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW236' , report_addl_criteria_1 ='ROW236B'
+WHERE  SCHM_CODE IN  ( 'LA101','TD103');
+COMMIT;
+
+--ROW118 TO ROW171--
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW242' , report_addl_criteria_1 ='ROW242B'
+WHERE  SCHM_CODE IN  ( 'LA106','SB110');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW248' , report_addl_criteria_1 ='ROW248B'
+WHERE  SCHM_CODE IN  ( 'OD001','TD103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW249' , report_addl_criteria_1 ='ROW249B'
+WHERE  SCHM_CODE IN  ( 'OD002','CA103');
+COMMIT; 
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW250' , report_addl_criteria_1 ='ROW250B'
+WHERE  SCHM_CODE IN  ('OD028', 'CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW251' , report_addl_criteria_1 ='ROW251B'
+WHERE  SCHM_CODE IN  ( 'OD003','CA107');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW252' , report_addl_criteria_1 ='ROW252B'
+WHERE  SCHM_CODE IN  ('OD651', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW253' , report_addl_criteria_1 ='ROW253B'
+WHERE  SCHM_CODE IN  ( 'OD651','TD103');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW101' , report_addl_criteria_1 ='ROW101C'
+WHERE  SCHM_CODE IN  ( 'SB110','CA102');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW102' , report_addl_criteria_1 ='ROW102C'
+WHERE  SCHM_CODE IN  ( 'SB201','CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW129' , report_addl_criteria_1 ='ROW129C'
+WHERE  SCHM_CODE IN  ( 'OD002','CA106');
+COMMIT; 
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW130' , report_addl_criteria_1 ='ROW130C'
+WHERE  SCHM_CODE IN  ('OD028', 'SB201');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW132' , report_addl_criteria_1 ='ROW132C'
+WHERE  SCHM_CODE IN  ('OD020', 'CA209');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW133' , report_addl_criteria_1 ='ROW133C'
+WHERE  SCHM_CODE IN  ( 'SB103','CA108');
+COMMIT;
+
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW138' , report_addl_criteria_1 ='ROW138C'
+WHERE  SCHM_CODE IN  ( 'SB105','CA102');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW139' , report_addl_criteria_1 ='ROW139C'
+WHERE  SCHM_CODE IN  ('TD115', 'CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW148' , report_addl_criteria_1 ='ROW148C'
+WHERE  SCHM_CODE IN  ('SB101', 'SB102');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW149' , report_addl_criteria_1 ='ROW149C'
+WHERE  SCHM_CODE IN  ('SB207', 'CA103');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW150' , report_addl_criteria_1 ='ROW150C'
+WHERE  SCHM_CODE IN  ( 'SB102','CA108');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW151' , report_addl_criteria_1 ='ROW151C'
+WHERE  SCHM_CODE IN  ('SB103', 'TD115');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW153' , report_addl_criteria_1 ='ROW153C'
+WHERE  SCHM_CODE IN  ('SB110', 'CA101');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW156' , report_addl_criteria_1 ='ROW156C'
+WHERE  SCHM_CODE IN  ( 'SB106', 'CA102');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW159' , report_addl_criteria_1 ='ROW159C'
+WHERE  SCHM_CODE IN  ( 'SB201','CA106');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW162' , report_addl_criteria_1 ='ROW162C'
+WHERE  SCHM_CODE IN  ( 'SB202','CA106');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW164' , report_addl_criteria_1 ='ROW164C'
+WHERE  SCHM_CODE IN  ('SB110', 'CA103');
+COMMIT;
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW167' , report_addl_criteria_1 ='ROW167C'
+WHERE  SCHM_CODE IN  ('SB203', 'CA207');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW170' , report_addl_criteria_1 ='ROW170C'
+WHERE  SCHM_CODE IN  ( 'SB110','CA101');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW173' , report_addl_criteria_1 ='ROW173C'
+WHERE  SCHM_CODE IN  ( 'LA101','CA102');
+COMMIT;
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW175' , report_addl_criteria_1 ='ROW175C'
+WHERE  SCHM_CODE IN  ( 'OD001','CA102');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW176' , report_addl_criteria_1 ='ROW176C'
+WHERE  SCHM_CODE IN  ( 'OD002','CA106');
+COMMIT; 
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW177' , report_addl_criteria_1 ='ROW177C'
+WHERE  SCHM_CODE IN  ( 'OD002','CA103');
+COMMIT; 
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW178' , report_addl_criteria_1 ='ROW178C'
+WHERE  SCHM_CODE IN  ('OD028', 'CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW187' , report_addl_criteria_1 ='ROW187C'
+WHERE  SCHM_CODE IN  ( 'OD003','CA207');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW184' , report_addl_criteria_1 ='ROW184C'
+WHERE  SCHM_CODE IN  ( 'OD003','CA206');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW185' , report_addl_criteria_1 ='ROW185C'
+WHERE  SCHM_CODE IN  ( 'SB106','CA206');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW186' , report_addl_criteria_1 ='ROW186C'
+WHERE  SCHM_CODE IN  ('OD651', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW189' , report_addl_criteria_1 ='ROW189C'
+WHERE  SCHM_CODE IN  ( 'SB105','CA101');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW190' , report_addl_criteria_1 ='ROW190C'
+WHERE  SCHM_CODE IN  ('SB207', 'CA102');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW191' , report_addl_criteria_1 ='ROW191C'
+WHERE  SCHM_CODE IN  ('TD115', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW192' , report_addl_criteria_1 ='ROW192C'
+WHERE  SCHM_CODE IN  ('SB101', 'CA106');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW194' , report_addl_criteria_1 ='ROW194C'
+WHERE  SCHM_CODE IN  ( 'SB102','CA206');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW195' , report_addl_criteria_1 ='ROW195C'
+WHERE  SCHM_CODE IN  ( 'SB102','CA207');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW196' , report_addl_criteria_1 ='ROW196C'
+WHERE  SCHM_CODE IN  ('SB203', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW197' , report_addl_criteria_1 ='ROW197C'
+WHERE  SCHM_CODE IN  ( 'SB106', 'CA109');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW198' , report_addl_criteria_1 ='ROW198C'
+WHERE  SCHM_CODE IN  ('SB103', 'CA108');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW202' , report_addl_criteria_1 ='ROW202C'
+WHERE  SCHM_CODE IN  ('SB110', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW206' , report_addl_criteria_1 ='ROW206C'
+WHERE  SCHM_CODE IN  ( 'SB201','CA106');
+COMMIT;
+
+--ROW103A
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW210' , report_addl_criteria_1 ='ROW210C'
+WHERE  SCHM_CODE IN  ( 'LA101','TD103');
+COMMIT;
+
+--ROW118 TO ROW171--
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW213' , report_addl_criteria_1 ='ROW213C'
+WHERE  SCHM_CODE IN  ( 'LA106','SB110');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW216' , report_addl_criteria_1 ='ROW216C'
+WHERE  SCHM_CODE IN  ( 'OD001','TD103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW218' , report_addl_criteria_1 ='ROW218C'
+WHERE  SCHM_CODE IN  ( 'OD002','CA103');
+COMMIT; 
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW221' , report_addl_criteria_1 ='ROW221C'
+WHERE  SCHM_CODE IN  ('OD028', 'CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW223' , report_addl_criteria_1 ='ROW223C'
+WHERE  SCHM_CODE IN  ( 'OD003','CA207');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW226' , report_addl_criteria_1 ='ROW226C'
+WHERE  SCHM_CODE IN  ('OD651', 'CA108');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW228' , report_addl_criteria_1 ='ROW228C'
+WHERE  SCHM_CODE IN  ('OD651', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW231' , report_addl_criteria_1 ='ROW231C'
+WHERE  SCHM_CODE IN  ( 'SB105','SB110');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW233' , report_addl_criteria_1 ='ROW233C'
+WHERE  SCHM_CODE IN  ('SB207', 'TD103');
+COMMIT;
+
+
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW237' , report_addl_criteria_1 ='ROW237C'
+WHERE  SCHM_CODE IN  ('SB101', 'CA106');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW239' , report_addl_criteria_1 ='ROW239C'
+WHERE  SCHM_CODE IN  ( 'SB102','CA207');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW242' , report_addl_criteria_1 ='ROW242C'
+WHERE  SCHM_CODE IN  ('SB103', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW243' , report_addl_criteria_1 ='ROW243C'
+WHERE  SCHM_CODE IN  ('SB203', 'CA108');
+COMMIT;
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW244' , report_addl_criteria_1 ='ROW244C'
+WHERE  SCHM_CODE IN  ( 'SB106', 'CA109');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW248' , report_addl_criteria_1 ='ROW248C'
+WHERE  SCHM_CODE IN  ('SB110', 'CA103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW249' , report_addl_criteria_1 ='ROW249C'
+WHERE  SCHM_CODE IN  ( 'SB201','CA106');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW250' , report_addl_criteria_1 ='ROW250C'
+WHERE  SCHM_CODE IN  ( 'LA106','SB110');
+COMMIT;
+
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW251' , report_addl_criteria_1 ='ROW251C'
+WHERE  SCHM_CODE IN  ( 'OD001','TD103');
+COMMIT;
+
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW252' , report_addl_criteria_1 ='ROW252C'
+WHERE  SCHM_CODE IN  ( 'OD002','CA103');
+COMMIT; 
+
+UPDATE brf49_mapping_table SET  REPORT_NAME_1 ='BRF49', REPORT_LABEL_1 = 'ROW253' , report_addl_criteria_1 ='ROW253C'
+WHERE  SCHM_CODE IN  ('OD028', 'CA106');
+COMMIT;
+
+
+COMMIT;
+END;
+
+
+create or replace procedure BRF49_SUMMARY_PROCEDURE (Report_date VARCHAR2)
+IS
+----30-SEP-2020--
+---VARARIBLE DECLARE
+V_REPORT_DATE DATE := TO_DATE(Report_date,'DD-MM-YYYY');
+V_REPORT_DUE_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), +3);
+V_REPORT_FROM_DATE DATE := Add_Months( Last_day (V_REPORT_DATE), -3)+1;
+
+V_R10_PRODUCT	varchar2(100 BYTE):='Total amount of regulatory capital, before the application of capital deductions';
+V_R10_YEAR_AMOUNT	Number(24,4):=0;
+V_R10_YEAR_FACTOR	Number(24,4):=1; 
+V_R10_YEAR_CALCULATED	Number(24,4):=0;
+V_R10_TOTAL_ASF	Number(24,4):=0;
+V_R11_PRODUCT	varchar2(100 BYTE):='Capital instruments not included above';
+V_R11_YEAR_AMOUNT	Number(24,4):=0;
+V_R11_YEAR_FACTOR	Number(24,4):=1;
+V_R11_YEAR_CALCULATED	Number(24,4):=0;
+V_R11_TOTAL_ASF	Number(24,4):=0;
+V_R13_PRODUCT	varchar2(100 BYTE):='Stable demand and term deposits (unsecured)';
+V_R13_MONTH_AMOUNT	Number(24,4):=0;
+V_R13_6MONTH_AMOUNT	Number(24,4):=0;
+V_R13_YEAR_AMOUNT	Number(24,4):=0;
+V_R13_MONTH_FACTOR	Number(24,4):=0.95;
+V_R13_6MONTH_FACTOR	Number(24,4):=0.95;
+V_R13_YEAR_FACTOR	Number(24,4):=1 ;
+V_R13_MONTH_CALCULATED	Number(24,4):=0;
+V_R13_6MONTH_CALCULATED	Number(24,4):=0;
+V_R13_YEAR_CALCULATED	Number(24,4):=0;
+V_R13_TOTAL_ASF	Number(24,4):=0;
+V_R14_PRODUCT	varchar2(100 BYTE):='Less stable demand and term deposits (unsecured)';
+V_R14_MONTH_AMOUNT	Number(24,4):=0;
+V_R14_6MONTH_AMOUNT	Number(24,4):=0;
+V_R14_YEAR_AMOUNT	Number(24,4):=0;
+V_R14_MONTH_FACTOR	Number(24,4):=0.9;
+V_R14_6MONTH_FACTOR	Number(24,4):=0.9;
+V_R14_YEAR_FACTOR	Number(24,4):=1;
+V_R14_MONTH_CALCULATED	Number(24,4):=0;
+V_R14_6MONTH_CALCULATED	Number(24,4):=0;
+V_R14_YEAR_CALCULATED	Number(24,4):=0;
+V_R14_TOTAL_ASF	Number(24,4):=0;
+V_R15_PRODUCT	varchar2(100 BYTE):='Secured funding';
+V_R15_MONTH_AMOUNT	Number(24,4):=0;
+V_R15_6MONTH_AMOUNT	Number(24,4):=0;
+V_R15_YEAR_AMOUNT	Number(24,4):=0;
+V_R15_MONTH_FACTOR	Number(24,4):=0;
+V_R15_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R15_YEAR_FACTOR	Number(24,4):=1;
+V_R15_MONTH_CALCULATED	Number(24,4):=0;
+V_R15_6MONTH_CALCULATED	Number(24,4):=0;
+V_R15_YEAR_CALCULATED	Number(24,4):=0;
+V_R15_TOTAL_ASF	Number(24,4):=0;
+V_R17_PRODUCT	varchar2(100 BYTE):='Operational deposit';
+V_R17_MONTH_AMOUNT	Number(24,4):=0;
+V_R17_6MONTH_AMOUNT	Number(24,4):=0;
+V_R17_YEAR_AMOUNT	Number(24,4):=0;
+V_R17_MONTH_FACTOR	Number(24,4):=0.5;
+V_R17_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R17_YEAR_FACTOR	Number(24,4):=1;
+V_R17_MONTH_CALCULATED	Number(24,4):=0;
+V_R17_6MONTH_CALCULATED	Number(24,4):=0;
+V_R17_YEAR_CALCULATED	Number(24,4):=0;
+V_R17_TOTAL_ASF	Number(24,4):=0;
+V_R18_PRODUCT	varchar2(100 BYTE):='Non-operational deposit (unsecured)';
+V_R18_MONTH_AMOUNT	Number(24,4):=0;
+V_R18_6MONTH_AMOUNT	Number(24,4):=0;
+V_R18_YEAR_AMOUNT	Number(24,4):=0;
+V_R18_MONTH_FACTOR	Number(24,4):=0.5;
+V_R18_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R18_YEAR_FACTOR	Number(24,4):=1;
+V_R18_MONTH_CALCULATED	Number(24,4):=0;
+V_R18_6MONTH_CALCULATED	Number(24,4):=0;
+V_R18_YEAR_CALCULATED	Number(24,4):=0;
+V_R18_TOTAL_ASF	Number(24,4):=0;
+V_R19_PRODUCT	varchar2(100 BYTE):='Other unsecured funding';
+V_R19_MONTH_AMOUNT	Number(24,4):=0;
+V_R19_6MONTH_AMOUNT	Number(24,4):=0;
+V_R19_YEAR_AMOUNT	Number(24,4):=0;
+V_R19_MONTH_FACTOR	Number(24,4):=0.5;
+V_R19_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R19_YEAR_FACTOR	Number(24,4):=1;
+V_R19_MONTH_CALCULATED	Number(24,4):=0;
+V_R19_6MONTH_CALCULATED	Number(24,4):=0;
+V_R19_YEAR_CALCULATED	Number(24,4):=0;
+V_R19_TOTAL_ASF	Number(24,4):=0;
+V_R20_PRODUCT	varchar2(100 BYTE):='Other unsecured funding';
+V_R20_MONTH_AMOUNT	Number(24,4):=0;
+V_R20_6MONTH_AMOUNT	Number(24,4):=0;
+V_R20_YEAR_AMOUNT	Number(24,4):=0;
+V_R20_MONTH_FACTOR	Number(24,4):=0.5;
+V_R20_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R20_YEAR_FACTOR	Number(24,4):=1;
+V_R20_MONTH_CALCULATED	Number(24,4):=0;
+V_R20_6MONTH_CALCULATED	Number(24,4):=0;
+V_R20_YEAR_CALCULATED	Number(24,4):=0;
+V_R20_TOTAL_ASF	Number(24,4):=0;
+V_R21_PRODUCT	varchar2(100 BYTE):='';
+V_R21_MONTH_AMOUNT	Number(24,4):=0;
+V_R21_6MONTH_AMOUNT	Number(24,4):=0;
+V_R21_YEAR_AMOUNT	Number(24,4):=0;
+V_R21_MONTH_FACTOR	Number(24,4):=0.5;
+V_R21_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R21_YEAR_FACTOR	Number(24,4):=1;
+V_R21_MONTH_CALCULATED	Number(24,4):=0;
+V_R21_6MONTH_CALCULATED	Number(24,4):=0;
+V_R21_YEAR_CALCULATED	Number(24,4):=0;
+V_R21_TOTAL_ASF	Number(24,4):=0;
+V_R22_PRODUCT	varchar2(100 BYTE):='Operational deposit';
+V_R22_MONTH_AMOUNT	Number(24,4):=0;
+V_R22_6MONTH_AMOUNT	Number(24,4):=0;
+V_R22_YEAR_AMOUNT	Number(24,4):=0;
+V_R22_MONTH_FACTOR	Number(24,4):=0.5;
+V_R22_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R22_YEAR_FACTOR	Number(24,4):=1;
+V_R22_MONTH_CALCULATED	Number(24,4):=0;
+V_R22_6MONTH_CALCULATED	Number(24,4):=0;
+V_R22_YEAR_CALCULATED	Number(24,4):=0;
+V_R22_TOTAL_ASF	Number(24,4):=0;
+V_R23_PRODUCT	varchar2(100 BYTE):='Non-operational deposit';
+V_R23_MONTH_AMOUNT	Number(24,4):=0;
+V_R23_6MONTH_AMOUNT	Number(24,4):=0;
+V_R23_YEAR_AMOUNT	Number(24,4):=0;
+V_R23_MONTH_FACTOR	Number(24,4):=0.5;
+V_R23_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R23_YEAR_FACTOR	Number(24,4):=1;
+V_R23_MONTH_CALCULATED	Number(24,4):=0;
+V_R23_6MONTH_CALCULATED	Number(24,4):=0;
+V_R23_YEAR_CALCULATED	Number(24,4):=0;
+V_R23_TOTAL_ASF	Number(24,4):=0;
+V_R24_PRODUCT	varchar2(100 BYTE):='Other unsecured funding';
+V_R24_MONTH_AMOUNT	Number(24,4):=0;
+V_R24_6MONTH_AMOUNT	Number(24,4):=0;
+V_R24_YEAR_AMOUNT	Number(24,4):=0;
+V_R24_MONTH_FACTOR	Number(24,4):=0.5;
+V_R24_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R24_YEAR_FACTOR	Number(24,4):=1;
+V_R24_MONTH_CALCULATED	Number(24,4):=0;
+V_R24_6MONTH_CALCULATED	Number(24,4):=0;
+V_R24_YEAR_CALCULATED	Number(24,4):=0;
+V_R24_TOTAL_ASF	Number(24,4):=0;
+V_R25_PRODUCT	varchar2(100 BYTE):='Secured funding';
+V_R25_MONTH_AMOUNT	Number(24,4):=0;
+V_R25_6MONTH_AMOUNT	Number(24,4):=0;
+V_R25_YEAR_AMOUNT	Number(24,4):=0;
+V_R25_MONTH_FACTOR	Number(24,4):=0.5;
+V_R25_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R25_YEAR_FACTOR	Number(24,4):=1;
+V_R25_MONTH_CALCULATED	Number(24,4):=0;
+V_R25_6MONTH_CALCULATED	Number(24,4):=0;
+V_R25_YEAR_CALCULATED	Number(24,4):=0;
+V_R25_TOTAL_ASF	Number(24,4):=0;
+V_R27_PRODUCT	varchar2(100 BYTE):='Operational deposit';
+V_R27_MONTH_AMOUNT	Number(24,4):=0;
+V_R27_6MONTH_AMOUNT	Number(24,4):=0;
+V_R27_YEAR_AMOUNT	Number(24,4):=0;
+V_R27_MONTH_FACTOR	Number(24,4):=0.5;
+V_R27_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R27_YEAR_FACTOR	Number(24,4):=1;
+V_R27_MONTH_CALCULATED	Number(24,4):=0;
+V_R27_6MONTH_CALCULATED	Number(24,4):=0;
+V_R27_YEAR_CALCULATED	Number(24,4):=0;
+V_R27_TOTAL_ASF	Number(24,4):=0;
+V_R28_PRODUCT	varchar2(100 BYTE):='NON-Operational deposit';
+V_R28_MONTH_AMOUNT	Number(24,4):=0;
+V_R28_6MONTH_AMOUNT	Number(24,4):=0;
+V_R28_YEAR_AMOUNT 	Number(24,4):=0;
+V_R28_MONTH_FACTOR	Number(24,4):=0;
+V_R28_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R28_YEAR_FACTOR	Number(24,4):=1;
+V_R28_MONTH_CALCULATED	Number(24,4):=0;
+V_R28_6MONTH_CALCULATED	Number(24,4):=0;
+V_R28_YEAR_CALCULATED	Number(24,4):=0;
+V_R28_TOTAL_ASF	Number(24,4):=0;
+V_R29_PRODUCT	varchar2(100 BYTE):='Other unsecured funding';
+V_R29_MONTH_AMOUNT	Number(24,4):=0;
+V_R29_6MONTH_AMOUNT	Number(24,4):=0;
+V_R29_YEAR_AMOUNT	Number(24,4):=0;
+V_R29_MONTH_FACTOR	Number(24,4):=0;
+V_R29_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R29_YEAR_FACTOR	Number(24,4):=1;
+V_R30_PRODUCT	varchar2(100 BYTE):='Secured funding';
+V_R30_MONTH_AMOUNT	Number(24,4):=0;
+V_R30_6MONTH_AMOUNT	Number(24,4):=0;
+V_R30_YEAR_AMOUNT	Number(24,4):=0;
+V_R30_MONTH_FACTOR	Number(24,4):=0;
+V_R30_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R30_YEAR_FACTOR	Number(24,4):=1;
+V_R30_MONTH_CALCULATED	Number(24,4):=0;
+V_R30_6MONTH_CALCULATED	Number(24,4):=0;
+V_R30_YEAR_CALCULATED	Number(24,4):=0;
+V_R30_TOTAL_ASF	Number(24,4):=0;
+V_R31_PRODUCT	varchar2(100 BYTE):='Zero-Cost Funding from CBUAE under TESS Program ';
+V_R31_MONTH_AMOUNT	Number(24,4):=0;
+V_R31_6MONTH_AMOUNT	Number(24,4):=0;
+V_R31_YEAR_AMOUNT	Number(24,4):=0;
+V_R31_MONTH_FACTOR	Number(24,4):=0.5;
+V_R31_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R31_YEAR_FACTOR	Number(24,4):=0.5;
+V_R31_MONTH_CALCULATED	Number(24,4):=0;
+V_R31_6MONTH_CALCULATED	Number(24,4):=0;
+V_R31_YEAR_CALCULATED	Number(24,4):=0;
+V_R31_TOTAL_ASF	Number(24,4):=0;
+V_R32_PRODUCT	varchar2(100 BYTE):='';
+V_R32_MONTH_AMOUNT	Number(24,4):=0;
+V_R32_6MONTH_AMOUNT	Number(24,4):=0;
+V_R32_YEAR_AMOUNT	Number(24,4):=0;
+V_R32_MONTH_FACTOR	Number(24,4):=0.5;
+V_R32_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R32_YEAR_FACTOR	Number(24,4):=1;
+V_R32_MONTH_CALCULATED	Number(24,4):=0;
+V_R32_6MONTH_CALCULATED	Number(24,4):=0;
+V_R32_YEAR_CALCULATED	Number(24,4):=0;
+V_R32_TOTAL_ASF	Number(24,4):=0;
+V_R33_PRODUCT	varchar2(100 BYTE):='Operational deposit';
+V_R33_MONTH_AMOUNT	Number(24,4):=0;
+V_R33_6MONTH_AMOUNT	Number(24,4):=0;
+V_R33_YEAR_AMOUNT	Number(24,4):=0;
+V_R33_MONTH_FACTOR	Number(24,4):=0.5;
+V_R33_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R33_YEAR_FACTOR	Number(24,4):=1;
+V_R33_MONTH_CALCULATED	Number(24,4):=0;
+V_R33_6MONTH_CALCULATED	Number(24,4):=0;
+V_R33_YEAR_CALCULATED	Number(24,4):=0;
+V_R33_TOTAL_ASF	Number(24,4):=0;
+V_R34_PRODUCT	varchar2(100 BYTE):='Non-operational deposit (unsecured)';
+V_R34_MONTH_AMOUNT	Number(24,4):=0;
+V_R34_6MONTH_AMOUNT	Number(24,4):=0;
+V_R34_YEAR_AMOUNT	Number(24,4):=0;
+V_R34_MONTH_FACTOR	Number(24,4):=0;
+V_R34_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R34_YEAR_FACTOR	Number(24,4):=1;
+V_R34_MONTH_CALCULATED	Number(24,4):=0;
+V_R34_6MONTH_CALCULATED	Number(24,4):=0;
+V_R34_YEAR_CALCULATED	Number(24,4):=0;
+V_R34_TOTAL_ASF	Number(24,4):=0;
+V_R35_PRODUCT	varchar2(100 BYTE):='Other unsecured funding';
+V_R35_MONTH_AMOUNT	Number(24,4):=0;
+V_R35_6MONTH_AMOUNT	Number(24,4):=0;
+V_R35_YEAR_AMOUNT	Number(24,4):=0;
+V_R35_MONTH_FACTOR	Number(24,4):=0;
+V_R35_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R35_YEAR_FACTOR	Number(24,4):=1;
+V_R35_MONTH_CALCULATED	Number(24,4):=0;
+V_R35_6MONTH_CALCULATED	Number(24,4):=0;
+V_R35_YEAR_CALCULATED	Number(24,4):=0;
+V_R35_TOTAL_ASF	Number(24,4):=0;
+V_R36_PRODUCT	varchar2(100 BYTE):='Secured funding';
+V_R36_MONTH_AMOUNT	Number(24,4):=0;
+V_R36_6MONTH_AMOUNT	Number(24,4):=0;
+V_R36_YEAR_AMOUNT	Number(24,4):=0;
+V_R36_MONTH_FACTOR	Number(24,4):=0;
+V_R36_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R36_YEAR_FACTOR	Number(24,4):=1;
+V_R36_MONTH_CALCULATED	Number(24,4):=0;
+V_R36_6MONTH_CALCULATED	Number(24,4):=0;
+V_R36_YEAR_CALCULATED	Number(24,4):=0;
+V_R36_TOTAL_ASF	Number(24,4):=0;
+V_R38_PRODUCT	varchar2(100 BYTE):='Derivative liabilities, gross of variation margin posted';
+V_R38_YEAR_AMOUNT	Number(24,4):=0;
+V_R39_PRODUCT	varchar2(100 BYTE):='Total variation margin posted';
+V_R39_YEAR_AMOUNT	Number(24,4):=0;
+V_R40_PRODUCT	varchar2(100 BYTE):='NSFR derivative liabilities';
+V_R40_YEAR_AMOUNT	Number(24,4):=0;
+V_R40_YEAR_FACTOR	Number(24,4):=0;
+V_R40_YEAR_CALCULATED	Number(24,4):=0;
+V_R40_TOTAL_ASF	Number(24,4):=0;
+V_R41_PRODUCT	varchar2(300 BYTE):='Total variation margin received that does not meet the criteria in paragraph 35(a) of BCBS Basel III NSFR';
+V_R41_YEAR_AMOUNT	Number(24,4):=0;
+V_R41_YEAR_FACTOR	Number(24,4):=0;
+V_R41_YEAR_CALCULATED	Number(24,4):=0;
+V_R41_TOTAL_ASF	Number(24,4):=0;
+V_R42_PRODUCT	varchar2(100 BYTE):='Total initial margin received';
+V_R42_YEAR_AMOUNT	Number(24,4):=0;
+V_R42_YEAR_FACTOR	Number(24,4):=0;
+V_R42_YEAR_CALCULATED	Number(24,4):=0;
+V_R42_TOTAL_ASF	Number(24,4):=0;
+V_R44_PRODUCT	varchar2(100 BYTE):='Deferred tax liabilities';
+V_R44_MONTH_AMOUNT	Number(24,4):=0;
+V_R44_6MONTH_AMOUNT	Number(24,4):=0;
+V_R44_YEAR_AMOUNT	Number(24,4):=0;
+V_R44_MONTH_FACTOR	Number(24,4):=0;
+V_R44_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R44_YEAR_FACTOR	Number(24,4):=1;
+V_R44_MONTH_CALCULATED	Number(24,4):=0;
+V_R44_6MONTH_CALCULATED	Number(24,4):=0;
+V_R44_YEAR_CALCULATED	Number(24,4):=0;
+V_R44_TOTAL_ASF	Number(24,4):=0;
+V_R45_PRODUCT	varchar2(100 BYTE):='Minority interest';
+V_R45_MONTH_AMOUNT	Number(24,4):=0;
+V_R45_6MONTH_AMOUNT	Number(24,4):=0;
+V_R45_YEAR_AMOUNT	Number(24,4):=0;
+V_R45_MONTH_FACTOR	Number(24,4):=0;
+V_R45_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R45_YEAR_FACTOR	Number(24,4):=1;
+V_R45_MONTH_CALCULATED	Number(24,4):=0;
+V_R45_6MONTH_CALCULATED	Number(24,4):=0;
+V_R45_YEAR_CALCULATED	Number(24,4):=0;
+V_R45_TOTAL_ASF	Number(24,4):=0;
+V_R46_PRODUCT	varchar2(100 BYTE):='Trade date payables';
+V_R46_MONTH_AMOUNT	Number(24,4):=0;
+V_R46_MONTH_FACTOR	Number(24,4):=0;
+V_R46_MONTH_CALCULATED	Number(24,4):=0;
+V_R46_TOTAL_ASF	Number(24,4):=0;
+V_R47_PRODUCT	varchar2(100 BYTE):='All other liability categories not included above';
+V_R47_MONTH_AMOUNT	Number(24,4):=0;
+V_R47_6MONTH_AMOUNT	Number(24,4):=0;
+V_R47_YEAR_AMOUNT	Number(24,4):=0;
+V_R47_MONTH_FACTOR	Number(24,4):=0;
+V_R47_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R47_YEAR_FACTOR	Number(24,4):=1;
+V_R47_MONTH_CALCULATED	Number(24,4):=0;
+V_R47_6MONTH_CALCULATED	Number(24,4):=0;
+V_R47_YEAR_CALCULATED	Number(24,4):=0;
+V_R47_TOTAL_ASF	Number(24,4):=0;
+V_R53_PRODUCT	varchar2(100 BYTE):=' Coins and banknotes currently held and immediately available to meet obligations';
+V_R53_MONTH_AMOUNT	Number(24,4):=0;
+V_R53_MONTH_FACTOR	Number(24,4):=0;
+V_R53_MONTH_CALCULATED	Number(24,4):=0;
+V_R53_TOTAL_ASF	Number(24,4):=0;
+V_R55_PRODUCT	varchar2(100 BYTE):='Balances held in the Statutory Reserve Account';
+V_R55_MONTH_AMOUNT	Number(24,4):=0;
+V_R55_MONTH_FACTOR	Number(24,4):=0;
+V_R55_MONTH_CALCULATED	Number(24,4):=0;
+V_R55_TOTAL_ASF	Number(24,4):=0;
+V_R56_PRODUCT	varchar2(100 BYTE):='Other central bank reserves';
+V_R56_MONTH_AMOUNT	Number(24,4):=0;
+V_R56_MONTH_FACTOR	Number(24,4):=0;
+V_R56_MONTH_CALCULATED	Number(24,4):=0;
+V_R56_TOTAL_ASF	Number(24,4):=0;
+V_R57_PRODUCT	varchar2(300 BYTE):='Unencumbered loans / securities to central banks';
+V_R57_MONTH_AMOUNT	Number(24,4):=0;
+V_R57_6MONTH_AMOUNT	Number(24,4):=0;
+V_R57_YEAR_AMOUNT	Number(24,4):=0;
+V_R57_MONTH_FACTOR	Number(24,4):=0;
+V_R57_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R57_YEAR_FACTOR	Number(24,4):=1;
+V_R57_MONTH_CALCULATED	Number(24,4):=0;
+V_R57_6MONTH_CALCULATED	Number(24,4):=0;
+V_R57_YEAR_CALCULATED	Number(24,4):=0;
+V_R57_TOTAL_ASF	Number(24,4):=0;
+V_R58_PRODUCT	varchar2(100 BYTE):='Encumbered assets with a remaining period of < 6 months  -  excluded from HQLA due to encumbrance';
+V_R58_MONTH_AMOUNT	Number(24,4):=0;
+V_R58_6MONTH_AMOUNT	Number(24,4):=0;
+V_R58_YEAR_AMOUNT	Number(24,4):=0;
+V_R58_MONTH_FACTOR	Number(24,4):=0;
+V_R58_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R58_YEAR_FACTOR	Number(24,4):=1;
+V_R58_MONTH_CALCULATED	Number(24,4):=0;
+V_R58_6MONTH_CALCULATED	Number(24,4):=0;
+V_R58_YEAR_CALCULATED	Number(24,4):=0;
+V_R58_TOTAL_ASF	Number(24,4):=0;
+V_R59_PRODUCT	varchar2(300 BYTE):='Encumbered assets with a remaining period of ≥ 6 months to < 1 year  -  excluded from HQLA due to encumbrance';
+V_R59_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R59_YEAR_FACTOR	Number(24,4):=1;
+V_R59_6MONTH_CALCULATED	Number(24,4):=0;
+V_R59_YEAR_CALCULATED	Number(24,4):=0;
+V_R59_TOTAL_ASF	Number(24,4):=0;
+V_R60_PRODUCT	varchar2(100 BYTE):='Encumbered assets with a remaining period of ≥ 1 year  -  excluded from HQLA due to encumbrance';
+V_R60_YEAR_AMOUNT	Number(24,4):=0;
+V_R60_YEAR_FACTOR	Number(24,4):=1;
+V_R60_YEAR_CALCULATED	Number(24,4):=0;
+V_R60_TOTAL_ASF	Number(24,4):=0;
+V_R62_PRODUCT	varchar2(300 BYTE):='Unencumbered   -  included in HQLA stock      (including CB debt securities with maturity of more than 6 months)';
+V_R62_MONTH_AMOUNT	Number(24,4):=0;
+V_R62_6MONTH_AMOUNT	Number(24,4):=0;
+V_R62_YEAR_AMOUNT	Number(24,4):=0;
+V_R62_MONTH_FACTOR	Number(24,4):=0.05;
+V_R62_6MONTH_FACTOR	Number(24,4):=0.05;
+V_R62_YEAR_FACTOR	Number(24,4):=0.05;
+V_R62_MONTH_CALCULATED	Number(24,4):=0;
+V_R62_6MONTH_CALCULATED	Number(24,4):=0;
+V_R62_YEAR_CALCULATED	Number(24,4):=0;
+V_R62_TOTAL_ASF	Number(24,4):=0;
+V_R63_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months   -  Level 1 excluded from HQLA due to encumbrance';
+V_R63_MONTH_AMOUNT	Number(24,4):=0;
+V_R63_MONTH_FACTOR	Number(24,4):=0.05;
+V_R63_MONTH_CALCULATED	Number(24,4):=0;
+V_R63_TOTAL_ASF	Number(24,4):=0;
+V_R64_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year   -  Level 1 excluded from HQLA due to encumbrance';
+V_R64_6MONTH_AMOUNT	Number(24,4):=0;
+V_R64_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R64_6MONTH_CALCULATED	Number(24,4):=0;
+V_R64_TOTAL_ASF	Number(24,4):=0;
+V_R65_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 1 year   -   Level 1 excluded from HQLA due to encumbrance';
+V_R65_YEAR_AMOUNT	Number(24,4):=0;
+V_R65_YEAR_FACTOR	Number(24,4):=1;
+V_R65_YEAR_CALCULATED	Number(24,4):=0;
+V_R65_TOTAL_ASF	Number(24,4):=0;
+V_R68_PRODUCT	varchar2(300 BYTE):='Unencumbered   -  included in HQLA stock';
+V_R68_MONTH_AMOUNT	Number(24,4):=0;
+V_R68_6MONTH_AMOUNT	Number(24,4):=0;
+V_R68_YEAR_AMOUNT	Number(24,4):=0;
+V_R68_MONTH_FACTOR	Number(24,4):=0.15;
+V_R68_6MONTH_FACTOR	Number(24,4):=0.15;
+V_R68_YEAR_FACTOR	Number(24,4):=0.15;
+V_R68_MONTH_CALCULATED	Number(24,4):=0;
+V_R68_6MONTH_CALCULATED	Number(24,4):=0;
+V_R68_YEAR_CALCULATED	Number(24,4):=0;
+V_R68_TOTAL_ASF	Number(24,4):=0;
+V_R69_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of less than 6 months  Level 2A excluded from HQLA due to encumbrance';
+V_R69_MONTH_AMOUNT	Number(24,4):=0;
+V_R69_MONTH_FACTOR	Number(24,4):=0.15;
+V_R69_MONTH_CALCULATED	Number(24,4):=0;
+V_R69_TOTAL_ASF	Number(24,4):=0;
+V_R70_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of greater than equl to 6 months to less than  1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R70_6MONTH_AMOUNT	Number(24,4):=0;
+V_R70_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R70_6MONTH_CALCULATED	Number(24,4):=0;
+V_R70_TOTAL_ASF	Number(24,4):=0;
+V_R71_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R71_YEAR_AMOUNT	Number(24,4):=0;
+V_R71_YEAR_FACTOR	Number(24,4):=1;
+V_R71_YEAR_CALCULATED	Number(24,4):=0;
+V_R71_TOTAL_ASF	Number(24,4):=0;
+V_R73_PRODUCT	varchar2(100 BYTE):='Unencumbered   -  included in HQLA stock';
+V_R73_MONTH_AMOUNT	Number(24,4):=0;
+V_R73_6MONTH_AMOUNT	Number(24,4):=0;
+V_R73_YEAR_AMOUNT	Number(24,4):=0;
+V_R73_MONTH_FACTOR	Number(24,4):=0.15;
+V_R73_6MONTH_FACTOR	Number(24,4):=0.15;
+V_R73_YEAR_FACTOR	Number(24,4):=0.15;
+V_R73_MONTH_CALCULATED	Number(24,4):=0;
+V_R73_6MONTH_CALCULATED	Number(24,4):=0;
+V_R73_YEAR_CALCULATED	Number(24,4):=0;
+V_R73_TOTAL_ASF	Number(24,4):=0;
+V_R74_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of < 6 months   -   Level 2A excluded from HQLA due to encumbrance';
+V_R74_MONTH_AMOUNT	Number(24,4):=0;
+V_R74_MONTH_FACTOR	Number(24,4):=0.15;
+V_R74_MONTH_CALCULATED	Number(24,4):=0;
+V_R74_TOTAL_ASF	Number(24,4):=0;
+V_R75_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R75_6MONTH_AMOUNT	Number(24,4):=0;
+V_R75_6MONTH_FACTOR	Number(24,4):=0.15;
+V_R75_6MONTH_CALCULATED	Number(24,4):=0;
+V_R75_TOTAL_ASF	Number(24,4):=0;
+V_R76_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R76_YEAR_AMOUNT	Number(24,4):=0;
+V_R76_YEAR_FACTOR	Number(24,4):=1;
+V_R76_YEAR_CALCULATED	Number(24,4):=0;
+V_R76_TOTAL_ASF	Number(24,4):=0;
+V_R79_PRODUCT	varchar2(100 BYTE):='Unencumbered   -  included in HQLA stock';
+V_R79_MONTH_AMOUNT	Number(24,4):=0;
+V_R79_6MONTH_AMOUNT	Number(24,4):=0;
+V_R79_YEAR_AMOUNT	Number(24,4):=0;
+V_R79_MONTH_FACTOR	Number(24,4):=0.5;
+V_R79_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R79_YEAR_FACTOR	Number(24,4):=0.5;
+V_R79_MONTH_CALCULATED	Number(24,4):=0;
+V_R79_6MONTH_CALCULATED	Number(24,4):=0;
+V_R79_YEAR_CALCULATED	Number(24,4):=0;
+V_R79_TOTAL_ASF	Number(24,4):=0;
+V_R80_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of < 6 months   -   Level 2A excluded from HQLA due to encumbrance';
+V_R80_MONTH_AMOUNT	Number(24,4):=0;
+V_R80_MONTH_FACTOR	Number(24,4):=0.5;
+V_R80_MONTH_CALCULATED	Number(24,4):=0;
+V_R80_TOTAL_ASF	Number(24,4):=0;
+V_R81_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R81_6MONTH_AMOUNT	Number(24,4):=0;
+V_R81_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R81_6MONTH_CALCULATED	Number(24,4):=0;
+V_R81_TOTAL_ASF	Number(24,4):=0;
+V_R82_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R82_YEAR_AMOUNT	Number(24,4):=0;
+V_R82_YEAR_FACTOR	Number(24,4):=1;
+V_R82_YEAR_CALCULATED	Number(24,4):=0;
+V_R82_TOTAL_ASF	Number(24,4):=0;
+V_R84_PRODUCT	varchar2(100 BYTE):='Unencumbered   -  included in HQLA stock';
+V_R84_YEAR_FACTOR	Number(24,4):=0.5;
+V_R84_YEAR_CALCULATED	Number(24,4):=0;
+V_R84_TOTAL_ASF	Number(24,4):=0;
+V_R85_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of < 6 months   -   Level 2A excluded from HQLA due to encumbrance';
+V_R85_YEAR_FACTOR	Number(24,4):=0.5;
+V_R85_YEAR_CALCULATED	Number(24,4):=0;
+V_R85_TOTAL_ASF	Number(24,4):=0;
+V_R86_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R86_YEAR_FACTOR	Number(24,4):=0.5;
+V_R86_YEAR_CALCULATED	Number(24,4):=0;
+V_R86_TOTAL_ASF	Number(24,4):=0;
+V_R87_PRODUCT	varchar2(300 BYTE):='Encumbered with a remaining period of ≥ 1 year   -   Level 2A excluded from HQLA due to encumbrance';
+V_R87_YEAR_FACTOR	Number(24,4):=01;
+V_R87_YEAR_CALCULATED	Number(24,4):=0;
+V_R87_TOTAL_ASF	Number(24,4):=0;
+V_R89_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R89_MONTH_AMOUNT	Number(24,4):=0;
+V_R89_6MONTH_AMOUNT	Number(24,4):=0;
+V_R89_YEAR_AMOUNT	Number(24,4):=0;
+V_R89_MONTH_FACTOR	Number(24,4):=0.5;
+V_R89_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R89_YEAR_FACTOR	Number(24,4):=0;
+V_R89_MONTH_CALCULATED	Number(24,4):=0;
+V_R89_6MONTH_CALCULATED	Number(24,4):=0;
+V_R89_YEAR_CALCULATED	Number(24,4):=0;
+V_R89_TOTAL_ASF	Number(24,4):=0;
+V_R90_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R90_MONTH_AMOUNT	Number(24,4):=0;
+V_R90_MONTH_FACTOR	Number(24,4):=0.5;
+V_R90_MONTH_CALCULATED	Number(24,4):=0;
+V_R90_TOTAL_ASF	Number(24,4):=0;
+V_R91_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R91_6MONTH_AMOUNT	Number(24,4):=0;
+V_R91_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R91_6MONTH_CALCULATED	Number(24,4):=0;
+V_R91_TOTAL_ASF	Number(24,4):=0;
+V_R93_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R93_YEAR_AMOUNT	Number(24,4):=0;
+V_R93_MONTH_FACTOR	Number(24,4):=0.1;
+V_R93_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R93_YEAR_FACTOR	Number(24,4):=1;
+V_R93_MONTH_CALCULATED	Number(24,4):=0;
+V_R93_6MONTH_CALCULATED	Number(24,4):=0;
+V_R93_YEAR_CALCULATED	Number(24,4):=0;
+V_R93_TOTAL_ASF	Number(24,4):=0;
+V_R94_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R94_MONTH_AMOUNT	Number(24,4):=0;
+V_R94_6MONTH_AMOUNT	Number(24,4):=0;
+V_R94_YEAR_AMOUNT	Number(24,4):=0;
+V_R94_MONTH_FACTOR	Number(24,4):=0.1;
+V_R94_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R94_YEAR_FACTOR	Number(24,4):=1;
+V_R94_MONTH_CALCULATED	Number(24,4):=0;
+V_R94_6MONTH_CALCULATED	Number(24,4):=0;
+V_R94_YEAR_CALCULATED	Number(24,4):=0;
+V_R94_TOTAL_ASF	Number(24,4):=0;
+V_R95_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R95_6MONTH_AMOUNT	Number(24,4):=0;
+V_R95_YEAR_AMOUNT	Number(24,4):=0;
+V_R95_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R95_YEAR_FACTOR	Number(24,4):=1;
+V_R95_6MONTH_CALCULATED	Number(24,4):=0;
+V_R95_YEAR_CALCULATED	Number(24,4):=0;
+V_R95_TOTAL_ASF	Number(24,4):=0;
+V_R96_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of  >= 1 year';
+V_R96_6MONTH_AMOUNT	Number(24,4):=0;
+V_R96_YEAR_AMOUNT	Number(24,4):=0;
+V_R96_6MONTH_FACTOR Number(24,4):=0;
+V_R96_YEAR_FACTOR	Number(24,4):=1;
+V_R96_6MONTH_CALCULATED	Number(24,4):=0;
+V_R96_YEAR_CALCULATED	Number(24,4):=0;
+V_R96_TOTAL_ASF	Number(24,4):=0;
+V_R98_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R98_MONTHS_AMOUNT	Number(24,4):=0;
+V_R98_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R98_YEAR_AMOUNT	Number(24,4):=0;
+V_R98_MONTHS_FACTOR	Number(24,4):=0.15;
+V_R98_6MONTHS_FACTOR	Number(24,4):=0.15;
+V_R98_YEAR_FACTOR	Number(24,4):=1;
+V_R98_MONTHS_CALCULATED	Number(24,4):=0;
+V_R98_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R98_YEAR_CALCULATED	Number(24,4):=0;
+V_R98_TOTAL_ASF	Number(24,4):=0;
+V_R99_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R99_MONTH_AMOUNT	Number(24,4):=0;
+V_R99_6MONTH_AMOUNT	Number(24,4):=0;
+V_R99_YEAR_AMOUNT	Number(24,4):=0;
+V_R99_MONTH_FACTOR	Number(24,4):=0.15;
+V_R99_6MONTH_FACTOR	Number(24,4):=0.15;
+V_R99_YEAR_FACTOR	Number(24,4):=1;
+V_R99_MONTH_CALCULATED	Number(24,4):=0;
+V_R99_6MONTH_CALCULATED	Number(24,4):=0;
+V_R99_YEAR_CALCULATED	Number(24,4):=0;
+V_R99_TOTAL_ASF	Number(24,4):=0;
+V_R100_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R100_6MONTH_AMOUNT	Number(24,4):=0;
+V_R100_YEAR_AMOUNT	Number(24,4):=0;
+V_R100_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R100_YEAR_FACTOR	Number(24,4):=1;
+V_R100_6MONTH_CALCULATED	Number(24,4):=0;
+V_R100_YEAR_CALCULATED	Number(24,4):=0;
+V_R100_TOTAL_ASF	Number(24,4):=0;
+V_R101_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period >= 1 year';
+V_R101_6MONTH_AMOUNT	Number(24,4):=0;
+V_R101_YEAR_AMOUNT	Number(24,4):=0;
+V_R101_6MONTH_FACTOR	Number(24,4):=0;
+V_R101_YEAR_FACTOR	Number(24,4):=1;
+V_R101_6MONTH_CALCULATED	Number(24,4):=0;
+V_R101_YEAR_CALCULATED	Number(24,4):=0;
+V_R101_TOTAL_ASF	Number(24,4):=0;
+V_R103_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R103_MONTHS_AMOUNT	Number(24,4):=0;
+V_R103_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R103_YEAR_AMOUNT	Number(24,4):=0;
+V_R103_MONTHS_FACTOR	Number(24,4):=0.15;
+V_R103_6MONTHS_FACTOR	Number(24,4):=0.15;
+V_R103_YEAR_FACTOR	Number(24,4):=1;
+V_R103_MONTHS_CALCULATED	Number(24,4):=0;
+V_R103_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R103_YEAR_CALCULATED	Number(24,4):=0;
+V_R103_TOTAL_ASF	Number(24,4):=0;
+V_R104_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R104_MONTH_AMOUNT	Number(24,4):=0;
+V_R104_6MONTH_AMOUNT	Number(24,4):=0;
+V_R104_YEAR_AMOUNT	Number(24,4):=0;
+V_R104_MONTH_FACTOR	Number(24,4):=0.5;
+V_R104_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R104_YEAR_FACTOR	Number(24,4):=0.1;
+V_R104_MONTH_CALCULATED	Number(24,4):=0;
+V_R104_6MONTH_CALCULATED	Number(24,4):=0;
+V_R104_YEAR_CALCULATED	Number(24,4):=0;
+V_R104_TOTAL_ASF	Number(24,4):=0;
+V_R105_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R105_6MONTH_AMOUNT	Number(24,4):=0;
+V_R105_YEAR_AMOUNT	Number(24,4):=0;
+V_R105_6MONTH_FACTOR	Number(24,4):=0.15;
+V_R105_YEAR_FACTOR	Number(24,4):=1;
+V_R105_6MONTH_CALCULATED	Number(24,4):=0;
+V_R105_YEAR_CALCULATED	Number(24,4):=0;
+V_R105_TOTAL_ASF	Number(24,4):=0;
+V_R106_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period >= 1 year';
+V_R106_6MONTH_AMOUNT	Number(24,4):=0;
+V_R106_YEAR_AMOUNT	Number(24,4):=0;
+V_R106_6MONTH_FACTOR	Number(24,4):=0;
+V_R106_YEAR_FACTOR	Number(24,4):=1;
+V_R106_6MONTH_CALCULATED	Number(24,4):=0;
+V_R106_YEAR_CALCULATED	Number(24,4):=0;
+V_R106_TOTAL_ASF	Number(24,4):=0;
+V_R109_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R109_MONTH_AMOUNT	Number(24,4):=0;
+V_R109_6MONTH_AMOUNT	Number(24,4):=0;
+V_R109_MONTH_FACTOR	Number(24,4):=0.5;
+V_R109_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R109_MONTH_CALCULATED	Number(24,4):=0;
+V_R109_6MONTH_CALCULATED	Number(24,4):=0;
+V_R109_TOTAL_ASF	Number(24,4):=0;
+V_R110_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R110_MONTH_AMOUNT	Number(24,4):=0;
+V_R110_MONTH_FACTOR	Number(24,4):=0.5;
+V_R110_MONTH_CALCULATED	Number(24,4):=0;
+V_R110_TOTAL_ASF	Number(24,4):=0;
+V_R111_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R111_6MONTH_AMOUNT	Number(24,4):=0;
+V_R111_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R111_6MONTH_CALCULATED	Number(24,4):=0;
+V_R111_TOTAL_ASF	Number(24,4):=0;
+V_R113_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R113_MONTH_AMOUNT	Number(24,4):=0;
+V_R113_6MONTH_AMOUNT	Number(24,4):=0;
+V_R113_MONTH_FACTOR	Number(24,4):=0.5;
+V_R113_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R113_MONTH_CALCULATED	Number(24,4):=0;
+V_R113_6MONTH_CALCULATED	Number(24,4):=0;
+V_R113_TOTAL_ASF	Number(24,4):=0;
+V_R114_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R114_MONTH_AMOUNT	Number(24,4):=0;
+V_R114_MONTH_FACTOR	Number(24,4):=0.5;
+V_R114_MONTH_CALCULATED	Number(24,4):=0;
+V_R114_TOTAL_ASF	Number(24,4):=0;
+V_R115_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R115_6MONTH_AMOUNT	Number(24,4):=0;
+V_R115_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R115_6MONTH_CALCULATED	Number(24,4):=0;
+V_R115_TOTAL_ASF	Number(24,4):=0;
+V_R117_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R117_MONTH_AMOUNT	Number(24,4):=0;
+V_R117_6MONTH_AMOUNT	Number(24,4):=0;
+V_R117_MONTH_FACTOR	Number(24,4):=0.5;
+V_R117_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R117_MONTH_CALCULATED	Number(24,4):=0;
+V_R117_6MONTH_CALCULATED	Number(24,4):=0;
+V_R117_TOTAL_ASF	Number(24,4):=0;
+V_R118_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R118_MONTH_AMOUNT	Number(24,4):=0;
+V_R118_MONTH_FACTOR	Number(24,4):=0.5;
+V_R118_MONTH_CALCULATED	Number(24,4):=0;
+V_R118_TOTAL_ASF	Number(24,4):=0;
+V_R119_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R119_6MONTH_AMOUNT	Number(24,4):=0;
+V_R119_6MONTH_FACTOR	Number(24,4):=0.5;
+V_R119_6MONTH_CALCULATED	Number(24,4):=0;
+V_R119_TOTAL_ASF	Number(24,4):=0;
+V_R122_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R122_YEAR_AMOUNT	Number(24,4):=0;
+V_R122_YEAR_FACTOR	Number(24,4):=0.65;
+V_R122_YEAR_CALCULATED	Number(24,4):=0;
+V_R122_TOTAL_ASF	Number(24,4):=0;
+V_R123_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R123_MONTH_AMOUNT	Number(24,4):=0;
+V_R123_MONTH_FACTOR	Number(24,4):=0.65;
+V_R123_MONTH_CALCULATED	Number(24,4):=0;
+V_R123_TOTAL_ASF	Number(24,4):=0;
+V_R124_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R124_6MONTH_AMOUNT	Number(24,4):=0;
+V_R124_6MONTH_FACTOR	Number(24,4):=0.65;
+V_R124_6MONTH_CALCULATED	Number(24,4):=0;
+V_R124_TOTAL_ASF	Number(24,4):=0;
+V_R125_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 1 year';
+V_R125_YEAR_AMOUNT	Number(24,4):=0;
+V_R125_YEAR_FACTOR	Number(24,4):=1;
+V_R125_YEAR_CALCULATED	Number(24,4):=0;
+V_R125_TOTAL_ASF	Number(24,4):=0;
+V_R127_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R127_YEAR_AMOUNT	Number(24,4):=0;
+V_R127_YEAR_FACTOR	Number(24,4):=0.65;
+V_R127_YEAR_CALCULATED	Number(24,4):=0;
+V_R127_TOTAL_ASF	Number(24,4):=0;
+V_R128_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R128_MONTH_AMOUNT	Number(24,4):=0;
+V_R128_MONTH_FACTOR	Number(24,4):=0.65;
+V_R128_MONTH_CALCULATED	Number(24,4):=0;
+V_R128_TOTAL_ASF	Number(24,4):=0;
+V_R129_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R129_6MONTH_AMOUNT	Number(24,4):=0;
+V_R129_6MONTH_FACTOR	Number(24,4):=0.65;
+V_R129_6MONTH_CALCULATED	Number(24,4):=0;
+V_R129_TOTAL_ASF	Number(24,4):=0;
+V_R130_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 1 year';
+V_R130_YEAR_AMOUNT	Number(24,4):=0;
+V_R130_YEAR_FACTOR	Number(24,4):=1;
+V_R130_YEAR_CALCULATED	Number(24,4):=0;
+V_R130_TOTAL_ASF	Number(24,4):=0;
+V_R132_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R132_YEAR_AMOUNT	Number(24,4):=0;
+V_R132_YEAR_FACTOR	Number(24,4):=0.85;
+V_R132_YEAR_CALCULATED	Number(24,4):=0;
+V_R132_TOTAL_ASF	Number(24,4):=0;
+V_R133_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R133_MONTH_AMOUNT	Number(24,4):=0;
+V_R133_MONTH_FACTOR	Number(24,4):=0.85;
+V_R133_MONTH_CALCULATED	Number(24,4):=0;
+V_R133_TOTAL_ASF	Number(24,4):=0;
+V_R134_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R134_6MONTH_AMOUNT	Number(24,4):=0;
+V_R134_6MONTH_FACTOR	Number(24,4):=0.85;
+V_R134_6MONTH_CALCULATED	Number(24,4):=0;
+V_R134_TOTAL_ASF	Number(24,4):=0;
+V_R135_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 1 year';
+V_R135_YEAR_AMOUNT	Number(24,4):=0;
+V_R135_YEAR_FACTOR	Number(24,4):=1;
+V_R135_YEAR_CALCULATED	Number(24,4):=0;
+V_R135_TOTAL_ASF	Number(24,4):=0;
+V_R137_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R137_YEAR_AMOUNT	Number(24,4):=0;
+V_R137_YEAR_FACTOR	Number(24,4):=0.85;
+V_R137_YEAR_CALCULATED	Number(24,4):=0;
+V_R137_TOTAL_ASF	Number(24,4):=0;
+V_R138_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R138_MONTH_AMOUNT	Number(24,4):=0;
+V_R138_MONTH_FACTOR	Number(24,4):=0.85;
+V_R138_MONTH_CALCULATED	Number(24,4):=0;
+V_R138_TOTAL_ASF	Number(24,4):=0;
+V_R139_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R139_6MONTH_AMOUNT	Number(24,4):=0;
+V_R139_6MONTH_FACTOR	Number(24,4):=0.85;
+V_R139_6MONTH_CALCULATED	Number(24,4):=0;
+V_R139_TOTAL_ASF	Number(24,4):=0;
+V_R140_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 1 year';
+V_R140_YEAR_AMOUNT	Number(24,4):=0;
+V_R140_YEAR_FACTOR	Number(24,4):=1;
+V_R140_YEAR_CALCULATED	Number(24,4):=0;
+V_R140_TOTAL_ASF	Number(24,4):=0;
+V_R142_PRODUCT	varchar2(100 BYTE):='Unencumbered';
+V_R142_YEAR_AMOUNT	Number(24,4):=0;
+V_R142_YEAR_FACTOR	Number(24,4):=0.85;
+V_R142_YEAR_CALCULATED	Number(24,4):=0;
+V_R142_TOTAL_ASF	Number(24,4):=0;
+V_R143_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of < 6 months';
+V_R143_MONTH_AMOUNT	Number(24,4):=0;
+V_R143_MONTH_FACTOR	Number(24,4):=0.85;
+V_R143_MONTH_CALCULATED	Number(24,4):=0;
+V_R143_TOTAL_ASF	Number(24,4):=0;
+V_R144_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 6 months to < 1 year';
+V_R144_6MONTH_AMOUNT	Number(24,4):=0;
+V_R144_6MONTH_FACTOR	Number(24,4):=0.85;
+V_R144_6MONTH_CALCULATED	Number(24,4):=0;
+V_R144_TOTAL_ASF	Number(24,4):=0;
+V_R145_PRODUCT	varchar2(100 BYTE):='Encumbered with a remaining period of ≥ 1 year';
+V_R145_YEAR_AMOUNT	Number(24,4):=0;
+V_R145_YEAR_FACTOR	Number(24,4):=1;
+V_R145_YEAR_CALCULATED	Number(24,4):=0;
+V_R145_TOTAL_ASF	Number(24,4):=0;
+V_R147_PRODUCT	varchar2(100 BYTE):='Derivative assets, gross of variation margin received';
+V_R147_YEAR_AMOUNT	Number(24,4):=0;
+V_R148_PRODUCT	varchar2(100 BYTE):='Cash variation margin';
+V_R148_YEAR_AMOUNT	Number(24,4):=0;
+V_R149_PRODUCT	varchar2(100 BYTE):='NSFR derivative assets';
+V_R149_YEAR_AMOUNT	Number(24,4):=0;
+V_R149_YEAR_FACTOR	Number(24,4):=1;
+V_R149_YEAR_CALCULATED	Number(24,4):=0;
+V_R149_TOTAL_ASF	Number(24,4):=0;
+V_R150_PRODUCT	varchar2(100 BYTE):='20% of derivative liabilities';
+V_R150_YEAR_AMOUNT	Number(24,4):=0;
+V_R150_YEAR_FACTOR	Number(24,4):=1;
+V_R150_YEAR_CALCULATED	Number(24,4):=0;
+V_R150_TOTAL_ASF	Number(24,4):=0;
+V_R151_PRODUCT	varchar2(100 BYTE):='Residual maturity of initial margin posted';
+V_R151_MONTHS_AMOUNT	Number(24,4):=0;
+V_R151_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R151_YEAR_AMOUNT	Number(24,4):=0;
+V_R151_MONTHS_FACTOR	Number(24,4):=0.85;
+V_R151_6MONTHS_FACTOR	Number(24,4):=0.85;
+V_R151_YEAR_FACTOR	Number(24,4):=1;
+V_R151_MONTHS_CALCULATED	Number(24,4):=0;
+V_R151_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R151_YEAR_CALCULATED	Number(24,4):=0;
+V_R151_TOTAL_ASF	Number(24,4):=0;
+V_R152_PRODUCT	varchar2(100 BYTE):='Initial margin posted on behalf of a customer';
+V_R152_YEAR_AMOUNT	Number(24,4):=0;
+V_R153_PRODUCT	varchar2(100 BYTE):='Cash or other assets provided to contribute to the default fund of a CCP';
+V_R153_YEAR_AMOUNT	Number(24,4):=0;
+V_R153_YEAR_FACTOR	Number(24,4):=0.85;
+V_R153_YEAR_CALCULATED	Number(24,4):=0;
+V_R153_TOTAL_ASF	Number(24,4):=0;
+V_R155_PRODUCT	varchar2(100 BYTE):='Trade date receivables';
+V_R155_MONTH_AMOUNT	Number(24,4):=0;
+V_R155_MONTH_FACTOR	Number(24,4):=0;
+V_R155_MONTH_CALCULATED	Number(24,4):=0;
+V_R155_TOTAL_ASF	Number(24,4):=0;
+V_R156_PRODUCT	varchar2(100 BYTE):='Interdependent assets';
+V_R156_MONTHS_AMOUNT	Number(24,4):=0;
+V_R156_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R156_YEAR_AMOUNT	Number(24,4):=0;
+V_R156_MONTHS_FACTOR	Number(24,4):=0;
+V_R156_6MONTHS_FACTOR	Number(24,4):=0;
+V_R156_YEAR_FACTOR	Number(24,4):=0;
+V_R156_MONTHS_CALCULATED	Number(24,4):=0;
+V_R156_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R156_YEAR_CALCULATED	Number(24,4):=0;
+V_R156_TOTAL_ASF	Number(24,4):=0;
+V_R157_PRODUCT	varchar2(100 BYTE):='Non-performing loans / financing';
+V_R157_MONTHS_AMOUNT	Number(24,4):=0;
+V_R157_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R157_YEAR_AMOUNT	Number(24,4):=0;
+V_R157_MONTHS_FACTOR	Number(24,4):=1;
+V_R157_6MONTHS_FACTOR	Number(24,4):=1;
+V_R157_YEAR_FACTOR	Number(24,4):=1;
+V_R157_MONTHS_CALCULATED	Number(24,4):=0;
+V_R157_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R157_YEAR_CALCULATED	Number(24,4):=0;
+V_R157_TOTAL_ASF	Number(24,4):=0;
+V_R158_PRODUCT	varchar2(100 BYTE):='Defaulted securities';
+V_R158_MONTHS_AMOUNT	Number(24,4):=0;
+V_R158_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R158_YEAR_AMOUNT	Number(24,4):=0;
+V_R158_MONTHS_FACTOR	Number(24,4):=1;
+V_R158_6MONTHS_FACTOR	Number(24,4):=1;
+V_R158_YEAR_FACTOR	Number(24,4):=1;
+V_R158_MONTHS_CALCULATED	Number(24,4):=0;
+V_R158_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R158_YEAR_CALCULATED	Number(24,4):=0;
+V_R158_TOTAL_ASF	Number(24,4):=0;
+V_R159_PRODUCT	varchar2(100 BYTE):='Non exchabge-traded equities';
+V_R159_MONTHS_AMOUNT	Number(24,4):=0;
+V_R159_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R159_YEAR_AMOUNT	Number(24,4):=0;
+V_R159_MONTHS_FACTOR	Number(24,4):=1;
+V_R159_6MONTHS_FACTOR	Number(24,4):=1;
+V_R159_YEAR_FACTOR	Number(24,4):=1;
+V_R159_MONTHS_CALCULATED	Number(24,4):=0;
+V_R159_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R159_YEAR_CALCULATED	Number(24,4):=0;
+V_R159_TOTAL_ASF	Number(24,4):=0;
+V_R160_PRODUCT	varchar2(100 BYTE):='Subsidiary assets';
+V_R160_MONTHS_AMOUNT	Number(24,4):=0;
+V_R160_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R160_YEAR_AMOUNT	Number(24,4):=0;
+V_R160_MONTHS_FACTOR	Number(24,4):=1;
+V_R160_6MONTHS_FACTOR	Number(24,4):=1;
+V_R160_YEAR_FACTOR	Number(24,4):=1;
+V_R160_MONTHS_CALCULATED	Number(24,4):=0;
+V_R160_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R160_YEAR_CALCULATED	Number(24,4):=0;
+V_R160_TOTAL_ASF	Number(24,4):=0;
+V_R161_PRODUCT	varchar2(300 BYTE):='Items deducted from regulatory capital';
+V_R161_MONTHS_AMOUNT	Number(24,4):=0;
+V_R161_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R161_YEAR_AMOUNT	Number(24,4):=0;
+V_R161_MONTHS_FACTOR	Number(24,4):=1;
+V_R161_6MONTHS_FACTOR	Number(24,4):=1;
+V_R161_YEAR_FACTOR	Number(24,4):=1;
+V_R161_MONTHS_CALCULATED	Number(24,4):=0;
+V_R161_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R161_YEAR_CALCULATED	Number(24,4):=0;
+V_R161_TOTAL_ASF	Number(24,4):=0;
+V_R162_PRODUCT	varchar2(100 BYTE):='All other assets, including insurance assets, fixed assets, retained interest';
+V_R162_MONTHS_AMOUNT	Number(24,4):=0;
+V_R162_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R162_YEAR_AMOUNT	Number(24,4):=0;
+V_R162_MONTHS_FACTOR	Number(24,4):=1;
+V_R162_6MONTHS_FACTOR	Number(24,4):=1;
+V_R162_YEAR_FACTOR	Number(24,4):=1;
+V_R162_MONTHS_CALCULATED	Number(24,4):=0;
+V_R162_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R162_YEAR_CALCULATED	Number(24,4):=0;
+V_R162_TOTAL_ASF	Number(24,4):=0;
+V_R163_PRODUCT	varchar2(100 BYTE):='';
+V_R163_MONTHS_AMOUNT	Number(24,4):=0;
+V_R163_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R163_YEAR_AMOUNT	Number(24,4):=0;
+V_R163_MONTHS_FACTOR	Number(24,4):=0;
+V_R163_6MONTHS_FACTOR	Number(24,4):=0;
+V_R163_YEAR_FACTOR	Number(24,4):=0;
+V_R163_MONTHS_CALCULATED	Number(24,4):=0;
+V_R163_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R163_YEAR_CALCULATED	Number(24,4):=0;
+V_R163_TOTAL_ASF	Number(24,4):=0;
+V_R165_PRODUCT	varchar2(100 BYTE):='Irrevocable and conditionally revocable credit and liquidity facilities';
+V_R165_AMOUNT	Number(24,4):=0;
+V_R165_RFS_FACTOR	Number(24,4):=0.05;
+V_R165_TOTAL_ASF	Number(24,4):=0;
+V_R166_PRODUCT	varchar2(100 BYTE):='Unconditionally revocable (i.e. uncommitted) credit and liquidity facilities';
+V_R166_AMOUNT	Number(24,4):=0;
+V_R166_RFS_FACTOR	Number(24,4):=0;
+V_R166_TOTAL_ASF	Number(24,4):=0;
+V_R167_PRODUCT	varchar2(100 BYTE):='Trade finance-related obligations (including guarantees and letters of credit)';
+V_R167_AMOUNT	Number(24,4):=0;
+V_R167_RFS_FACTOR	Number(24,4):=0.05;
+V_R167_TOTAL_ASF	Number(24,4):=0;
+V_R168_PRODUCT	varchar2(100 BYTE):='Guarantees and letters of credit unrelated to trade finance obligations';
+V_R168_AMOUNT	Number(24,4):=0;
+V_R168_RFS_FACTOR	Number(24,4):=0.2;
+V_R168_TOTAL_ASF	Number(24,4):=0;
+V_R169_PRODUCT	varchar2(300 BYTE):='Other off-b/s assets, including potential requests for debt repurchase of the banks own debt (including related conduits), structured products, managed funds';
+V_R169_AMOUNT	Number(24,4):=0;
+V_R169_RFS_FACTOR	Number(24,4):=0.1;
+V_R169_TOTAL_ASF	Number(24,4):=0;
+V_R170_PRODUCT	varchar2(100 BYTE):='Total RSF';
+V_R170_TOTAL_ASF	varchar2(100 BYTE):='';
+V_R170_Total_RSF	Number(24,4):=0;
+V_R171_PRODUCT	varchar2(100 BYTE):='Available amount of stable funding/ Required amount of stable funding >= 100';
+V_R171_NSFR	varchar2(100 BYTE):='';
+V_R171_TOTAL_ASF	Number(24,4):=0;
+V_R174_PRODUCT	varchar2(100 BYTE):='Zero-Cost Funding from CBUAE under TESS Program ';
+V_R174_MONTHS_AMOUNT	Number(24,4):=0;
+V_R174_6MONTHS_AMOUNT	Number(24,4):=0;
+V_R174_YEAR_AMOUNT	Number(24,4):=0;
+V_R174_MONTHS_FACTOR	Number(24,4):=0;
+V_R174_6MONTHS_FACTOR	Number(24,4):=0.5;
+V_R174_YEAR_FACTOR	Number(24,4):=1;
+V_R174_MONTHS_CALCULATED	Number(24,4):=0;
+V_R174_6MONTHS_CALCULATED	Number(24,4):=0;
+V_R174_YEAR_CALCULATED	Number(24,4):=0;
+V_R174_TOTAL_ASF	Number(24,4):=0;
+V_R175_NSFR	varchar2(100 BYTE):='NSFR';
+V_R175_TOTAL_ASF	Number(24,4):=0;
+V_R48_PRODUCT varchar2(100 BYTE):='Total ASF';
+V_R48_TOTAL_ASP Number(24,4):=0;
+V_R59_6MONTH_AMOUNT	Number(24,4):=0;
+V_R59_YEAR_AMOUNT Number(24,4):=0;
+V_R84_YEAR_AMOUNT	Number(24,4):=0;
+V_R85_YEAR_AMOUNT	Number(24,4):=0;
+V_R86_YEAR_AMOUNT	Number(24,4):=0;
+V_R87_YEAR_AMOUNT	Number(24,4):=0;
+V_R93_MONTH_AMOUNT	Number(24,4):=0;
+V_R93_6MONTH_AMOUNT	Number(24,4):=0;
+V_R29_MONTH_CALCULATED	Number(24,4):=0;
+V_R29_6MONTH_CALCULATED	Number(24,4):=0;
+V_R29_YEAR_CALCULATED	Number(24,4):=0;
+V_R29_TOTAL_ASF	Number(24,4):=0;
+BEGIN 
+
+delete from BRF49_SUMMARYTABLE where report_date = V_REPORT_DATE;
+Commit;
+
+select count(*) into V_R10_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW101' AND REPORT_ADDL_CRITERIA_1 = 'ROW101C' ;
+ V_R10_YEAR_CALCULATED:=V_R10_YEAR_AMOUNT * V_R10_YEAR_FACTOR;
+V_R10_TOTAL_ASF:=V_R10_YEAR_CALCULATED;
+
+select count(*) into V_R11_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW102' AND REPORT_ADDL_CRITERIA_1 = 'ROW102C' ;
+ V_R11_YEAR_CALCULATED:=V_R10_YEAR_AMOUNT * V_R10_YEAR_FACTOR;
+V_R11_TOTAL_ASF:=V_R11_YEAR_CALCULATED;
+
+select count(*) into V_R13_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW104' AND REPORT_ADDL_CRITERIA_1 = 'ROW104A' ;
+select count(*) into V_R13_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW104' AND REPORT_ADDL_CRITERIA_1 = 'ROW104B' ;
+select count(*) into V_R13_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW104' AND REPORT_ADDL_CRITERIA_1 = 'ROW104C' ;	
+V_R13_MONTH_CALCULATED:= V_R13_MONTH_AMOUNT* V_R13_MONTH_FACTOR;
+V_R13_6MONTH_CALCULATED:=V_R13_6MONTH_AMOUNT*V_R13_6MONTH_FACTOR;
+V_R13_YEAR_CALCULATED:=V_R13_YEAR_AMOUNT *V_R13_YEAR_FACTOR;
+V_R13_TOTAL_ASF:=V_R13_MONTH_CALCULATED+V_R13_6MONTH_CALCULATED+V_R13_YEAR_CALCULATED;
+
+
+
+
+select count(*) into V_R14_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW105' AND REPORT_ADDL_CRITERIA_1 = 'ROW105A' ;
+select count(*) into V_R14_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW105' AND REPORT_ADDL_CRITERIA_1 = 'ROW105B' ;
+select count(*) into V_R14_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW105' AND REPORT_ADDL_CRITERIA_1 = 'ROW105C' ;	
+V_R14_MONTH_CALCULATED:= V_R14_MONTH_AMOUNT* V_R14_MONTH_FACTOR;
+V_R14_6MONTH_CALCULATED:=V_R14_6MONTH_AMOUNT*V_R14_6MONTH_FACTOR;
+V_R14_YEAR_CALCULATED:=V_R14_YEAR_AMOUNT *V_R14_YEAR_FACTOR;
+V_R14_TOTAL_ASF:=V_R14_MONTH_CALCULATED+V_R14_6MONTH_CALCULATED+V_R14_YEAR_CALCULATED;
+
+select count(*) into V_R15_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW106' AND REPORT_ADDL_CRITERIA_1 = 'ROW106A' ;
+select count(*) into V_R15_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW106' AND REPORT_ADDL_CRITERIA_1 = 'ROW106B' ;
+select count(*) into V_R15_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW106' AND REPORT_ADDL_CRITERIA_1 = 'ROW106C' ;	
+select count(*) into V_R15_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW106' AND REPORT_ADDL_CRITERIA_1 = 'ROW101D' ;
+V_R15_MONTH_CALCULATED:= V_R15_MONTH_AMOUNT* V_R15_MONTH_FACTOR;
+V_R15_6MONTH_CALCULATED:=V_R15_6MONTH_AMOUNT*V_R15_6MONTH_FACTOR;
+V_R15_YEAR_CALCULATED:=V_R15_YEAR_AMOUNT *V_R15_YEAR_FACTOR;
+V_R15_TOTAL_ASF:=V_R15_MONTH_CALCULATED+V_R15_6MONTH_CALCULATED+V_R15_YEAR_CALCULATED;
+--R17
+
+select count(*) into V_R17_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW108' AND REPORT_ADDL_CRITERIA_1 = 'ROW108A' ;
+select count(*) into V_R17_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW108' AND REPORT_ADDL_CRITERIA_1 = 'ROW108B' ;
+select count(*) into V_R17_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW108' AND REPORT_ADDL_CRITERIA_1 = 'ROW108C' ;	
+V_R17_MONTH_CALCULATED:= V_R17_MONTH_AMOUNT* V_R17_MONTH_FACTOR;
+V_R17_6MONTH_CALCULATED:=V_R17_6MONTH_AMOUNT*V_R17_6MONTH_FACTOR;
+V_R17_YEAR_CALCULATED:=V_R17_YEAR_AMOUNT *V_R17_YEAR_FACTOR;
+V_R17_TOTAL_ASF:=V_R17_MONTH_CALCULATED+V_R17_6MONTH_CALCULATED+V_R17_YEAR_CALCULATED;
+
+
+select count(*) into V_R18_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW109' AND REPORT_ADDL_CRITERIA_1 = 'ROW109A' ;
+select count(*) into V_R18_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW109' AND REPORT_ADDL_CRITERIA_1 = 'ROW109B' ;
+select count(*) into V_R18_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW109' AND REPORT_ADDL_CRITERIA_1 = 'ROW109C' ;	
+V_R18_MONTH_CALCULATED:= V_R18_MONTH_AMOUNT* V_R18_MONTH_FACTOR;
+V_R18_6MONTH_CALCULATED:=V_R18_6MONTH_AMOUNT*V_R18_6MONTH_FACTOR;
+V_R18_YEAR_CALCULATED:=V_R18_YEAR_AMOUNT *V_R18_YEAR_FACTOR;
+V_R18_TOTAL_ASF:=V_R18_MONTH_CALCULATED+V_R18_6MONTH_CALCULATED+V_R18_YEAR_CALCULATED;
+
+select count(*) into V_R19_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW110' AND REPORT_ADDL_CRITERIA_1 = 'ROW110A' ;
+select count(*) into V_R19_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW110' AND REPORT_ADDL_CRITERIA_1 = 'ROW110B' ;
+select count(*) into V_R19_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW110' AND REPORT_ADDL_CRITERIA_1 = 'ROW110C' ;	
+V_R19_MONTH_CALCULATED:= V_R19_MONTH_AMOUNT* V_R19_MONTH_FACTOR;
+V_R19_6MONTH_CALCULATED:=V_R19_6MONTH_AMOUNT*V_R19_6MONTH_FACTOR;
+V_R19_YEAR_CALCULATED:=V_R19_YEAR_AMOUNT *V_R19_YEAR_FACTOR;
+V_R19_TOTAL_ASF:=V_R19_MONTH_CALCULATED+V_R19_6MONTH_CALCULATED+V_R19_YEAR_CALCULATED;
+
+select count(*) into V_R20_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW111' AND REPORT_ADDL_CRITERIA_1 = 'ROW111A' ;
+select count(*) into V_R20_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW111' AND REPORT_ADDL_CRITERIA_1 = 'ROW111B' ;
+select count(*) into V_R20_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW111' AND REPORT_ADDL_CRITERIA_1 = 'ROW111C' ;	
+V_R20_MONTH_CALCULATED:= V_R20_MONTH_AMOUNT* V_R20_MONTH_FACTOR;
+V_R20_6MONTH_CALCULATED:=V_R20_6MONTH_AMOUNT*V_R20_6MONTH_FACTOR;
+V_R20_YEAR_CALCULATED:=V_R20_YEAR_AMOUNT *V_R20_YEAR_FACTOR;
+V_R20_TOTAL_ASF:=V_R20_MONTH_CALCULATED+V_R20_6MONTH_CALCULATED+V_R20_YEAR_CALCULATED;
+
+select count(*) into V_R22_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW113' AND REPORT_ADDL_CRITERIA_1 = 'ROW113A' ;
+select count(*) into V_R22_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW113' AND REPORT_ADDL_CRITERIA_1 = 'ROW113B' ;
+select count(*) into V_R22_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW113' AND REPORT_ADDL_CRITERIA_1 = 'ROW113C' ;	
+V_R22_MONTH_CALCULATED:= V_R22_MONTH_AMOUNT* V_R22_MONTH_FACTOR;
+V_R22_6MONTH_CALCULATED:=V_R22_6MONTH_AMOUNT*V_R22_6MONTH_FACTOR;
+V_R22_YEAR_CALCULATED:=V_R22_YEAR_AMOUNT *V_R22_YEAR_FACTOR;
+V_R22_TOTAL_ASF:=V_R22_MONTH_CALCULATED+V_R22_6MONTH_CALCULATED+V_R22_YEAR_CALCULATED;
+
+select count(*) into V_R23_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW114' AND REPORT_ADDL_CRITERIA_1 = 'ROW114A' ;
+select count(*) into V_R23_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW114' AND REPORT_ADDL_CRITERIA_1 = 'ROW114B' ;
+select count(*) into V_R23_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW114' AND REPORT_ADDL_CRITERIA_1 = 'ROW114C' ;	
+V_R23_MONTH_CALCULATED:= V_R23_MONTH_AMOUNT* V_R23_MONTH_FACTOR;
+V_R23_6MONTH_CALCULATED:=V_R23_6MONTH_AMOUNT*V_R23_6MONTH_FACTOR;
+V_R23_YEAR_CALCULATED:=V_R23_YEAR_AMOUNT *V_R23_YEAR_FACTOR;
+V_R23_TOTAL_ASF:=V_R23_MONTH_CALCULATED+V_R23_6MONTH_CALCULATED+V_R23_YEAR_CALCULATED;
+
+select count(*) into V_R24_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW115' AND REPORT_ADDL_CRITERIA_1 = 'ROW115A' ;
+select count(*) into V_R24_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW115' AND REPORT_ADDL_CRITERIA_1 = 'ROW115B' ;
+select count(*) into V_R24_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW115' AND REPORT_ADDL_CRITERIA_1 = 'ROW115C' ;	
+V_R24_MONTH_CALCULATED:= V_R24_MONTH_AMOUNT* V_R24_MONTH_FACTOR;
+V_R24_6MONTH_CALCULATED:=V_R24_6MONTH_AMOUNT*V_R24_6MONTH_FACTOR;
+V_R24_YEAR_CALCULATED:=V_R24_YEAR_AMOUNT *V_R24_YEAR_FACTOR;
+V_R24_TOTAL_ASF:=V_R24_MONTH_CALCULATED+V_R24_6MONTH_CALCULATED+V_R24_YEAR_CALCULATED;
+
+
+select count(*) into V_R25_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW116' AND REPORT_ADDL_CRITERIA_1 = 'ROW116A' ;
+select count(*) into V_R25_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW116' AND REPORT_ADDL_CRITERIA_1 = 'ROW116B' ;
+select count(*) into V_R25_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW116' AND REPORT_ADDL_CRITERIA_1 = 'ROW116C' ;	
+V_R25_MONTH_CALCULATED:= V_R25_MONTH_AMOUNT* V_R25_MONTH_FACTOR;
+V_R25_6MONTH_CALCULATED:=V_R25_6MONTH_AMOUNT*V_R25_6MONTH_FACTOR;
+V_R25_YEAR_CALCULATED:=V_R25_YEAR_AMOUNT *V_R25_YEAR_FACTOR;
+V_R25_TOTAL_ASF:=V_R25_MONTH_CALCULATED+V_R25_6MONTH_CALCULATED+V_R25_YEAR_CALCULATED;
+
+select count(*) into V_R27_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW118' AND REPORT_ADDL_CRITERIA_1 = 'ROW118A' ;
+select count(*) into V_R27_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW118' AND REPORT_ADDL_CRITERIA_1 = 'ROW118B' ;
+select count(*) into V_R27_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW118' AND REPORT_ADDL_CRITERIA_1 = 'ROW118C' ;	
+V_R27_MONTH_CALCULATED:= V_R27_MONTH_AMOUNT* V_R27_MONTH_FACTOR;
+V_R27_6MONTH_CALCULATED:=V_R27_6MONTH_AMOUNT*V_R27_6MONTH_FACTOR;
+V_R27_YEAR_CALCULATED:=V_R27_YEAR_AMOUNT *V_R27_YEAR_FACTOR;
+V_R27_TOTAL_ASF:=V_R27_MONTH_CALCULATED+V_R27_6MONTH_CALCULATED+V_R27_YEAR_CALCULATED;
+
+select count(*) into V_R28_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW119' AND REPORT_ADDL_CRITERIA_1 = 'ROW119A' ;
+select count(*) into V_R28_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW119' AND REPORT_ADDL_CRITERIA_1 = 'ROW119B' ;
+select count(*) into V_R28_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW119' AND REPORT_ADDL_CRITERIA_1 = 'ROW119C' ;
+select count(*) into V_R28_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW119' AND REPORT_ADDL_CRITERIA_1 = 'ROW119D' ;
+V_R28_MONTH_CALCULATED:= V_R28_MONTH_AMOUNT* V_R28_MONTH_FACTOR;
+V_R28_6MONTH_CALCULATED:=V_R28_6MONTH_AMOUNT*V_R28_6MONTH_FACTOR;
+V_R28_YEAR_CALCULATED:=V_R28_YEAR_AMOUNT *V_R28_YEAR_FACTOR;
+V_R28_TOTAL_ASF:=V_R28_MONTH_CALCULATED+V_R28_6MONTH_CALCULATED+V_R28_YEAR_CALCULATED;
+
+
+select count(*) into V_R29_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW120' AND REPORT_ADDL_CRITERIA_1 = 'ROW120A' ;
+select count(*) into V_R29_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW120' AND REPORT_ADDL_CRITERIA_1 = 'ROW120B' ;
+select count(*) into V_R29_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW120' AND REPORT_ADDL_CRITERIA_1 = 'ROW120C' ;
+select count(*) into V_R29_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW120' AND REPORT_ADDL_CRITERIA_1 = 'ROW120D' ;
+V_R29_MONTH_CALCULATED:= V_R29_MONTH_AMOUNT * V_R29_MONTH_FACTOR;
+V_R29_6MONTH_CALCULATED:=V_R29_6MONTH_AMOUNT*V_R29_6MONTH_FACTOR;
+V_R29_YEAR_CALCULATED:=V_R29_YEAR_AMOUNT *V_R29_YEAR_FACTOR;
+V_R29_TOTAL_ASF:=V_R29_MONTH_CALCULATED+V_R29_6MONTH_CALCULATED+V_R29_YEAR_CALCULATED;
+
+select count(*) into V_R30_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW121' AND REPORT_ADDL_CRITERIA_1 = 'ROW121A' ;
+select count(*) into V_R30_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW121' AND REPORT_ADDL_CRITERIA_1 = 'ROW121B' ;
+select count(*) into V_R30_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW121' AND REPORT_ADDL_CRITERIA_1 = 'ROW121C' ;
+select count(*) into V_R30_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW121' AND REPORT_ADDL_CRITERIA_1 = 'ROW121D' ;
+V_R30_MONTH_CALCULATED:= V_R30_MONTH_AMOUNT* V_R30_MONTH_FACTOR;
+V_R30_6MONTH_CALCULATED:=V_R30_6MONTH_AMOUNT*V_R30_6MONTH_FACTOR;
+V_R30_YEAR_CALCULATED:=V_R30_YEAR_AMOUNT *V_R30_YEAR_FACTOR;
+V_R30_TOTAL_ASF:=V_R30_MONTH_CALCULATED+V_R30_6MONTH_CALCULATED+V_R30_YEAR_CALCULATED;
+
+--
+select count(*) into V_R31_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW122' AND REPORT_ADDL_CRITERIA_1 = 'ROW122A' ;
+select count(*) into V_R31_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW122' AND REPORT_ADDL_CRITERIA_1 = 'ROW122B' ;
+select count(*) into V_R31_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW122' AND REPORT_ADDL_CRITERIA_1 = 'ROW122C' ;	
+V_R31_MONTH_CALCULATED:= V_R31_MONTH_AMOUNT* V_R31_MONTH_FACTOR;
+V_R31_6MONTH_CALCULATED:=V_R31_6MONTH_AMOUNT*V_R31_6MONTH_FACTOR;
+V_R31_YEAR_CALCULATED:=V_R31_YEAR_AMOUNT *V_R31_YEAR_FACTOR;
+V_R31_TOTAL_ASF:=V_R31_MONTH_CALCULATED+V_R31_6MONTH_CALCULATED+V_R31_YEAR_CALCULATED;
+
+select count(*) into V_R33_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW124' AND REPORT_ADDL_CRITERIA_1 = 'ROW124A' ;
+select count(*) into V_R33_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW124' AND REPORT_ADDL_CRITERIA_1 = 'ROW124B' ;
+select count(*) into V_R33_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW124' AND REPORT_ADDL_CRITERIA_1 = 'ROW124C' ;	
+V_R33_MONTH_CALCULATED:= V_R33_MONTH_AMOUNT* V_R33_MONTH_FACTOR;
+V_R33_6MONTH_CALCULATED:=V_R33_6MONTH_AMOUNT*V_R33_6MONTH_FACTOR;
+V_R33_YEAR_CALCULATED:=V_R33_YEAR_AMOUNT *V_R33_YEAR_FACTOR;
+V_R33_TOTAL_ASF:=V_R33_MONTH_CALCULATED+V_R33_6MONTH_CALCULATED+V_R33_YEAR_CALCULATED;
+
+
+select count(*) into V_R34_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW125' AND REPORT_ADDL_CRITERIA_1 = 'ROW125A' ;
+select count(*) into V_R34_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW125' AND REPORT_ADDL_CRITERIA_1 = 'ROW125B' ;
+select count(*) into V_R34_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW125' AND REPORT_ADDL_CRITERIA_1 = 'ROW125C' ;	
+select count(*) into V_R34_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW125' AND REPORT_ADDL_CRITERIA_1 = 'ROW125D' ;
+V_R34_MONTH_CALCULATED:= V_R34_MONTH_AMOUNT* V_R34_MONTH_FACTOR;
+V_R34_6MONTH_CALCULATED:=V_R34_6MONTH_AMOUNT*V_R34_6MONTH_FACTOR;
+V_R34_YEAR_CALCULATED:=V_R34_YEAR_AMOUNT *V_R34_YEAR_FACTOR;
+V_R34_TOTAL_ASF:=V_R34_MONTH_CALCULATED+V_R34_6MONTH_CALCULATED+V_R34_YEAR_CALCULATED;
+
+select count(*) into V_R35_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW126' AND REPORT_ADDL_CRITERIA_1 = 'ROW126A' ;
+select count(*) into V_R35_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW126' AND REPORT_ADDL_CRITERIA_1 = 'ROW126B' ;
+select count(*) into V_R35_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW126' AND REPORT_ADDL_CRITERIA_1 = 'ROW126C' ;	
+select count(*) into V_R35_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW126' AND REPORT_ADDL_CRITERIA_1 = 'ROW126D' ;
+V_R35_MONTH_CALCULATED:= V_R35_MONTH_AMOUNT* V_R35_MONTH_FACTOR;
+V_R35_6MONTH_CALCULATED:=V_R35_6MONTH_AMOUNT*V_R35_6MONTH_FACTOR;
+V_R35_YEAR_CALCULATED:=V_R35_YEAR_AMOUNT *V_R35_YEAR_FACTOR;
+V_R35_TOTAL_ASF:=V_R35_MONTH_CALCULATED+V_R35_6MONTH_CALCULATED+V_R35_YEAR_CALCULATED;
+--R36
+select count(*) into V_R36_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW127' AND REPORT_ADDL_CRITERIA_1 = 'ROW127A' ;
+select count(*) into V_R36_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW127' AND REPORT_ADDL_CRITERIA_1 = 'ROW127B' ;
+select count(*) into V_R36_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW127' AND REPORT_ADDL_CRITERIA_1 = 'ROW127C' ;
+select count(*) into V_R36_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW127' AND REPORT_ADDL_CRITERIA_1 = 'ROW127D' ;
+V_R36_MONTH_CALCULATED:= V_R36_MONTH_AMOUNT* V_R36_MONTH_FACTOR;
+V_R36_6MONTH_CALCULATED:=V_R36_6MONTH_AMOUNT*V_R36_6MONTH_FACTOR;
+V_R36_YEAR_CALCULATED:=V_R36_YEAR_AMOUNT *V_R36_YEAR_FACTOR;
+V_R36_TOTAL_ASF:=V_R36_MONTH_CALCULATED+V_R36_6MONTH_CALCULATED+V_R36_YEAR_CALCULATED;
+
+--
+--R36
+
+select count(*) into V_R38_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW129' AND REPORT_ADDL_CRITERIA_1 = 'ROW129C' ;
+select count(*) into V_R39_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW130' AND REPORT_ADDL_CRITERIA_1 = 'ROW130C' ;
+V_R40_YEAR_AMOUNT:=V_R38_YEAR_AMOUNT - V_R39_YEAR_AMOUNT;
+
+select count(*) into V_R40_YEAR_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW131' AND REPORT_ADDL_CRITERIA_1 = 'ROW131F' ;
+V_R40_TOTAL_ASF:=V_R40_YEAR_CALCULATED;
+--
+select count(*) into V_R41_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW132' AND REPORT_ADDL_CRITERIA_1 = 'ROW132C' ;
+select count(*) into V_R41_YEAR_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW132' AND REPORT_ADDL_CRITERIA_1 = 'ROW132F' ;
+V_R41_YEAR_CALCULATED:=V_R41_YEAR_AMOUNT*V_R41_YEAR_FACTOR;
+V_R41_TOTAL_ASF:=V_R41_YEAR_CALCULATED;
+--
+select count(*) into V_R42_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW133' AND REPORT_ADDL_CRITERIA_1 = 'ROW133C' ;
+select count(*) into V_R42_YEAR_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW133' AND REPORT_ADDL_CRITERIA_1 = 'ROW133F' ;
+V_R42_YEAR_CALCULATED:=V_R42_YEAR_AMOUNT*V_R42_YEAR_FACTOR;
+V_R42_TOTAL_ASF:=V_R42_YEAR_CALCULATED;
+
+select count(*) into V_R44_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135A' ;
+select count(*) into V_R44_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135B' ;
+select count(*) into V_R44_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135C' ;	
+V_R44_MONTH_CALCULATED:= V_R44_MONTH_AMOUNT* V_R44_MONTH_FACTOR;
+V_R44_6MONTH_CALCULATED:=V_R44_6MONTH_AMOUNT*V_R44_6MONTH_FACTOR;
+V_R44_YEAR_CALCULATED:=V_R44_YEAR_AMOUNT *V_R44_YEAR_FACTOR;
+V_R44_TOTAL_ASF:=V_R44_MONTH_CALCULATED+V_R44_6MONTH_CALCULATED+V_R44_YEAR_CALCULATED;
+
+--select count(*) into V_R44_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135D' ;
+--select count(*) into V_R44_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135E' ;
+--select count(*) into V_R44_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135F' ;
+--select count(*) into V_R44_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW135' AND REPORT_ADDL_CRITERIA_1 = 'ROW135A' ;	
+--V_R44_MONTH_CALCULATED:= V_R44_MONTH_AMOUNT* V_R44_MONTH_FACTOR;
+--V_R44_6MONTH_CALCULATED:=V_R44_6MONTH_AMOUNT*V_R44_6MONTH_FACTOR;
+--V_R44_YEAR_CALCULATED:=V_R44_YEAR_AMOUNT *V_R44_YEAR_FACTOR;
+--V_R44_TOTAL_ASF:=V_R44_MONTH_CALCULATED+V_R44_6MONTH_CALCULATED+V_R44_YEAR_CALCULATED;
+
+select count(*) into V_R45_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW136' AND REPORT_ADDL_CRITERIA_1 = 'ROW136D' ;
+select count(*) into V_R45_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW136' AND REPORT_ADDL_CRITERIA_1 = 'ROW136A' ;
+select count(*) into V_R45_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW136' AND REPORT_ADDL_CRITERIA_1 = 'ROW136B' ;
+select count(*) into V_R45_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW136' AND REPORT_ADDL_CRITERIA_1 = 'ROW136C' ;	
+V_R45_MONTH_CALCULATED:= V_R45_MONTH_AMOUNT* V_R45_MONTH_FACTOR;
+V_R45_6MONTH_CALCULATED:=V_R45_6MONTH_AMOUNT*V_R45_6MONTH_FACTOR;
+V_R45_YEAR_CALCULATED:=V_R45_YEAR_AMOUNT *V_R45_YEAR_FACTOR;
+V_R45_TOTAL_ASF:=V_R45_MONTH_CALCULATED+V_R45_6MONTH_CALCULATED+V_R45_YEAR_CALCULATED;
+--
+select count(*) into V_R46_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW137' AND REPORT_ADDL_CRITERIA_1 = 'ROW137A' ;
+select count(*) into V_R46_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW137' AND REPORT_ADDL_CRITERIA_1 = 'ROW137A' ;
+select count(*) into V_R46_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW137' AND REPORT_ADDL_CRITERIA_1 = 'ROW137D' ;
+V_R46_MONTH_CALCULATED:= V_R46_MONTH_AMOUNT* V_R46_MONTH_FACTOR;
+V_R46_TOTAL_ASF:=V_R46_MONTH_CALCULATED;
+--R47
+select count(*) into V_R47_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW138' AND REPORT_ADDL_CRITERIA_1 = 'ROW138D' ;
+select count(*) into V_R47_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW138' AND REPORT_ADDL_CRITERIA_1 = 'ROW138A' ;
+--select count(*) into V_R47_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW138' AND REPORT_ADDL_CRITERIA_1 = 'ROW138A' ;
+select count(*) into V_R47_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW138' AND REPORT_ADDL_CRITERIA_1 = 'ROW138B' ;
+select count(*) into V_R47_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW138' AND REPORT_ADDL_CRITERIA_1 = 'ROW138C' ;	
+V_R47_MONTH_CALCULATED:= V_R47_MONTH_AMOUNT* V_R47_MONTH_FACTOR;
+V_R47_6MONTH_CALCULATED:=V_R47_6MONTH_AMOUNT*V_R47_6MONTH_FACTOR;
+V_R47_YEAR_CALCULATED:=V_R47_YEAR_AMOUNT *V_R47_YEAR_FACTOR;
+V_R46_TOTAL_ASF:=V_R47_6MONTH_CALCULATED+V_R47_MONTH_CALCULATED+V_R47_YEAR_CALCULATED;
+--
+V_R48_TOTAL_ASP:=V_R10_TOTAL_ASF+V_R11_TOTAL_ASF+V_R13_TOTAL_ASF+V_R14_TOTAL_ASF+V_R15_TOTAL_ASF +V_R17_TOTAL_ASF+V_R18_TOTAL_ASF
++V_R19_TOTAL_ASF+ V_R20_TOTAL_ASF+V_R22_TOTAL_ASF+V_R23_TOTAL_ASF+V_R24_TOTAL_ASF+V_R25_TOTAL_ASF +V_R27_TOTAL_ASF+V_R28_TOTAL_ASF
++V_R29_TOTAL_ASF+V_R30_TOTAL_ASF+V_R33_TOTAL_ASF+V_R33_TOTAL_ASF+V_R34_TOTAL_ASF+V_R35_TOTAL_ASF +V_R36_TOTAL_ASF+
+V_R40_TOTAL_ASF+V_R41_TOTAL_ASF+V_R42_TOTAL_ASF+V_R44_TOTAL_ASF+V_R45_TOTAL_ASF +V_R46_TOTAL_ASF+V_R47_TOTAL_ASF;
+--r50
+select count(*) into V_R53_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW144' AND REPORT_ADDL_CRITERIA_1 = 'ROW144A' ;
+select count(*) into V_R53_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW144' AND REPORT_ADDL_CRITERIA_1 = 'ROW144D' ;
+select count(*) into V_R53_MONTH_CALCULATED from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW144' AND REPORT_ADDL_CRITERIA_1 = 'ROW144G' ;	
+V_R53_TOTAL_ASF:=V_R53_MONTH_CALCULATED;
+
+
+select count(*) into V_R55_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW146' AND REPORT_ADDL_CRITERIA_1 = 'ROW146A' ;
+select count(*) into V_R55_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW146' AND REPORT_ADDL_CRITERIA_1 = 'ROW146D' ;
+select count(*) into V_R55_MONTH_CALCULATED from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW146' AND REPORT_ADDL_CRITERIA_1 = 'ROW146G' ;	
+V_R55_TOTAL_ASF:=V_R55_MONTH_CALCULATED;
+
+
+select count(*) into V_R56_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW147' AND REPORT_ADDL_CRITERIA_1 = 'ROW147A' ;
+select count(*) into V_R56_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW147' AND REPORT_ADDL_CRITERIA_1 = 'ROW147D' ;
+select count(*) into V_R56_MONTH_CALCULATED from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW147' AND REPORT_ADDL_CRITERIA_1 = 'ROW147G' ;	
+V_R56_TOTAL_ASF:=V_R56_MONTH_CALCULATED;
+
+--
+select count(*) into V_R57_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW148' AND REPORT_ADDL_CRITERIA_1 = 'ROW148A' ;
+select count(*) into V_R57_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW148' AND REPORT_ADDL_CRITERIA_1 = 'ROW148B' ;
+select count(*) into V_R57_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW148' AND REPORT_ADDL_CRITERIA_1 = 'ROW148C' ;
+select count(*) into V_R57_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW148' AND REPORT_ADDL_CRITERIA_1 = 'ROW148D' ;
+V_R57_MONTH_CALCULATED:= V_R57_MONTH_AMOUNT* V_R57_MONTH_FACTOR;
+V_R57_6MONTH_CALCULATED:=V_R57_6MONTH_AMOUNT*V_R57_6MONTH_FACTOR;
+V_R57_YEAR_CALCULATED:=V_R57_YEAR_AMOUNT *V_R57_YEAR_FACTOR;
+V_R57_TOTAL_ASF:=V_R57_MONTH_CALCULATED+V_R57_6MONTH_CALCULATED+V_R57_YEAR_CALCULATED;
+--
+select count(*) into V_R58_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW149' AND REPORT_ADDL_CRITERIA_1 = 'ROW149A' ;
+select count(*) into V_R58_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW149' AND REPORT_ADDL_CRITERIA_1 = 'ROW149B' ;
+select count(*) into V_R58_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW149' AND REPORT_ADDL_CRITERIA_1 = 'ROW149C' ;
+select count(*) into V_R58_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW149' AND REPORT_ADDL_CRITERIA_1 = 'ROW149D' ;
+V_R58_MONTH_CALCULATED:= V_R58_MONTH_AMOUNT* V_R58_MONTH_FACTOR;
+V_R58_6MONTH_CALCULATED:=V_R58_6MONTH_AMOUNT*V_R58_6MONTH_FACTOR;
+V_R58_YEAR_CALCULATED:=V_R58_YEAR_AMOUNT *V_R58_YEAR_FACTOR;
+V_R58_TOTAL_ASF:=V_R58_MONTH_CALCULATED+V_R58_6MONTH_CALCULATED+V_R58_YEAR_CALCULATED;
+
+select count(*) into V_R59_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW150' AND REPORT_ADDL_CRITERIA_1 = 'ROW150B' ;
+select count(*) into V_R59_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW150' AND REPORT_ADDL_CRITERIA_1 = 'ROW150C' ;
+V_R59_6MONTH_CALCULATED:=V_R59_6MONTH_AMOUNT*V_R59_6MONTH_FACTOR;
+V_R59_YEAR_CALCULATED:=V_R59_YEAR_AMOUNT*V_R59_YEAR_FACTOR;
+V_R59_TOTAL_ASF:=V_R59_6MONTH_CALCULATED+V_R59_YEAR_CALCULATED;
+
+select count(*) into V_R60_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW151' AND REPORT_ADDL_CRITERIA_1 = 'ROW151A' ;
+V_R60_YEAR_CALCULATED:=V_R60_YEAR_AMOUNT*V_R60_YEAR_FACTOR;
+V_R60_TOTAL_ASF:=V_R60_YEAR_CALCULATED;
+
+select count(*) into V_R62_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW153' AND REPORT_ADDL_CRITERIA_1 = 'ROW153A' ;
+select count(*) into V_R62_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW153' AND REPORT_ADDL_CRITERIA_1 = 'ROW153B' ;
+select count(*) into V_R62_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW153' AND REPORT_ADDL_CRITERIA_1 = 'ROW153C' ;	
+V_R62_MONTH_CALCULATED:= V_R62_MONTH_AMOUNT* V_R62_MONTH_FACTOR;
+V_R62_6MONTH_CALCULATED:=V_R62_6MONTH_AMOUNT*V_R62_6MONTH_FACTOR;
+V_R62_YEAR_CALCULATED:=V_R62_YEAR_AMOUNT *V_R62_YEAR_FACTOR;
+V_R62_TOTAL_ASF:=V_R62_MONTH_CALCULATED+V_R62_6MONTH_CALCULATED+V_R62_YEAR_CALCULATED;
+
+select count(*) into V_R63_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW154' AND REPORT_ADDL_CRITERIA_1 = 'ROW154A' ;
+V_R63_MONTH_CALCULATED:=V_R62_MONTH_AMOUNT*V_R63_MONTH_FACTOR;
+V_R63_TOTAL_ASF:=V_R63_MONTH_CALCULATED;
+
+select count(*) into V_R64_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW155' AND REPORT_ADDL_CRITERIA_1 = 'ROW155A' ;
+V_R64_6MONTH_CALCULATED:=V_R64_6MONTH_AMOUNT*V_R64_6MONTH_FACTOR;
+V_R64_TOTAL_ASF:=V_R64_6MONTH_CALCULATED;
+
+select count(*) into V_R65_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW156' AND REPORT_ADDL_CRITERIA_1 = 'ROW156A' ;
+V_R65_YEAR_CALCULATED:=V_R65_YEAR_AMOUNT*V_R65_YEAR_FACTOR;
+V_R65_TOTAL_ASF:=V_R65_YEAR_CALCULATED;
+
+Select count(*) into V_R68_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW159' AND REPORT_ADDL_CRITERIA_1 = 'ROW159A' ;
+select count(*) into V_R68_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW159' AND REPORT_ADDL_CRITERIA_1 = 'ROW159B' ;
+select count(*) into V_R68_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW159' AND REPORT_ADDL_CRITERIA_1 = 'ROW159C' ;	
+V_R68_MONTH_CALCULATED:= V_R68_MONTH_AMOUNT* V_R68_MONTH_FACTOR;
+V_R68_6MONTH_CALCULATED:=V_R68_6MONTH_AMOUNT*V_R68_6MONTH_FACTOR;
+V_R68_YEAR_CALCULATED:=V_R68_YEAR_AMOUNT *V_R68_YEAR_FACTOR;
+V_R68_TOTAL_ASF:=V_R68_MONTH_CALCULATED+V_R68_6MONTH_CALCULATED+V_R68_YEAR_CALCULATED;
+
+select count(*) into V_R69_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW160' AND REPORT_ADDL_CRITERIA_1 = 'ROW160A' ;
+V_R69_MONTH_CALCULATED:=V_R69_MONTH_AMOUNT*V_R69_MONTH_FACTOR;
+V_R69_TOTAL_ASF:=V_R69_MONTH_CALCULATED;
+
+select count(*) into V_R70_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW161' AND REPORT_ADDL_CRITERIA_1 = 'ROW161A' ;
+V_R70_6MONTH_CALCULATED:=V_R70_6MONTH_AMOUNT*V_R70_6MONTH_FACTOR;
+V_R70_TOTAL_ASF:=V_R70_6MONTH_CALCULATED;
+
+select count(*) into V_R71_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW162' AND REPORT_ADDL_CRITERIA_1 = 'ROW162A' ;
+V_R71_YEAR_CALCULATED:=V_R71_YEAR_AMOUNT*V_R71_YEAR_FACTOR;
+V_R71_TOTAL_ASF:=V_R71_YEAR_CALCULATED;
+
+Select count(*) into V_R73_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW164' AND REPORT_ADDL_CRITERIA_1 = 'ROW164A' ;
+select count(*) into V_R73_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW164' AND REPORT_ADDL_CRITERIA_1 = 'ROW164B' ;
+select count(*) into V_R73_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW164' AND REPORT_ADDL_CRITERIA_1 = 'ROW164C' ;	
+V_R73_MONTH_CALCULATED:= V_R73_MONTH_AMOUNT* V_R73_MONTH_FACTOR;
+V_R73_6MONTH_CALCULATED:=V_R73_6MONTH_AMOUNT*V_R73_6MONTH_FACTOR;
+V_R73_YEAR_CALCULATED:=V_R73_YEAR_AMOUNT *V_R73_YEAR_FACTOR;
+V_R73_TOTAL_ASF:=V_R73_MONTH_CALCULATED+V_R73_6MONTH_CALCULATED+V_R73_YEAR_CALCULATED;
+
+select count(*) into V_R74_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW165' AND REPORT_ADDL_CRITERIA_1 = 'ROW165A' ;
+V_R74_MONTH_CALCULATED:=V_R74_MONTH_AMOUNT*V_R74_MONTH_FACTOR;
+V_R74_TOTAL_ASF:=V_R74_MONTH_CALCULATED;
+
+select count(*) into V_R75_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW166' AND REPORT_ADDL_CRITERIA_1 = 'ROW166B' ;
+V_R75_6MONTH_CALCULATED:=V_R75_6MONTH_AMOUNT*V_R75_6MONTH_FACTOR;
+V_R75_TOTAL_ASF:=V_R75_6MONTH_CALCULATED;
+
+select count(*) into V_R76_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW167' AND REPORT_ADDL_CRITERIA_1 = 'ROW167C' ;
+V_R76_YEAR_CALCULATED:=V_R76_YEAR_AMOUNT*V_R76_YEAR_FACTOR;
+V_R76_TOTAL_ASF:=V_R76_YEAR_CALCULATED;
+
+Select count(*) into V_R79_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW170' AND REPORT_ADDL_CRITERIA_1 = 'ROW170A' ;
+select count(*) into V_R79_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW170' AND REPORT_ADDL_CRITERIA_1 = 'ROW170B' ;
+select count(*) into V_R79_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW170' AND REPORT_ADDL_CRITERIA_1 = 'ROW170C' ;	
+V_R79_MONTH_CALCULATED:= V_R79_MONTH_AMOUNT* V_R79_MONTH_FACTOR;
+V_R79_6MONTH_CALCULATED:=V_R79_6MONTH_AMOUNT*V_R79_6MONTH_FACTOR;
+V_R79_YEAR_CALCULATED:=V_R79_YEAR_AMOUNT *V_R79_YEAR_FACTOR;
+V_R79_TOTAL_ASF:=V_R79_MONTH_CALCULATED+V_R79_6MONTH_CALCULATED+V_R79_YEAR_CALCULATED;
+
+select count(*) into V_R80_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW171' AND REPORT_ADDL_CRITERIA_1 = 'ROW171A' ;
+V_R80_MONTH_CALCULATED:=V_R80_MONTH_AMOUNT*V_R80_MONTH_FACTOR;
+V_R80_TOTAL_ASF:=V_R80_MONTH_CALCULATED;
+
+select count(*) into V_R81_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW172' AND REPORT_ADDL_CRITERIA_1 = 'ROW172B' ;
+V_R81_6MONTH_CALCULATED:=V_R81_6MONTH_AMOUNT*V_R81_6MONTH_FACTOR;
+V_R81_TOTAL_ASF:=V_R81_6MONTH_CALCULATED;
+
+select count(*) into V_R82_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW173' AND REPORT_ADDL_CRITERIA_1 = 'ROW173C' ;
+V_R82_YEAR_CALCULATED:=V_R82_YEAR_AMOUNT*V_R82_YEAR_FACTOR;
+V_R82_TOTAL_ASF:=V_R82_YEAR_CALCULATED;
+
+
+
+select count(*) into V_R84_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW175' AND REPORT_ADDL_CRITERIA_1 = 'ROW175C' ;
+V_R84_YEAR_CALCULATED:= V_R84_YEAR_AMOUNT*V_R84_YEAR_FACTOR;
+V_R84_TOTAL_ASF:=V_R84_YEAR_CALCULATED;
+
+select count(*) into V_R85_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW176' AND REPORT_ADDL_CRITERIA_1 = 'ROW176C' ;
+V_R85_YEAR_CALCULATED:= V_R85_YEAR_AMOUNT*V_R85_YEAR_FACTOR;
+V_R85_TOTAL_ASF:=V_R85_YEAR_CALCULATED;
+
+select count(*) into V_R86_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW177' AND REPORT_ADDL_CRITERIA_1 = 'ROW177C' ;
+V_R86_YEAR_CALCULATED:= V_R86_YEAR_AMOUNT*V_R86_YEAR_FACTOR;
+V_R86_TOTAL_ASF:=V_R86_YEAR_CALCULATED;
+
+select count(*) into V_R87_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW178' AND REPORT_ADDL_CRITERIA_1 = 'ROW178C' ;
+V_R87_YEAR_CALCULATED:= V_R87_YEAR_AMOUNT*V_R87_YEAR_FACTOR;
+V_R87_TOTAL_ASF:=V_R87_YEAR_CALCULATED;
+
+
+
+select count(*) into V_R89_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW101' AND REPORT_ADDL_CRITERIA_1 = 'ROW180A' ;
+select count(*) into V_R89_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW101' AND REPORT_ADDL_CRITERIA_1 = 'ROW180B' ;
+V_R89_MONTH_CALCULATED:= V_R89_MONTH_AMOUNT* V_R89_MONTH_FACTOR;
+V_R89_6MONTH_CALCULATED:=V_R89_6MONTH_AMOUNT*V_R89_6MONTH_FACTOR;
+V_R89_TOTAL_ASF:=V_R89_MONTH_CALCULATED+V_R89_6MONTH_CALCULATED ;
+
+select count(*) into V_R90_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW101' AND REPORT_ADDL_CRITERIA_1 = 'ROW181A' ;
+
+V_R90_MONTH_CALCULATED:= V_R90_MONTH_AMOUNT* V_R90_MONTH_FACTOR;
+
+V_R90_TOTAL_ASF:=V_R90_MONTH_CALCULATED;
+
+select count(*) into V_R91_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW182' AND REPORT_ADDL_CRITERIA_1 = 'ROW182B' ;
+
+V_R91_6MONTH_CALCULATED:=V_R91_6MONTH_AMOUNT*V_R91_6MONTH_FACTOR;
+
+V_R91_TOTAL_ASF:= V_R91_6MONTH_CALCULATED;
+
+select count(*) into V_R93_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW184' AND REPORT_ADDL_CRITERIA_1 = 'ROW184A' ;
+select count(*) into V_R93_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW184' AND REPORT_ADDL_CRITERIA_1 = 'ROW184B' ;
+select count(*) into V_R93_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW184' AND REPORT_ADDL_CRITERIA_1 = 'ROW184C' ;	
+V_R93_MONTH_CALCULATED:= V_R93_MONTH_AMOUNT* V_R93_MONTH_FACTOR;
+V_R93_6MONTH_CALCULATED:=V_R93_6MONTH_AMOUNT*V_R93_6MONTH_FACTOR;
+V_R93_YEAR_CALCULATED:=V_R93_YEAR_AMOUNT *V_R93_YEAR_FACTOR;
+V_R93_TOTAL_ASF:=V_R93_MONTH_CALCULATED+V_R93_6MONTH_CALCULATED+V_R93_YEAR_CALCULATED;
+
+select count(*) into V_R94_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW185' AND REPORT_ADDL_CRITERIA_1 = 'ROW185A' ;
+select count(*) into V_R94_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW185' AND REPORT_ADDL_CRITERIA_1 = 'ROW185B' ;
+select count(*) into V_R94_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW185' AND REPORT_ADDL_CRITERIA_1 = 'ROW185C' ;	
+V_R94_MONTH_CALCULATED:= V_R94_MONTH_AMOUNT* V_R94_MONTH_FACTOR;
+V_R94_6MONTH_CALCULATED:=V_R94_6MONTH_AMOUNT*V_R94_6MONTH_FACTOR;
+V_R94_YEAR_CALCULATED:=V_R94_YEAR_AMOUNT *V_R94_YEAR_FACTOR;
+V_R94_TOTAL_ASF:=V_R94_MONTH_CALCULATED+V_R94_6MONTH_CALCULATED+V_R94_YEAR_CALCULATED;
+
+select count(*) into V_R95_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW186' AND REPORT_ADDL_CRITERIA_1 = 'ROW186B' ;
+select count(*) into V_R95_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW186' AND REPORT_ADDL_CRITERIA_1 = 'ROW186C' ;	
+
+V_R95_6MONTH_CALCULATED:=V_R95_6MONTH_AMOUNT*V_R95_6MONTH_FACTOR;
+V_R95_YEAR_CALCULATED:=V_R95_YEAR_AMOUNT *V_R95_YEAR_FACTOR;
+V_R95_TOTAL_ASF:=V_R95_6MONTH_CALCULATED+V_R95_YEAR_CALCULATED;
+
+select count(*) into V_R96_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW187' AND REPORT_ADDL_CRITERIA_1 = 'ROW187C' ;	
+V_R96_YEAR_CALCULATED:=V_R96_YEAR_AMOUNT *V_R96_YEAR_FACTOR;
+V_R96_TOTAL_ASF:=V_R96_YEAR_CALCULATED;
+
+select count(*) into V_R98_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW189' AND REPORT_ADDL_CRITERIA_1 = 'ROW189A' ;
+select count(*) into V_R98_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW189' AND REPORT_ADDL_CRITERIA_1 = 'ROW189B' ;
+select count(*) into V_R98_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW189' AND REPORT_ADDL_CRITERIA_1 = 'ROW189C' ;	
+V_R98_MONTHS_CALCULATED:= V_R98_MONTHS_AMOUNT* V_R98_MONTHS_FACTOR;
+V_R98_6MONTHS_CALCULATED:=V_R98_6MONTHS_AMOUNT*V_R98_6MONTHS_FACTOR;
+V_R98_YEAR_CALCULATED:=V_R98_YEAR_AMOUNT *V_R98_YEAR_FACTOR;
+V_R98_TOTAL_ASF:=V_R98_MONTHS_CALCULATED+V_R98_6MONTHS_CALCULATED+V_R98_YEAR_CALCULATED;
+
+select count(*) into V_R99_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW191' AND REPORT_ADDL_CRITERIA_1 = 'ROW191A' ;
+select count(*) into V_R99_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW191' AND REPORT_ADDL_CRITERIA_1 = 'ROW191B' ;
+select count(*) into V_R99_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW191' AND REPORT_ADDL_CRITERIA_1 = 'ROW191C' ;	
+V_R99_MONTH_CALCULATED:= V_R99_MONTH_AMOUNT* V_R99_MONTH_FACTOR;
+V_R99_6MONTH_CALCULATED:=V_R99_6MONTH_AMOUNT*V_R99_6MONTH_FACTOR;
+V_R99_YEAR_CALCULATED:=V_R99_YEAR_AMOUNT *V_R99_YEAR_FACTOR;
+V_R99_TOTAL_ASF:=V_R99_MONTH_CALCULATED+V_R99_6MONTH_CALCULATED+V_R99_YEAR_CALCULATED;
+
+select count(*) into V_R100_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW191' AND REPORT_ADDL_CRITERIA_1 = 'ROW191B' ;
+select count(*) into V_R100_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW191' AND REPORT_ADDL_CRITERIA_1 = 'ROW191C' ;	
+V_R100_6MONTH_CALCULATED:=V_R100_6MONTH_AMOUNT*V_R100_6MONTH_FACTOR;
+V_R100_YEAR_CALCULATED:=V_R100_YEAR_AMOUNT *V_R100_YEAR_FACTOR;
+V_R100_TOTAL_ASF:=V_R100_YEAR_CALCULATED+V_R100_6MONTH_CALCULATED;
+
+select count(*) into V_R101_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW192' AND REPORT_ADDL_CRITERIA_1 = 'ROW192C' ;	
+V_R101_YEAR_CALCULATED:=V_R101_YEAR_AMOUNT *V_R101_YEAR_FACTOR;
+V_R101_TOTAL_ASF:=V_R101_YEAR_CALCULATED;
+
+select count(*) into V_R103_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW194' AND REPORT_ADDL_CRITERIA_1 = 'ROW194A' ;
+select count(*) into V_R103_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW194' AND REPORT_ADDL_CRITERIA_1 = 'ROW194B' ;
+select count(*) into V_R103_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW194' AND REPORT_ADDL_CRITERIA_1 = 'ROW194C' ;	
+V_R103_MONTHS_CALCULATED:= V_R103_MONTHS_AMOUNT* V_R103_MONTHS_FACTOR;
+V_R103_6MONTHS_CALCULATED:=V_R103_6MONTHS_AMOUNT*V_R103_6MONTHS_FACTOR;
+V_R103_YEAR_CALCULATED:=V_R103_YEAR_AMOUNT *V_R103_YEAR_FACTOR;
+V_R103_TOTAL_ASF:=V_R103_MONTHS_CALCULATED+V_R103_6MONTHS_CALCULATED+V_R103_YEAR_CALCULATED;
+
+select count(*) into V_R104_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW195' AND REPORT_ADDL_CRITERIA_1 = 'ROW195A' ;
+select count(*) into V_R104_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW195' AND REPORT_ADDL_CRITERIA_1 = 'ROW195B' ;
+select count(*) into V_R104_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW195' AND REPORT_ADDL_CRITERIA_1 = 'ROW195C' ;	
+V_R104_MONTH_CALCULATED:= V_R104_MONTH_AMOUNT* V_R104_MONTH_FACTOR;
+V_R104_6MONTH_CALCULATED:=V_R104_6MONTH_AMOUNT*V_R104_6MONTH_FACTOR;
+V_R104_YEAR_CALCULATED:=V_R104_YEAR_AMOUNT *V_R104_YEAR_FACTOR;
+V_R104_TOTAL_ASF:=V_R104_MONTH_CALCULATED+V_R104_6MONTH_CALCULATED+V_R104_YEAR_CALCULATED;
+
+
+select count(*) into V_R105_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW196' AND REPORT_ADDL_CRITERIA_1 = 'ROW196B' ;	
+select count(*) into V_R105_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW196' AND REPORT_ADDL_CRITERIA_1 = 'ROW196C' ;	
+V_R105_6MONTH_CALCULATED:=V_R105_6MONTH_AMOUNT*V_R105_6MONTH_FACTOR;
+V_R105_YEAR_CALCULATED:=V_R105_YEAR_AMOUNT *V_R105_YEAR_FACTOR;
+V_R105_TOTAL_ASF:=V_R105_6MONTH_CALCULATED+V_R105_YEAR_CALCULATED;
+
+select count(*) into V_R106_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW197' AND REPORT_ADDL_CRITERIA_1 = 'ROW197C' ;	
+V_R106_YEAR_CALCULATED:=V_R106_YEAR_AMOUNT *V_R106_YEAR_FACTOR;
+V_R106_TOTAL_ASF:=V_R106_YEAR_CALCULATED;
+
+select count(*) into V_R109_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW200' AND REPORT_ADDL_CRITERIA_1 = 'ROW200A' ;	
+select count(*) into V_R109_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW200' AND REPORT_ADDL_CRITERIA_1 = 'ROW200B' ;
+V_R109_6MONTH_CALCULATED:=V_R109_6MONTH_AMOUNT*V_R109_6MONTH_FACTOR;
+V_R109_MONTH_CALCULATED:=V_R109_MONTH_AMOUNT *V_R109_MONTH_FACTOR;
+V_R109_TOTAL_ASF:=V_R109_6MONTH_CALCULATED+V_R109_MONTH_CALCULATED;
+
+select count(*) into V_R110_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW201' AND REPORT_ADDL_CRITERIA_1 = 'ROW201A' ;	
+V_R110_MONTH_CALCULATED:=V_R110_MONTH_AMOUNT *V_R110_MONTH_FACTOR;
+V_R110_TOTAL_ASF:=V_R110_MONTH_CALCULATED;
+
+select count(*) into V_R111_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW202' AND REPORT_ADDL_CRITERIA_1 = 'ROW202B' ;	
+V_R111_6MONTH_CALCULATED:=V_R111_6MONTH_AMOUNT *V_R111_6MONTH_FACTOR;
+V_R111_TOTAL_ASF:=V_R111_6MONTH_CALCULATED;
+
+
+select count(*) into V_R113_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW204' AND REPORT_ADDL_CRITERIA_1 = 'ROW204A' ;	
+select count(*) into V_R113_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW204' AND REPORT_ADDL_CRITERIA_1 = 'ROW204B' ;
+V_R113_6MONTH_CALCULATED:=V_R113_6MONTH_AMOUNT*V_R113_6MONTH_FACTOR;
+V_R113_MONTH_CALCULATED:=V_R113_MONTH_AMOUNT *V_R113_MONTH_FACTOR;
+V_R113_TOTAL_ASF:=V_R113_6MONTH_CALCULATED+V_R113_MONTH_CALCULATED;
+
+select count(*) into V_R114_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW205' AND REPORT_ADDL_CRITERIA_1 = 'ROW205A' ;	
+V_R114_MONTH_CALCULATED:=V_R114_MONTH_AMOUNT *V_R114_MONTH_FACTOR;
+V_R114_TOTAL_ASF:=V_R114_MONTH_CALCULATED;
+
+select count(*) into V_R115_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW206' AND REPORT_ADDL_CRITERIA_1 = 'ROW206B' ;	
+V_R115_6MONTH_CALCULATED:=V_R115_6MONTH_AMOUNT *V_R115_6MONTH_FACTOR;
+V_R115_TOTAL_ASF:=V_R115_6MONTH_CALCULATED;
+
+select count(*) into V_R117_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW208' AND REPORT_ADDL_CRITERIA_1 = 'ROW208A' ;	
+select count(*) into V_R117_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW208' AND REPORT_ADDL_CRITERIA_1 = 'ROW208B' ;
+V_R117_6MONTH_CALCULATED:=V_R117_6MONTH_AMOUNT*V_R117_6MONTH_FACTOR;
+V_R117_MONTH_CALCULATED:=V_R117_MONTH_AMOUNT *V_R117_MONTH_FACTOR;
+V_R117_TOTAL_ASF:=V_R117_6MONTH_CALCULATED+V_R117_MONTH_CALCULATED;
+
+select count(*) into V_R118_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW209' AND REPORT_ADDL_CRITERIA_1 = 'ROW209A' ;	
+V_R118_MONTH_CALCULATED:=V_R118_MONTH_AMOUNT *V_R118_MONTH_FACTOR;
+V_R118_TOTAL_ASF:=V_R118_MONTH_CALCULATED;
+
+select count(*) into V_R119_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW210' AND REPORT_ADDL_CRITERIA_1 = 'ROW210B' ;	
+V_R119_6MONTH_CALCULATED:=V_R119_6MONTH_AMOUNT *V_R119_6MONTH_FACTOR;
+V_R119_TOTAL_ASF:=V_R119_6MONTH_CALCULATED;
+
+select count(*) into V_R122_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW213' AND REPORT_ADDL_CRITERIA_1 = 'ROW213C' ;	
+V_R122_YEAR_CALCULATED:=V_R122_YEAR_AMOUNT *V_R122_YEAR_FACTOR;
+V_R122_TOTAL_ASF:=V_R122_YEAR_CALCULATED;
+
+select count(*) into V_R123_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW214' AND REPORT_ADDL_CRITERIA_1 = 'ROW214A' ;	
+V_R123_MONTH_CALCULATED:=V_R123_MONTH_AMOUNT *V_R123_MONTH_FACTOR;
+V_R123_TOTAL_ASF:=V_R123_MONTH_CALCULATED;
+
+select count(*) into V_R124_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW215' AND REPORT_ADDL_CRITERIA_1 = 'ROW215B' ;	
+V_R124_6MONTH_CALCULATED:=V_R124_6MONTH_AMOUNT *V_R124_6MONTH_FACTOR;
+V_R124_TOTAL_ASF:=V_R124_6MONTH_CALCULATED;
+
+select count(*) into V_R125_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW216' AND REPORT_ADDL_CRITERIA_1 = 'ROW216C' ;	
+V_R125_YEAR_CALCULATED:=V_R125_YEAR_AMOUNT *V_R125_YEAR_FACTOR;
+V_R125_TOTAL_ASF:=V_R125_YEAR_CALCULATED;
+
+select count(*) into V_R127_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW218' AND REPORT_ADDL_CRITERIA_1 = 'ROW218C' ;	
+V_R127_YEAR_CALCULATED:=V_R127_YEAR_AMOUNT *V_R127_YEAR_FACTOR;
+V_R127_TOTAL_ASF:=V_R127_YEAR_CALCULATED;
+
+select count(*) into V_R128_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW219' AND REPORT_ADDL_CRITERIA_1 = 'ROW219A' ;	
+V_R128_MONTH_CALCULATED:=V_R128_MONTH_AMOUNT *V_R128_MONTH_FACTOR;
+V_R128_TOTAL_ASF:=V_R128_MONTH_CALCULATED;
+
+select count(*) into V_R129_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW220' AND REPORT_ADDL_CRITERIA_1 = 'ROW220B' ;	
+V_R129_6MONTH_CALCULATED:=V_R129_6MONTH_AMOUNT *V_R129_6MONTH_FACTOR;
+V_R129_TOTAL_ASF:=V_R129_6MONTH_CALCULATED;
+
+select count(*) into V_R130_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW221' AND REPORT_ADDL_CRITERIA_1 = 'ROW221C' ;	
+V_R130_YEAR_CALCULATED:=V_R130_YEAR_AMOUNT *V_R130_YEAR_FACTOR;
+V_R130_TOTAL_ASF:=V_R130_YEAR_CALCULATED;
+
+select count(*) into V_R132_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW223' AND REPORT_ADDL_CRITERIA_1 = 'ROW223C' ;	
+V_R132_YEAR_CALCULATED:=V_R132_YEAR_AMOUNT *V_R132_YEAR_FACTOR;
+V_R132_TOTAL_ASF:=V_R132_YEAR_CALCULATED;
+
+select count(*) into V_R133_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW224' AND REPORT_ADDL_CRITERIA_1 = 'ROW224A' ;	
+V_R133_MONTH_CALCULATED:=V_R133_MONTH_AMOUNT *V_R133_MONTH_FACTOR;
+V_R133_TOTAL_ASF:=V_R133_MONTH_CALCULATED;
+
+select count(*) into V_R134_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW225' AND REPORT_ADDL_CRITERIA_1 = 'ROW225B' ;	
+V_R134_6MONTH_CALCULATED:=V_R134_6MONTH_AMOUNT *V_R134_6MONTH_FACTOR;
+V_R134_TOTAL_ASF:=V_R134_6MONTH_CALCULATED;
+
+select count(*) into V_R135_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW226' AND REPORT_ADDL_CRITERIA_1 = 'ROW226C' ;	
+V_R135_YEAR_CALCULATED:=V_R135_YEAR_AMOUNT *V_R135_YEAR_FACTOR;
+V_R135_TOTAL_ASF:=V_R135_YEAR_CALCULATED;
+
+select count(*) into V_R137_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW228' AND REPORT_ADDL_CRITERIA_1 = 'ROW228C' ;	
+V_R137_YEAR_CALCULATED:=V_R137_YEAR_AMOUNT *V_R137_YEAR_FACTOR;
+V_R137_TOTAL_ASF:=V_R137_YEAR_CALCULATED;
+
+select count(*) into V_R138_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW229' AND REPORT_ADDL_CRITERIA_1 = 'ROW229A' ;	
+V_R138_MONTH_CALCULATED:=V_R138_MONTH_AMOUNT *V_R138_MONTH_FACTOR;
+V_R138_TOTAL_ASF:=V_R138_MONTH_CALCULATED;
+
+select count(*) into V_R139_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW230' AND REPORT_ADDL_CRITERIA_1 = 'ROW230A' ;	
+V_R139_6MONTH_CALCULATED:=V_R139_6MONTH_AMOUNT *V_R139_6MONTH_FACTOR;
+V_R139_TOTAL_ASF:=V_R139_6MONTH_CALCULATED;
+
+select count(*) into V_R140_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW231' AND REPORT_ADDL_CRITERIA_1 = 'ROW231C' ;	
+V_R140_YEAR_CALCULATED:=V_R140_YEAR_AMOUNT *V_R140_YEAR_FACTOR;
+V_R140_TOTAL_ASF:=V_R140_YEAR_CALCULATED;
+
+select count(*) into V_R142_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW233' AND REPORT_ADDL_CRITERIA_1 = 'ROW233C' ;	
+V_R142_YEAR_CALCULATED:=V_R142_YEAR_AMOUNT *V_R142_YEAR_FACTOR;
+V_R142_TOTAL_ASF:=V_R142_YEAR_CALCULATED;
+
+select count(*) into V_R143_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW234' AND REPORT_ADDL_CRITERIA_1 = 'ROW234A' ;	
+V_R143_MONTH_CALCULATED:=V_R143_MONTH_AMOUNT *V_R143_MONTH_FACTOR;
+V_R143_TOTAL_ASF:=V_R143_MONTH_CALCULATED;
+
+select count(*) into V_R144_6MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW235' AND REPORT_ADDL_CRITERIA_1 = 'ROW235B' ;	
+V_R144_6MONTH_CALCULATED:=V_R144_6MONTH_AMOUNT *V_R144_6MONTH_FACTOR;
+V_R144_TOTAL_ASF:=V_R144_6MONTH_CALCULATED;
+
+select count(*) into V_R145_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW236' AND REPORT_ADDL_CRITERIA_1 = 'ROW236C' ;	
+V_R145_YEAR_CALCULATED:=V_R145_YEAR_AMOUNT *V_R145_YEAR_FACTOR;
+V_R145_TOTAL_ASF:=V_R145_YEAR_CALCULATED;
+
+
+select count(*) into V_R147_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW238' AND REPORT_ADDL_CRITERIA_1 = 'ROW238C' ;
+select count(*) into V_R148_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW239' AND REPORT_ADDL_CRITERIA_1 = 'ROW239A' ;
+V_R149_YEAR_AMOUNT:=V_R149_YEAR_AMOUNT -V_R149_YEAR_AMOUNT;
+V_R149_TOTAL_ASF:=V_R149_YEAR_CALCULATED;
+V_R150_YEAR_AMOUNT:=V_R38_YEAR_AMOUNT * 0.2;
+V_R150_YEAR_CALCULATED := V_R150_YEAR_AMOUNT * V_R150_YEAR_FACTOR;
+V_R150_TOTAL_ASF:=V_R150_YEAR_CALCULATED;
+
+select count(*) into V_R151_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW242' AND REPORT_ADDL_CRITERIA_1 = 'ROW242A' ;
+select count(*) into V_R151_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW242' AND REPORT_ADDL_CRITERIA_1 = 'ROW242B' ;
+select count(*) into V_R151_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW242' AND REPORT_ADDL_CRITERIA_1 = 'ROW242C' ;	
+V_R151_MONTHS_CALCULATED:= V_R151_MONTHS_AMOUNT* V_R151_MONTHS_FACTOR;
+V_R151_6MONTHS_CALCULATED:=V_R151_6MONTHS_AMOUNT*V_R151_6MONTHS_FACTOR;
+V_R151_YEAR_CALCULATED:=V_R151_YEAR_AMOUNT * V_R151_YEAR_FACTOR;
+V_R151_TOTAL_ASF:=V_R151_MONTHS_CALCULATED+V_R151_6MONTHS_CALCULATED+V_R151_YEAR_CALCULATED;
+
+select count(*) into V_R152_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW243' AND REPORT_ADDL_CRITERIA_1 = 'ROW243C' ;
+select count(*) into V_R153_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW244' AND REPORT_ADDL_CRITERIA_1 = 'ROW244C' ;	
+V_R153_YEAR_CALCULATED:=V_R153_YEAR_AMOUNT *V_R153_YEAR_FACTOR;
+V_R153_TOTAL_ASF:=V_R153_YEAR_CALCULATED;
+
+select count(*) into V_R155_MONTH_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW246' AND REPORT_ADDL_CRITERIA_1 = 'ROW246D' ;
+select count(*) into V_R155_MONTH_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW246' AND REPORT_ADDL_CRITERIA_1 = 'ROW246A' ;	
+V_R155_MONTH_CALCULATED:=V_R155_MONTH_AMOUNT *V_R155_MONTH_FACTOR;
+V_R155_TOTAL_ASF:=V_R155_MONTH_CALCULATED;
+
+select count(*) into V_R156_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW247' AND REPORT_ADDL_CRITERIA_1 = 'ROW247A' ;
+select count(*) into V_R156_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW247' AND REPORT_ADDL_CRITERIA_1 = 'ROW247B' ;
+select count(*) into V_R156_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW247' AND REPORT_ADDL_CRITERIA_1 = 'ROW247C' ;
+select count(*) into V_R156_MONTHS_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW247' AND REPORT_ADDL_CRITERIA_1 = 'ROW247D' ;
+select count(*) into V_R156_6MONTHS_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW247' AND REPORT_ADDL_CRITERIA_1 = 'ROW247E' ;
+select count(*) into V_R156_YEAR_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW247' AND REPORT_ADDL_CRITERIA_1 = 'ROW247F' ;
+V_R156_MONTHS_CALCULATED:= V_R156_MONTHS_AMOUNT* V_R156_MONTHS_FACTOR;
+V_R156_6MONTHS_CALCULATED:=V_R156_6MONTHS_AMOUNT*V_R156_6MONTHS_FACTOR;
+V_R156_YEAR_CALCULATED:=V_R156_YEAR_AMOUNT *V_R156_YEAR_FACTOR;
+V_R156_TOTAL_ASF:=V_R156_MONTHS_CALCULATED+V_R156_6MONTHS_CALCULATED+V_R156_YEAR_CALCULATED;
+
+select count(*) into V_R157_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW248' AND REPORT_ADDL_CRITERIA_1 = 'ROW248A' ;
+select count(*) into V_R157_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW248' AND REPORT_ADDL_CRITERIA_1 = 'ROW248B' ;
+select count(*) into V_R157_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW248' AND REPORT_ADDL_CRITERIA_1 = 'ROW248C' ;	
+V_R157_MONTHS_CALCULATED:= V_R157_MONTHS_AMOUNT* V_R157_MONTHS_FACTOR;
+V_R157_6MONTHS_CALCULATED:=V_R157_6MONTHS_AMOUNT*V_R157_6MONTHS_FACTOR;
+V_R157_YEAR_CALCULATED:=V_R157_YEAR_AMOUNT *V_R157_YEAR_FACTOR;
+V_R157_TOTAL_ASF:=V_R157_MONTHS_CALCULATED+V_R157_6MONTHS_CALCULATED+V_R157_YEAR_CALCULATED;
+
+select count(*) into V_R158_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW249' AND REPORT_ADDL_CRITERIA_1 = 'ROW249A' ;
+select count(*) into V_R158_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW249' AND REPORT_ADDL_CRITERIA_1 = 'ROW249A' ;
+select count(*) into V_R158_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW249' AND REPORT_ADDL_CRITERIA_1 = 'ROW249A' ;	
+V_R158_MONTHS_CALCULATED:= V_R158_MONTHS_AMOUNT* V_R158_MONTHS_FACTOR;
+V_R158_6MONTHS_CALCULATED:=V_R158_6MONTHS_AMOUNT*V_R158_6MONTHS_FACTOR;
+V_R158_YEAR_CALCULATED:=V_R158_YEAR_AMOUNT *V_R158_YEAR_FACTOR;
+V_R158_TOTAL_ASF:=V_R158_MONTHS_CALCULATED+V_R158_6MONTHS_CALCULATED+V_R158_YEAR_CALCULATED;
+
+select count(*) into V_R159_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW250' AND REPORT_ADDL_CRITERIA_1 = 'ROW250A' ;
+select count(*) into V_R159_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW250' AND REPORT_ADDL_CRITERIA_1 = 'ROW250B' ;
+select count(*) into V_R159_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW250' AND REPORT_ADDL_CRITERIA_1 = 'ROW250C' ;	
+V_R159_MONTHS_CALCULATED:= V_R159_MONTHS_AMOUNT* V_R159_MONTHS_FACTOR;
+V_R159_6MONTHS_CALCULATED:=V_R159_6MONTHS_AMOUNT*V_R159_6MONTHS_FACTOR;
+V_R159_YEAR_CALCULATED:=V_R159_YEAR_AMOUNT *V_R159_YEAR_FACTOR;
+V_R159_TOTAL_ASF:=V_R159_MONTHS_CALCULATED+V_R159_6MONTHS_CALCULATED+V_R159_YEAR_CALCULATED;
+
+select count(*) into V_R160_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW251' AND REPORT_ADDL_CRITERIA_1 = 'ROW251A' ;
+select count(*) into V_R160_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW251' AND REPORT_ADDL_CRITERIA_1 = 'ROW251B' ;
+select count(*) into V_R160_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW251' AND REPORT_ADDL_CRITERIA_1 = 'ROW251C' ;	
+V_R160_MONTHS_CALCULATED:= V_R160_MONTHS_AMOUNT* V_R160_MONTHS_FACTOR;
+V_R160_6MONTHS_CALCULATED:=V_R160_6MONTHS_AMOUNT*V_R160_6MONTHS_FACTOR;
+V_R160_YEAR_CALCULATED:=V_R160_YEAR_AMOUNT *V_R160_YEAR_FACTOR;
+V_R160_TOTAL_ASF:=V_R160_MONTHS_CALCULATED+V_R160_6MONTHS_CALCULATED+V_R160_YEAR_CALCULATED;
+
+select count(*) into V_R161_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW252' AND REPORT_ADDL_CRITERIA_1 = 'ROW252A' ;
+select count(*) into V_R161_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW252' AND REPORT_ADDL_CRITERIA_1 = 'ROW252B' ;
+select count(*) into V_R161_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW252' AND REPORT_ADDL_CRITERIA_1 = 'ROW252C' ;	
+V_R161_MONTHS_CALCULATED:= V_R161_MONTHS_AMOUNT* V_R161_MONTHS_FACTOR;
+V_R161_6MONTHS_CALCULATED:=V_R161_6MONTHS_AMOUNT*V_R161_6MONTHS_FACTOR;
+V_R161_YEAR_CALCULATED:=V_R161_YEAR_AMOUNT *V_R161_YEAR_FACTOR;
+V_R161_TOTAL_ASF:=V_R161_MONTHS_CALCULATED+V_R161_6MONTHS_CALCULATED+V_R161_YEAR_CALCULATED;
+
+select count(*) into V_R162_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW253' AND REPORT_ADDL_CRITERIA_1 = 'ROW253A' ;
+select count(*) into V_R162_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW253' AND REPORT_ADDL_CRITERIA_1 = 'ROW253B' ;
+select count(*) into V_R162_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW253' AND REPORT_ADDL_CRITERIA_1 = 'ROW253C' ;	
+V_R162_MONTHS_CALCULATED:= V_R162_MONTHS_AMOUNT* V_R162_MONTHS_FACTOR;
+V_R162_6MONTHS_CALCULATED:=V_R162_6MONTHS_AMOUNT*V_R162_6MONTHS_FACTOR;
+V_R162_YEAR_CALCULATED:=V_R162_YEAR_AMOUNT *V_R162_YEAR_FACTOR;
+V_R162_TOTAL_ASF:=V_R162_MONTHS_CALCULATED+V_R162_6MONTHS_CALCULATED+V_R162_YEAR_CALCULATED;
+
+select count(*) into V_R165_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW256' AND REPORT_ADDL_CRITERIA_1 = 'ROW256A' ;
+V_R165_TOTAL_ASF:=V_R165_AMOUNT * V_R165_RFS_FACTOR;
+
+select count(*) into V_R166_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW257' AND REPORT_ADDL_CRITERIA_1 = 'ROW257A' ;
+select count(*) into V_R166_RFS_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW257' AND REPORT_ADDL_CRITERIA_1 = 'ROW257D' ;
+V_R166_TOTAL_ASF:=V_R166_AMOUNT * V_R166_RFS_FACTOR;
+
+select count(*) into V_R167_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW258' AND REPORT_ADDL_CRITERIA_1 = 'ROW258A' ;
+V_R167_TOTAL_ASF:=V_R167_AMOUNT * V_R167_RFS_FACTOR;
+
+select count(*) into V_R168_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW259' AND REPORT_ADDL_CRITERIA_1 = 'ROW259A' ;
+V_R168_TOTAL_ASF:=V_R168_AMOUNT * V_R168_RFS_FACTOR;
+
+select count(*) into V_R169_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW260' AND REPORT_ADDL_CRITERIA_1 = 'ROW260A' ;
+V_R169_TOTAL_ASF:=V_R169_AMOUNT *V_R169_RFS_FACTOR;
+
+
+
+select count(*) into V_R174_MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW265' AND REPORT_ADDL_CRITERIA_1 = 'ROW265A' ;
+select count(*) into V_R174_6MONTHS_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW265' AND REPORT_ADDL_CRITERIA_1 = 'ROW265B' ;
+select count(*) into V_R174_YEAR_AMOUNT from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW265' AND REPORT_ADDL_CRITERIA_1 = 'ROW265C' ;	
+select count(*) into V_R174_MONTHS_FACTOR from BRF49_DETAILTABLE where report_date = V_REPORT_DATE AND REPORT_LABEL_1= 'ROW265' AND REPORT_ADDL_CRITERIA_1 = 'ROW265D' ;
+
+V_R174_MONTHS_CALCULATED:= V_R174_MONTHS_AMOUNT*V_R174_MONTHS_FACTOR;
+V_R174_6MONTHS_CALCULATED:= V_R174_6MONTHS_AMOUNT*V_R174_6MONTHS_FACTOR;
+V_R174_YEAR_CALCULATED:= V_R174_YEAR_AMOUNT*V_R174_YEAR_FACTOR;
+V_R174_TOTAL_ASF:= V_R174_MONTHS_CALCULATED+V_R174_6MONTHS_CALCULATED+V_R174_YEAR_CALCULATED;
+
+V_R170_TOTAL_ASF:=+V_R53_TOTAL_ASF+V_R55_TOTAL_ASF +V_R56_TOTAL_ASF+V_R57_TOTAL_ASF+V_R58_TOTAL_ASF
++V_R59_TOTAL_ASF+ V_R60_TOTAL_ASF+V_R62_TOTAL_ASF+V_R63_TOTAL_ASF+V_R64_TOTAL_ASF+V_R65_TOTAL_ASF +V_R68_TOTAL_ASF
++V_R69_TOTAL_ASF+V_R70_TOTAL_ASF+V_R71_TOTAL_ASF+V_R73_TOTAL_ASF+V_R74_TOTAL_ASF+V_R75_TOTAL_ASF +V_R76_TOTAL_ASF+V_R79_TOTAL_ASF+
+V_R80_TOTAL_ASF+V_R81_TOTAL_ASF+V_R82_TOTAL_ASF+V_R84_TOTAL_ASF+V_R85_TOTAL_ASF +V_R86_TOTAL_ASF+V_R87_TOTAL_ASF+V_R89_TOTAL_ASF+V_R90_TOTAL_ASF+V_R91_TOTAL_ASF
++V_R93_TOTAL_ASF+V_R94_TOTAL_ASF+V_R95_TOTAL_ASF +V_R96_TOTAL_ASF+V_R98_TOTAL_ASF
++V_R99_TOTAL_ASF+ V_R100_TOTAL_ASF+V_R101_TOTAL_ASF+V_R103_TOTAL_ASF+V_R104_TOTAL_ASF+V_R105_TOTAL_ASF +V_R106_TOTAL_ASF
++V_R109_TOTAL_ASF+V_R110_TOTAL_ASF+V_R111_TOTAL_ASF+V_R113_TOTAL_ASF+V_R114_TOTAL_ASF+V_R115_TOTAL_ASF +V_R117_TOTAL_ASF+V_R118_TOTAL_ASF+
+V_R119_TOTAL_ASF+
+V_R123_TOTAL_ASF+V_R122_TOTAL_ASF+V_R124_TOTAL_ASF+V_R125_TOTAL_ASF +V_R128_TOTAL_ASF+V_R127_TOTAL_ASF+V_R129_TOTAL_ASF+V_R130_TOTAL_ASF
++V_R133_TOTAL_ASF+V_R134_TOTAL_ASF+V_R135_TOTAL_ASF +V_R132_TOTAL_ASF+V_R138_TOTAL_ASF+V_R137_TOTAL_ASF
++V_R139_TOTAL_ASF+ V_R140_TOTAL_ASF+V_R142_TOTAL_ASF+V_R143_TOTAL_ASF+V_R144_TOTAL_ASF+V_R145_TOTAL_ASF 
++V_R149_TOTAL_ASF+V_R150_TOTAL_ASF+V_R151_TOTAL_ASF+V_R153_TOTAL_ASF+V_R155_TOTAL_ASF +V_R157_TOTAL_ASF+V_R158_TOTAL_ASF+
+V_R159_TOTAL_ASF+V_R156_TOTAL_ASF+V_R160_TOTAL_ASF+V_R161_TOTAL_ASF+V_R162_TOTAL_ASF+V_R165_TOTAL_ASF+V_R166_TOTAL_ASF +V_R168_TOTAL_ASF+V_R167_TOTAL_ASF+V_R169_TOTAL_ASF;
+
+IF 
+(V_R48_TOTAL_ASP = 0 AND V_R170_TOTAL_ASF = 0 ) THEN
+ V_R171_NSFR := 0 ;
+ELSIF
+(V_R48_TOTAL_ASP > 0 AND V_R170_TOTAL_ASF >0 ) then  V_R171_NSFR := (V_R48_TOTAL_ASP/V_R170_TOTAL_ASF); 
+ END IF;
+ 
+ IF 
+( V_R48_TOTAL_ASP - V_R31_TOTAL_ASF + V_R174_TOTAL_ASF = 0 AND V_R170_TOTAL_ASF = 0 ) THEN
+V_R175_TOTAL_ASF := 0;
+ELSIF
+ ( V_R48_TOTAL_ASP - V_R31_TOTAL_ASF + V_R174_TOTAL_ASF > 0 AND V_R170_TOTAL_ASF > 0 )THEN
+V_R175_TOTAL_ASF := V_R48_TOTAL_ASP - V_R31_TOTAL_ASF + V_R174_TOTAL_ASF/ V_R170_TOTAL_ASF;
+ END IF;
+--IF ELSE      
+--IF  (V_R48_TOTAL_ASP>0 AND V_R170_TOTAL_ASF>0 ) THEN 
+--      V_R171_NSFR := 0 ; 
+--ELSIF  (V_R48_TOTAL_ASP>0 AND V_R170_TOTAL_ASF>0) THEN 
+   --   V_R171_NSFR := (V_R48_TOTAL_ASP/V_R170_TOTAL_ASF); 
+-- end if;
+insert into BRF49_SUMMARYTABLE(
+R10_PRODUCT,
+R10_YEAR_AMOUNT,
+R10_YEAR_FACTOR,
+R10_YEAR_CALCULATED,
+R10_TOTAL_ASF,
+R11_PRODUCT,
+R11_YEAR_AMOUNT,
+R11_YEAR_FACTOR,
+R11_YEAR_CALCULATED,
+R11_TOTAL_ASF,
+R13_PRODUCT,
+R13_MONTH_AMOUNT,
+R13_6MONTH_AMOUNT,
+R13_YEAR_AMOUNT,
+R13_MONTH_FACTOR,
+R13_6MONTH_FACTOR,
+R13_YEAR_FACTOR,
+R13_MONTH_CALCULATED,
+R13_6MONTH_CALCULATED,
+R13_YEAR_CALCULATED,
+R13_TOTAL_ASF,
+R14_PRODUCT,
+R14_MONTH_AMOUNT,
+R14_6MONTH_AMOUNT,
+R14_YEAR_AMOUNT,
+R14_MONTH_FACTOR,
+R14_6MONTH_FACTOR,
+R14_YEAR_FACTOR,
+R14_MONTH_CALCULATED,
+R14_6MONTH_CALCULATED,
+R14_YEAR_CALCULATED,
+R14_TOTAL_ASF,
+R15_PRODUCT,
+R15_MONTH_AMOUNT,
+R15_6MONTH_AMOUNT,
+R15_YEAR_AMOUNT,
+R15_MONTH_FACTOR,
+R15_6MONTH_FACTOR,
+R15_YEAR_FACTOR,
+R15_MONTH_CALCULATED,
+R15_6MONTH_CALCULATED,
+R15_YEAR_CALCULATED,
+R15_TOTAL_ASF,
+R17_PRODUCT,
+R17_MONTH_AMOUNT,
+R17_6MONTH_AMOUNT,
+R17_YEAR_AMOUNT,
+R17_MONTH_FACTOR,
+R17_6MONTH_FACTOR,
+R17_YEAR_FACTOR,
+R17_MONTH_CALCULATED,
+R17_6MONTH_CALCULATED,
+R17_YEAR_CALCULATED,
+R17_TOTAL_ASF,
+R18_PRODUCT,
+R18_MONTH_AMOUNT,
+R18_6MONTH_AMOUNT,
+R18_YEAR_AMOUNT,
+R18_MONTH_FACTOR,
+R18_6MONTH_FACTOR,
+R18_YEAR_FACTOR,
+R18_MONTH_CALCULATED,
+R18_6MONTH_CALCULATED,
+R18_YEAR_CALCULATED,
+R18_TOTAL_ASF,
+R19_PRODUCT,
+R19_MONTH_AMOUNT,
+R19_6MONTH_AMOUNT,
+R19_YEAR_AMOUNT,
+R19_MONTH_FACTOR,
+R19_6MONTH_FACTOR,
+R19_YEAR_FACTOR,
+R19_MONTH_CALCULATED,
+R19_6MONTH_CALCULATED,
+R19_YEAR_CALCULATED,
+R19_TOTAL_ASF,
+R20_PRODUCT,
+R20_MONTH_AMOUNT,
+R20_6MONTH_AMOUNT,
+R20_YEAR_AMOUNT,
+R20_MONTH_FACTOR,
+R20_6MONTH_FACTOR,
+R20_YEAR_FACTOR,
+R20_MONTH_CALCULATED,
+R20_6MONTH_CALCULATED,
+R20_YEAR_CALCULATED,
+R20_TOTAL_ASF,
+R21_PRODUCT,
+R21_MONTH_AMOUNT,
+R21_6MONTH_AMOUNT,
+R21_YEAR_AMOUNT,
+R21_MONTH_FACTOR,
+R21_6MONTH_FACTOR,
+R21_YEAR_FACTOR,
+R21_MONTH_CALCULATED,
+R21_6MONTH_CALCULATED,
+R21_YEAR_CALCULATED,
+R21_TOTAL_ASF,
+R22_PRODUCT,
+R22_MONTH_AMOUNT,
+R22_6MONTH_AMOUNT,
+R22_YEAR_AMOUNT,
+R22_MONTH_FACTOR,
+R22_6MONTH_FACTOR,
+R22_YEAR_FACTOR,
+R22_MONTH_CALCULATED,
+R22_6MONTH_CALCULATED,
+R22_YEAR_CALCULATED,
+R22_TOTAL_ASF,
+R23_PRODUCT,
+R23_MONTH_AMOUNT,
+R23_6MONTH_AMOUNT,
+R23_YEAR_AMOUNT,
+R23_MONTH_FACTOR,
+R23_6MONTH_FACTOR,
+R23_YEAR_FACTOR,
+R23_MONTH_CALCULATED,
+R23_6MONTH_CALCULATED,
+R23_YEAR_CALCULATED,
+R23_TOTAL_ASF,
+R24_PRODUCT,
+R24_MONTH_AMOUNT,
+R24_6MONTH_AMOUNT,
+R24_YEAR_AMOUNT,
+R24_MONTH_FACTOR,
+R24_6MONTH_FACTOR,
+R24_YEAR_FACTOR,
+R24_MONTH_CALCULATED,
+R24_6MONTH_CALCULATED,
+R24_YEAR_CALCULATED,
+R24_TOTAL_ASF,
+R25_PRODUCT,
+R25_MONTH_AMOUNT,
+R25_6MONTH_AMOUNT,
+R25_YEAR_AMOUNT,
+R25_MONTH_FACTOR,
+R25_6MONTH_FACTOR,
+R25_YEAR_FACTOR,
+R25_MONTH_CALCULATED,
+R25_6MONTH_CALCULATED,
+R25_YEAR_CALCULATED,
+R25_TOTAL_ASF,
+R27_PRODUCT,
+R27_MONTH_AMOUNT,
+R27_6MONTH_AMOUNT,
+R27_YEAR_AMOUNT,
+R27_MONTH_FACTOR,
+R27_6MONTH_FACTOR,
+R27_YEAR_FACTOR,
+R27_MONTH_CALCULATED,
+R27_6MONTH_CALCULATED,
+R27_YEAR_CALCULATED,
+R27_TOTAL_ASF,
+R28_PRODUCT,
+R28_MONTH_AMOUNT,
+R28_6MONTH_AMOUNT,
+R28_YEAR_AMOUNT,
+R28_MONTH_FACTOR,
+R28_6MONTH_FACTOR,
+R28_YEAR_FACTOR,
+R28_MONTH_CALCULATED,
+R28_6MONTH_CALCULATED,
+R28_YEAR_CALCULATED,
+R28_TOTAL_ASF,
+R29_PRODUCT,
+R29_MONTH_AMOUNT,
+R29_6MONTH_AMOUNT,
+R29_YEAR_AMOUNT,
+R29_MONTH_FACTOR,
+R29_6MONTH_FACTOR,
+R29_YEAR_FACTOR,
+R30_PRODUCT,
+R30_MONTH_AMOUNT,
+R30_6MONTH_AMOUNT,
+R30_YEAR_AMOUNT,
+R30_MONTH_FACTOR,
+R30_6MONTH_FACTOR,
+R30_YEAR_FACTOR,
+R30_MONTH_CALCULATED,
+R30_6MONTH_CALCULATED,
+R30_YEAR_CALCULATED,
+R30_TOTAL_ASF,
+R31_PRODUCT,
+R31_MONTH_AMOUNT,
+R31_6MONTH_AMOUNT,
+R31_YEAR_AMOUNT,
+R31_MONTH_FACTOR,
+R31_6MONTH_FACTOR,
+R31_YEAR_FACTOR,
+R31_MONTH_CALCULATED,
+R31_6MONTH_CALCULATED,
+R31_YEAR_CALCULATED,
+R31_TOTAL_ASF,
+R32_PRODUCT,
+R32_MONTH_AMOUNT,
+R32_6MONTH_AMOUNT,
+R32_YEAR_AMOUNT,
+R32_MONTH_FACTOR,
+R32_6MONTH_FACTOR,
+R32_YEAR_FACTOR,
+R32_MONTH_CALCULATED,
+R32_6MONTH_CALCULATED,
+R32_YEAR_CALCULATED,
+R32_TOTAL_ASF,
+R33_PRODUCT,
+R33_MONTH_AMOUNT,
+R33_6MONTH_AMOUNT,
+R33_YEAR_AMOUNT,
+R33_MONTH_FACTOR,
+R33_6MONTH_FACTOR,
+R33_YEAR_FACTOR,
+R33_MONTH_CALCULATED,
+R33_6MONTH_CALCULATED,
+R33_YEAR_CALCULATED,
+R33_TOTAL_ASF,
+R34_PRODUCT,
+R34_MONTH_AMOUNT,
+R34_6MONTH_AMOUNT,
+R34_YEAR_AMOUNT,
+R34_MONTH_FACTOR,
+R34_6MONTH_FACTOR,
+R34_YEAR_FACTOR,
+R34_MONTH_CALCULATED,
+R34_6MONTH_CALCULATED,
+R34_YEAR_CALCULATED,
+R34_TOTAL_ASF,
+R35_PRODUCT,
+R35_MONTH_AMOUNT,
+R35_6MONTH_AMOUNT,
+R35_YEAR_AMOUNT,
+R35_MONTH_FACTOR,
+R35_6MONTH_FACTOR,
+R35_YEAR_FACTOR,
+R35_MONTH_CALCULATED,
+R35_6MONTH_CALCULATED,
+R35_YEAR_CALCULATED,
+R35_TOTAL_ASF,
+R36_PRODUCT,
+R36_MONTH_AMOUNT,
+R36_6MONTH_AMOUNT,
+R36_YEAR_AMOUNT,
+R36_MONTH_FACTOR,
+R36_6MONTH_FACTOR,
+R36_YEAR_FACTOR,
+R36_MONTH_CALCULATED,
+R36_6MONTH_CALCULATED,
+R36_YEAR_CALCULATED,
+R36_TOTAL_ASF,
+R38_PRODUCT,
+R38_YEAR_AMOUNT,
+R39_PRODUCT,
+R39_YEAR_AMOUNT,
+R40_PRODUCT,
+R40_YEAR_AMOUNT,
+R40_YEAR_FACTOR,
+R40_YEAR_CALCULATED,
+R40_TOTAL_ASF,
+R41_PRODUCT,
+R41_YEAR_AMOUNT,
+R41_YEAR_FACTOR,
+R41_YEAR_CALCULATED,
+R41_TOTAL_ASF,
+R42_PRODUCT,
+R42_YEAR_AMOUNT,
+R42_YEAR_FACTOR,
+R42_YEAR_CALCULATED,
+R42_TOTAL_ASF,
+R44_PRODUCT,
+R44_MONTH_AMOUNT,
+R44_6MONTH_AMOUNT,
+R44_YEAR_AMOUNT,
+R44_MONTH_FACTOR,
+R44_6MONTH_FACTOR,
+R44_YEAR_FACTOR,
+R44_MONTH_CALCULATED,
+R44_6MONTH_CALCULATED,
+R44_YEAR_CALCULATED,
+R44_TOTAL_ASF,
+R45_PRODUCT,
+R45_MONTH_AMOUNT,
+R45_6MONTH_AMOUNT,
+R45_YEAR_AMOUNT,
+R45_MONTH_FACTOR,
+R45_6MONTH_FACTOR,
+R45_YEAR_FACTOR,
+R45_MONTH_CALCULATED,
+R45_6MONTH_CALCULATED,
+R45_YEAR_CALCULATED,
+R45_TOTAL_ASF,
+R46_PRODUCT,
+R46_MONTH_AMOUNT,
+R46_MONTH_FACTOR,
+R46_MONTH_CALCULATED,
+R46_TOTAL_ASF,
+R47_PRODUCT,
+R47_MONTH_AMOUNT,
+R47_6MONTH_AMOUNT,
+R47_YEAR_AMOUNT,
+R47_MONTH_FACTOR,
+R47_6MONTH_FACTOR,
+R47_YEAR_FACTOR,
+R47_MONTH_CALCULATED,
+R47_6MONTH_CALCULATED,
+R47_YEAR_CALCULATED,
+R47_TOTAL_ASF,
+R53_PRODUCT,
+R53_MONTH_AMOUNT,
+R53_MONTH_FACTOR,
+R53_MONTH_CALCULATED,
+R53_TOTAL_ASF,
+R55_PRODUCT,
+R55_MONTH_AMOUNT,
+R55_MONTH_FACTOR,
+R55_MONTH_CALCULATED,
+R55_TOTAL_ASF,
+R56_PRODUCT,
+R56_MONTH_AMOUNT,
+R56_MONTH_FACTOR,
+R56_MONTH_CALCULATED,
+R56_TOTAL_ASF,
+R57_PRODUCT,
+R57_MONTH_AMOUNT,
+R57_6MONTH_AMOUNT,
+R57_YEAR_AMOUNT,
+R57_MONTH_FACTOR,
+R57_6MONTH_FACTOR,
+R57_YEAR_FACTOR,
+R57_MONTH_CALCULATED,
+R57_6MONTH_CALCULATED,
+R57_YEAR_CALCULATED,
+R57_TOTAL_ASF,
+R58_PRODUCT,
+R58_MONTH_AMOUNT,
+R58_6MONTH_AMOUNT,
+R58_YEAR_AMOUNT,
+R58_MONTH_FACTOR,
+R58_6MONTH_FACTOR,
+R58_YEAR_FACTOR,
+R58_MONTH_CALCULATED,
+R58_6MONTH_CALCULATED,
+R58_YEAR_CALCULATED,
+R58_TOTAL_ASF,
+R59_PRODUCT,
+R59_6MONTH_FACTOR,
+R59_YEAR_FACTOR,
+R59_6MONTH_CALCULATED,
+R59_YEAR_CALCULATED,
+R59_TOTAL_ASF,
+R60_PRODUCT,
+R60_YEAR_AMOUNT,
+R60_YEAR_FACTOR,
+R60_YEAR_CALCULATED,
+R60_TOTAL_ASF,
+R62_PRODUCT,
+R62_MONTH_AMOUNT,
+R62_6MONTH_AMOUNT,
+R62_YEAR_AMOUNT,
+R62_MONTH_FACTOR,
+R62_6MONTH_FACTOR,
+R62_YEAR_FACTOR,
+R62_MONTH_CALCULATED,
+R62_6MONTH_CALCULATED,
+R62_YEAR_CALCULATED,
+R62_TOTAL_ASF,
+R63_PRODUCT,
+R63_MONTH_AMOUNT,
+R63_MONTH_FACTOR,
+R63_MONTH_CALCULATED,
+R63_TOTAL_ASF,
+R64_PRODUCT,
+R64_6MONTH_AMOUNT,
+R64_6MONTH_FACTOR,
+R64_6MONTH_CALCULATED,
+R64_TOTAL_ASF,
+R65_PRODUCT,
+R65_YEAR_AMOUNT,
+R65_YEAR_FACTOR,
+R65_YEAR_CALCULATED,
+R65_TOTAL_ASF,
+R68_PRODUCT,
+R68_MONTH_AMOUNT,
+R68_6MONTH_AMOUNT,
+R68_YEAR_AMOUNT,
+R68_MONTH_FACTOR,
+R68_6MONTH_FACTOR,
+R68_YEAR_FACTOR,
+R68_MONTH_CALCULATED,
+R68_6MONTH_CALCULATED,
+R68_YEAR_CALCULATED,
+R68_TOTAL_ASF,
+R69_PRODUCT,
+R69_MONTH_AMOUNT,
+R69_MONTH_FACTOR,
+R69_MONTH_CALCULATED,
+R69_TOTAL_ASF,
+R70_PRODUCT,
+R70_6MONTH_AMOUNT,
+R70_6MONTH_FACTOR,
+R70_6MONTH_CALCULATED,
+R70_TOTAL_ASF,
+R71_PRODUCT,
+R71_YEAR_AMOUNT,
+R71_YEAR_FACTOR,
+R71_YEAR_CALCULATED,
+R71_TOTAL_ASF,
+R73_PRODUCT,
+R73_MONTH_AMOUNT,
+R73_6MONTH_AMOUNT,
+R73_YEAR_AMOUNT,
+R73_MONTH_FACTOR,
+R73_6MONTH_FACTOR,
+R73_YEAR_FACTOR,
+R73_MONTH_CALCULATED,
+R73_6MONTH_CALCULATED,
+R73_YEAR_CALCULATED,
+R73_TOTAL_ASF,
+R74_PRODUCT,
+R74_MONTH_AMOUNT,
+R74_MONTH_FACTOR,
+R74_MONTH_CALCULATED,
+R74_TOTAL_ASF,
+R75_PRODUCT,
+R75_6MONTH_AMOUNT,
+R75_6MONTH_FACTOR,
+R75_6MONTH_CALCULATED,
+R75_TOTAL_ASF,
+R76_PRODUCT,
+R76_YEAR_AMOUNT,
+R76_YEAR_FACTOR,
+R76_YEAR_CALCULATED,
+R76_TOTAL_ASF,
+R79_PRODUCT,
+R79_MONTH_AMOUNT,
+R79_6MONTH_AMOUNT,
+R79_YEAR_AMOUNT,
+R79_MONTH_FACTOR,
+R79_6MONTH_FACTOR,
+R79_YEAR_FACTOR,
+R79_MONTH_CALCULATED,
+R79_6MONTH_CALCULATED,
+R79_YEAR_CALCULATED,
+R79_TOTAL_ASF,
+R80_PRODUCT,
+R80_MONTH_AMOUNT,
+R80_MONTH_FACTOR,
+R80_MONTH_CALCULATED,
+R80_TOTAL_ASF,
+R81_PRODUCT,
+R81_6MONTH_AMOUNT,
+R81_6MONTH_FACTOR,
+R81_6MONTH_CALCULATED,
+R81_TOTAL_ASF,
+R82_PRODUCT,
+R82_YEAR_AMOUNT,
+R82_YEAR_FACTOR,
+R82_YEAR_CALCULATED,
+R82_TOTAL_ASF,
+R84_PRODUCT,
+R84_YEAR_FACTOR,
+R84_YEAR_CALCULATED,
+R84_TOTAL_ASF,
+R85_PRODUCT,
+R85_YEAR_FACTOR,
+R85_YEAR_CALCULATED,
+R85_TOTAL_ASF,
+R86_PRODUCT,
+R86_YEAR_FACTOR,
+R86_YEAR_CALCULATED,
+R86_TOTAL_ASF,
+R87_PRODUCT,
+R87_YEAR_FACTOR,
+R87_YEAR_CALCULATED,
+R87_TOTAL_ASF,
+R89_PRODUCT,
+R89_MONTH_AMOUNT,
+R89_6MONTH_AMOUNT,
+R89_YEAR_AMOUNT,
+R89_MONTH_FACTOR,
+R89_6MONTH_FACTOR,
+R89_YEAR_FACTOR,
+R89_MONTH_CALCULATED,
+R89_6MONTH_CALCULATED,
+R89_YEAR_CALCULATED,
+R89_TOTAL_ASF,
+R90_PRODUCT,
+R90_MONTH_AMOUNT,
+R90_MONTH_FACTOR,
+R90_MONTH_CALCULATED,
+R90_TOTAL_ASF,
+R91_PRODUCT,
+R91_6MONTH_AMOUNT,
+R91_6MONTH_FACTOR,
+R91_6MONTH_CALCULATED,
+R91_TOTAL_ASF,
+R93_PRODUCT,
+R93_YEAR_AMOUNT,
+R93_MONTH_FACTOR,
+R93_6MONTH_FACTOR,
+R93_YEAR_FACTOR,
+R93_MONTH_CALCULATED,
+R93_6MONTH_CALCULATED,
+R93_YEAR_CALCULATED,
+R93_TOTAL_ASF,
+R94_PRODUCT,
+R94_MONTH_AMOUNT,
+R94_6MONTH_AMOUNT,
+R94_YEAR_AMOUNT,
+R94_MONTH_FACTOR,
+R94_6MONTH_FACTOR,
+R94_YEAR_FACTOR,
+R94_MONTH_CALCULATED,
+R94_6MONTH_CALCULATED,
+R94_YEAR_CALCULATED,
+R94_TOTAL_ASF,
+R95_PRODUCT,
+R95_6MONTH_AMOUNT,
+R95_YEAR_AMOUNT,
+R95_6MONTH_FACTOR,
+R95_YEAR_FACTOR,
+R95_6MONTH_CALCULATED,
+R95_YEAR_CALCULATED,
+R95_TOTAL_ASF,
+R96_PRODUCT,
+R96_6MONTH_AMOUNT,
+R96_YEAR_AMOUNT,
+R96_6MONTH_FACTOR,
+R96_YEAR_FACTOR,
+R96_6MONTH_CALCULATED,
+R96_YEAR_CALCULATED,
+R96_TOTAL_ASF,
+R98_PRODUCT,
+R98_MONTHS_AMOUNT,
+R98_6MONTHS_AMOUNT,
+R98_YEAR_AMOUNT,
+R98_MONTHS_FACTOR,
+R98_6MONTHS_FACTOR,
+R98_YEAR_FACTOR,
+R98_MONTHS_CALCULATED,
+R98_6MONTHS_CALCULATED,
+R98_YEAR_CALCULATED,
+R98_TOTAL_ASF,
+R99_PRODUCT,
+R99_MONTH_AMOUNT,
+R99_6MONTH_AMOUNT,
+R99_YEAR_AMOUNT,
+R99_MONTH_FACTOR,
+R99_6MONTH_FACTOR,
+R99_YEAR_FACTOR,
+R99_MONTH_CALCULATED,
+R99_6MONTH_CALCULATED,
+R99_YEAR_CALCULATED,
+R99_TOTAL_ASF,
+R100_PRODUCT,
+R100_6MONTH_AMOUNT,
+R100_YEAR_AMOUNT,
+R100_6MONTH_FACTOR,
+R100_YEAR_FACTOR,
+R100_6MONTH_CALCULATED,
+R100_YEAR_CALCULATED,
+R100_TOTAL_ASF,
+R101_PRODUCT,
+R101_6MONTH_AMOUNT,
+R101_YEAR_AMOUNT,
+R101_6MONTH_FACTOR,
+R101_YEAR_FACTOR,
+R101_6MONTH_CALCULATED,
+R101_YEAR_CALCULATED,
+R101_TOTAL_ASF,
+R103_PRODUCT,
+R103_MONTHS_AMOUNT,
+R103_6MONTHS_AMOUNT,
+R103_YEAR_AMOUNT,
+R103_MONTHS_FACTOR,
+R103_6MONTHS_FACTOR,
+R103_YEAR_FACTOR,
+R103_MONTHS_CALCULATED,
+R103_6MONTHS_CALCULATED,
+R103_YEAR_CALCULATED,
+R103_TOTAL_ASF,
+R104_PRODUCT,
+R104_MONTH_AMOUNT,
+R104_6MONTH_AMOUNT,
+R104_YEAR_AMOUNT,
+R104_MONTH_FACTOR,
+R104_6MONTH_FACTOR,
+R104_YEAR_FACTOR,
+R104_MONTH_CALCULATED,
+R104_6MONTH_CALCULATED,
+R104_YEAR_CALCULATED,
+R104_TOTAL_ASF,
+R105_PRODUCT,
+R105_6MONTH_AMOUNT,
+R105_YEAR_AMOUNT,
+R105_6MONTH_FACTOR,
+R105_YEAR_FACTOR,
+R105_6MONTH_CALCULATED,
+R105_YEAR_CALCULATED,
+R105_TOTAL_ASF,
+R106_PRODUCT,
+R106_6MONTH_AMOUNT,
+R106_YEAR_AMOUNT,
+R106_6MONTH_FACTOR,
+R106_YEAR_FACTOR,
+R106_6MONTH_CALCULATED,
+R106_YEAR_CALCULATED,
+R106_TOTAL_ASF,
+R109_PRODUCT,
+R109_MONTH_AMOUNT,
+R109_6MONTH_AMOUNT,
+R109_MONTH_FACTOR,
+R109_6MONTH_FACTOR,
+R109_MONTH_CALCULATED,
+R109_6MONTH_CALCULATED,
+R109_TOTAL_ASF,
+R110_PRODUCT,
+R110_MONTH_AMOUNT,
+R110_MONTH_FACTOR,
+R110_MONTH_CALCULATED,
+R110_TOTAL_ASF,
+R111_PRODUCT,
+R111_6MONTH_AMOUNT,
+R111_6MONTH_FACTOR,
+R111_6MONTH_CALCULATED,
+R111_TOTAL_ASF,
+R113_PRODUCT,
+R113_MONTH_AMOUNT,
+R113_6MONTH_AMOUNT,
+R113_MONTH_FACTOR,
+R113_6MONTH_FACTOR,
+R113_MONTH_CALCULATED,
+R113_6MONTH_CALCULATED,
+R113_TOTAL_ASF,
+R114_PRODUCT,
+R114_MONTH_AMOUNT,
+R114_MONTH_FACTOR,
+R114_MONTH_CALCULATED,
+R114_TOTAL_ASF,
+R115_PRODUCT,
+R115_6MONTH_AMOUNT,
+R115_6MONTH_FACTOR,
+R115_6MONTH_CALCULATED,
+R115_TOTAL_ASF,
+R117_PRODUCT,
+R117_MONTH_AMOUNT,
+R117_6MONTH_AMOUNT,
+R117_MONTH_FACTOR,
+R117_6MONTH_FACTOR,
+R117_MONTH_CALCULATED,
+R117_6MONTH_CALCULATED,
+R117_TOTAL_ASF,
+R118_PRODUCT,
+R118_MONTH_AMOUNT,
+R118_MONTH_FACTOR,
+R118_MONTH_CALCULATED,
+R118_TOTAL_ASF,
+R119_PRODUCT,
+R119_6MONTH_AMOUNT,
+R119_6MONTH_FACTOR,
+R119_6MONTH_CALCULATED,
+R119_TOTAL_ASF,
+R122_PRODUCT,
+R122_YEAR_AMOUNT,
+R122_YEAR_FACTOR,
+R122_YEAR_CALCULATED,
+R122_TOTAL_ASF,
+R123_PRODUCT,
+R123_MONTH_AMOUNT,
+R123_MONTH_FACTOR,
+R123_MONTH_CALCULATED,
+R123_TOTAL_ASF,
+R124_PRODUCT,
+R124_6MONTH_AMOUNT,
+R124_6MONTH_FACTOR,
+R124_6MONTH_CALCULATED,
+R124_TOTAL_ASF,
+R125_PRODUCT,
+R125_YEAR_AMOUNT,
+R125_YEAR_FACTOR,
+R125_YEAR_CALCULATED,
+R125_TOTAL_ASF,
+R127_PRODUCT,
+R127_YEAR_AMOUNT,
+R127_YEAR_FACTOR,
+R127_YEAR_CALCULATED,
+R127_TOTAL_ASF,
+R128_PRODUCT,
+R128_MONTH_AMOUNT,
+R128_MONTH_FACTOR,
+R128_MONTH_CALCULATED,
+R128_TOTAL_ASF,
+R129_PRODUCT,
+R129_6MONTH_AMOUNT,
+R129_6MONTH_FACTOR,
+R129_6MONTH_CALCULATED,
+R129_TOTAL_ASF,
+R130_PRODUCT,
+R130_YEAR_AMOUNT,
+R130_YEAR_FACTOR,
+R130_YEAR_CALCULATED,
+R130_TOTAL_ASF,
+R132_PRODUCT,
+R132_YEAR_AMOUNT,
+R132_YEAR_FACTOR,
+R132_YEAR_CALCULATED,
+R132_TOTAL_ASF,
+R133_PRODUCT,
+R133_MONTH_AMOUNT,
+R133_MONTH_FACTOR,
+R133_MONTH_CALCULATED,
+R133_TOTAL_ASF,
+R134_PRODUCT,
+R134_6MONTH_AMOUNT,
+R134_6MONTH_FACTOR,
+R134_6MONTH_CALCULATED,
+R134_TOTAL_ASF,
+R135_PRODUCT,
+R135_YEAR_AMOUNT,
+R135_YEAR_FACTOR,
+R135_YEAR_CALCULATED,
+R135_TOTAL_ASF,
+R137_PRODUCT,
+R137_YEAR_AMOUNT,
+R137_YEAR_FACTOR,
+R137_YEAR_CALCULATED,
+R137_TOTAL_ASF,
+R138_PRODUCT,
+R138_MONTH_AMOUNT,
+R138_MONTH_FACTOR,
+R138_MONTH_CALCULATED,
+R138_TOTAL_ASF,
+R139_PRODUCT,
+R139_6MONTH_AMOUNT,
+R139_6MONTH_FACTOR,
+R139_6MONTH_CALCULATED,
+R139_TOTAL_ASF,
+R140_PRODUCT,
+R140_YEAR_AMOUNT,
+R140_YEAR_FACTOR,
+R140_YEAR_CALCULATED,
+R140_TOTAL_ASF,
+R142_PRODUCT,
+R142_YEAR_AMOUNT,
+R142_YEAR_FACTOR,
+R142_YEAR_CALCULATED,
+R142_TOTAL_ASF,
+R143_PRODUCT,
+R143_MONTH_AMOUNT,
+R143_MONTH_FACTOR,
+R143_MONTH_CALCULATED,
+R143_TOTAL_ASF,
+R144_PRODUCT,
+R144_6MONTH_AMOUNT,
+R144_6MONTH_FACTOR,
+R144_6MONTH_CALCULATED,
+R144_TOTAL_ASF,
+R145_PRODUCT,
+R145_YEAR_AMOUNT,
+R145_YEAR_FACTOR,
+R145_YEAR_CALCULATED,
+R145_TOTAL_ASF,
+R147_PRODUCT,
+R147_YEAR_AMOUNT,
+R148_PRODUCT,
+R148_YEAR_AMOUNT,
+R149_PRODUCT,
+R149_YEAR_AMOUNT,
+R149_YEAR_FACTOR,
+R149_YEAR_CALCULATED,
+R149_TOTAL_ASF,
+R150_PRODUCT,
+R150_YEAR_AMOUNT,
+R150_YEAR_FACTOR,
+R150_YEAR_CALCULATED,
+R150_TOTAL_ASF,
+R151_PRODUCT,
+R151_MONTHS_AMOUNT,
+R151_6MONTHS_AMOUNT,
+R151_YEAR_AMOUNT,
+R151_MONTHS_FACTOR,
+R151_6MONTHS_FACTOR,
+R151_YEAR_FACTOR,
+R151_MONTHS_CALCULATED,
+R151_6MONTHS_CALCULATED,
+R151_YEAR_CALCULATED,
+R151_TOTAL_ASF,
+R152_PRODUCT,
+R152_YEAR_AMOUNT,
+R153_PRODUCT,
+R153_YEAR_AMOUNT,
+R153_YEAR_FACTOR,
+R153_YEAR_CALCULATED,
+R153_TOTAL_ASF,
+R155_PRODUCT,
+R155_MONTH_AMOUNT,
+R155_MONTH_FACTOR,
+R155_MONTH_CALCULATED,
+R155_TOTAL_ASF,
+R156_PRODUCT,
+R156_MONTHS_AMOUNT,
+R156_6MONTHS_AMOUNT,
+R156_YEAR_AMOUNT,
+R156_MONTHS_FACTOR,
+R156_6MONTHS_FACTOR,
+R156_YEAR_FACTOR,
+R156_MONTHS_CALCULATED,
+R156_6MONTHS_CALCULATED,
+R156_YEAR_CALCULATED,
+R156_TOTAL_ASF,
+R157_PRODUCT,
+R157_MONTHS_AMOUNT,
+R157_6MONTHS_AMOUNT,
+R157_YEAR_AMOUNT,
+R157_MONTHS_FACTOR,
+R157_6MONTHS_FACTOR,
+R157_YEAR_FACTOR,
+R157_MONTHS_CALCULATED,
+R157_6MONTHS_CALCULATED,
+R157_YEAR_CALCULATED,
+R157_TOTAL_ASF,
+R158_PRODUCT,
+R158_MONTHS_AMOUNT,
+R158_6MONTHS_AMOUNT,
+R158_YEAR_AMOUNT,
+R158_MONTHS_FACTOR,
+R158_6MONTHS_FACTOR,
+R158_YEAR_FACTOR,
+R158_MONTHS_CALCULATED,
+R158_6MONTHS_CALCULATED,
+R158_YEAR_CALCULATED,
+R158_TOTAL_ASF,
+R159_PRODUCT,
+R159_MONTHS_AMOUNT,
+R159_6MONTHS_AMOUNT,
+R159_YEAR_AMOUNT,
+R159_MONTHS_FACTOR,
+R159_6MONTHS_FACTOR,
+R159_YEAR_FACTOR,
+R159_MONTHS_CALCULATED,
+R159_6MONTHS_CALCULATED,
+R159_YEAR_CALCULATED,
+R159_TOTAL_ASF,
+R160_PRODUCT,
+R160_MONTHS_AMOUNT,
+R160_6MONTHS_AMOUNT,
+R160_YEAR_AMOUNT,
+R160_MONTHS_FACTOR,
+R160_6MONTHS_FACTOR,
+R160_YEAR_FACTOR,
+R160_MONTHS_CALCULATED,
+R160_6MONTHS_CALCULATED,
+R160_YEAR_CALCULATED,
+R160_TOTAL_ASF,
+R161_PRODUCT,
+R161_MONTHS_AMOUNT,
+R161_6MONTHS_AMOUNT,
+R161_YEAR_AMOUNT,
+R161_MONTHS_FACTOR,
+R161_6MONTHS_FACTOR,
+R161_YEAR_FACTOR,
+R161_MONTHS_CALCULATED,
+R161_6MONTHS_CALCULATED,
+R161_YEAR_CALCULATED,
+R161_TOTAL_ASF,
+R162_PRODUCT,
+R162_MONTHS_AMOUNT,
+R162_6MONTHS_AMOUNT,
+R162_YEAR_AMOUNT,
+R162_MONTHS_FACTOR,
+R162_6MONTHS_FACTOR,
+R162_YEAR_FACTOR,
+R162_MONTHS_CALCULATED,
+R162_6MONTHS_CALCULATED,
+R162_YEAR_CALCULATED,
+R162_TOTAL_ASF,
+R163_PRODUCT,
+R163_MONTHS_AMOUNT,
+R163_6MONTHS_AMOUNT,
+R163_YEAR_AMOUNT,
+R163_MONTHS_FACTOR,
+R163_6MONTHS_FACTOR,
+R163_YEAR_FACTOR,
+R163_MONTHS_CALCULATED,
+R163_6MONTHS_CALCULATED,
+R163_YEAR_CALCULATED,
+R163_TOTAL_ASF,
+R165_PRODUCT,
+R165_AMOUNT,
+R165_RFS_FACTOR,
+R165_TOTAL_ASF,
+R166_PRODUCT,
+R166_AMOUNT,
+R166_RFS_FACTOR,
+R166_TOTAL_ASF,
+R167_PRODUCT,
+R167_AMOUNT,
+R167_RFS_FACTOR,
+R167_TOTAL_ASF,
+R168_PRODUCT,
+R168_AMOUNT,
+R168_RFS_FACTOR,
+R168_TOTAL_ASF,
+R169_PRODUCT,
+R169_AMOUNT,
+R169_RFS_FACTOR,
+R169_TOTAL_ASF,
+R170_PRODUCT,
+R170_TOTAL_ASF,
+R170_TOTAL_RSF,
+R171_PRODUCT,
+R171_NSFR,
+R171_TOTAL_ASF,
+R174_PRODUCT,
+R174_MONTHS_AMOUNT,
+R174_6MONTHS_AMOUNT,
+R174_YEAR_AMOUNT,
+R174_MONTHS_FACTOR,
+R174_6MONTHS_FACTOR,
+R174_YEAR_FACTOR,
+R174_MONTHS_CALCULATED,
+R174_6MONTHS_CALCULATED,
+R174_YEAR_CALCULATED,
+R174_TOTAL_ASF,
+R175_NSFR,
+R175_TOTAL_ASF,
+REPORT_DATE,
+R48_PRODUCT,
+R48_TOTAL_ASP,
+R59_YEAR_AMOUNT,
+R59_6MONTH_AMOUNT,
+R84_YEAR_AMOUNT,
+R85_YEAR_AMOUNT,
+R86_YEAR_AMOUNT,
+R87_YEAR_AMOUNT,
+R93_MONTH_AMOUNT,
+R93_6MONTH_AMOUNT,
+R29_MONTH_CALCULATED,
+R29_6MONTH_CALCULATED,
+R29_YEAR_CALCULATED,
+R29_TOTAL_ASF
+)
+VALUES
+(
+V_R10_PRODUCT,
+V_R10_YEAR_AMOUNT,
+V_R10_YEAR_FACTOR,
+V_R10_YEAR_CALCULATED,
+V_R10_TOTAL_ASF,
+V_R11_PRODUCT,
+V_R11_YEAR_AMOUNT,
+V_R11_YEAR_FACTOR,
+V_R11_YEAR_CALCULATED,
+V_R11_TOTAL_ASF,
+V_R13_PRODUCT,
+V_R13_MONTH_AMOUNT,
+V_R13_6MONTH_AMOUNT,
+V_R13_YEAR_AMOUNT,
+V_R13_MONTH_FACTOR,
+V_R13_6MONTH_FACTOR,
+V_R13_YEAR_FACTOR,
+V_R13_MONTH_CALCULATED,
+V_R13_6MONTH_CALCULATED,
+V_R13_YEAR_CALCULATED,
+V_R13_TOTAL_ASF,
+V_R14_PRODUCT,
+V_R14_MONTH_AMOUNT,
+V_R14_6MONTH_AMOUNT,
+V_R14_YEAR_AMOUNT,
+V_R14_MONTH_FACTOR,
+V_R14_6MONTH_FACTOR,
+V_R14_YEAR_FACTOR,
+V_R14_MONTH_CALCULATED,
+V_R14_6MONTH_CALCULATED,
+V_R14_YEAR_CALCULATED,
+V_R14_TOTAL_ASF,
+V_R15_PRODUCT,
+V_R15_MONTH_AMOUNT,
+V_R15_6MONTH_AMOUNT,
+V_R15_YEAR_AMOUNT,
+V_R15_MONTH_FACTOR,
+V_R15_6MONTH_FACTOR,
+V_R15_YEAR_FACTOR,
+V_R15_MONTH_CALCULATED,
+V_R15_6MONTH_CALCULATED,
+V_R15_YEAR_CALCULATED,
+V_R15_TOTAL_ASF,
+V_R17_PRODUCT,
+V_R17_MONTH_AMOUNT,
+V_R17_6MONTH_AMOUNT,
+V_R17_YEAR_AMOUNT,
+V_R17_MONTH_FACTOR,
+V_R17_6MONTH_FACTOR,
+V_R17_YEAR_FACTOR,
+V_R17_MONTH_CALCULATED,
+V_R17_6MONTH_CALCULATED,
+V_R17_YEAR_CALCULATED,
+V_R17_TOTAL_ASF,
+V_R18_PRODUCT,
+V_R18_MONTH_AMOUNT,
+V_R18_6MONTH_AMOUNT,
+V_R18_YEAR_AMOUNT,
+V_R18_MONTH_FACTOR,
+V_R18_6MONTH_FACTOR,
+V_R18_YEAR_FACTOR,
+V_R18_MONTH_CALCULATED,
+V_R18_6MONTH_CALCULATED,
+V_R18_YEAR_CALCULATED,
+V_R18_TOTAL_ASF,
+V_R19_PRODUCT,
+V_R19_MONTH_AMOUNT,
+V_R19_6MONTH_AMOUNT,
+V_R19_YEAR_AMOUNT,
+V_R19_MONTH_FACTOR,
+V_R19_6MONTH_FACTOR,
+V_R19_YEAR_FACTOR,
+V_R19_MONTH_CALCULATED,
+V_R19_6MONTH_CALCULATED,
+V_R19_YEAR_CALCULATED,
+V_R19_TOTAL_ASF,
+V_R20_PRODUCT,
+V_R20_MONTH_AMOUNT,
+V_R20_6MONTH_AMOUNT,
+V_R20_YEAR_AMOUNT,
+V_R20_MONTH_FACTOR,
+V_R20_6MONTH_FACTOR,
+V_R20_YEAR_FACTOR,
+V_R20_MONTH_CALCULATED,
+V_R20_6MONTH_CALCULATED,
+V_R20_YEAR_CALCULATED,
+V_R20_TOTAL_ASF,
+V_R21_PRODUCT,
+V_R21_MONTH_AMOUNT,
+V_R21_6MONTH_AMOUNT,
+V_R21_YEAR_AMOUNT,
+V_R21_MONTH_FACTOR,
+V_R21_6MONTH_FACTOR,
+V_R21_YEAR_FACTOR,
+V_R21_MONTH_CALCULATED,
+V_R21_6MONTH_CALCULATED,
+V_R21_YEAR_CALCULATED,
+V_R21_TOTAL_ASF,
+V_R22_PRODUCT,
+V_R22_MONTH_AMOUNT,
+V_R22_6MONTH_AMOUNT,
+V_R22_YEAR_AMOUNT,
+V_R22_MONTH_FACTOR,
+V_R22_6MONTH_FACTOR,
+V_R22_YEAR_FACTOR,
+V_R22_MONTH_CALCULATED,
+V_R22_6MONTH_CALCULATED,
+V_R22_YEAR_CALCULATED,
+V_R22_TOTAL_ASF,
+V_R23_PRODUCT,
+V_R23_MONTH_AMOUNT,
+V_R23_6MONTH_AMOUNT,
+V_R23_YEAR_AMOUNT,
+V_R23_MONTH_FACTOR,
+V_R23_6MONTH_FACTOR,
+V_R23_YEAR_FACTOR,
+V_R23_MONTH_CALCULATED,
+V_R23_6MONTH_CALCULATED,
+V_R23_YEAR_CALCULATED,
+V_R23_TOTAL_ASF,
+V_R24_PRODUCT,
+V_R24_MONTH_AMOUNT,
+V_R24_6MONTH_AMOUNT,
+V_R24_YEAR_AMOUNT,
+V_R24_MONTH_FACTOR,
+V_R24_6MONTH_FACTOR,
+V_R24_YEAR_FACTOR,
+V_R24_MONTH_CALCULATED,
+V_R24_6MONTH_CALCULATED,
+V_R24_YEAR_CALCULATED,
+V_R24_TOTAL_ASF,
+V_R25_PRODUCT,
+V_R25_MONTH_AMOUNT,
+V_R25_6MONTH_AMOUNT,
+V_R25_YEAR_AMOUNT,
+V_R25_MONTH_FACTOR,
+V_R25_6MONTH_FACTOR,
+V_R25_YEAR_FACTOR,
+V_R25_MONTH_CALCULATED,
+V_R25_6MONTH_CALCULATED,
+V_R25_YEAR_CALCULATED,
+V_R25_TOTAL_ASF,
+V_R27_PRODUCT,
+V_R27_MONTH_AMOUNT,
+V_R27_6MONTH_AMOUNT,
+V_R27_YEAR_AMOUNT,
+V_R27_MONTH_FACTOR,
+V_R27_6MONTH_FACTOR,
+V_R27_YEAR_FACTOR,
+V_R27_MONTH_CALCULATED,
+V_R27_6MONTH_CALCULATED,
+V_R27_YEAR_CALCULATED,
+V_R27_TOTAL_ASF,
+V_R28_PRODUCT,
+V_R28_MONTH_AMOUNT,
+V_R28_6MONTH_AMOUNT,
+V_R28_YEAR_AMOUNT,
+V_R28_MONTH_FACTOR,
+V_R28_6MONTH_FACTOR,
+V_R28_YEAR_FACTOR,
+V_R28_MONTH_CALCULATED,
+V_R28_6MONTH_CALCULATED,
+V_R28_YEAR_CALCULATED,
+V_R28_TOTAL_ASF,
+V_R29_PRODUCT,
+V_R29_MONTH_AMOUNT,
+V_R29_6MONTH_AMOUNT,
+V_R29_YEAR_AMOUNT,
+V_R29_MONTH_FACTOR,
+V_R29_6MONTH_FACTOR,
+V_R29_YEAR_FACTOR,
+V_R30_PRODUCT,
+V_R30_MONTH_AMOUNT,
+V_R30_6MONTH_AMOUNT,
+V_R30_YEAR_AMOUNT,
+V_R30_MONTH_FACTOR,
+V_R30_6MONTH_FACTOR,
+V_R30_YEAR_FACTOR,
+V_R30_MONTH_CALCULATED,
+V_R30_6MONTH_CALCULATED,
+V_R30_YEAR_CALCULATED,
+V_R30_TOTAL_ASF,
+V_R31_PRODUCT,
+V_R31_MONTH_AMOUNT,
+V_R31_6MONTH_AMOUNT,
+V_R31_YEAR_AMOUNT,
+V_R31_MONTH_FACTOR,
+V_R31_6MONTH_FACTOR,
+V_R31_YEAR_FACTOR,
+V_R31_MONTH_CALCULATED,
+V_R31_6MONTH_CALCULATED,
+V_R31_YEAR_CALCULATED,
+V_R31_TOTAL_ASF,
+V_R32_PRODUCT,
+V_R32_MONTH_AMOUNT,
+V_R32_6MONTH_AMOUNT,
+V_R32_YEAR_AMOUNT,
+V_R32_MONTH_FACTOR,
+V_R32_6MONTH_FACTOR,
+V_R32_YEAR_FACTOR,
+V_R32_MONTH_CALCULATED,
+V_R32_6MONTH_CALCULATED,
+V_R32_YEAR_CALCULATED,
+V_R32_TOTAL_ASF,
+V_R33_PRODUCT,
+V_R33_MONTH_AMOUNT,
+V_R33_6MONTH_AMOUNT,
+V_R33_YEAR_AMOUNT,
+V_R33_MONTH_FACTOR,
+V_R33_6MONTH_FACTOR,
+V_R33_YEAR_FACTOR,
+V_R33_MONTH_CALCULATED,
+V_R33_6MONTH_CALCULATED,
+V_R33_YEAR_CALCULATED,
+V_R33_TOTAL_ASF,
+V_R34_PRODUCT,
+V_R34_MONTH_AMOUNT,
+V_R34_6MONTH_AMOUNT,
+V_R34_YEAR_AMOUNT,
+V_R34_MONTH_FACTOR,
+V_R34_6MONTH_FACTOR,
+V_R34_YEAR_FACTOR,
+V_R34_MONTH_CALCULATED,
+V_R34_6MONTH_CALCULATED,
+V_R34_YEAR_CALCULATED,
+V_R34_TOTAL_ASF,
+V_R35_PRODUCT,
+V_R35_MONTH_AMOUNT,
+V_R35_6MONTH_AMOUNT,
+V_R35_YEAR_AMOUNT,
+V_R35_MONTH_FACTOR,
+V_R35_6MONTH_FACTOR,
+V_R35_YEAR_FACTOR,
+V_R35_MONTH_CALCULATED,
+V_R35_6MONTH_CALCULATED,
+V_R35_YEAR_CALCULATED,
+V_R35_TOTAL_ASF,
+V_R36_PRODUCT,
+V_R36_MONTH_AMOUNT,
+V_R36_6MONTH_AMOUNT,
+V_R36_YEAR_AMOUNT,
+V_R36_MONTH_FACTOR,
+V_R36_6MONTH_FACTOR,
+V_R36_YEAR_FACTOR,
+V_R36_MONTH_CALCULATED,
+V_R36_6MONTH_CALCULATED,
+V_R36_YEAR_CALCULATED,
+V_R36_TOTAL_ASF,
+V_R38_PRODUCT,
+V_R38_YEAR_AMOUNT,
+V_R39_PRODUCT,
+V_R39_YEAR_AMOUNT,
+V_R40_PRODUCT,
+V_R40_YEAR_AMOUNT,
+V_R40_YEAR_FACTOR,
+V_R40_YEAR_CALCULATED,
+V_R40_TOTAL_ASF,
+V_R41_PRODUCT,
+V_R41_YEAR_AMOUNT,
+V_R41_YEAR_FACTOR,
+V_R41_YEAR_CALCULATED,
+V_R41_TOTAL_ASF,
+V_R42_PRODUCT,
+V_R42_YEAR_AMOUNT,
+V_R42_YEAR_FACTOR,
+V_R42_YEAR_CALCULATED,
+V_R42_TOTAL_ASF,
+V_R44_PRODUCT,
+V_R44_MONTH_AMOUNT,
+V_R44_6MONTH_AMOUNT,
+V_R44_YEAR_AMOUNT,
+V_R44_MONTH_FACTOR,
+V_R44_6MONTH_FACTOR,
+V_R44_YEAR_FACTOR,
+V_R44_MONTH_CALCULATED,
+V_R44_6MONTH_CALCULATED,
+V_R44_YEAR_CALCULATED,
+V_R44_TOTAL_ASF,
+V_R45_PRODUCT,
+V_R45_MONTH_AMOUNT,
+V_R45_6MONTH_AMOUNT,
+V_R45_YEAR_AMOUNT,
+V_R45_MONTH_FACTOR,
+V_R45_6MONTH_FACTOR,
+V_R45_YEAR_FACTOR,
+V_R45_MONTH_CALCULATED,
+V_R45_6MONTH_CALCULATED,
+V_R45_YEAR_CALCULATED,
+V_R45_TOTAL_ASF,
+V_R46_PRODUCT,
+V_R46_MONTH_AMOUNT,
+V_R46_MONTH_FACTOR,
+V_R46_MONTH_CALCULATED,
+V_R46_TOTAL_ASF,
+V_R47_PRODUCT,
+V_R47_MONTH_AMOUNT,
+V_R47_6MONTH_AMOUNT,
+V_R47_YEAR_AMOUNT,
+V_R47_MONTH_FACTOR,
+V_R47_6MONTH_FACTOR,
+V_R47_YEAR_FACTOR,
+V_R47_MONTH_CALCULATED,
+V_R47_6MONTH_CALCULATED,
+V_R47_YEAR_CALCULATED,
+V_R47_TOTAL_ASF,
+V_R53_PRODUCT,
+V_R53_MONTH_AMOUNT,
+V_R53_MONTH_FACTOR,
+V_R53_MONTH_CALCULATED,
+V_R53_TOTAL_ASF,
+V_R55_PRODUCT,
+V_R55_MONTH_AMOUNT,
+V_R55_MONTH_FACTOR,
+V_R55_MONTH_CALCULATED,
+V_R55_TOTAL_ASF,
+V_R56_PRODUCT,
+V_R56_MONTH_AMOUNT,
+V_R56_MONTH_FACTOR,
+V_R56_MONTH_CALCULATED,
+V_R56_TOTAL_ASF,
+V_R57_PRODUCT,
+V_R57_MONTH_AMOUNT,
+V_R57_6MONTH_AMOUNT,
+V_R57_YEAR_AMOUNT,
+V_R57_MONTH_FACTOR,
+V_R57_6MONTH_FACTOR,
+V_R57_YEAR_FACTOR,
+V_R57_MONTH_CALCULATED,
+V_R57_6MONTH_CALCULATED,
+V_R57_YEAR_CALCULATED,
+V_R57_TOTAL_ASF,
+V_R58_PRODUCT,
+V_R58_MONTH_AMOUNT,
+V_R58_6MONTH_AMOUNT,
+V_R58_YEAR_AMOUNT,
+V_R58_MONTH_FACTOR,
+V_R58_6MONTH_FACTOR,
+V_R58_YEAR_FACTOR,
+V_R58_MONTH_CALCULATED,
+V_R58_6MONTH_CALCULATED,
+V_R58_YEAR_CALCULATED,
+V_R58_TOTAL_ASF,
+V_R59_PRODUCT,
+V_R59_6MONTH_FACTOR,
+V_R59_YEAR_FACTOR,
+V_R59_6MONTH_CALCULATED,
+V_R59_YEAR_CALCULATED,
+V_R59_TOTAL_ASF,
+V_R60_PRODUCT,
+V_R60_YEAR_AMOUNT,
+V_R60_YEAR_FACTOR,
+V_R60_YEAR_CALCULATED,
+V_R60_TOTAL_ASF,
+V_R62_PRODUCT,
+V_R62_MONTH_AMOUNT,
+V_R62_6MONTH_AMOUNT,
+V_R62_YEAR_AMOUNT,
+V_R62_MONTH_FACTOR,
+V_R62_6MONTH_FACTOR,
+V_R62_YEAR_FACTOR,
+V_R62_MONTH_CALCULATED,
+V_R62_6MONTH_CALCULATED,
+V_R62_YEAR_CALCULATED,
+V_R62_TOTAL_ASF,
+V_R63_PRODUCT,
+V_R63_MONTH_AMOUNT,
+V_R63_MONTH_FACTOR,
+V_R63_MONTH_CALCULATED,
+V_R63_TOTAL_ASF,
+V_R64_PRODUCT,
+V_R64_6MONTH_AMOUNT,
+V_R64_6MONTH_FACTOR,
+V_R64_6MONTH_CALCULATED,
+V_R64_TOTAL_ASF,
+V_R65_PRODUCT,
+V_R65_YEAR_AMOUNT,
+V_R65_YEAR_FACTOR,
+V_R65_YEAR_CALCULATED,
+V_R65_TOTAL_ASF,
+V_R68_PRODUCT,
+V_R68_MONTH_AMOUNT,
+V_R68_6MONTH_AMOUNT,
+V_R68_YEAR_AMOUNT,
+V_R68_MONTH_FACTOR,
+V_R68_6MONTH_FACTOR,
+V_R68_YEAR_FACTOR,
+V_R68_MONTH_CALCULATED,
+V_R68_6MONTH_CALCULATED,
+V_R68_YEAR_CALCULATED,
+V_R68_TOTAL_ASF,
+V_R69_PRODUCT,
+V_R69_MONTH_AMOUNT,
+V_R69_MONTH_FACTOR,
+V_R69_MONTH_CALCULATED,
+V_R69_TOTAL_ASF,
+V_R70_PRODUCT,
+V_R70_6MONTH_AMOUNT,
+V_R70_6MONTH_FACTOR,
+V_R70_6MONTH_CALCULATED,
+V_R70_TOTAL_ASF,
+V_R71_PRODUCT,
+V_R71_YEAR_AMOUNT,
+V_R71_YEAR_FACTOR,
+V_R71_YEAR_CALCULATED,
+V_R71_TOTAL_ASF,
+V_R73_PRODUCT,
+V_R73_MONTH_AMOUNT,
+V_R73_6MONTH_AMOUNT,
+V_R73_YEAR_AMOUNT,
+V_R73_MONTH_FACTOR,
+V_R73_6MONTH_FACTOR,
+V_R73_YEAR_FACTOR,
+V_R73_MONTH_CALCULATED,
+V_R73_6MONTH_CALCULATED,
+V_R73_YEAR_CALCULATED,
+V_R73_TOTAL_ASF,
+V_R74_PRODUCT,
+V_R74_MONTH_AMOUNT,
+V_R74_MONTH_FACTOR,
+V_R74_MONTH_CALCULATED,
+V_R74_TOTAL_ASF,
+V_R75_PRODUCT,
+V_R75_6MONTH_AMOUNT,
+V_R75_6MONTH_FACTOR,
+V_R75_6MONTH_CALCULATED,
+V_R75_TOTAL_ASF,
+V_R76_PRODUCT,
+V_R76_YEAR_AMOUNT,
+V_R76_YEAR_FACTOR,
+V_R76_YEAR_CALCULATED,
+V_R76_TOTAL_ASF,
+V_R79_PRODUCT,
+V_R79_MONTH_AMOUNT,
+V_R79_6MONTH_AMOUNT,
+V_R79_YEAR_AMOUNT,
+V_R79_MONTH_FACTOR,
+V_R79_6MONTH_FACTOR,
+V_R79_YEAR_FACTOR,
+V_R79_MONTH_CALCULATED,
+V_R79_6MONTH_CALCULATED,
+V_R79_YEAR_CALCULATED,
+V_R79_TOTAL_ASF,
+V_R80_PRODUCT,
+V_R80_MONTH_AMOUNT,
+V_R80_MONTH_FACTOR,
+V_R80_MONTH_CALCULATED,
+V_R80_TOTAL_ASF,
+V_R81_PRODUCT,
+V_R81_6MONTH_AMOUNT,
+V_R81_6MONTH_FACTOR,
+V_R81_6MONTH_CALCULATED,
+V_R81_TOTAL_ASF,
+V_R82_PRODUCT,
+V_R82_YEAR_AMOUNT,
+V_R82_YEAR_FACTOR,
+V_R82_YEAR_CALCULATED,
+V_R82_TOTAL_ASF,
+V_R84_PRODUCT,
+V_R84_YEAR_FACTOR,
+V_R84_YEAR_CALCULATED,
+V_R84_TOTAL_ASF,
+V_R85_PRODUCT,
+V_R85_YEAR_FACTOR,
+V_R85_YEAR_CALCULATED,
+V_R85_TOTAL_ASF,
+V_R86_PRODUCT,
+V_R86_YEAR_FACTOR,
+V_R86_YEAR_CALCULATED,
+V_R86_TOTAL_ASF,
+V_R87_PRODUCT,
+V_R87_YEAR_FACTOR,
+V_R87_YEAR_CALCULATED,
+V_R87_TOTAL_ASF,
+V_R89_PRODUCT,
+V_R89_MONTH_AMOUNT,
+V_R89_6MONTH_AMOUNT,
+V_R89_YEAR_AMOUNT,
+V_R89_MONTH_FACTOR,
+V_R89_6MONTH_FACTOR,
+V_R89_YEAR_FACTOR,
+V_R89_MONTH_CALCULATED,
+V_R89_6MONTH_CALCULATED,
+V_R89_YEAR_CALCULATED,
+V_R89_TOTAL_ASF,
+V_R90_PRODUCT,
+V_R90_MONTH_AMOUNT,
+V_R90_MONTH_FACTOR,
+V_R90_MONTH_CALCULATED,
+V_R90_TOTAL_ASF,
+V_R91_PRODUCT,
+V_R91_6MONTH_AMOUNT,
+V_R91_6MONTH_FACTOR,
+V_R91_6MONTH_CALCULATED,
+V_R91_TOTAL_ASF,
+V_R93_PRODUCT,
+V_R93_YEAR_AMOUNT,
+V_R93_MONTH_FACTOR,
+V_R93_6MONTH_FACTOR,
+V_R93_YEAR_FACTOR,
+V_R93_MONTH_CALCULATED,
+V_R93_6MONTH_CALCULATED,
+V_R93_YEAR_CALCULATED,
+V_R93_TOTAL_ASF,
+V_R94_PRODUCT,
+V_R94_MONTH_AMOUNT,
+V_R94_6MONTH_AMOUNT,
+V_R94_YEAR_AMOUNT,
+V_R94_MONTH_FACTOR,
+V_R94_6MONTH_FACTOR,
+V_R94_YEAR_FACTOR,
+V_R94_MONTH_CALCULATED,
+V_R94_6MONTH_CALCULATED,
+V_R94_YEAR_CALCULATED,
+V_R94_TOTAL_ASF,
+V_R95_PRODUCT,
+V_R95_6MONTH_AMOUNT,
+V_R95_YEAR_AMOUNT,
+V_R95_6MONTH_FACTOR,
+V_R95_YEAR_FACTOR,
+V_R95_6MONTH_CALCULATED,
+V_R95_YEAR_CALCULATED,
+V_R95_TOTAL_ASF,
+V_R96_PRODUCT,
+V_R96_6MONTH_AMOUNT,
+V_R96_YEAR_AMOUNT,
+V_R96_6MONTH_FACTOR,
+V_R96_YEAR_FACTOR,
+V_R96_6MONTH_CALCULATED,
+V_R96_YEAR_CALCULATED,
+V_R96_TOTAL_ASF,
+V_R98_PRODUCT,
+V_R98_MONTHS_AMOUNT,
+V_R98_6MONTHS_AMOUNT,
+V_R98_YEAR_AMOUNT,
+V_R98_MONTHS_FACTOR,
+V_R98_6MONTHS_FACTOR,
+V_R98_YEAR_FACTOR,
+V_R98_MONTHS_CALCULATED,
+V_R98_6MONTHS_CALCULATED,
+V_R98_YEAR_CALCULATED,
+V_R98_TOTAL_ASF,
+V_R99_PRODUCT,
+V_R99_MONTH_AMOUNT,
+V_R99_6MONTH_AMOUNT,
+V_R99_YEAR_AMOUNT,
+V_R99_MONTH_FACTOR,
+V_R99_6MONTH_FACTOR,
+V_R99_YEAR_FACTOR,
+V_R99_MONTH_CALCULATED,
+V_R99_6MONTH_CALCULATED,
+V_R99_YEAR_CALCULATED,
+V_R99_TOTAL_ASF,
+V_R100_PRODUCT,
+V_R100_6MONTH_AMOUNT,
+V_R100_YEAR_AMOUNT,
+V_R100_6MONTH_FACTOR,
+V_R100_YEAR_FACTOR,
+V_R100_6MONTH_CALCULATED,
+V_R100_YEAR_CALCULATED,
+V_R100_TOTAL_ASF,
+V_R101_PRODUCT,
+V_R101_6MONTH_AMOUNT,
+V_R101_YEAR_AMOUNT,
+V_R101_6MONTH_FACTOR,
+V_R101_YEAR_FACTOR,
+V_R101_6MONTH_CALCULATED,
+V_R101_YEAR_CALCULATED,
+V_R101_TOTAL_ASF,
+V_R103_PRODUCT,
+V_R103_MONTHS_AMOUNT,
+V_R103_6MONTHS_AMOUNT,
+V_R103_YEAR_AMOUNT,
+V_R103_MONTHS_FACTOR,
+V_R103_6MONTHS_FACTOR,
+V_R103_YEAR_FACTOR,
+V_R103_MONTHS_CALCULATED,
+V_R103_6MONTHS_CALCULATED,
+V_R103_YEAR_CALCULATED,
+V_R103_TOTAL_ASF,
+V_R104_PRODUCT,
+V_R104_MONTH_AMOUNT,
+V_R104_6MONTH_AMOUNT,
+V_R104_YEAR_AMOUNT,
+V_R104_MONTH_FACTOR,
+V_R104_6MONTH_FACTOR,
+V_R104_YEAR_FACTOR,
+V_R104_MONTH_CALCULATED,
+V_R104_6MONTH_CALCULATED,
+V_R104_YEAR_CALCULATED,
+V_R104_TOTAL_ASF,
+V_R105_PRODUCT,
+V_R105_6MONTH_AMOUNT,
+V_R105_YEAR_AMOUNT,
+V_R105_6MONTH_FACTOR,
+V_R105_YEAR_FACTOR,
+V_R105_6MONTH_CALCULATED,
+V_R105_YEAR_CALCULATED,
+V_R105_TOTAL_ASF,
+V_R106_PRODUCT,
+V_R106_6MONTH_AMOUNT,
+V_R106_YEAR_AMOUNT,
+V_R106_6MONTH_FACTOR,
+V_R106_YEAR_FACTOR,
+V_R106_6MONTH_CALCULATED,
+V_R106_YEAR_CALCULATED,
+V_R106_TOTAL_ASF,
+V_R109_PRODUCT,
+V_R109_MONTH_AMOUNT,
+V_R109_6MONTH_AMOUNT,
+V_R109_MONTH_FACTOR,
+V_R109_6MONTH_FACTOR,
+V_R109_MONTH_CALCULATED,
+V_R109_6MONTH_CALCULATED,
+V_R109_TOTAL_ASF,
+V_R110_PRODUCT,
+V_R110_MONTH_AMOUNT,
+V_R110_MONTH_FACTOR,
+V_R110_MONTH_CALCULATED,
+V_R110_TOTAL_ASF,
+V_R111_PRODUCT,
+V_R111_6MONTH_AMOUNT,
+V_R111_6MONTH_FACTOR,
+V_R111_6MONTH_CALCULATED,
+V_R111_TOTAL_ASF,
+V_R113_PRODUCT,
+V_R113_MONTH_AMOUNT,
+V_R113_6MONTH_AMOUNT,
+V_R113_MONTH_FACTOR,
+V_R113_6MONTH_FACTOR,
+V_R113_MONTH_CALCULATED,
+V_R113_6MONTH_CALCULATED,
+V_R113_TOTAL_ASF,
+V_R114_PRODUCT,
+V_R114_MONTH_AMOUNT,
+V_R114_MONTH_FACTOR,
+V_R114_MONTH_CALCULATED,
+V_R114_TOTAL_ASF,
+V_R115_PRODUCT,
+V_R115_6MONTH_AMOUNT,
+V_R115_6MONTH_FACTOR,
+V_R115_6MONTH_CALCULATED,
+V_R115_TOTAL_ASF,
+V_R117_PRODUCT,
+V_R117_MONTH_AMOUNT,
+V_R117_6MONTH_AMOUNT,
+V_R117_MONTH_FACTOR,
+V_R117_6MONTH_FACTOR,
+V_R117_MONTH_CALCULATED,
+V_R117_6MONTH_CALCULATED,
+V_R117_TOTAL_ASF,
+V_R118_PRODUCT,
+V_R118_MONTH_AMOUNT,
+V_R118_MONTH_FACTOR,
+V_R118_MONTH_CALCULATED,
+V_R118_TOTAL_ASF,
+V_R119_PRODUCT,
+V_R119_6MONTH_AMOUNT,
+V_R119_6MONTH_FACTOR,
+V_R119_6MONTH_CALCULATED,
+V_R119_TOTAL_ASF,
+V_R122_PRODUCT,
+V_R122_YEAR_AMOUNT,
+V_R122_YEAR_FACTOR,
+V_R122_YEAR_CALCULATED,
+V_R122_TOTAL_ASF,
+V_R123_PRODUCT,
+V_R123_MONTH_AMOUNT,
+V_R123_MONTH_FACTOR,
+V_R123_MONTH_CALCULATED,
+V_R123_TOTAL_ASF,
+V_R124_PRODUCT,
+V_R124_6MONTH_AMOUNT,
+V_R124_6MONTH_FACTOR,
+V_R124_6MONTH_CALCULATED,
+V_R124_TOTAL_ASF,
+V_R125_PRODUCT,
+V_R125_YEAR_AMOUNT,
+V_R125_YEAR_FACTOR,
+V_R125_YEAR_CALCULATED,
+V_R125_TOTAL_ASF,
+V_R127_PRODUCT,
+V_R127_YEAR_AMOUNT,
+V_R127_YEAR_FACTOR,
+V_R127_YEAR_CALCULATED,
+V_R127_TOTAL_ASF,
+V_R128_PRODUCT,
+V_R128_MONTH_AMOUNT,
+V_R128_MONTH_FACTOR,
+V_R128_MONTH_CALCULATED,
+V_R128_TOTAL_ASF,
+V_R129_PRODUCT,
+V_R129_6MONTH_AMOUNT,
+V_R129_6MONTH_FACTOR,
+V_R129_6MONTH_CALCULATED,
+V_R129_TOTAL_ASF,
+V_R130_PRODUCT,
+V_R130_YEAR_AMOUNT,
+V_R130_YEAR_FACTOR,
+V_R130_YEAR_CALCULATED,
+V_R130_TOTAL_ASF,
+V_R132_PRODUCT,
+V_R132_YEAR_AMOUNT,
+V_R132_YEAR_FACTOR,
+V_R132_YEAR_CALCULATED,
+V_R132_TOTAL_ASF,
+V_R133_PRODUCT,
+V_R133_MONTH_AMOUNT,
+V_R133_MONTH_FACTOR,
+V_R133_MONTH_CALCULATED,
+V_R133_TOTAL_ASF,
+V_R134_PRODUCT,
+V_R134_6MONTH_AMOUNT,
+V_R134_6MONTH_FACTOR,
+V_R134_6MONTH_CALCULATED,
+V_R134_TOTAL_ASF,
+V_R135_PRODUCT,
+V_R135_YEAR_AMOUNT,
+V_R135_YEAR_FACTOR,
+V_R135_YEAR_CALCULATED,
+V_R135_TOTAL_ASF,
+V_R137_PRODUCT,
+V_R137_YEAR_AMOUNT,
+V_R137_YEAR_FACTOR,
+V_R137_YEAR_CALCULATED,
+V_R137_TOTAL_ASF,
+V_R138_PRODUCT,
+V_R138_MONTH_AMOUNT,
+V_R138_MONTH_FACTOR,
+V_R138_MONTH_CALCULATED,
+V_R138_TOTAL_ASF,
+V_R139_PRODUCT,
+V_R139_6MONTH_AMOUNT,
+V_R139_6MONTH_FACTOR,
+V_R139_6MONTH_CALCULATED,
+V_R139_TOTAL_ASF,
+V_R140_PRODUCT,
+V_R140_YEAR_AMOUNT,
+V_R140_YEAR_FACTOR,
+V_R140_YEAR_CALCULATED,
+V_R140_TOTAL_ASF,
+V_R142_PRODUCT,
+V_R142_YEAR_AMOUNT,
+V_R142_YEAR_FACTOR,
+V_R142_YEAR_CALCULATED,
+V_R142_TOTAL_ASF,
+V_R143_PRODUCT,
+V_R143_MONTH_AMOUNT,
+V_R143_MONTH_FACTOR,
+V_R143_MONTH_CALCULATED,
+V_R143_TOTAL_ASF,
+V_R144_PRODUCT,
+V_R144_6MONTH_AMOUNT,
+V_R144_6MONTH_FACTOR,
+V_R144_6MONTH_CALCULATED,
+V_R144_TOTAL_ASF,
+V_R145_PRODUCT,
+V_R145_YEAR_AMOUNT,
+V_R145_YEAR_FACTOR,
+V_R145_YEAR_CALCULATED,
+V_R145_TOTAL_ASF,
+V_R147_PRODUCT,
+V_R147_YEAR_AMOUNT,
+V_R148_PRODUCT,
+V_R148_YEAR_AMOUNT,
+V_R149_PRODUCT,
+V_R149_YEAR_AMOUNT,
+V_R149_YEAR_FACTOR,
+V_R149_YEAR_CALCULATED,
+V_R149_TOTAL_ASF,
+V_R150_PRODUCT,
+V_R150_YEAR_AMOUNT,
+V_R150_YEAR_FACTOR,
+V_R150_YEAR_CALCULATED,
+V_R150_TOTAL_ASF,
+V_R151_PRODUCT,
+V_R151_MONTHS_AMOUNT,
+V_R151_6MONTHS_AMOUNT,
+V_R151_YEAR_AMOUNT,
+V_R151_MONTHS_FACTOR,
+V_R151_6MONTHS_FACTOR,
+V_R151_YEAR_FACTOR,
+V_R151_MONTHS_CALCULATED,
+V_R151_6MONTHS_CALCULATED,
+V_R151_YEAR_CALCULATED,
+V_R151_TOTAL_ASF,
+V_R152_PRODUCT,
+V_R152_YEAR_AMOUNT,
+V_R153_PRODUCT,
+V_R153_YEAR_AMOUNT,
+V_R153_YEAR_FACTOR,
+V_R153_YEAR_CALCULATED,
+V_R153_TOTAL_ASF,
+V_R155_PRODUCT,
+V_R155_MONTH_AMOUNT,
+V_R155_MONTH_FACTOR,
+V_R155_MONTH_CALCULATED,
+V_R155_TOTAL_ASF,
+V_R156_PRODUCT,
+V_R156_MONTHS_AMOUNT,
+V_R156_6MONTHS_AMOUNT,
+V_R156_YEAR_AMOUNT,
+V_R156_MONTHS_FACTOR,
+V_R156_6MONTHS_FACTOR,
+V_R156_YEAR_FACTOR,
+V_R156_MONTHS_CALCULATED,
+V_R156_6MONTHS_CALCULATED,
+V_R156_YEAR_CALCULATED,
+V_R156_TOTAL_ASF,
+V_R157_PRODUCT,
+V_R157_MONTHS_AMOUNT,
+V_R157_6MONTHS_AMOUNT,
+V_R157_YEAR_AMOUNT,
+V_R157_MONTHS_FACTOR,
+V_R157_6MONTHS_FACTOR,
+V_R157_YEAR_FACTOR,
+V_R157_MONTHS_CALCULATED,
+V_R157_6MONTHS_CALCULATED,
+V_R157_YEAR_CALCULATED,
+V_R157_TOTAL_ASF,
+V_R158_PRODUCT,
+V_R158_MONTHS_AMOUNT,
+V_R158_6MONTHS_AMOUNT,
+V_R158_YEAR_AMOUNT,
+V_R158_MONTHS_FACTOR,
+V_R158_6MONTHS_FACTOR,
+V_R158_YEAR_FACTOR,
+V_R158_MONTHS_CALCULATED,
+V_R158_6MONTHS_CALCULATED,
+V_R158_YEAR_CALCULATED,
+V_R158_TOTAL_ASF,
+V_R159_PRODUCT,
+V_R159_MONTHS_AMOUNT,
+V_R159_6MONTHS_AMOUNT,
+V_R159_YEAR_AMOUNT,
+V_R159_MONTHS_FACTOR,
+V_R159_6MONTHS_FACTOR,
+V_R159_YEAR_FACTOR,
+V_R159_MONTHS_CALCULATED,
+V_R159_6MONTHS_CALCULATED,
+V_R159_YEAR_CALCULATED,
+V_R159_TOTAL_ASF,
+V_R160_PRODUCT,
+V_R160_MONTHS_AMOUNT,
+V_R160_6MONTHS_AMOUNT,
+V_R160_YEAR_AMOUNT,
+V_R160_MONTHS_FACTOR,
+V_R160_6MONTHS_FACTOR,
+V_R160_YEAR_FACTOR,
+V_R160_MONTHS_CALCULATED,
+V_R160_6MONTHS_CALCULATED,
+V_R160_YEAR_CALCULATED,
+V_R160_TOTAL_ASF,
+V_R161_PRODUCT,
+V_R161_MONTHS_AMOUNT,
+V_R161_6MONTHS_AMOUNT,
+V_R161_YEAR_AMOUNT,
+V_R161_MONTHS_FACTOR,
+V_R161_6MONTHS_FACTOR,
+V_R161_YEAR_FACTOR,
+V_R161_MONTHS_CALCULATED,
+V_R161_6MONTHS_CALCULATED,
+V_R161_YEAR_CALCULATED,
+V_R161_TOTAL_ASF,
+V_R162_PRODUCT,
+V_R162_MONTHS_AMOUNT,
+V_R162_6MONTHS_AMOUNT,
+V_R162_YEAR_AMOUNT,
+V_R162_MONTHS_FACTOR,
+V_R162_6MONTHS_FACTOR,
+V_R162_YEAR_FACTOR,
+V_R162_MONTHS_CALCULATED,
+V_R162_6MONTHS_CALCULATED,
+V_R162_YEAR_CALCULATED,
+V_R162_TOTAL_ASF,
+V_R163_PRODUCT,
+V_R163_MONTHS_AMOUNT,
+V_R163_6MONTHS_AMOUNT,
+V_R163_YEAR_AMOUNT,
+V_R163_MONTHS_FACTOR,
+V_R163_6MONTHS_FACTOR,
+V_R163_YEAR_FACTOR,
+V_R163_MONTHS_CALCULATED,
+V_R163_6MONTHS_CALCULATED,
+V_R163_YEAR_CALCULATED,
+V_R163_TOTAL_ASF,
+V_R165_PRODUCT,
+V_R165_AMOUNT,
+V_R165_RFS_FACTOR,
+V_R165_TOTAL_ASF,
+V_R166_PRODUCT,
+V_R166_AMOUNT,
+V_R166_RFS_FACTOR,
+V_R166_TOTAL_ASF,
+V_R167_PRODUCT,
+V_R167_AMOUNT,
+V_R167_RFS_FACTOR,
+V_R167_TOTAL_ASF,
+V_R168_PRODUCT,
+V_R168_AMOUNT,
+V_R168_RFS_FACTOR,
+V_R168_TOTAL_ASF,
+V_R169_PRODUCT,
+V_R169_AMOUNT,
+V_R169_RFS_FACTOR,
+V_R169_TOTAL_ASF,
+V_R170_PRODUCT,
+V_R170_TOTAL_ASF,
+V_R170_TOTAL_RSF,
+V_R171_PRODUCT,
+V_R171_NSFR,
+V_R171_TOTAL_ASF,
+V_R174_PRODUCT,
+V_R174_MONTHS_AMOUNT,
+V_R174_6MONTHS_AMOUNT,
+V_R174_YEAR_AMOUNT,
+V_R174_MONTHS_FACTOR,
+V_R174_6MONTHS_FACTOR,
+V_R174_YEAR_FACTOR,
+V_R174_MONTHS_CALCULATED,
+V_R174_6MONTHS_CALCULATED,
+V_R174_YEAR_CALCULATED,
+V_R174_TOTAL_ASF,
+V_R175_NSFR,
+V_R175_TOTAL_ASF,
+V_REPORT_DATE,
+V_R48_PRODUCT,
+V_R48_TOTAL_ASP,
+V_R59_YEAR_AMOUNT,
+V_R59_6MONTH_AMOUNT,
+V_R84_YEAR_AMOUNT,
+V_R85_YEAR_AMOUNT,
+V_R86_YEAR_AMOUNT,
+V_R87_YEAR_AMOUNT,
+V_R93_MONTH_AMOUNT,
+V_R93_6MONTH_AMOUNT,
+V_R29_MONTH_CALCULATED,
+V_R29_6MONTH_CALCULATED,
+V_R29_YEAR_CALCULATED,
+V_R29_TOTAL_ASF
+);
+COMMIT;
+END;

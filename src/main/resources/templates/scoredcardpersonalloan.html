@@ -1,0 +1,469 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	:SANJEEVI S  
+CREATED ON	:05-JUNE-2024
+PURPOSE		: FRONT ENT DEVLOPMENT PROCESS
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel=”stylesheet”
+	href=”https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css” />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"
+	rel="stylesheet">
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<style>
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+	curser: pointer;
+}
+
+.tabcontent {
+	display: none;
+	padding: 20px;
+	border-top: 1px solid #ccc;
+}
+
+.active {
+	background-color: #2084a9;
+}
+
+.btn-primary:hover {
+	background-color: #337ab7;
+	/* Change this color to the desired hover color */
+	border-color: #2e6da4;
+	/* Change this color to match the hover background color */
+	color: #fff; /* Change this color to match the hover text color */
+}
+
+/* Add this CSS to highlight the active tab */
+.active-tab {
+	background-color: #337ab7;
+	border-color: #2e6da4;
+	color: #fff;
+}
+</style>
+<style>
+        .hidden-input {
+            display: none;
+        }
+        .display-value {
+            font-size: 16px; /* Adjust the font size as needed */
+        }
+    </style>
+    
+<script>
+
+function home() {
+	location.href = 'Dashboard'
+}
+
+function back() {
+	window.history.back();
+}
+
+
+</script>
+<script>
+    function openTab(event, tabId, mode) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="btn" and remove the class "active"
+        tablinks = document.getElementsByClassName("btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabId).style.display = "block";
+        event.currentTarget.className += " active";
+
+        // Assuming you want to handle additional actions based on the mode
+        if (mode === 'PDBR') {
+            console.log('Switched to PDBR tab');
+            // Add any additional logic for PDBR mode here
+        } else if (mode === 'INCOME') {
+            console.log('Switched to Income tab');
+            // Add any additional logic for Income mode here
+        }
+    }
+</script>
+
+
+
+<!-- ---DBR--- -->
+<script>
+function DBR() {
+    var buttonContainer = document.getElementById('buttonContainer');
+    buttonContainer.style.display = 'block';
+  }
+  </script>
+
+<script>
+    $(document).ready(function() {
+        // Function to calculate Effective partial score, Max score, Min score, and Avg score
+        function calculateValues(input) {
+            var $row = $(input).closest('tr'); // Get the closest row to the input field
+
+            var partialScore = parseFloat($row.find("[name='partial_score']").val()) || 0; // Get partial score value
+            var weight = parseFloat($row.find("[name='weight']").val()) || 0; // Get weight value
+
+            var effectivePartialScore = partialScore * weight; // Calculate effective partial score
+            
+            // Get all partial scores in the tbody
+            var partialScores = $row.closest('tbody').find("[name='partial_score']").map(function() {
+                return parseFloat($(this).val()) || 0;
+            }).get();
+            
+            var maxPartialScore = Math.max.apply(null, partialScores); // Calculate max partial score
+            var minPartialScore = Math.min.apply(null, partialScores); // Calculate min partial score
+            var avgPartialScore = partialScores.reduce((a, b) => a + b, 0) / partialScores.length; // Calculate avg partial score
+
+            var maxScore = weight * maxPartialScore; // Calculate max score as per formula = R5 * (MAX(P5:P9))
+            var minScore = weight * minPartialScore; // Calculate min score as per formula = R5 * (MIN(P5:P9))
+            var avgScore = weight * avgPartialScore; // Calculate avg score as per formula = R5 * (AVERAGE(P5:P9))
+
+            // Update the Effective partial score field in the current row
+            $row.find("[name='effective_partial_score']").val(effectivePartialScore.toFixed(2));
+            // Update the Max score field in the current row
+            $row.find("[name='max_score']").val(maxScore.toFixed(2));
+            // Update the Min score field in the current row
+            $row.find("[name='min_score']").val(minScore.toFixed(2));
+            // Update the Avg score field in the current row
+            $row.find("[name='avg_score']").val(avgScore.toFixed(2));
+        }
+
+        // Function to initialize calculations for all rows
+        function initializeCalculations() {
+            $("tr").each(function() {
+                calculateValues($(this).find("[name='partial_score'], [name='weight']"));
+            });
+        }
+
+        // Attach input event listener to all input fields with class 'dbr'
+        $(document).on('input', "[name='partial_score'], [name='weight']", function() {
+            calculateValues(this); // Call calculateValues function when input changes
+        });
+
+        // Initialize calculations on document ready
+        initializeCalculations();
+    });
+
+    // Function to make elements contenteditable and show the submit button
+    function enableContentEditable() {
+        event.preventDefault();
+        $('#submit').show();
+        $('.dbr').attr('contenteditable', 'true').focus();
+    }
+
+    // Function for adding a new DBR
+    function addDBR() {
+        enableContentEditable();
+    }
+
+    // Function for modifying an existing DBR
+    function modDBR() {
+        enableContentEditable();
+    }
+
+    // Function to collect data from the table and submit to the backend
+    function subdbr() {
+        var scheduler = [];
+
+        $("#usertable tbody tr").each(function () {
+            var row = {};
+
+            row.variable = $(this).find("[name='variable']").val();
+            row.group_dbr = $(this).find("[name='group']").val();
+            row.bin_value = $(this).find("[name='bin_value']").val();
+            row.partial_score = $(this).find("[name='partial_score']").val();
+            row.weight = $(this).find("[name='weight']").val(); // Include weight value
+            row.effective_partial_score = $(this).find("[name='effective_partial_score']").val();
+            row.max_score = $(this).find("[name='max_score']").val();
+            row.min_score = $(this).find("[name='min_score']").val();
+            row.avg_score = $(this).find("[name='avg_score']").val();
+
+            scheduler.push(row);
+        });
+
+        console.log(scheduler);
+
+        $.ajax({
+            url: './auditschedulemodifysubmit',
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(scheduler),
+            success: function (response) {
+                alert("Operation successful");
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("An error occurred: " + error);
+                console.error("Error details:", xhr, status, error);
+            }
+        });
+    }
+</script>
+	<script>
+
+function ltv()
+{
+	
+	alert("ltv");
+	 $.ajax({
+			type: 'GET',
+			url: './ltv',
+			success: function (data) {
+				console.log(data);
+				if(data.length > 0){
+					console.log("Inside");
+					var trHTML = '';
+					$.each(data, function (key, entity) {
+						trHTML += 
+							'<tr>'
+							+'<td rowspan="5">'+(LTV)Requested Loan to Asset Value at application +'</td>'
+						+'<td>'+ entity.group +'</td>'
+							+ '<td>' +entity.bin_value   + '</td>'
+							+ '<td>' +  + '</td>'
+							+'<td  >'+ +'</td>'
+							+ '</tr>';
+					});
+					$('#ltvbody').empty().append(trHTML);
+				}
+			},
+			error: function () {
+				$('#errorMessage').text('Error fetching data');
+				$('#errorModal').modal('show');
+			}
+		});
+	
+	
+}
+
+
+</script>
+<script>
+document.getElementById('addRowBtn').addEventListener('click', function() {
+    var table = document.getElementById('usertable').getElementsByTagName('tbody')[0];
+    var newRow = table.insertRow();
+
+    var cell1 = newRow.insertCell(0);
+    var cell2 = newRow.insertCell(1);
+    var cell3 = newRow.insertCell(2);
+    var cell4 = newRow.insertCell(3);
+    var cell5 = newRow.insertCell(4);
+    var cell6 = newRow.insertCell(5);
+    var cell7 = newRow.insertCell(6);
+    var cell8 = newRow.insertCell(7);
+    var cell9 = newRow.insertCell(8);
+
+    cell1.innerHTML = '<input type="text" name="variable" class="dbr">';
+    cell2.innerHTML = '<input type="text" name="group" class="dbr">';
+    cell3.innerHTML = '<input type="text" name="bin_value" class="dbr">';
+    cell4.innerHTML = '<input type="text" name="partial_score" class="dbr">';
+    cell5.innerHTML = '<input type="text" name="effective_partial_score" class="dbr">';
+    cell6.innerHTML = '<input type="text" name="weight" class="dbr hidden-input"><span class="display-value">16%</span>';
+    cell7.innerHTML = '<input type="text" name="max_score" class="dbr">';
+    cell8.innerHTML = '<input type="text" name="min_score" class="dbr">';
+    cell9.innerHTML = '<input type="text" name="avg_score" class="dbr">';
+});
+
+
+</script>
+
+<script>
+
+function subdbr1()
+{
+	
+	alert("submit");
+	
+	var a=
+	$.ajax({
+              url : './submit',
+              data : $("#dbrForm").serialize(),
+              type : 'POST',
+              console.log(data);
+              success : function(data) {
+
+			alert("Modified successfully");
+	} 
+	});
+}
+
+</script>
+
+</head>
+<title>XBRL</title>
+<body onload="color(this)">
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-14">
+
+				<div class="card"
+					style="width: 1600px; margin-left: -100px; margin-top: 50px;">
+					<div class="card-header"
+						style="background-color: #4d8cb9; color: white;">
+
+						<div class="row">
+
+							<h4 style="margin-top: 5px; margin-left: 20px;">ScoreCardParameter</h4>
+							<div style="padding-left: 1200px; display: none;"
+								id="buttonContainer">
+								<button type="button" onclick="addDBR();" id="addRowBtn"
+									class="btn btn-xs btn-primary btns">Add</button>
+								<button type="button" onclick="modDBR();"
+									class="btn btn-xs btn-primary btns">Modify</button>
+							</div>
+						</div>
+					</div>
+                    <div class="card-body">
+                        <div class="tab" style="padding: 8px 12px; position: relative; font-size: 13px; width: 100%;">
+                            <button type="button" id="PDBR" onclick="openTab(event, 'tab1', 'PDBR');" class="btn btn-xs btn-primary btns">DBR</button>
+                            <button type="button" id="INCOME" onclick="openTab(event, 'tab2', 'INCOME');" class="btn btn-xs btn-primary btns">Income</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab3');event.preventDefault(); ltv();" class="btn btn-primary">LTV</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab4');event.preventDefault();glcodedesc();" class="btn btn-primary">Worse Payment Delay</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab5');event.preventDefault();paymentfrquncy();" class="btn btn-primary">Age</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab6');event.preventDefault();infoflg();" class="btn btn-primary">Length</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab7');event.preventDefault();schemecode();" class="btn btn-primary">Month</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab8');event.preventDefault();schemecode();" class="btn btn-primary">Number of inquiries</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab9');event.preventDefault();schemecode();" class="btn btn-primary">No of active contracts</button>
+                            <button type="button" id="" onclick="openTab(event, 'tab10');event.preventDefault();schemecode();" class="btn btn-primary">Number of Dependents</button>
+                        </div>
+                        <!-- -----DBR Tab Content----- -->
+                        <div id="tab1" class="tabcontent mt-n3">
+                            <form id="dbrForm" th:action="@{/submit}" method="post">
+                                <table class="table table-bordered table-hover table-condensed table-sm" style="font-size: 15px; margin-left: -20px;">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th style="text-align: center; font-weight: bold;">Variable</th>
+                                            <th style="text-align: center;">Group</th>
+                                            <th style="text-align: center;">Bin Value</th>
+                                            <th style="text-align: center;">Partial score</th>
+                                            <th style="text-align: center;">Effective partial score</th>
+                                            <th style="text-align: center;">Weight</th>
+                                            <th style="text-align: center;">Max score</th>
+                                            <th style="text-align: center;">Min score</th>
+                                            <th style="text-align: center;">Avg score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dbrtbody">
+                                        <tr th:each="pdbr : ${getPDBRvalue}">
+                                            <td><input type="text" name="variable" th:value="${pdbr.variable}" class="pdbr"></td>
+                                            <td><input type="text" name="group" th:value="${pdbr.group_dbr}" class="pdbr"></td>
+                                            <td><input type="text" name="bin_value" th:value="${pdbr.bin_value}" class="pdbr"></td>
+                                            <td><input type="text" name="partial_score" th:value="${pdbr.partial_score}" class="pdbr" id="partial_score"></td>
+                                            <td><input type="text" name="effective_partial_score" th:value="${pdbr.effactive_partial_score}" class="pdbr" id="effective_partial_score"></td>
+                                            <td><input type="text" name="weight" th:value="${pdbr.weight}" class="pdbr hidden-input" id="weight">
+                                                <span class="display-value">15%</span>
+                                            </td>
+                                            <td><input type="text" name="max_score" th:value="${pdbr.max_score}" class="pdbr" id="max_score"></td>
+                                            <td><input type="text" name="min_score" th:value="${pdbr.min_score}" class="pdbr" id="min_score"></td>
+                                            <td><input type="text" name="avg_score" th:value="${pdbr.avg_score}" class="pdbr" id="avg_score"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+
+                        <!-- --------INCOME Tab Content----- -->
+                        <div id="tab2" class="tabcontent mt-n3">
+                            <form id="incomeForm" th:action="@{/submit}" method="post">
+                                <table class="table table-bordered table-hover table-condensed table-sm" style="font-size: 15px; margin-left: -20px;">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th style="text-align: center; font-weight: bold;">Variable</th>
+                                            <th style="text-align: center;">Group</th>
+                                            <th style="text-align: center;">Bin Value</th>
+                                            <th style="text-align: center;">Partial score</th>
+                                            <th style="text-align: center;">Effective partial score</th>
+                                            <th style="text-align: center;">Weight</th>
+                                            <th style="text-align: center;">Max score</th>
+                                            <th style="text-align: center;">Min score</th>
+                                            <th style="text-align: center;">Avg score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="incometbody">
+                                        <tr th:each="income : ${getIncomevalue}">
+                                            <td><input type="text" name="variable" th:value="${income.variable}" class="income"></td>
+                                            <td><input type="text" name="group" th:value="${income.group_dbr}" class="income"></td>
+                                            <td><input type="text" name="bin_value" th:value="${income.bin_value}" class="income"></td>
+                                            <td><input type="text" name="partial_score" th:value="${income.partial_score}" class="income" id="partial_score"></td>
+                                            <td><input type="text" name="effective_partial_score" th:value="${income.effactive_partial_score}" class="income" id="effective_partial_score"></td>
+                                            <td><input type="text" name="weight" th:value="${income.weight}" class="income hidden-input" id="weight">
+                                                <span class="display-value">11%</span>
+                                            </td>
+                                            <td><input type="text" name="max_score" th:value="${income.max_score}" class="income" id="max_score"></td>
+                                            <td><input type="text" name="min_score" th:value="${income.min_score}" class="income" id="min_score"></td>
+                                            <td><input type="text" name="avg_score" th:value="${income.avg_score}" class="income" id="avg_score"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        
+                        <div class="card-footer text-center" style="background-color: #386276">
+                            <button type="button" class="btn btn-xs btn-primary" onclick="home();">Home</button>
+                            <button type="button" class="btn btn-xs btn-primary" id="submit" style="display: none;" onclick="subdbr();">Submit</button>
+                            <button type="button" class="btn btn-xs btn-primary" onclick="back();">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+
+

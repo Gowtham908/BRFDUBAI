@@ -1,0 +1,8851 @@
+package com.bornfire.xbrl.entities.BRBS;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Entity
+@Table(name = "BRF93C_SUMMARYTABLE")
+public class BRF93_SUMMARYENTITY3 {
+	private String r33_country_break_down;
+	private BigDecimal r33_no_of_transactions_financial_investment_government;
+	private BigDecimal r33_amount_financial_investment_government;
+	private BigDecimal r33_no_of_transactions_direct_investment_government;
+	private BigDecimal r33_amount_direct_investment_government;
+	private BigDecimal r33_no_of_transactions_services_government;
+	private BigDecimal r33_amount_services_government;
+	private BigDecimal r33_no_of_transactions_trade_government;
+	private BigDecimal r33_amount_trade_government;
+	private BigDecimal r33_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r33_amount_financial_investment_reserve;
+	private BigDecimal r33_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r33_amount_direct_investment_reserve;
+	private BigDecimal r33_no_of_transactions_services_reserve;
+	private BigDecimal r33_amount_services_reserve;
+	private BigDecimal r33_no_of_transactions_trade_reserve;
+	private BigDecimal r33_amount_trade_reserve;
+	private BigDecimal r33_no_of_transactions_financial_investment_gre;
+	private BigDecimal r33_amount_financial_investment_gre;
+	private BigDecimal r33_no_of_transactions_direct_investment_gre;
+	private BigDecimal r33_amount_direct_investment_gre;
+	private BigDecimal r33_no_of_transactions_services_gre;
+	private BigDecimal r33_amount_services_gre;
+	private BigDecimal r33_no_of_transactions_trade_gre;
+	private BigDecimal r33_amount_trade_gre;
+	private BigDecimal r33_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r33_amount_financial_investment_corporate;
+	private BigDecimal r33_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r33_amount_direct_investment_corporate;
+	private BigDecimal r33_no_of_transactions_services_corporate;
+	private BigDecimal r33_amount_services_corporate;
+	private BigDecimal r33_no_of_transactions_trade_corporate;
+	private BigDecimal r33_amount_trade_corporate;
+	private BigDecimal r33_no_of_transactions_financial_investment_sme;
+	private BigDecimal r33_amount_financial_investment_sme;
+	private BigDecimal r33_no_of_transactions_direct_investment_sme;
+	private BigDecimal r33_amount_direct_investment_sme;
+	private BigDecimal r33_no_of_transactions_services_sme;
+	private BigDecimal r33_amount_services_sme;
+	private BigDecimal r33_no_of_transactions_trade_sme;
+	private BigDecimal r33_amount_trade_sme;
+	private BigDecimal r33_no_of_transactions_financial_investment_individual;
+	private BigDecimal r33_amount_financial_investment_individual;
+	private BigDecimal r33_no_of_transactions_direct_investment_individual;
+	private BigDecimal r33_amount_direct_investment_individual;
+	private BigDecimal r33_no_of_transactions_family_support_individual;
+	private BigDecimal r33_amount_family_support_individual;
+	private BigDecimal r33_no_of_transactions_education_individual;
+	private BigDecimal r33_amount_education_individual;
+	private BigDecimal r33_no_of_transactions_medical_individual;
+	private BigDecimal r33_amount_medical_individual;
+	private BigDecimal r33_no_of_transactions_tourism_individual;
+	private BigDecimal r33_amount_tourism_individual;
+	private BigDecimal r33_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r33_amount_debt_settlement_individual;
+	private BigDecimal r33_no_of_transactions_other_services_individual;
+	private BigDecimal r33_amount_other_services_individual;
+	private BigDecimal r33_total_no_of_transactions;
+	private BigDecimal r33_grand_total;
+	private String r34_country_break_down;
+	private BigDecimal r34_no_of_transactions_financial_investment_government;
+	private BigDecimal r34_amount_financial_investment_government;
+	private BigDecimal r34_no_of_transactions_direct_investment_government;
+	private BigDecimal r34_amount_direct_investment_government;
+	private BigDecimal r34_no_of_transactions_services_government;
+	private BigDecimal r34_amount_services_government;
+	private BigDecimal r34_no_of_transactions_trade_government;
+	private BigDecimal r34_amount_trade_government;
+	private BigDecimal r34_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r34_amount_financial_investment_reserve;
+	private BigDecimal r34_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r34_amount_direct_investment_reserve;
+	private BigDecimal r34_no_of_transactions_services_reserve;
+	private BigDecimal r34_amount_services_reserve;
+	private BigDecimal r34_no_of_transactions_trade_reserve;
+	private BigDecimal r34_amount_trade_reserve;
+	private BigDecimal r34_no_of_transactions_financial_investment_gre;
+	private BigDecimal r34_amount_financial_investment_gre;
+	private BigDecimal r34_no_of_transactions_direct_investment_gre;
+	private BigDecimal r34_amount_direct_investment_gre;
+	private BigDecimal r34_no_of_transactions_services_gre;
+	private BigDecimal r34_amount_services_gre;
+	private BigDecimal r34_no_of_transactions_trade_gre;
+	private BigDecimal r34_amount_trade_gre;
+	private BigDecimal r34_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r34_amount_financial_investment_corporate;
+	private BigDecimal r34_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r34_amount_direct_investment_corporate;
+	private BigDecimal r34_no_of_transactions_services_corporate;
+	private BigDecimal r34_amount_services_corporate;
+	private BigDecimal r34_no_of_transactions_trade_corporate;
+	private BigDecimal r34_amount_trade_corporate;
+	private BigDecimal r34_no_of_transactions_financial_investment_sme;
+	private BigDecimal r34_amount_financial_investment_sme;
+	private BigDecimal r34_no_of_transactions_direct_investment_sme;
+	private BigDecimal r34_amount_direct_investment_sme;
+	private BigDecimal r34_no_of_transactions_services_sme;
+	private BigDecimal r34_amount_services_sme;
+	private BigDecimal r34_no_of_transactions_trade_sme;
+	private BigDecimal r34_amount_trade_sme;
+	private BigDecimal r34_no_of_transactions_financial_investment_individual;
+	private BigDecimal r34_amount_financial_investment_individual;
+	private BigDecimal r34_no_of_transactions_direct_investment_individual;
+	private BigDecimal r34_amount_direct_investment_individual;
+	private BigDecimal r34_no_of_transactions_family_support_individual;
+	private BigDecimal r34_amount_family_support_individual;
+	private BigDecimal r34_no_of_transactions_education_individual;
+	private BigDecimal r34_amount_education_individual;
+	private BigDecimal r34_no_of_transactions_medical_individual;
+	private BigDecimal r34_amount_medical_individual;
+	private BigDecimal r34_no_of_transactions_tourism_individual;
+	private BigDecimal r34_amount_tourism_individual;
+	private BigDecimal r34_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r34_amount_debt_settlement_individual;
+	private BigDecimal r34_no_of_transactions_other_services_individual;
+	private BigDecimal r34_amount_other_services_individual;
+	private BigDecimal r34_total_no_of_transactions;
+	private BigDecimal r34_grand_total;
+	private String r35_country_break_down;
+	private BigDecimal r35_no_of_transactions_financial_investment_government;
+	private BigDecimal r35_amount_financial_investment_government;
+	private BigDecimal r35_no_of_transactions_direct_investment_government;
+	private BigDecimal r35_amount_direct_investment_government;
+	private BigDecimal r35_no_of_transactions_services_government;
+	private BigDecimal r35_amount_services_government;
+	private BigDecimal r35_no_of_transactions_trade_government;
+	private BigDecimal r35_amount_trade_government;
+	private BigDecimal r35_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r35_amount_financial_investment_reserve;
+	private BigDecimal r35_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r35_amount_direct_investment_reserve;
+	private BigDecimal r35_no_of_transactions_services_reserve;
+	private BigDecimal r35_amount_services_reserve;
+	private BigDecimal r35_no_of_transactions_trade_reserve;
+	private BigDecimal r35_amount_trade_reserve;
+	private BigDecimal r35_no_of_transactions_financial_investment_gre;
+	private BigDecimal r35_amount_financial_investment_gre;
+	private BigDecimal r35_no_of_transactions_direct_investment_gre;
+	private BigDecimal r35_amount_direct_investment_gre;
+	private BigDecimal r35_no_of_transactions_services_gre;
+	private BigDecimal r35_amount_services_gre;
+	private BigDecimal r35_no_of_transactions_trade_gre;
+	private BigDecimal r35_amount_trade_gre;
+	private BigDecimal r35_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r35_amount_financial_investment_corporate;
+	private BigDecimal r35_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r35_amount_direct_investment_corporate;
+	private BigDecimal r35_no_of_transactions_services_corporate;
+	private BigDecimal r35_amount_services_corporate;
+	private BigDecimal r35_no_of_transactions_trade_corporate;
+	private BigDecimal r35_amount_trade_corporate;
+	private BigDecimal r35_no_of_transactions_financial_investment_sme;
+	private BigDecimal r35_amount_financial_investment_sme;
+	private BigDecimal r35_no_of_transactions_direct_investment_sme;
+	private BigDecimal r35_amount_direct_investment_sme;
+	private BigDecimal r35_no_of_transactions_services_sme;
+	private BigDecimal r35_amount_services_sme;
+	private BigDecimal r35_no_of_transactions_trade_sme;
+	private BigDecimal r35_amount_trade_sme;
+	private BigDecimal r35_no_of_transactions_financial_investment_individual;
+	private BigDecimal r35_amount_financial_investment_individual;
+	private BigDecimal r35_no_of_transactions_direct_investment_individual;
+	private BigDecimal r35_amount_direct_investment_individual;
+	private BigDecimal r35_no_of_transactions_family_support_individual;
+	private BigDecimal r35_amount_family_support_individual;
+	private BigDecimal r35_no_of_transactions_education_individual;
+	private BigDecimal r35_amount_education_individual;
+	private BigDecimal r35_no_of_transactions_medical_individual;
+	private BigDecimal r35_amount_medical_individual;
+	private BigDecimal r35_no_of_transactions_tourism_individual;
+	private BigDecimal r35_amount_tourism_individual;
+	private BigDecimal r35_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r35_amount_debt_settlement_individual;
+	private BigDecimal r35_no_of_transactions_other_services_individual;
+	private BigDecimal r35_amount_other_services_individual;
+	private BigDecimal r35_total_no_of_transactions;
+	private BigDecimal r35_grand_total;
+	private String r36_country_break_down;
+	private BigDecimal r36_no_of_transactions_financial_investment_government;
+	private BigDecimal r36_amount_financial_investment_government;
+	private BigDecimal r36_no_of_transactions_direct_investment_government;
+	private BigDecimal r36_amount_direct_investment_government;
+	private BigDecimal r36_no_of_transactions_services_government;
+	private BigDecimal r36_amount_services_government;
+	private BigDecimal r36_no_of_transactions_trade_government;
+	private BigDecimal r36_amount_trade_government;
+	private BigDecimal r36_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r36_amount_financial_investment_reserve;
+	private BigDecimal r36_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r36_amount_direct_investment_reserve;
+	private BigDecimal r36_no_of_transactions_services_reserve;
+	private BigDecimal r36_amount_services_reserve;
+	private BigDecimal r36_no_of_transactions_trade_reserve;
+	private BigDecimal r36_amount_trade_reserve;
+	private BigDecimal r36_no_of_transactions_financial_investment_gre;
+	private BigDecimal r36_amount_financial_investment_gre;
+	private BigDecimal r36_no_of_transactions_direct_investment_gre;
+	private BigDecimal r36_amount_direct_investment_gre;
+	private BigDecimal r36_no_of_transactions_services_gre;
+	private BigDecimal r36_amount_services_gre;
+	private BigDecimal r36_no_of_transactions_trade_gre;
+	private BigDecimal r36_amount_trade_gre;
+	private BigDecimal r36_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r36_amount_financial_investment_corporate;
+	private BigDecimal r36_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r36_amount_direct_investment_corporate;
+	private BigDecimal r36_no_of_transactions_services_corporate;
+	private BigDecimal r36_amount_services_corporate;
+	private BigDecimal r36_no_of_transactions_trade_corporate;
+	private BigDecimal r36_amount_trade_corporate;
+	private BigDecimal r36_no_of_transactions_financial_investment_sme;
+	private BigDecimal r36_amount_financial_investment_sme;
+	private BigDecimal r36_no_of_transactions_direct_investment_sme;
+	private BigDecimal r36_amount_direct_investment_sme;
+	private BigDecimal r36_no_of_transactions_services_sme;
+	private BigDecimal r36_amount_services_sme;
+	private BigDecimal r36_no_of_transactions_trade_sme;
+	private BigDecimal r36_amount_trade_sme;
+	private BigDecimal r36_no_of_transactions_financial_investment_individual;
+	private BigDecimal r36_amount_financial_investment_individual;
+	private BigDecimal r36_no_of_transactions_direct_investment_individual;
+	private BigDecimal r36_amount_direct_investment_individual;
+	private BigDecimal r36_no_of_transactions_family_support_individual;
+	private BigDecimal r36_amount_family_support_individual;
+	private BigDecimal r36_no_of_transactions_education_individual;
+	private BigDecimal r36_amount_education_individual;
+	private BigDecimal r36_no_of_transactions_medical_individual;
+	private BigDecimal r36_amount_medical_individual;
+	private BigDecimal r36_no_of_transactions_tourism_individual;
+	private BigDecimal r36_amount_tourism_individual;
+	private BigDecimal r36_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r36_amount_debt_settlement_individual;
+	private BigDecimal r36_no_of_transactions_other_services_individual;
+	private BigDecimal r36_amount_other_services_individual;
+	private BigDecimal r36_total_no_of_transactions;
+	private BigDecimal r36_grand_total;
+	private String r37_country_break_down;
+	private BigDecimal r37_no_of_transactions_financial_investment_government;
+	private BigDecimal r37_amount_financial_investment_government;
+	private BigDecimal r37_no_of_transactions_direct_investment_government;
+	private BigDecimal r37_amount_direct_investment_government;
+	private BigDecimal r37_no_of_transactions_services_government;
+	private BigDecimal r37_amount_services_government;
+	private BigDecimal r37_no_of_transactions_trade_government;
+	private BigDecimal r37_amount_trade_government;
+	private BigDecimal r37_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r37_amount_financial_investment_reserve;
+	private BigDecimal r37_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r37_amount_direct_investment_reserve;
+	private BigDecimal r37_no_of_transactions_services_reserve;
+	private BigDecimal r37_amount_services_reserve;
+	private BigDecimal r37_no_of_transactions_trade_reserve;
+	private BigDecimal r37_amount_trade_reserve;
+	private BigDecimal r37_no_of_transactions_financial_investment_gre;
+	private BigDecimal r37_amount_financial_investment_gre;
+	private BigDecimal r37_no_of_transactions_direct_investment_gre;
+	private BigDecimal r37_amount_direct_investment_gre;
+	private BigDecimal r37_no_of_transactions_services_gre;
+	private BigDecimal r37_amount_services_gre;
+	private BigDecimal r37_no_of_transactions_trade_gre;
+	private BigDecimal r37_amount_trade_gre;
+	private BigDecimal r37_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r37_amount_financial_investment_corporate;
+	private BigDecimal r37_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r37_amount_direct_investment_corporate;
+	private BigDecimal r37_no_of_transactions_services_corporate;
+	private BigDecimal r37_amount_services_corporate;
+	private BigDecimal r37_no_of_transactions_trade_corporate;
+	private BigDecimal r37_amount_trade_corporate;
+	private BigDecimal r37_no_of_transactions_financial_investment_sme;
+	private BigDecimal r37_amount_financial_investment_sme;
+	private BigDecimal r37_no_of_transactions_direct_investment_sme;
+	private BigDecimal r37_amount_direct_investment_sme;
+	private BigDecimal r37_no_of_transactions_services_sme;
+	private BigDecimal r37_amount_services_sme;
+	private BigDecimal r37_no_of_transactions_trade_sme;
+	private BigDecimal r37_amount_trade_sme;
+	private BigDecimal r37_no_of_transactions_financial_investment_individual;
+	private BigDecimal r37_amount_financial_investment_individual;
+	private BigDecimal r37_no_of_transactions_direct_investment_individual;
+	private BigDecimal r37_amount_direct_investment_individual;
+	private BigDecimal r37_no_of_transactions_family_support_individual;
+	private BigDecimal r37_amount_family_support_individual;
+	private BigDecimal r37_no_of_transactions_education_individual;
+	private BigDecimal r37_amount_education_individual;
+	private BigDecimal r37_no_of_transactions_medical_individual;
+	private BigDecimal r37_amount_medical_individual;
+	private BigDecimal r37_no_of_transactions_tourism_individual;
+	private BigDecimal r37_amount_tourism_individual;
+	private BigDecimal r37_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r37_amount_debt_settlement_individual;
+	private BigDecimal r37_no_of_transactions_other_services_individual;
+	private BigDecimal r37_amount_other_services_individual;
+	private BigDecimal r37_total_no_of_transactions;
+	private BigDecimal r37_grand_total;
+	private String r38_country_break_down;
+	private BigDecimal r38_no_of_transactions_financial_investment_government;
+	private BigDecimal r38_amount_financial_investment_government;
+	private BigDecimal r38_no_of_transactions_direct_investment_government;
+	private BigDecimal r38_amount_direct_investment_government;
+	private BigDecimal r38_no_of_transactions_services_government;
+	private BigDecimal r38_amount_services_government;
+	private BigDecimal r38_no_of_transactions_trade_government;
+	private BigDecimal r38_amount_trade_government;
+	private BigDecimal r38_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r38_amount_financial_investment_reserve;
+	private BigDecimal r38_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r38_amount_direct_investment_reserve;
+	private BigDecimal r38_no_of_transactions_services_reserve;
+	private BigDecimal r38_amount_services_reserve;
+	private BigDecimal r38_no_of_transactions_trade_reserve;
+	private BigDecimal r38_amount_trade_reserve;
+	private BigDecimal r38_no_of_transactions_financial_investment_gre;
+	private BigDecimal r38_amount_financial_investment_gre;
+	private BigDecimal r38_no_of_transactions_direct_investment_gre;
+	private BigDecimal r38_amount_direct_investment_gre;
+	private BigDecimal r38_no_of_transactions_services_gre;
+	private BigDecimal r38_amount_services_gre;
+	private BigDecimal r38_no_of_transactions_trade_gre;
+	private BigDecimal r38_amount_trade_gre;
+	private BigDecimal r38_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r38_amount_financial_investment_corporate;
+	private BigDecimal r38_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r38_amount_direct_investment_corporate;
+	private BigDecimal r38_no_of_transactions_services_corporate;
+	private BigDecimal r38_amount_services_corporate;
+	private BigDecimal r38_no_of_transactions_trade_corporate;
+	private BigDecimal r38_amount_trade_corporate;
+	private BigDecimal r38_no_of_transactions_financial_investment_sme;
+	private BigDecimal r38_amount_financial_investment_sme;
+	private BigDecimal r38_no_of_transactions_direct_investment_sme;
+	private BigDecimal r38_amount_direct_investment_sme;
+	private BigDecimal r38_no_of_transactions_services_sme;
+	private BigDecimal r38_amount_services_sme;
+	private BigDecimal r38_no_of_transactions_trade_sme;
+	private BigDecimal r38_amount_trade_sme;
+	private BigDecimal r38_no_of_transactions_financial_investment_individual;
+	private BigDecimal r38_amount_financial_investment_individual;
+	private BigDecimal r38_no_of_transactions_direct_investment_individual;
+	private BigDecimal r38_amount_direct_investment_individual;
+	private BigDecimal r38_no_of_transactions_family_support_individual;
+	private BigDecimal r38_amount_family_support_individual;
+	private BigDecimal r38_no_of_transactions_education_individual;
+	private BigDecimal r38_amount_education_individual;
+	private BigDecimal r38_no_of_transactions_medical_individual;
+	private BigDecimal r38_amount_medical_individual;
+	private BigDecimal r38_no_of_transactions_tourism_individual;
+	private BigDecimal r38_amount_tourism_individual;
+	private BigDecimal r38_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r38_amount_debt_settlement_individual;
+	private BigDecimal r38_no_of_transactions_other_services_individual;
+	private BigDecimal r38_amount_other_services_individual;
+	private BigDecimal r38_total_no_of_transactions;
+	private BigDecimal r38_grand_total;
+	private String r39_country_break_down;
+	private BigDecimal r39_no_of_transactions_financial_investment_government;
+	private BigDecimal r39_amount_financial_investment_government;
+	private BigDecimal r39_no_of_transactions_direct_investment_government;
+	private BigDecimal r39_amount_direct_investment_government;
+	private BigDecimal r39_no_of_transactions_services_government;
+	private BigDecimal r39_amount_services_government;
+	private BigDecimal r39_no_of_transactions_trade_government;
+	private BigDecimal r39_amount_trade_government;
+	private BigDecimal r39_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r39_amount_financial_investment_reserve;
+	private BigDecimal r39_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r39_amount_direct_investment_reserve;
+	private BigDecimal r39_no_of_transactions_services_reserve;
+	private BigDecimal r39_amount_services_reserve;
+	private BigDecimal r39_no_of_transactions_trade_reserve;
+	private BigDecimal r39_amount_trade_reserve;
+	private BigDecimal r39_no_of_transactions_financial_investment_gre;
+	private BigDecimal r39_amount_financial_investment_gre;
+	private BigDecimal r39_no_of_transactions_direct_investment_gre;
+	private BigDecimal r39_amount_direct_investment_gre;
+	private BigDecimal r39_no_of_transactions_services_gre;
+	private BigDecimal r39_amount_services_gre;
+	private BigDecimal r39_no_of_transactions_trade_gre;
+	private BigDecimal r39_amount_trade_gre;
+	private BigDecimal r39_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r39_amount_financial_investment_corporate;
+	private BigDecimal r39_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r39_amount_direct_investment_corporate;
+	private BigDecimal r39_no_of_transactions_services_corporate;
+	private BigDecimal r39_amount_services_corporate;
+	private BigDecimal r39_no_of_transactions_trade_corporate;
+	private BigDecimal r39_amount_trade_corporate;
+	private BigDecimal r39_no_of_transactions_financial_investment_sme;
+	private BigDecimal r39_amount_financial_investment_sme;
+	private BigDecimal r39_no_of_transactions_direct_investment_sme;
+	private BigDecimal r39_amount_direct_investment_sme;
+	private BigDecimal r39_no_of_transactions_services_sme;
+	private BigDecimal r39_amount_services_sme;
+	private BigDecimal r39_no_of_transactions_trade_sme;
+	private BigDecimal r39_amount_trade_sme;
+	private BigDecimal r39_no_of_transactions_financial_investment_individual;
+	private BigDecimal r39_amount_financial_investment_individual;
+	private BigDecimal r39_no_of_transactions_direct_investment_individual;
+	private BigDecimal r39_amount_direct_investment_individual;
+	private BigDecimal r39_no_of_transactions_family_support_individual;
+	private BigDecimal r39_amount_family_support_individual;
+	private BigDecimal r39_no_of_transactions_education_individual;
+	private BigDecimal r39_amount_education_individual;
+	private BigDecimal r39_no_of_transactions_medical_individual;
+	private BigDecimal r39_amount_medical_individual;
+	private BigDecimal r39_no_of_transactions_tourism_individual;
+	private BigDecimal r39_amount_tourism_individual;
+	private BigDecimal r39_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r39_amount_debt_settlement_individual;
+	private BigDecimal r39_no_of_transactions_other_services_individual;
+	private BigDecimal r39_amount_other_services_individual;
+	private BigDecimal r39_total_no_of_transactions;
+	private BigDecimal r39_grand_total;
+	private String r40_country_break_down;
+	private BigDecimal r40_no_of_transactions_financial_investment_government;
+	private BigDecimal r40_amount_financial_investment_government;
+	private BigDecimal r40_no_of_transactions_direct_investment_government;
+	private BigDecimal r40_amount_direct_investment_government;
+	private BigDecimal r40_no_of_transactions_services_government;
+	private BigDecimal r40_amount_services_government;
+	private BigDecimal r40_no_of_transactions_trade_government;
+	private BigDecimal r40_amount_trade_government;
+	private BigDecimal r40_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r40_amount_financial_investment_reserve;
+	private BigDecimal r40_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r40_amount_direct_investment_reserve;
+	private BigDecimal r40_no_of_transactions_services_reserve;
+	private BigDecimal r40_amount_services_reserve;
+	private BigDecimal r40_no_of_transactions_trade_reserve;
+	private BigDecimal r40_amount_trade_reserve;
+	private BigDecimal r40_no_of_transactions_financial_investment_gre;
+	private BigDecimal r40_amount_financial_investment_gre;
+	private BigDecimal r40_no_of_transactions_direct_investment_gre;
+	private BigDecimal r40_amount_direct_investment_gre;
+	private BigDecimal r40_no_of_transactions_services_gre;
+	private BigDecimal r40_amount_services_gre;
+	private BigDecimal r40_no_of_transactions_trade_gre;
+	private BigDecimal r40_amount_trade_gre;
+	private BigDecimal r40_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r40_amount_financial_investment_corporate;
+	private BigDecimal r40_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r40_amount_direct_investment_corporate;
+	private BigDecimal r40_no_of_transactions_services_corporate;
+	private BigDecimal r40_amount_services_corporate;
+	private BigDecimal r40_no_of_transactions_trade_corporate;
+	private BigDecimal r40_amount_trade_corporate;
+	private BigDecimal r40_no_of_transactions_financial_investment_sme;
+	private BigDecimal r40_amount_financial_investment_sme;
+	private BigDecimal r40_no_of_transactions_direct_investment_sme;
+	private BigDecimal r40_amount_direct_investment_sme;
+	private BigDecimal r40_no_of_transactions_services_sme;
+	private BigDecimal r40_amount_services_sme;
+	private BigDecimal r40_no_of_transactions_trade_sme;
+	private BigDecimal r40_amount_trade_sme;
+	private BigDecimal r40_no_of_transactions_financial_investment_individual;
+	private BigDecimal r40_amount_financial_investment_individual;
+	private BigDecimal r40_no_of_transactions_direct_investment_individual;
+	private BigDecimal r40_amount_direct_investment_individual;
+	private BigDecimal r40_no_of_transactions_family_support_individual;
+	private BigDecimal r40_amount_family_support_individual;
+	private BigDecimal r40_no_of_transactions_education_individual;
+	private BigDecimal r40_amount_education_individual;
+	private BigDecimal r40_no_of_transactions_medical_individual;
+	private BigDecimal r40_amount_medical_individual;
+	private BigDecimal r40_no_of_transactions_tourism_individual;
+	private BigDecimal r40_amount_tourism_individual;
+	private BigDecimal r40_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r40_amount_debt_settlement_individual;
+	private BigDecimal r40_no_of_transactions_other_services_individual;
+	private BigDecimal r40_amount_other_services_individual;
+	private BigDecimal r40_total_no_of_transactions;
+	private BigDecimal r40_grand_total;
+	private String r41_country_break_down;
+	private BigDecimal r41_no_of_transactions_financial_investment_government;
+	private BigDecimal r41_amount_financial_investment_government;
+	private BigDecimal r41_no_of_transactions_direct_investment_government;
+	private BigDecimal r41_amount_direct_investment_government;
+	private BigDecimal r41_no_of_transactions_services_government;
+	private BigDecimal r41_amount_services_government;
+	private BigDecimal r41_no_of_transactions_trade_government;
+	private BigDecimal r41_amount_trade_government;
+	private BigDecimal r41_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r41_amount_financial_investment_reserve;
+	private BigDecimal r41_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r41_amount_direct_investment_reserve;
+	private BigDecimal r41_no_of_transactions_services_reserve;
+	private BigDecimal r41_amount_services_reserve;
+	private BigDecimal r41_no_of_transactions_trade_reserve;
+	private BigDecimal r41_amount_trade_reserve;
+	private BigDecimal r41_no_of_transactions_financial_investment_gre;
+	private BigDecimal r41_amount_financial_investment_gre;
+	private BigDecimal r41_no_of_transactions_direct_investment_gre;
+	private BigDecimal r41_amount_direct_investment_gre;
+	private BigDecimal r41_no_of_transactions_services_gre;
+	private BigDecimal r41_amount_services_gre;
+	private BigDecimal r41_no_of_transactions_trade_gre;
+	private BigDecimal r41_amount_trade_gre;
+	private BigDecimal r41_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r41_amount_financial_investment_corporate;
+	private BigDecimal r41_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r41_amount_direct_investment_corporate;
+	private BigDecimal r41_no_of_transactions_services_corporate;
+	private BigDecimal r41_amount_services_corporate;
+	private BigDecimal r41_no_of_transactions_trade_corporate;
+	private BigDecimal r41_amount_trade_corporate;
+	private BigDecimal r41_no_of_transactions_financial_investment_sme;
+	private BigDecimal r41_amount_financial_investment_sme;
+	private BigDecimal r41_no_of_transactions_direct_investment_sme;
+	private BigDecimal r41_amount_direct_investment_sme;
+	private BigDecimal r41_no_of_transactions_services_sme;
+	private BigDecimal r41_amount_services_sme;
+	private BigDecimal r41_no_of_transactions_trade_sme;
+	private BigDecimal r41_amount_trade_sme;
+	private BigDecimal r41_no_of_transactions_financial_investment_individual;
+	private BigDecimal r41_amount_financial_investment_individual;
+	private BigDecimal r41_no_of_transactions_direct_investment_individual;
+	private BigDecimal r41_amount_direct_investment_individual;
+	private BigDecimal r41_no_of_transactions_family_support_individual;
+	private BigDecimal r41_amount_family_support_individual;
+	private BigDecimal r41_no_of_transactions_education_individual;
+	private BigDecimal r41_amount_education_individual;
+	private BigDecimal r41_no_of_transactions_medical_individual;
+	private BigDecimal r41_amount_medical_individual;
+	private BigDecimal r41_no_of_transactions_tourism_individual;
+	private BigDecimal r41_amount_tourism_individual;
+	private BigDecimal r41_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r41_amount_debt_settlement_individual;
+	private BigDecimal r41_no_of_transactions_other_services_individual;
+	private BigDecimal r41_amount_other_services_individual;
+	private BigDecimal r41_total_no_of_transactions;
+	private BigDecimal r41_grand_total;
+	private String r42_country_break_down;
+	private BigDecimal r42_no_of_transactions_financial_investment_government;
+	private BigDecimal r42_amount_financial_investment_government;
+	private BigDecimal r42_no_of_transactions_direct_investment_government;
+	private BigDecimal r42_amount_direct_investment_government;
+	private BigDecimal r42_no_of_transactions_services_government;
+	private BigDecimal r42_amount_services_government;
+	private BigDecimal r42_no_of_transactions_trade_government;
+	private BigDecimal r42_amount_trade_government;
+	private BigDecimal r42_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r42_amount_financial_investment_reserve;
+	private BigDecimal r42_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r42_amount_direct_investment_reserve;
+	private BigDecimal r42_no_of_transactions_services_reserve;
+	private BigDecimal r42_amount_services_reserve;
+	private BigDecimal r42_no_of_transactions_trade_reserve;
+	private BigDecimal r42_amount_trade_reserve;
+	private BigDecimal r42_no_of_transactions_financial_investment_gre;
+	private BigDecimal r42_amount_financial_investment_gre;
+	private BigDecimal r42_no_of_transactions_direct_investment_gre;
+	private BigDecimal r42_amount_direct_investment_gre;
+	private BigDecimal r42_no_of_transactions_services_gre;
+	private BigDecimal r42_amount_services_gre;
+	private BigDecimal r42_no_of_transactions_trade_gre;
+	private BigDecimal r42_amount_trade_gre;
+	private BigDecimal r42_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r42_amount_financial_investment_corporate;
+	private BigDecimal r42_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r42_amount_direct_investment_corporate;
+	private BigDecimal r42_no_of_transactions_services_corporate;
+	private BigDecimal r42_amount_services_corporate;
+	private BigDecimal r42_no_of_transactions_trade_corporate;
+	private BigDecimal r42_amount_trade_corporate;
+	private BigDecimal r42_no_of_transactions_financial_investment_sme;
+	private BigDecimal r42_amount_financial_investment_sme;
+	private BigDecimal r42_no_of_transactions_direct_investment_sme;
+	private BigDecimal r42_amount_direct_investment_sme;
+	private BigDecimal r42_no_of_transactions_services_sme;
+	private BigDecimal r42_amount_services_sme;
+	private BigDecimal r42_no_of_transactions_trade_sme;
+	private BigDecimal r42_amount_trade_sme;
+	private BigDecimal r42_no_of_transactions_financial_investment_individual;
+	private BigDecimal r42_amount_financial_investment_individual;
+	private BigDecimal r42_no_of_transactions_direct_investment_individual;
+	private BigDecimal r42_amount_direct_investment_individual;
+	private BigDecimal r42_no_of_transactions_family_support_individual;
+	private BigDecimal r42_amount_family_support_individual;
+	private BigDecimal r42_no_of_transactions_education_individual;
+	private BigDecimal r42_amount_education_individual;
+	private BigDecimal r42_no_of_transactions_medical_individual;
+	private BigDecimal r42_amount_medical_individual;
+	private BigDecimal r42_no_of_transactions_tourism_individual;
+	private BigDecimal r42_amount_tourism_individual;
+	private BigDecimal r42_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r42_amount_debt_settlement_individual;
+	private BigDecimal r42_no_of_transactions_other_services_individual;
+	private BigDecimal r42_amount_other_services_individual;
+	private BigDecimal r42_total_no_of_transactions;
+	private BigDecimal r42_grand_total;
+	private String r43_country_break_down;
+	private BigDecimal r43_no_of_transactions_financial_investment_government;
+	private BigDecimal r43_amount_financial_investment_government;
+	private BigDecimal r43_no_of_transactions_direct_investment_government;
+	private BigDecimal r43_amount_direct_investment_government;
+	private BigDecimal r43_no_of_transactions_services_government;
+	private BigDecimal r43_amount_services_government;
+	private BigDecimal r43_no_of_transactions_trade_government;
+	private BigDecimal r43_amount_trade_government;
+	private BigDecimal r43_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r43_amount_financial_investment_reserve;
+	private BigDecimal r43_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r43_amount_direct_investment_reserve;
+	private BigDecimal r43_no_of_transactions_services_reserve;
+	private BigDecimal r43_amount_services_reserve;
+	private BigDecimal r43_no_of_transactions_trade_reserve;
+	private BigDecimal r43_amount_trade_reserve;
+	private BigDecimal r43_no_of_transactions_financial_investment_gre;
+	private BigDecimal r43_amount_financial_investment_gre;
+	private BigDecimal r43_no_of_transactions_direct_investment_gre;
+	private BigDecimal r43_amount_direct_investment_gre;
+	private BigDecimal r43_no_of_transactions_services_gre;
+	private BigDecimal r43_amount_services_gre;
+	private BigDecimal r43_no_of_transactions_trade_gre;
+	private BigDecimal r43_amount_trade_gre;
+	private BigDecimal r43_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r43_amount_financial_investment_corporate;
+	private BigDecimal r43_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r43_amount_direct_investment_corporate;
+	private BigDecimal r43_no_of_transactions_services_corporate;
+	private BigDecimal r43_amount_services_corporate;
+	private BigDecimal r43_no_of_transactions_trade_corporate;
+	private BigDecimal r43_amount_trade_corporate;
+	private BigDecimal r43_no_of_transactions_financial_investment_sme;
+	private BigDecimal r43_amount_financial_investment_sme;
+	private BigDecimal r43_no_of_transactions_direct_investment_sme;
+	private BigDecimal r43_amount_direct_investment_sme;
+	private BigDecimal r43_no_of_transactions_services_sme;
+	private BigDecimal r43_amount_services_sme;
+	private BigDecimal r43_no_of_transactions_trade_sme;
+	private BigDecimal r43_amount_trade_sme;
+	private BigDecimal r43_no_of_transactions_financial_investment_individual;
+	private BigDecimal r43_amount_financial_investment_individual;
+	private BigDecimal r43_no_of_transactions_direct_investment_individual;
+	private BigDecimal r43_amount_direct_investment_individual;
+	private BigDecimal r43_no_of_transactions_family_support_individual;
+	private BigDecimal r43_amount_family_support_individual;
+	private BigDecimal r43_no_of_transactions_education_individual;
+	private BigDecimal r43_amount_education_individual;
+	private BigDecimal r43_no_of_transactions_medical_individual;
+	private BigDecimal r43_amount_medical_individual;
+	private BigDecimal r43_no_of_transactions_tourism_individual;
+	private BigDecimal r43_amount_tourism_individual;
+	private BigDecimal r43_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r43_amount_debt_settlement_individual;
+	private BigDecimal r43_no_of_transactions_other_services_individual;
+	private BigDecimal r43_amount_other_services_individual;
+	private BigDecimal r43_total_no_of_transactions;
+	private BigDecimal r43_grand_total;
+	private String r44_country_break_down;
+	private BigDecimal r44_no_of_transactions_financial_investment_government;
+	private BigDecimal r44_amount_financial_investment_government;
+	private BigDecimal r44_no_of_transactions_direct_investment_government;
+	private BigDecimal r44_amount_direct_investment_government;
+	private BigDecimal r44_no_of_transactions_services_government;
+	private BigDecimal r44_amount_services_government;
+	private BigDecimal r44_no_of_transactions_trade_government;
+	private BigDecimal r44_amount_trade_government;
+	private BigDecimal r44_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r44_amount_financial_investment_reserve;
+	private BigDecimal r44_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r44_amount_direct_investment_reserve;
+	private BigDecimal r44_no_of_transactions_services_reserve;
+	private BigDecimal r44_amount_services_reserve;
+	private BigDecimal r44_no_of_transactions_trade_reserve;
+	private BigDecimal r44_amount_trade_reserve;
+	private BigDecimal r44_no_of_transactions_financial_investment_gre;
+	private BigDecimal r44_amount_financial_investment_gre;
+	private BigDecimal r44_no_of_transactions_direct_investment_gre;
+	private BigDecimal r44_amount_direct_investment_gre;
+	private BigDecimal r44_no_of_transactions_services_gre;
+	private BigDecimal r44_amount_services_gre;
+	private BigDecimal r44_no_of_transactions_trade_gre;
+	private BigDecimal r44_amount_trade_gre;
+	private BigDecimal r44_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r44_amount_financial_investment_corporate;
+	private BigDecimal r44_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r44_amount_direct_investment_corporate;
+	private BigDecimal r44_no_of_transactions_services_corporate;
+	private BigDecimal r44_amount_services_corporate;
+	private BigDecimal r44_no_of_transactions_trade_corporate;
+	private BigDecimal r44_amount_trade_corporate;
+	private BigDecimal r44_no_of_transactions_financial_investment_sme;
+	private BigDecimal r44_amount_financial_investment_sme;
+	private BigDecimal r44_no_of_transactions_direct_investment_sme;
+	private BigDecimal r44_amount_direct_investment_sme;
+	private BigDecimal r44_no_of_transactions_services_sme;
+	private BigDecimal r44_amount_services_sme;
+	private BigDecimal r44_no_of_transactions_trade_sme;
+	private BigDecimal r44_amount_trade_sme;
+	private BigDecimal r44_no_of_transactions_financial_investment_individual;
+	private BigDecimal r44_amount_financial_investment_individual;
+	private BigDecimal r44_no_of_transactions_direct_investment_individual;
+	private BigDecimal r44_amount_direct_investment_individual;
+	private BigDecimal r44_no_of_transactions_family_support_individual;
+	private BigDecimal r44_amount_family_support_individual;
+	private BigDecimal r44_no_of_transactions_education_individual;
+	private BigDecimal r44_amount_education_individual;
+	private BigDecimal r44_no_of_transactions_medical_individual;
+	private BigDecimal r44_amount_medical_individual;
+	private BigDecimal r44_no_of_transactions_tourism_individual;
+	private BigDecimal r44_amount_tourism_individual;
+	private BigDecimal r44_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r44_amount_debt_settlement_individual;
+	private BigDecimal r44_no_of_transactions_other_services_individual;
+	private BigDecimal r44_amount_other_services_individual;
+	private BigDecimal r44_total_no_of_transactions;
+	private BigDecimal r44_grand_total;
+	private String r45_country_break_down;
+	private BigDecimal r45_no_of_transactions_financial_investment_government;
+	private BigDecimal r45_amount_financial_investment_government;
+	private BigDecimal r45_no_of_transactions_direct_investment_government;
+	private BigDecimal r45_amount_direct_investment_government;
+	private BigDecimal r45_no_of_transactions_services_government;
+	private BigDecimal r45_amount_services_government;
+	private BigDecimal r45_no_of_transactions_trade_government;
+	private BigDecimal r45_amount_trade_government;
+	private BigDecimal r45_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r45_amount_financial_investment_reserve;
+	private BigDecimal r45_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r45_amount_direct_investment_reserve;
+	private BigDecimal r45_no_of_transactions_services_reserve;
+	private BigDecimal r45_amount_services_reserve;
+	private BigDecimal r45_no_of_transactions_trade_reserve;
+	private BigDecimal r45_amount_trade_reserve;
+	private BigDecimal r45_no_of_transactions_financial_investment_gre;
+	private BigDecimal r45_amount_financial_investment_gre;
+	private BigDecimal r45_no_of_transactions_direct_investment_gre;
+	private BigDecimal r45_amount_direct_investment_gre;
+	private BigDecimal r45_no_of_transactions_services_gre;
+	private BigDecimal r45_amount_services_gre;
+	private BigDecimal r45_no_of_transactions_trade_gre;
+	private BigDecimal r45_amount_trade_gre;
+	private BigDecimal r45_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r45_amount_financial_investment_corporate;
+	private BigDecimal r45_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r45_amount_direct_investment_corporate;
+	private BigDecimal r45_no_of_transactions_services_corporate;
+	private BigDecimal r45_amount_services_corporate;
+	private BigDecimal r45_no_of_transactions_trade_corporate;
+	private BigDecimal r45_amount_trade_corporate;
+	private BigDecimal r45_no_of_transactions_financial_investment_sme;
+	private BigDecimal r45_amount_financial_investment_sme;
+	private BigDecimal r45_no_of_transactions_direct_investment_sme;
+	private BigDecimal r45_amount_direct_investment_sme;
+	private BigDecimal r45_no_of_transactions_services_sme;
+	private BigDecimal r45_amount_services_sme;
+	private BigDecimal r45_no_of_transactions_trade_sme;
+	private BigDecimal r45_amount_trade_sme;
+	private BigDecimal r45_no_of_transactions_financial_investment_individual;
+	private BigDecimal r45_amount_financial_investment_individual;
+	private BigDecimal r45_no_of_transactions_direct_investment_individual;
+	private BigDecimal r45_amount_direct_investment_individual;
+	private BigDecimal r45_no_of_transactions_family_support_individual;
+	private BigDecimal r45_amount_family_support_individual;
+	private BigDecimal r45_no_of_transactions_education_individual;
+	private BigDecimal r45_amount_education_individual;
+	private BigDecimal r45_no_of_transactions_medical_individual;
+	private BigDecimal r45_amount_medical_individual;
+	private BigDecimal r45_no_of_transactions_tourism_individual;
+	private BigDecimal r45_amount_tourism_individual;
+	private BigDecimal r45_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r45_amount_debt_settlement_individual;
+	private BigDecimal r45_no_of_transactions_other_services_individual;
+	private BigDecimal r45_amount_other_services_individual;
+	private BigDecimal r45_total_no_of_transactions;
+	private BigDecimal r45_grand_total;
+	private String r46_country_break_down;
+	private BigDecimal r46_no_of_transactions_financial_investment_government;
+	private BigDecimal r46_amount_financial_investment_government;
+	private BigDecimal r46_no_of_transactions_direct_investment_government;
+	private BigDecimal r46_amount_direct_investment_government;
+	private BigDecimal r46_no_of_transactions_services_government;
+	private BigDecimal r46_amount_services_government;
+	private BigDecimal r46_no_of_transactions_trade_government;
+	private BigDecimal r46_amount_trade_government;
+	private BigDecimal r46_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r46_amount_financial_investment_reserve;
+	private BigDecimal r46_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r46_amount_direct_investment_reserve;
+	private BigDecimal r46_no_of_transactions_services_reserve;
+	private BigDecimal r46_amount_services_reserve;
+	private BigDecimal r46_no_of_transactions_trade_reserve;
+	private BigDecimal r46_amount_trade_reserve;
+	private BigDecimal r46_no_of_transactions_financial_investment_gre;
+	private BigDecimal r46_amount_financial_investment_gre;
+	private BigDecimal r46_no_of_transactions_direct_investment_gre;
+	private BigDecimal r46_amount_direct_investment_gre;
+	private BigDecimal r46_no_of_transactions_services_gre;
+	private BigDecimal r46_amount_services_gre;
+	private BigDecimal r46_no_of_transactions_trade_gre;
+	private BigDecimal r46_amount_trade_gre;
+	private BigDecimal r46_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r46_amount_financial_investment_corporate;
+	private BigDecimal r46_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r46_amount_direct_investment_corporate;
+	private BigDecimal r46_no_of_transactions_services_corporate;
+	private BigDecimal r46_amount_services_corporate;
+	private BigDecimal r46_no_of_transactions_trade_corporate;
+	private BigDecimal r46_amount_trade_corporate;
+	private BigDecimal r46_no_of_transactions_financial_investment_sme;
+	private BigDecimal r46_amount_financial_investment_sme;
+	private BigDecimal r46_no_of_transactions_direct_investment_sme;
+	private BigDecimal r46_amount_direct_investment_sme;
+	private BigDecimal r46_no_of_transactions_services_sme;
+	private BigDecimal r46_amount_services_sme;
+	private BigDecimal r46_no_of_transactions_trade_sme;
+	private BigDecimal r46_amount_trade_sme;
+	private BigDecimal r46_no_of_transactions_financial_investment_individual;
+	private BigDecimal r46_amount_financial_investment_individual;
+	private BigDecimal r46_no_of_transactions_direct_investment_individual;
+	private BigDecimal r46_amount_direct_investment_individual;
+	private BigDecimal r46_no_of_transactions_family_support_individual;
+	private BigDecimal r46_amount_family_support_individual;
+	private BigDecimal r46_no_of_transactions_education_individual;
+	private BigDecimal r46_amount_education_individual;
+	private BigDecimal r46_no_of_transactions_medical_individual;
+	private BigDecimal r46_amount_medical_individual;
+	private BigDecimal r46_no_of_transactions_tourism_individual;
+	private BigDecimal r46_amount_tourism_individual;
+	private BigDecimal r46_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r46_amount_debt_settlement_individual;
+	private BigDecimal r46_no_of_transactions_other_services_individual;
+	private BigDecimal r46_amount_other_services_individual;
+	private BigDecimal r46_total_no_of_transactions;
+	private BigDecimal r46_grand_total;
+	private String r47_country_break_down;
+	private BigDecimal r47_no_of_transactions_financial_investment_government;
+	private BigDecimal r47_amount_financial_investment_government;
+	private BigDecimal r47_no_of_transactions_direct_investment_government;
+	private BigDecimal r47_amount_direct_investment_government;
+	private BigDecimal r47_no_of_transactions_services_government;
+	private BigDecimal r47_amount_services_government;
+	private BigDecimal r47_no_of_transactions_trade_government;
+	private BigDecimal r47_amount_trade_government;
+	private BigDecimal r47_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r47_amount_financial_investment_reserve;
+	private BigDecimal r47_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r47_amount_direct_investment_reserve;
+	private BigDecimal r47_no_of_transactions_services_reserve;
+	private BigDecimal r47_amount_services_reserve;
+	private BigDecimal r47_no_of_transactions_trade_reserve;
+	private BigDecimal r47_amount_trade_reserve;
+	private BigDecimal r47_no_of_transactions_financial_investment_gre;
+	private BigDecimal r47_amount_financial_investment_gre;
+	private BigDecimal r47_no_of_transactions_direct_investment_gre;
+	private BigDecimal r47_amount_direct_investment_gre;
+	private BigDecimal r47_no_of_transactions_services_gre;
+	private BigDecimal r47_amount_services_gre;
+	private BigDecimal r47_no_of_transactions_trade_gre;
+	private BigDecimal r47_amount_trade_gre;
+	private BigDecimal r47_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r47_amount_financial_investment_corporate;
+	private BigDecimal r47_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r47_amount_direct_investment_corporate;
+	private BigDecimal r47_no_of_transactions_services_corporate;
+	private BigDecimal r47_amount_services_corporate;
+	private BigDecimal r47_no_of_transactions_trade_corporate;
+	private BigDecimal r47_amount_trade_corporate;
+	private BigDecimal r47_no_of_transactions_financial_investment_sme;
+	private BigDecimal r47_amount_financial_investment_sme;
+	private BigDecimal r47_no_of_transactions_direct_investment_sme;
+	private BigDecimal r47_amount_direct_investment_sme;
+	private BigDecimal r47_no_of_transactions_services_sme;
+	private BigDecimal r47_amount_services_sme;
+	private BigDecimal r47_no_of_transactions_trade_sme;
+	private BigDecimal r47_amount_trade_sme;
+	private BigDecimal r47_no_of_transactions_financial_investment_individual;
+	private BigDecimal r47_amount_financial_investment_individual;
+	private BigDecimal r47_no_of_transactions_direct_investment_individual;
+	private BigDecimal r47_amount_direct_investment_individual;
+	private BigDecimal r47_no_of_transactions_family_support_individual;
+	private BigDecimal r47_amount_family_support_individual;
+	private BigDecimal r47_no_of_transactions_education_individual;
+	private BigDecimal r47_amount_education_individual;
+	private BigDecimal r47_no_of_transactions_medical_individual;
+	private BigDecimal r47_amount_medical_individual;
+	private BigDecimal r47_no_of_transactions_tourism_individual;
+	private BigDecimal r47_amount_tourism_individual;
+	private BigDecimal r47_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r47_amount_debt_settlement_individual;
+	private BigDecimal r47_no_of_transactions_other_services_individual;
+	private BigDecimal r47_amount_other_services_individual;
+	private BigDecimal r47_total_no_of_transactions;
+	private BigDecimal r47_grand_total;
+	private String r48_country_break_down;
+	private BigDecimal r48_no_of_transactions_financial_investment_government;
+	private BigDecimal r48_amount_financial_investment_government;
+	private BigDecimal r48_no_of_transactions_direct_investment_government;
+	private BigDecimal r48_amount_direct_investment_government;
+	private BigDecimal r48_no_of_transactions_services_government;
+	private BigDecimal r48_amount_services_government;
+	private BigDecimal r48_no_of_transactions_trade_government;
+	private BigDecimal r48_amount_trade_government;
+	private BigDecimal r48_no_of_transactions_financial_investment_reserve;
+	private BigDecimal r48_amount_financial_investment_reserve;
+	private BigDecimal r48_no_of_transactions_direct_investment_reserve;
+	private BigDecimal r48_amount_direct_investment_reserve;
+	private BigDecimal r48_no_of_transactions_services_reserve;
+	private BigDecimal r48_amount_services_reserve;
+	private BigDecimal r48_no_of_transactions_trade_reserve;
+	private BigDecimal r48_amount_trade_reserve;
+	private BigDecimal r48_no_of_transactions_financial_investment_gre;
+	private BigDecimal r48_amount_financial_investment_gre;
+	private BigDecimal r48_no_of_transactions_direct_investment_gre;
+	private BigDecimal r48_amount_direct_investment_gre;
+	private BigDecimal r48_no_of_transactions_services_gre;
+	private BigDecimal r48_amount_services_gre;
+	private BigDecimal r48_no_of_transactions_trade_gre;
+	private BigDecimal r48_amount_trade_gre;
+	private BigDecimal r48_no_of_transactions_financial_investment_corporate;
+	private BigDecimal r48_amount_financial_investment_corporate;
+	private BigDecimal r48_no_of_transactions_direct_investment_corporate;
+	private BigDecimal r48_amount_direct_investment_corporate;
+	private BigDecimal r48_no_of_transactions_services_corporate;
+	private BigDecimal r48_amount_services_corporate;
+	private BigDecimal r48_no_of_transactions_trade_corporate;
+	private BigDecimal r48_amount_trade_corporate;
+	private BigDecimal r48_no_of_transactions_financial_investment_sme;
+	private BigDecimal r48_amount_financial_investment_sme;
+	private BigDecimal r48_no_of_transactions_direct_investment_sme;
+	private BigDecimal r48_amount_direct_investment_sme;
+	private BigDecimal r48_no_of_transactions_services_sme;
+	private BigDecimal r48_amount_services_sme;
+	private BigDecimal r48_no_of_transactions_trade_sme;
+	private BigDecimal r48_amount_trade_sme;
+	private BigDecimal r48_no_of_transactions_financial_investment_individual;
+	private BigDecimal r48_amount_financial_investment_individual;
+	private BigDecimal r48_no_of_transactions_direct_investment_individual;
+	private BigDecimal r48_amount_direct_investment_individual;
+	private BigDecimal r48_no_of_transactions_family_support_individual;
+	private BigDecimal r48_amount_family_support_individual;
+	private BigDecimal r48_no_of_transactions_education_individual;
+	private BigDecimal r48_amount_education_individual;
+	private BigDecimal r48_no_of_transactions_medical_individual;
+	private BigDecimal r48_amount_medical_individual;
+	private BigDecimal r48_no_of_transactions_tourism_individual;
+	private BigDecimal r48_amount_tourism_individual;
+	private BigDecimal r48_no_of_transactions_debt_settlement_individual;
+	private BigDecimal r48_amount_debt_settlement_individual;
+	private BigDecimal r48_no_of_transactions_other_services_individual;
+	private BigDecimal r48_amount_other_services_individual;
+	private BigDecimal r48_total_no_of_transactions;
+	private BigDecimal r48_grand_total;
+	private Date report_submit_date;
+	@Id
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date report_date;
+	private Date report_from_date;
+	private Date report_to_date;
+	private String report_code;
+	private String entity_flg;
+	private String modify_flg;
+	private String del_flg;
+	private String repdesc;
+	private String frequency;
+
+	public String getR33_country_break_down() {
+		return r33_country_break_down;
+	}
+
+	public BigDecimal getR33_no_of_transactions_financial_investment_government() {
+		return r33_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR33_amount_financial_investment_government() {
+		return r33_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR33_no_of_transactions_direct_investment_government() {
+		return r33_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR33_amount_direct_investment_government() {
+		return r33_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR33_no_of_transactions_services_government() {
+		return r33_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR33_amount_services_government() {
+		return r33_amount_services_government;
+	}
+
+	public BigDecimal getR33_no_of_transactions_trade_government() {
+		return r33_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR33_amount_trade_government() {
+		return r33_amount_trade_government;
+	}
+
+	public BigDecimal getR33_no_of_transactions_financial_investment_reserve() {
+		return r33_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR33_amount_financial_investment_reserve() {
+		return r33_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR33_no_of_transactions_direct_investment_reserve() {
+		return r33_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR33_amount_direct_investment_reserve() {
+		return r33_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR33_no_of_transactions_services_reserve() {
+		return r33_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR33_amount_services_reserve() {
+		return r33_amount_services_reserve;
+	}
+
+	public BigDecimal getR33_no_of_transactions_trade_reserve() {
+		return r33_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR33_amount_trade_reserve() {
+		return r33_amount_trade_reserve;
+	}
+
+	public BigDecimal getR33_no_of_transactions_financial_investment_gre() {
+		return r33_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR33_amount_financial_investment_gre() {
+		return r33_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR33_no_of_transactions_direct_investment_gre() {
+		return r33_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR33_amount_direct_investment_gre() {
+		return r33_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR33_no_of_transactions_services_gre() {
+		return r33_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR33_amount_services_gre() {
+		return r33_amount_services_gre;
+	}
+
+	public BigDecimal getR33_no_of_transactions_trade_gre() {
+		return r33_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR33_amount_trade_gre() {
+		return r33_amount_trade_gre;
+	}
+
+	public BigDecimal getR33_no_of_transactions_financial_investment_corporate() {
+		return r33_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR33_amount_financial_investment_corporate() {
+		return r33_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR33_no_of_transactions_direct_investment_corporate() {
+		return r33_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR33_amount_direct_investment_corporate() {
+		return r33_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR33_no_of_transactions_services_corporate() {
+		return r33_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR33_amount_services_corporate() {
+		return r33_amount_services_corporate;
+	}
+
+	public BigDecimal getR33_no_of_transactions_trade_corporate() {
+		return r33_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR33_amount_trade_corporate() {
+		return r33_amount_trade_corporate;
+	}
+
+	public BigDecimal getR33_no_of_transactions_financial_investment_sme() {
+		return r33_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR33_amount_financial_investment_sme() {
+		return r33_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR33_no_of_transactions_direct_investment_sme() {
+		return r33_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR33_amount_direct_investment_sme() {
+		return r33_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR33_no_of_transactions_services_sme() {
+		return r33_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR33_amount_services_sme() {
+		return r33_amount_services_sme;
+	}
+
+	public BigDecimal getR33_no_of_transactions_trade_sme() {
+		return r33_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR33_amount_trade_sme() {
+		return r33_amount_trade_sme;
+	}
+
+	public BigDecimal getR33_no_of_transactions_financial_investment_individual() {
+		return r33_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR33_amount_financial_investment_individual() {
+		return r33_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR33_no_of_transactions_direct_investment_individual() {
+		return r33_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR33_amount_direct_investment_individual() {
+		return r33_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR33_no_of_transactions_family_support_individual() {
+		return r33_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR33_amount_family_support_individual() {
+		return r33_amount_family_support_individual;
+	}
+
+	public BigDecimal getR33_no_of_transactions_education_individual() {
+		return r33_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR33_amount_education_individual() {
+		return r33_amount_education_individual;
+	}
+
+	public BigDecimal getR33_no_of_transactions_medical_individual() {
+		return r33_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR33_amount_medical_individual() {
+		return r33_amount_medical_individual;
+	}
+
+	public BigDecimal getR33_no_of_transactions_tourism_individual() {
+		return r33_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR33_amount_tourism_individual() {
+		return r33_amount_tourism_individual;
+	}
+
+	public BigDecimal getR33_no_of_transactions_debt_settlement_individual() {
+		return r33_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR33_amount_debt_settlement_individual() {
+		return r33_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR33_no_of_transactions_other_services_individual() {
+		return r33_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR33_amount_other_services_individual() {
+		return r33_amount_other_services_individual;
+	}
+
+	public BigDecimal getR33_total_no_of_transactions() {
+		return r33_total_no_of_transactions;
+	}
+
+	public BigDecimal getR33_grand_total() {
+		return r33_grand_total;
+	}
+
+	public String getR34_country_break_down() {
+		return r34_country_break_down;
+	}
+
+	public BigDecimal getR34_no_of_transactions_financial_investment_government() {
+		return r34_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR34_amount_financial_investment_government() {
+		return r34_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR34_no_of_transactions_direct_investment_government() {
+		return r34_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR34_amount_direct_investment_government() {
+		return r34_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR34_no_of_transactions_services_government() {
+		return r34_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR34_amount_services_government() {
+		return r34_amount_services_government;
+	}
+
+	public BigDecimal getR34_no_of_transactions_trade_government() {
+		return r34_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR34_amount_trade_government() {
+		return r34_amount_trade_government;
+	}
+
+	public BigDecimal getR34_no_of_transactions_financial_investment_reserve() {
+		return r34_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR34_amount_financial_investment_reserve() {
+		return r34_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR34_no_of_transactions_direct_investment_reserve() {
+		return r34_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR34_amount_direct_investment_reserve() {
+		return r34_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR34_no_of_transactions_services_reserve() {
+		return r34_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR34_amount_services_reserve() {
+		return r34_amount_services_reserve;
+	}
+
+	public BigDecimal getR34_no_of_transactions_trade_reserve() {
+		return r34_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR34_amount_trade_reserve() {
+		return r34_amount_trade_reserve;
+	}
+
+	public BigDecimal getR34_no_of_transactions_financial_investment_gre() {
+		return r34_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR34_amount_financial_investment_gre() {
+		return r34_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR34_no_of_transactions_direct_investment_gre() {
+		return r34_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR34_amount_direct_investment_gre() {
+		return r34_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR34_no_of_transactions_services_gre() {
+		return r34_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR34_amount_services_gre() {
+		return r34_amount_services_gre;
+	}
+
+	public BigDecimal getR34_no_of_transactions_trade_gre() {
+		return r34_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR34_amount_trade_gre() {
+		return r34_amount_trade_gre;
+	}
+
+	public BigDecimal getR34_no_of_transactions_financial_investment_corporate() {
+		return r34_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR34_amount_financial_investment_corporate() {
+		return r34_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR34_no_of_transactions_direct_investment_corporate() {
+		return r34_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR34_amount_direct_investment_corporate() {
+		return r34_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR34_no_of_transactions_services_corporate() {
+		return r34_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR34_amount_services_corporate() {
+		return r34_amount_services_corporate;
+	}
+
+	public BigDecimal getR34_no_of_transactions_trade_corporate() {
+		return r34_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR34_amount_trade_corporate() {
+		return r34_amount_trade_corporate;
+	}
+
+	public BigDecimal getR34_no_of_transactions_financial_investment_sme() {
+		return r34_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR34_amount_financial_investment_sme() {
+		return r34_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR34_no_of_transactions_direct_investment_sme() {
+		return r34_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR34_amount_direct_investment_sme() {
+		return r34_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR34_no_of_transactions_services_sme() {
+		return r34_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR34_amount_services_sme() {
+		return r34_amount_services_sme;
+	}
+
+	public BigDecimal getR34_no_of_transactions_trade_sme() {
+		return r34_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR34_amount_trade_sme() {
+		return r34_amount_trade_sme;
+	}
+
+	public BigDecimal getR34_no_of_transactions_financial_investment_individual() {
+		return r34_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR34_amount_financial_investment_individual() {
+		return r34_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR34_no_of_transactions_direct_investment_individual() {
+		return r34_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR34_amount_direct_investment_individual() {
+		return r34_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR34_no_of_transactions_family_support_individual() {
+		return r34_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR34_amount_family_support_individual() {
+		return r34_amount_family_support_individual;
+	}
+
+	public BigDecimal getR34_no_of_transactions_education_individual() {
+		return r34_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR34_amount_education_individual() {
+		return r34_amount_education_individual;
+	}
+
+	public BigDecimal getR34_no_of_transactions_medical_individual() {
+		return r34_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR34_amount_medical_individual() {
+		return r34_amount_medical_individual;
+	}
+
+	public BigDecimal getR34_no_of_transactions_tourism_individual() {
+		return r34_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR34_amount_tourism_individual() {
+		return r34_amount_tourism_individual;
+	}
+
+	public BigDecimal getR34_no_of_transactions_debt_settlement_individual() {
+		return r34_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR34_amount_debt_settlement_individual() {
+		return r34_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR34_no_of_transactions_other_services_individual() {
+		return r34_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR34_amount_other_services_individual() {
+		return r34_amount_other_services_individual;
+	}
+
+	public BigDecimal getR34_total_no_of_transactions() {
+		return r34_total_no_of_transactions;
+	}
+
+	public BigDecimal getR34_grand_total() {
+		return r34_grand_total;
+	}
+
+	public String getR35_country_break_down() {
+		return r35_country_break_down;
+	}
+
+	public BigDecimal getR35_no_of_transactions_financial_investment_government() {
+		return r35_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR35_amount_financial_investment_government() {
+		return r35_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR35_no_of_transactions_direct_investment_government() {
+		return r35_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR35_amount_direct_investment_government() {
+		return r35_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR35_no_of_transactions_services_government() {
+		return r35_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR35_amount_services_government() {
+		return r35_amount_services_government;
+	}
+
+	public BigDecimal getR35_no_of_transactions_trade_government() {
+		return r35_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR35_amount_trade_government() {
+		return r35_amount_trade_government;
+	}
+
+	public BigDecimal getR35_no_of_transactions_financial_investment_reserve() {
+		return r35_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR35_amount_financial_investment_reserve() {
+		return r35_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR35_no_of_transactions_direct_investment_reserve() {
+		return r35_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR35_amount_direct_investment_reserve() {
+		return r35_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR35_no_of_transactions_services_reserve() {
+		return r35_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR35_amount_services_reserve() {
+		return r35_amount_services_reserve;
+	}
+
+	public BigDecimal getR35_no_of_transactions_trade_reserve() {
+		return r35_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR35_amount_trade_reserve() {
+		return r35_amount_trade_reserve;
+	}
+
+	public BigDecimal getR35_no_of_transactions_financial_investment_gre() {
+		return r35_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR35_amount_financial_investment_gre() {
+		return r35_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR35_no_of_transactions_direct_investment_gre() {
+		return r35_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR35_amount_direct_investment_gre() {
+		return r35_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR35_no_of_transactions_services_gre() {
+		return r35_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR35_amount_services_gre() {
+		return r35_amount_services_gre;
+	}
+
+	public BigDecimal getR35_no_of_transactions_trade_gre() {
+		return r35_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR35_amount_trade_gre() {
+		return r35_amount_trade_gre;
+	}
+
+	public BigDecimal getR35_no_of_transactions_financial_investment_corporate() {
+		return r35_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR35_amount_financial_investment_corporate() {
+		return r35_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR35_no_of_transactions_direct_investment_corporate() {
+		return r35_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR35_amount_direct_investment_corporate() {
+		return r35_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR35_no_of_transactions_services_corporate() {
+		return r35_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR35_amount_services_corporate() {
+		return r35_amount_services_corporate;
+	}
+
+	public BigDecimal getR35_no_of_transactions_trade_corporate() {
+		return r35_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR35_amount_trade_corporate() {
+		return r35_amount_trade_corporate;
+	}
+
+	public BigDecimal getR35_no_of_transactions_financial_investment_sme() {
+		return r35_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR35_amount_financial_investment_sme() {
+		return r35_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR35_no_of_transactions_direct_investment_sme() {
+		return r35_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR35_amount_direct_investment_sme() {
+		return r35_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR35_no_of_transactions_services_sme() {
+		return r35_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR35_amount_services_sme() {
+		return r35_amount_services_sme;
+	}
+
+	public BigDecimal getR35_no_of_transactions_trade_sme() {
+		return r35_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR35_amount_trade_sme() {
+		return r35_amount_trade_sme;
+	}
+
+	public BigDecimal getR35_no_of_transactions_financial_investment_individual() {
+		return r35_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR35_amount_financial_investment_individual() {
+		return r35_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR35_no_of_transactions_direct_investment_individual() {
+		return r35_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR35_amount_direct_investment_individual() {
+		return r35_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR35_no_of_transactions_family_support_individual() {
+		return r35_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR35_amount_family_support_individual() {
+		return r35_amount_family_support_individual;
+	}
+
+	public BigDecimal getR35_no_of_transactions_education_individual() {
+		return r35_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR35_amount_education_individual() {
+		return r35_amount_education_individual;
+	}
+
+	public BigDecimal getR35_no_of_transactions_medical_individual() {
+		return r35_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR35_amount_medical_individual() {
+		return r35_amount_medical_individual;
+	}
+
+	public BigDecimal getR35_no_of_transactions_tourism_individual() {
+		return r35_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR35_amount_tourism_individual() {
+		return r35_amount_tourism_individual;
+	}
+
+	public BigDecimal getR35_no_of_transactions_debt_settlement_individual() {
+		return r35_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR35_amount_debt_settlement_individual() {
+		return r35_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR35_no_of_transactions_other_services_individual() {
+		return r35_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR35_amount_other_services_individual() {
+		return r35_amount_other_services_individual;
+	}
+
+	public BigDecimal getR35_total_no_of_transactions() {
+		return r35_total_no_of_transactions;
+	}
+
+	public BigDecimal getR35_grand_total() {
+		return r35_grand_total;
+	}
+
+	public String getR36_country_break_down() {
+		return r36_country_break_down;
+	}
+
+	public BigDecimal getR36_no_of_transactions_financial_investment_government() {
+		return r36_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR36_amount_financial_investment_government() {
+		return r36_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR36_no_of_transactions_direct_investment_government() {
+		return r36_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR36_amount_direct_investment_government() {
+		return r36_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR36_no_of_transactions_services_government() {
+		return r36_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR36_amount_services_government() {
+		return r36_amount_services_government;
+	}
+
+	public BigDecimal getR36_no_of_transactions_trade_government() {
+		return r36_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR36_amount_trade_government() {
+		return r36_amount_trade_government;
+	}
+
+	public BigDecimal getR36_no_of_transactions_financial_investment_reserve() {
+		return r36_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR36_amount_financial_investment_reserve() {
+		return r36_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR36_no_of_transactions_direct_investment_reserve() {
+		return r36_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR36_amount_direct_investment_reserve() {
+		return r36_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR36_no_of_transactions_services_reserve() {
+		return r36_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR36_amount_services_reserve() {
+		return r36_amount_services_reserve;
+	}
+
+	public BigDecimal getR36_no_of_transactions_trade_reserve() {
+		return r36_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR36_amount_trade_reserve() {
+		return r36_amount_trade_reserve;
+	}
+
+	public BigDecimal getR36_no_of_transactions_financial_investment_gre() {
+		return r36_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR36_amount_financial_investment_gre() {
+		return r36_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR36_no_of_transactions_direct_investment_gre() {
+		return r36_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR36_amount_direct_investment_gre() {
+		return r36_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR36_no_of_transactions_services_gre() {
+		return r36_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR36_amount_services_gre() {
+		return r36_amount_services_gre;
+	}
+
+	public BigDecimal getR36_no_of_transactions_trade_gre() {
+		return r36_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR36_amount_trade_gre() {
+		return r36_amount_trade_gre;
+	}
+
+	public BigDecimal getR36_no_of_transactions_financial_investment_corporate() {
+		return r36_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR36_amount_financial_investment_corporate() {
+		return r36_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR36_no_of_transactions_direct_investment_corporate() {
+		return r36_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR36_amount_direct_investment_corporate() {
+		return r36_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR36_no_of_transactions_services_corporate() {
+		return r36_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR36_amount_services_corporate() {
+		return r36_amount_services_corporate;
+	}
+
+	public BigDecimal getR36_no_of_transactions_trade_corporate() {
+		return r36_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR36_amount_trade_corporate() {
+		return r36_amount_trade_corporate;
+	}
+
+	public BigDecimal getR36_no_of_transactions_financial_investment_sme() {
+		return r36_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR36_amount_financial_investment_sme() {
+		return r36_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR36_no_of_transactions_direct_investment_sme() {
+		return r36_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR36_amount_direct_investment_sme() {
+		return r36_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR36_no_of_transactions_services_sme() {
+		return r36_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR36_amount_services_sme() {
+		return r36_amount_services_sme;
+	}
+
+	public BigDecimal getR36_no_of_transactions_trade_sme() {
+		return r36_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR36_amount_trade_sme() {
+		return r36_amount_trade_sme;
+	}
+
+	public BigDecimal getR36_no_of_transactions_financial_investment_individual() {
+		return r36_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR36_amount_financial_investment_individual() {
+		return r36_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR36_no_of_transactions_direct_investment_individual() {
+		return r36_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR36_amount_direct_investment_individual() {
+		return r36_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR36_no_of_transactions_family_support_individual() {
+		return r36_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR36_amount_family_support_individual() {
+		return r36_amount_family_support_individual;
+	}
+
+	public BigDecimal getR36_no_of_transactions_education_individual() {
+		return r36_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR36_amount_education_individual() {
+		return r36_amount_education_individual;
+	}
+
+	public BigDecimal getR36_no_of_transactions_medical_individual() {
+		return r36_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR36_amount_medical_individual() {
+		return r36_amount_medical_individual;
+	}
+
+	public BigDecimal getR36_no_of_transactions_tourism_individual() {
+		return r36_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR36_amount_tourism_individual() {
+		return r36_amount_tourism_individual;
+	}
+
+	public BigDecimal getR36_no_of_transactions_debt_settlement_individual() {
+		return r36_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR36_amount_debt_settlement_individual() {
+		return r36_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR36_no_of_transactions_other_services_individual() {
+		return r36_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR36_amount_other_services_individual() {
+		return r36_amount_other_services_individual;
+	}
+
+	public BigDecimal getR36_total_no_of_transactions() {
+		return r36_total_no_of_transactions;
+	}
+
+	public BigDecimal getR36_grand_total() {
+		return r36_grand_total;
+	}
+
+	public String getR37_country_break_down() {
+		return r37_country_break_down;
+	}
+
+	public BigDecimal getR37_no_of_transactions_financial_investment_government() {
+		return r37_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR37_amount_financial_investment_government() {
+		return r37_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR37_no_of_transactions_direct_investment_government() {
+		return r37_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR37_amount_direct_investment_government() {
+		return r37_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR37_no_of_transactions_services_government() {
+		return r37_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR37_amount_services_government() {
+		return r37_amount_services_government;
+	}
+
+	public BigDecimal getR37_no_of_transactions_trade_government() {
+		return r37_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR37_amount_trade_government() {
+		return r37_amount_trade_government;
+	}
+
+	public BigDecimal getR37_no_of_transactions_financial_investment_reserve() {
+		return r37_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR37_amount_financial_investment_reserve() {
+		return r37_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR37_no_of_transactions_direct_investment_reserve() {
+		return r37_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR37_amount_direct_investment_reserve() {
+		return r37_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR37_no_of_transactions_services_reserve() {
+		return r37_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR37_amount_services_reserve() {
+		return r37_amount_services_reserve;
+	}
+
+	public BigDecimal getR37_no_of_transactions_trade_reserve() {
+		return r37_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR37_amount_trade_reserve() {
+		return r37_amount_trade_reserve;
+	}
+
+	public BigDecimal getR37_no_of_transactions_financial_investment_gre() {
+		return r37_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR37_amount_financial_investment_gre() {
+		return r37_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR37_no_of_transactions_direct_investment_gre() {
+		return r37_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR37_amount_direct_investment_gre() {
+		return r37_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR37_no_of_transactions_services_gre() {
+		return r37_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR37_amount_services_gre() {
+		return r37_amount_services_gre;
+	}
+
+	public BigDecimal getR37_no_of_transactions_trade_gre() {
+		return r37_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR37_amount_trade_gre() {
+		return r37_amount_trade_gre;
+	}
+
+	public BigDecimal getR37_no_of_transactions_financial_investment_corporate() {
+		return r37_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR37_amount_financial_investment_corporate() {
+		return r37_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR37_no_of_transactions_direct_investment_corporate() {
+		return r37_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR37_amount_direct_investment_corporate() {
+		return r37_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR37_no_of_transactions_services_corporate() {
+		return r37_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR37_amount_services_corporate() {
+		return r37_amount_services_corporate;
+	}
+
+	public BigDecimal getR37_no_of_transactions_trade_corporate() {
+		return r37_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR37_amount_trade_corporate() {
+		return r37_amount_trade_corporate;
+	}
+
+	public BigDecimal getR37_no_of_transactions_financial_investment_sme() {
+		return r37_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR37_amount_financial_investment_sme() {
+		return r37_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR37_no_of_transactions_direct_investment_sme() {
+		return r37_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR37_amount_direct_investment_sme() {
+		return r37_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR37_no_of_transactions_services_sme() {
+		return r37_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR37_amount_services_sme() {
+		return r37_amount_services_sme;
+	}
+
+	public BigDecimal getR37_no_of_transactions_trade_sme() {
+		return r37_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR37_amount_trade_sme() {
+		return r37_amount_trade_sme;
+	}
+
+	public BigDecimal getR37_no_of_transactions_financial_investment_individual() {
+		return r37_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR37_amount_financial_investment_individual() {
+		return r37_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR37_no_of_transactions_direct_investment_individual() {
+		return r37_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR37_amount_direct_investment_individual() {
+		return r37_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR37_no_of_transactions_family_support_individual() {
+		return r37_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR37_amount_family_support_individual() {
+		return r37_amount_family_support_individual;
+	}
+
+	public BigDecimal getR37_no_of_transactions_education_individual() {
+		return r37_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR37_amount_education_individual() {
+		return r37_amount_education_individual;
+	}
+
+	public BigDecimal getR37_no_of_transactions_medical_individual() {
+		return r37_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR37_amount_medical_individual() {
+		return r37_amount_medical_individual;
+	}
+
+	public BigDecimal getR37_no_of_transactions_tourism_individual() {
+		return r37_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR37_amount_tourism_individual() {
+		return r37_amount_tourism_individual;
+	}
+
+	public BigDecimal getR37_no_of_transactions_debt_settlement_individual() {
+		return r37_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR37_amount_debt_settlement_individual() {
+		return r37_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR37_no_of_transactions_other_services_individual() {
+		return r37_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR37_amount_other_services_individual() {
+		return r37_amount_other_services_individual;
+	}
+
+	public BigDecimal getR37_total_no_of_transactions() {
+		return r37_total_no_of_transactions;
+	}
+
+	public BigDecimal getR37_grand_total() {
+		return r37_grand_total;
+	}
+
+	public String getR38_country_break_down() {
+		return r38_country_break_down;
+	}
+
+	public BigDecimal getR38_no_of_transactions_financial_investment_government() {
+		return r38_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR38_amount_financial_investment_government() {
+		return r38_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR38_no_of_transactions_direct_investment_government() {
+		return r38_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR38_amount_direct_investment_government() {
+		return r38_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR38_no_of_transactions_services_government() {
+		return r38_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR38_amount_services_government() {
+		return r38_amount_services_government;
+	}
+
+	public BigDecimal getR38_no_of_transactions_trade_government() {
+		return r38_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR38_amount_trade_government() {
+		return r38_amount_trade_government;
+	}
+
+	public BigDecimal getR38_no_of_transactions_financial_investment_reserve() {
+		return r38_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR38_amount_financial_investment_reserve() {
+		return r38_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR38_no_of_transactions_direct_investment_reserve() {
+		return r38_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR38_amount_direct_investment_reserve() {
+		return r38_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR38_no_of_transactions_services_reserve() {
+		return r38_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR38_amount_services_reserve() {
+		return r38_amount_services_reserve;
+	}
+
+	public BigDecimal getR38_no_of_transactions_trade_reserve() {
+		return r38_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR38_amount_trade_reserve() {
+		return r38_amount_trade_reserve;
+	}
+
+	public BigDecimal getR38_no_of_transactions_financial_investment_gre() {
+		return r38_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR38_amount_financial_investment_gre() {
+		return r38_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR38_no_of_transactions_direct_investment_gre() {
+		return r38_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR38_amount_direct_investment_gre() {
+		return r38_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR38_no_of_transactions_services_gre() {
+		return r38_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR38_amount_services_gre() {
+		return r38_amount_services_gre;
+	}
+
+	public BigDecimal getR38_no_of_transactions_trade_gre() {
+		return r38_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR38_amount_trade_gre() {
+		return r38_amount_trade_gre;
+	}
+
+	public BigDecimal getR38_no_of_transactions_financial_investment_corporate() {
+		return r38_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR38_amount_financial_investment_corporate() {
+		return r38_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR38_no_of_transactions_direct_investment_corporate() {
+		return r38_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR38_amount_direct_investment_corporate() {
+		return r38_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR38_no_of_transactions_services_corporate() {
+		return r38_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR38_amount_services_corporate() {
+		return r38_amount_services_corporate;
+	}
+
+	public BigDecimal getR38_no_of_transactions_trade_corporate() {
+		return r38_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR38_amount_trade_corporate() {
+		return r38_amount_trade_corporate;
+	}
+
+	public BigDecimal getR38_no_of_transactions_financial_investment_sme() {
+		return r38_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR38_amount_financial_investment_sme() {
+		return r38_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR38_no_of_transactions_direct_investment_sme() {
+		return r38_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR38_amount_direct_investment_sme() {
+		return r38_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR38_no_of_transactions_services_sme() {
+		return r38_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR38_amount_services_sme() {
+		return r38_amount_services_sme;
+	}
+
+	public BigDecimal getR38_no_of_transactions_trade_sme() {
+		return r38_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR38_amount_trade_sme() {
+		return r38_amount_trade_sme;
+	}
+
+	public BigDecimal getR38_no_of_transactions_financial_investment_individual() {
+		return r38_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR38_amount_financial_investment_individual() {
+		return r38_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR38_no_of_transactions_direct_investment_individual() {
+		return r38_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR38_amount_direct_investment_individual() {
+		return r38_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR38_no_of_transactions_family_support_individual() {
+		return r38_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR38_amount_family_support_individual() {
+		return r38_amount_family_support_individual;
+	}
+
+	public BigDecimal getR38_no_of_transactions_education_individual() {
+		return r38_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR38_amount_education_individual() {
+		return r38_amount_education_individual;
+	}
+
+	public BigDecimal getR38_no_of_transactions_medical_individual() {
+		return r38_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR38_amount_medical_individual() {
+		return r38_amount_medical_individual;
+	}
+
+	public BigDecimal getR38_no_of_transactions_tourism_individual() {
+		return r38_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR38_amount_tourism_individual() {
+		return r38_amount_tourism_individual;
+	}
+
+	public BigDecimal getR38_no_of_transactions_debt_settlement_individual() {
+		return r38_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR38_amount_debt_settlement_individual() {
+		return r38_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR38_no_of_transactions_other_services_individual() {
+		return r38_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR38_amount_other_services_individual() {
+		return r38_amount_other_services_individual;
+	}
+
+	public BigDecimal getR38_total_no_of_transactions() {
+		return r38_total_no_of_transactions;
+	}
+
+	public BigDecimal getR38_grand_total() {
+		return r38_grand_total;
+	}
+
+	public String getR39_country_break_down() {
+		return r39_country_break_down;
+	}
+
+	public BigDecimal getR39_no_of_transactions_financial_investment_government() {
+		return r39_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR39_amount_financial_investment_government() {
+		return r39_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR39_no_of_transactions_direct_investment_government() {
+		return r39_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR39_amount_direct_investment_government() {
+		return r39_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR39_no_of_transactions_services_government() {
+		return r39_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR39_amount_services_government() {
+		return r39_amount_services_government;
+	}
+
+	public BigDecimal getR39_no_of_transactions_trade_government() {
+		return r39_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR39_amount_trade_government() {
+		return r39_amount_trade_government;
+	}
+
+	public BigDecimal getR39_no_of_transactions_financial_investment_reserve() {
+		return r39_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR39_amount_financial_investment_reserve() {
+		return r39_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR39_no_of_transactions_direct_investment_reserve() {
+		return r39_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR39_amount_direct_investment_reserve() {
+		return r39_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR39_no_of_transactions_services_reserve() {
+		return r39_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR39_amount_services_reserve() {
+		return r39_amount_services_reserve;
+	}
+
+	public BigDecimal getR39_no_of_transactions_trade_reserve() {
+		return r39_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR39_amount_trade_reserve() {
+		return r39_amount_trade_reserve;
+	}
+
+	public BigDecimal getR39_no_of_transactions_financial_investment_gre() {
+		return r39_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR39_amount_financial_investment_gre() {
+		return r39_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR39_no_of_transactions_direct_investment_gre() {
+		return r39_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR39_amount_direct_investment_gre() {
+		return r39_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR39_no_of_transactions_services_gre() {
+		return r39_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR39_amount_services_gre() {
+		return r39_amount_services_gre;
+	}
+
+	public BigDecimal getR39_no_of_transactions_trade_gre() {
+		return r39_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR39_amount_trade_gre() {
+		return r39_amount_trade_gre;
+	}
+
+	public BigDecimal getR39_no_of_transactions_financial_investment_corporate() {
+		return r39_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR39_amount_financial_investment_corporate() {
+		return r39_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR39_no_of_transactions_direct_investment_corporate() {
+		return r39_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR39_amount_direct_investment_corporate() {
+		return r39_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR39_no_of_transactions_services_corporate() {
+		return r39_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR39_amount_services_corporate() {
+		return r39_amount_services_corporate;
+	}
+
+	public BigDecimal getR39_no_of_transactions_trade_corporate() {
+		return r39_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR39_amount_trade_corporate() {
+		return r39_amount_trade_corporate;
+	}
+
+	public BigDecimal getR39_no_of_transactions_financial_investment_sme() {
+		return r39_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR39_amount_financial_investment_sme() {
+		return r39_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR39_no_of_transactions_direct_investment_sme() {
+		return r39_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR39_amount_direct_investment_sme() {
+		return r39_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR39_no_of_transactions_services_sme() {
+		return r39_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR39_amount_services_sme() {
+		return r39_amount_services_sme;
+	}
+
+	public BigDecimal getR39_no_of_transactions_trade_sme() {
+		return r39_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR39_amount_trade_sme() {
+		return r39_amount_trade_sme;
+	}
+
+	public BigDecimal getR39_no_of_transactions_financial_investment_individual() {
+		return r39_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR39_amount_financial_investment_individual() {
+		return r39_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR39_no_of_transactions_direct_investment_individual() {
+		return r39_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR39_amount_direct_investment_individual() {
+		return r39_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR39_no_of_transactions_family_support_individual() {
+		return r39_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR39_amount_family_support_individual() {
+		return r39_amount_family_support_individual;
+	}
+
+	public BigDecimal getR39_no_of_transactions_education_individual() {
+		return r39_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR39_amount_education_individual() {
+		return r39_amount_education_individual;
+	}
+
+	public BigDecimal getR39_no_of_transactions_medical_individual() {
+		return r39_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR39_amount_medical_individual() {
+		return r39_amount_medical_individual;
+	}
+
+	public BigDecimal getR39_no_of_transactions_tourism_individual() {
+		return r39_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR39_amount_tourism_individual() {
+		return r39_amount_tourism_individual;
+	}
+
+	public BigDecimal getR39_no_of_transactions_debt_settlement_individual() {
+		return r39_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR39_amount_debt_settlement_individual() {
+		return r39_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR39_no_of_transactions_other_services_individual() {
+		return r39_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR39_amount_other_services_individual() {
+		return r39_amount_other_services_individual;
+	}
+
+	public BigDecimal getR39_total_no_of_transactions() {
+		return r39_total_no_of_transactions;
+	}
+
+	public BigDecimal getR39_grand_total() {
+		return r39_grand_total;
+	}
+
+	public String getR40_country_break_down() {
+		return r40_country_break_down;
+	}
+
+	public BigDecimal getR40_no_of_transactions_financial_investment_government() {
+		return r40_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR40_amount_financial_investment_government() {
+		return r40_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR40_no_of_transactions_direct_investment_government() {
+		return r40_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR40_amount_direct_investment_government() {
+		return r40_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR40_no_of_transactions_services_government() {
+		return r40_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR40_amount_services_government() {
+		return r40_amount_services_government;
+	}
+
+	public BigDecimal getR40_no_of_transactions_trade_government() {
+		return r40_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR40_amount_trade_government() {
+		return r40_amount_trade_government;
+	}
+
+	public BigDecimal getR40_no_of_transactions_financial_investment_reserve() {
+		return r40_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR40_amount_financial_investment_reserve() {
+		return r40_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR40_no_of_transactions_direct_investment_reserve() {
+		return r40_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR40_amount_direct_investment_reserve() {
+		return r40_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR40_no_of_transactions_services_reserve() {
+		return r40_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR40_amount_services_reserve() {
+		return r40_amount_services_reserve;
+	}
+
+	public BigDecimal getR40_no_of_transactions_trade_reserve() {
+		return r40_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR40_amount_trade_reserve() {
+		return r40_amount_trade_reserve;
+	}
+
+	public BigDecimal getR40_no_of_transactions_financial_investment_gre() {
+		return r40_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR40_amount_financial_investment_gre() {
+		return r40_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR40_no_of_transactions_direct_investment_gre() {
+		return r40_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR40_amount_direct_investment_gre() {
+		return r40_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR40_no_of_transactions_services_gre() {
+		return r40_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR40_amount_services_gre() {
+		return r40_amount_services_gre;
+	}
+
+	public BigDecimal getR40_no_of_transactions_trade_gre() {
+		return r40_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR40_amount_trade_gre() {
+		return r40_amount_trade_gre;
+	}
+
+	public BigDecimal getR40_no_of_transactions_financial_investment_corporate() {
+		return r40_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR40_amount_financial_investment_corporate() {
+		return r40_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR40_no_of_transactions_direct_investment_corporate() {
+		return r40_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR40_amount_direct_investment_corporate() {
+		return r40_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR40_no_of_transactions_services_corporate() {
+		return r40_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR40_amount_services_corporate() {
+		return r40_amount_services_corporate;
+	}
+
+	public BigDecimal getR40_no_of_transactions_trade_corporate() {
+		return r40_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR40_amount_trade_corporate() {
+		return r40_amount_trade_corporate;
+	}
+
+	public BigDecimal getR40_no_of_transactions_financial_investment_sme() {
+		return r40_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR40_amount_financial_investment_sme() {
+		return r40_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR40_no_of_transactions_direct_investment_sme() {
+		return r40_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR40_amount_direct_investment_sme() {
+		return r40_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR40_no_of_transactions_services_sme() {
+		return r40_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR40_amount_services_sme() {
+		return r40_amount_services_sme;
+	}
+
+	public BigDecimal getR40_no_of_transactions_trade_sme() {
+		return r40_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR40_amount_trade_sme() {
+		return r40_amount_trade_sme;
+	}
+
+	public BigDecimal getR40_no_of_transactions_financial_investment_individual() {
+		return r40_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR40_amount_financial_investment_individual() {
+		return r40_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR40_no_of_transactions_direct_investment_individual() {
+		return r40_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR40_amount_direct_investment_individual() {
+		return r40_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR40_no_of_transactions_family_support_individual() {
+		return r40_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR40_amount_family_support_individual() {
+		return r40_amount_family_support_individual;
+	}
+
+	public BigDecimal getR40_no_of_transactions_education_individual() {
+		return r40_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR40_amount_education_individual() {
+		return r40_amount_education_individual;
+	}
+
+	public BigDecimal getR40_no_of_transactions_medical_individual() {
+		return r40_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR40_amount_medical_individual() {
+		return r40_amount_medical_individual;
+	}
+
+	public BigDecimal getR40_no_of_transactions_tourism_individual() {
+		return r40_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR40_amount_tourism_individual() {
+		return r40_amount_tourism_individual;
+	}
+
+	public BigDecimal getR40_no_of_transactions_debt_settlement_individual() {
+		return r40_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR40_amount_debt_settlement_individual() {
+		return r40_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR40_no_of_transactions_other_services_individual() {
+		return r40_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR40_amount_other_services_individual() {
+		return r40_amount_other_services_individual;
+	}
+
+	public BigDecimal getR40_total_no_of_transactions() {
+		return r40_total_no_of_transactions;
+	}
+
+	public BigDecimal getR40_grand_total() {
+		return r40_grand_total;
+	}
+
+	public String getR41_country_break_down() {
+		return r41_country_break_down;
+	}
+
+	public BigDecimal getR41_no_of_transactions_financial_investment_government() {
+		return r41_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR41_amount_financial_investment_government() {
+		return r41_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR41_no_of_transactions_direct_investment_government() {
+		return r41_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR41_amount_direct_investment_government() {
+		return r41_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR41_no_of_transactions_services_government() {
+		return r41_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR41_amount_services_government() {
+		return r41_amount_services_government;
+	}
+
+	public BigDecimal getR41_no_of_transactions_trade_government() {
+		return r41_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR41_amount_trade_government() {
+		return r41_amount_trade_government;
+	}
+
+	public BigDecimal getR41_no_of_transactions_financial_investment_reserve() {
+		return r41_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR41_amount_financial_investment_reserve() {
+		return r41_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR41_no_of_transactions_direct_investment_reserve() {
+		return r41_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR41_amount_direct_investment_reserve() {
+		return r41_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR41_no_of_transactions_services_reserve() {
+		return r41_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR41_amount_services_reserve() {
+		return r41_amount_services_reserve;
+	}
+
+	public BigDecimal getR41_no_of_transactions_trade_reserve() {
+		return r41_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR41_amount_trade_reserve() {
+		return r41_amount_trade_reserve;
+	}
+
+	public BigDecimal getR41_no_of_transactions_financial_investment_gre() {
+		return r41_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR41_amount_financial_investment_gre() {
+		return r41_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR41_no_of_transactions_direct_investment_gre() {
+		return r41_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR41_amount_direct_investment_gre() {
+		return r41_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR41_no_of_transactions_services_gre() {
+		return r41_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR41_amount_services_gre() {
+		return r41_amount_services_gre;
+	}
+
+	public BigDecimal getR41_no_of_transactions_trade_gre() {
+		return r41_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR41_amount_trade_gre() {
+		return r41_amount_trade_gre;
+	}
+
+	public BigDecimal getR41_no_of_transactions_financial_investment_corporate() {
+		return r41_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR41_amount_financial_investment_corporate() {
+		return r41_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR41_no_of_transactions_direct_investment_corporate() {
+		return r41_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR41_amount_direct_investment_corporate() {
+		return r41_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR41_no_of_transactions_services_corporate() {
+		return r41_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR41_amount_services_corporate() {
+		return r41_amount_services_corporate;
+	}
+
+	public BigDecimal getR41_no_of_transactions_trade_corporate() {
+		return r41_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR41_amount_trade_corporate() {
+		return r41_amount_trade_corporate;
+	}
+
+	public BigDecimal getR41_no_of_transactions_financial_investment_sme() {
+		return r41_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR41_amount_financial_investment_sme() {
+		return r41_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR41_no_of_transactions_direct_investment_sme() {
+		return r41_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR41_amount_direct_investment_sme() {
+		return r41_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR41_no_of_transactions_services_sme() {
+		return r41_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR41_amount_services_sme() {
+		return r41_amount_services_sme;
+	}
+
+	public BigDecimal getR41_no_of_transactions_trade_sme() {
+		return r41_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR41_amount_trade_sme() {
+		return r41_amount_trade_sme;
+	}
+
+	public BigDecimal getR41_no_of_transactions_financial_investment_individual() {
+		return r41_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR41_amount_financial_investment_individual() {
+		return r41_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR41_no_of_transactions_direct_investment_individual() {
+		return r41_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR41_amount_direct_investment_individual() {
+		return r41_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR41_no_of_transactions_family_support_individual() {
+		return r41_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR41_amount_family_support_individual() {
+		return r41_amount_family_support_individual;
+	}
+
+	public BigDecimal getR41_no_of_transactions_education_individual() {
+		return r41_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR41_amount_education_individual() {
+		return r41_amount_education_individual;
+	}
+
+	public BigDecimal getR41_no_of_transactions_medical_individual() {
+		return r41_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR41_amount_medical_individual() {
+		return r41_amount_medical_individual;
+	}
+
+	public BigDecimal getR41_no_of_transactions_tourism_individual() {
+		return r41_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR41_amount_tourism_individual() {
+		return r41_amount_tourism_individual;
+	}
+
+	public BigDecimal getR41_no_of_transactions_debt_settlement_individual() {
+		return r41_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR41_amount_debt_settlement_individual() {
+		return r41_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR41_no_of_transactions_other_services_individual() {
+		return r41_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR41_amount_other_services_individual() {
+		return r41_amount_other_services_individual;
+	}
+
+	public BigDecimal getR41_total_no_of_transactions() {
+		return r41_total_no_of_transactions;
+	}
+
+	public BigDecimal getR41_grand_total() {
+		return r41_grand_total;
+	}
+
+	public String getR42_country_break_down() {
+		return r42_country_break_down;
+	}
+
+	public BigDecimal getR42_no_of_transactions_financial_investment_government() {
+		return r42_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR42_amount_financial_investment_government() {
+		return r42_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR42_no_of_transactions_direct_investment_government() {
+		return r42_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR42_amount_direct_investment_government() {
+		return r42_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR42_no_of_transactions_services_government() {
+		return r42_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR42_amount_services_government() {
+		return r42_amount_services_government;
+	}
+
+	public BigDecimal getR42_no_of_transactions_trade_government() {
+		return r42_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR42_amount_trade_government() {
+		return r42_amount_trade_government;
+	}
+
+	public BigDecimal getR42_no_of_transactions_financial_investment_reserve() {
+		return r42_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR42_amount_financial_investment_reserve() {
+		return r42_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR42_no_of_transactions_direct_investment_reserve() {
+		return r42_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR42_amount_direct_investment_reserve() {
+		return r42_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR42_no_of_transactions_services_reserve() {
+		return r42_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR42_amount_services_reserve() {
+		return r42_amount_services_reserve;
+	}
+
+	public BigDecimal getR42_no_of_transactions_trade_reserve() {
+		return r42_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR42_amount_trade_reserve() {
+		return r42_amount_trade_reserve;
+	}
+
+	public BigDecimal getR42_no_of_transactions_financial_investment_gre() {
+		return r42_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR42_amount_financial_investment_gre() {
+		return r42_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR42_no_of_transactions_direct_investment_gre() {
+		return r42_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR42_amount_direct_investment_gre() {
+		return r42_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR42_no_of_transactions_services_gre() {
+		return r42_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR42_amount_services_gre() {
+		return r42_amount_services_gre;
+	}
+
+	public BigDecimal getR42_no_of_transactions_trade_gre() {
+		return r42_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR42_amount_trade_gre() {
+		return r42_amount_trade_gre;
+	}
+
+	public BigDecimal getR42_no_of_transactions_financial_investment_corporate() {
+		return r42_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR42_amount_financial_investment_corporate() {
+		return r42_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR42_no_of_transactions_direct_investment_corporate() {
+		return r42_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR42_amount_direct_investment_corporate() {
+		return r42_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR42_no_of_transactions_services_corporate() {
+		return r42_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR42_amount_services_corporate() {
+		return r42_amount_services_corporate;
+	}
+
+	public BigDecimal getR42_no_of_transactions_trade_corporate() {
+		return r42_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR42_amount_trade_corporate() {
+		return r42_amount_trade_corporate;
+	}
+
+	public BigDecimal getR42_no_of_transactions_financial_investment_sme() {
+		return r42_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR42_amount_financial_investment_sme() {
+		return r42_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR42_no_of_transactions_direct_investment_sme() {
+		return r42_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR42_amount_direct_investment_sme() {
+		return r42_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR42_no_of_transactions_services_sme() {
+		return r42_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR42_amount_services_sme() {
+		return r42_amount_services_sme;
+	}
+
+	public BigDecimal getR42_no_of_transactions_trade_sme() {
+		return r42_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR42_amount_trade_sme() {
+		return r42_amount_trade_sme;
+	}
+
+	public BigDecimal getR42_no_of_transactions_financial_investment_individual() {
+		return r42_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR42_amount_financial_investment_individual() {
+		return r42_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR42_no_of_transactions_direct_investment_individual() {
+		return r42_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR42_amount_direct_investment_individual() {
+		return r42_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR42_no_of_transactions_family_support_individual() {
+		return r42_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR42_amount_family_support_individual() {
+		return r42_amount_family_support_individual;
+	}
+
+	public BigDecimal getR42_no_of_transactions_education_individual() {
+		return r42_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR42_amount_education_individual() {
+		return r42_amount_education_individual;
+	}
+
+	public BigDecimal getR42_no_of_transactions_medical_individual() {
+		return r42_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR42_amount_medical_individual() {
+		return r42_amount_medical_individual;
+	}
+
+	public BigDecimal getR42_no_of_transactions_tourism_individual() {
+		return r42_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR42_amount_tourism_individual() {
+		return r42_amount_tourism_individual;
+	}
+
+	public BigDecimal getR42_no_of_transactions_debt_settlement_individual() {
+		return r42_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR42_amount_debt_settlement_individual() {
+		return r42_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR42_no_of_transactions_other_services_individual() {
+		return r42_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR42_amount_other_services_individual() {
+		return r42_amount_other_services_individual;
+	}
+
+	public BigDecimal getR42_total_no_of_transactions() {
+		return r42_total_no_of_transactions;
+	}
+
+	public BigDecimal getR42_grand_total() {
+		return r42_grand_total;
+	}
+
+	public String getR43_country_break_down() {
+		return r43_country_break_down;
+	}
+
+	public BigDecimal getR43_no_of_transactions_financial_investment_government() {
+		return r43_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR43_amount_financial_investment_government() {
+		return r43_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR43_no_of_transactions_direct_investment_government() {
+		return r43_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR43_amount_direct_investment_government() {
+		return r43_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR43_no_of_transactions_services_government() {
+		return r43_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR43_amount_services_government() {
+		return r43_amount_services_government;
+	}
+
+	public BigDecimal getR43_no_of_transactions_trade_government() {
+		return r43_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR43_amount_trade_government() {
+		return r43_amount_trade_government;
+	}
+
+	public BigDecimal getR43_no_of_transactions_financial_investment_reserve() {
+		return r43_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR43_amount_financial_investment_reserve() {
+		return r43_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR43_no_of_transactions_direct_investment_reserve() {
+		return r43_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR43_amount_direct_investment_reserve() {
+		return r43_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR43_no_of_transactions_services_reserve() {
+		return r43_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR43_amount_services_reserve() {
+		return r43_amount_services_reserve;
+	}
+
+	public BigDecimal getR43_no_of_transactions_trade_reserve() {
+		return r43_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR43_amount_trade_reserve() {
+		return r43_amount_trade_reserve;
+	}
+
+	public BigDecimal getR43_no_of_transactions_financial_investment_gre() {
+		return r43_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR43_amount_financial_investment_gre() {
+		return r43_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR43_no_of_transactions_direct_investment_gre() {
+		return r43_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR43_amount_direct_investment_gre() {
+		return r43_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR43_no_of_transactions_services_gre() {
+		return r43_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR43_amount_services_gre() {
+		return r43_amount_services_gre;
+	}
+
+	public BigDecimal getR43_no_of_transactions_trade_gre() {
+		return r43_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR43_amount_trade_gre() {
+		return r43_amount_trade_gre;
+	}
+
+	public BigDecimal getR43_no_of_transactions_financial_investment_corporate() {
+		return r43_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR43_amount_financial_investment_corporate() {
+		return r43_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR43_no_of_transactions_direct_investment_corporate() {
+		return r43_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR43_amount_direct_investment_corporate() {
+		return r43_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR43_no_of_transactions_services_corporate() {
+		return r43_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR43_amount_services_corporate() {
+		return r43_amount_services_corporate;
+	}
+
+	public BigDecimal getR43_no_of_transactions_trade_corporate() {
+		return r43_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR43_amount_trade_corporate() {
+		return r43_amount_trade_corporate;
+	}
+
+	public BigDecimal getR43_no_of_transactions_financial_investment_sme() {
+		return r43_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR43_amount_financial_investment_sme() {
+		return r43_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR43_no_of_transactions_direct_investment_sme() {
+		return r43_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR43_amount_direct_investment_sme() {
+		return r43_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR43_no_of_transactions_services_sme() {
+		return r43_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR43_amount_services_sme() {
+		return r43_amount_services_sme;
+	}
+
+	public BigDecimal getR43_no_of_transactions_trade_sme() {
+		return r43_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR43_amount_trade_sme() {
+		return r43_amount_trade_sme;
+	}
+
+	public BigDecimal getR43_no_of_transactions_financial_investment_individual() {
+		return r43_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR43_amount_financial_investment_individual() {
+		return r43_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR43_no_of_transactions_direct_investment_individual() {
+		return r43_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR43_amount_direct_investment_individual() {
+		return r43_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR43_no_of_transactions_family_support_individual() {
+		return r43_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR43_amount_family_support_individual() {
+		return r43_amount_family_support_individual;
+	}
+
+	public BigDecimal getR43_no_of_transactions_education_individual() {
+		return r43_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR43_amount_education_individual() {
+		return r43_amount_education_individual;
+	}
+
+	public BigDecimal getR43_no_of_transactions_medical_individual() {
+		return r43_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR43_amount_medical_individual() {
+		return r43_amount_medical_individual;
+	}
+
+	public BigDecimal getR43_no_of_transactions_tourism_individual() {
+		return r43_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR43_amount_tourism_individual() {
+		return r43_amount_tourism_individual;
+	}
+
+	public BigDecimal getR43_no_of_transactions_debt_settlement_individual() {
+		return r43_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR43_amount_debt_settlement_individual() {
+		return r43_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR43_no_of_transactions_other_services_individual() {
+		return r43_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR43_amount_other_services_individual() {
+		return r43_amount_other_services_individual;
+	}
+
+	public BigDecimal getR43_total_no_of_transactions() {
+		return r43_total_no_of_transactions;
+	}
+
+	public BigDecimal getR43_grand_total() {
+		return r43_grand_total;
+	}
+
+	public String getR44_country_break_down() {
+		return r44_country_break_down;
+	}
+
+	public BigDecimal getR44_no_of_transactions_financial_investment_government() {
+		return r44_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR44_amount_financial_investment_government() {
+		return r44_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR44_no_of_transactions_direct_investment_government() {
+		return r44_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR44_amount_direct_investment_government() {
+		return r44_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR44_no_of_transactions_services_government() {
+		return r44_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR44_amount_services_government() {
+		return r44_amount_services_government;
+	}
+
+	public BigDecimal getR44_no_of_transactions_trade_government() {
+		return r44_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR44_amount_trade_government() {
+		return r44_amount_trade_government;
+	}
+
+	public BigDecimal getR44_no_of_transactions_financial_investment_reserve() {
+		return r44_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR44_amount_financial_investment_reserve() {
+		return r44_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR44_no_of_transactions_direct_investment_reserve() {
+		return r44_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR44_amount_direct_investment_reserve() {
+		return r44_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR44_no_of_transactions_services_reserve() {
+		return r44_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR44_amount_services_reserve() {
+		return r44_amount_services_reserve;
+	}
+
+	public BigDecimal getR44_no_of_transactions_trade_reserve() {
+		return r44_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR44_amount_trade_reserve() {
+		return r44_amount_trade_reserve;
+	}
+
+	public BigDecimal getR44_no_of_transactions_financial_investment_gre() {
+		return r44_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR44_amount_financial_investment_gre() {
+		return r44_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR44_no_of_transactions_direct_investment_gre() {
+		return r44_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR44_amount_direct_investment_gre() {
+		return r44_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR44_no_of_transactions_services_gre() {
+		return r44_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR44_amount_services_gre() {
+		return r44_amount_services_gre;
+	}
+
+	public BigDecimal getR44_no_of_transactions_trade_gre() {
+		return r44_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR44_amount_trade_gre() {
+		return r44_amount_trade_gre;
+	}
+
+	public BigDecimal getR44_no_of_transactions_financial_investment_corporate() {
+		return r44_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR44_amount_financial_investment_corporate() {
+		return r44_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR44_no_of_transactions_direct_investment_corporate() {
+		return r44_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR44_amount_direct_investment_corporate() {
+		return r44_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR44_no_of_transactions_services_corporate() {
+		return r44_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR44_amount_services_corporate() {
+		return r44_amount_services_corporate;
+	}
+
+	public BigDecimal getR44_no_of_transactions_trade_corporate() {
+		return r44_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR44_amount_trade_corporate() {
+		return r44_amount_trade_corporate;
+	}
+
+	public BigDecimal getR44_no_of_transactions_financial_investment_sme() {
+		return r44_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR44_amount_financial_investment_sme() {
+		return r44_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR44_no_of_transactions_direct_investment_sme() {
+		return r44_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR44_amount_direct_investment_sme() {
+		return r44_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR44_no_of_transactions_services_sme() {
+		return r44_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR44_amount_services_sme() {
+		return r44_amount_services_sme;
+	}
+
+	public BigDecimal getR44_no_of_transactions_trade_sme() {
+		return r44_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR44_amount_trade_sme() {
+		return r44_amount_trade_sme;
+	}
+
+	public BigDecimal getR44_no_of_transactions_financial_investment_individual() {
+		return r44_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR44_amount_financial_investment_individual() {
+		return r44_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR44_no_of_transactions_direct_investment_individual() {
+		return r44_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR44_amount_direct_investment_individual() {
+		return r44_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR44_no_of_transactions_family_support_individual() {
+		return r44_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR44_amount_family_support_individual() {
+		return r44_amount_family_support_individual;
+	}
+
+	public BigDecimal getR44_no_of_transactions_education_individual() {
+		return r44_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR44_amount_education_individual() {
+		return r44_amount_education_individual;
+	}
+
+	public BigDecimal getR44_no_of_transactions_medical_individual() {
+		return r44_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR44_amount_medical_individual() {
+		return r44_amount_medical_individual;
+	}
+
+	public BigDecimal getR44_no_of_transactions_tourism_individual() {
+		return r44_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR44_amount_tourism_individual() {
+		return r44_amount_tourism_individual;
+	}
+
+	public BigDecimal getR44_no_of_transactions_debt_settlement_individual() {
+		return r44_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR44_amount_debt_settlement_individual() {
+		return r44_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR44_no_of_transactions_other_services_individual() {
+		return r44_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR44_amount_other_services_individual() {
+		return r44_amount_other_services_individual;
+	}
+
+	public BigDecimal getR44_total_no_of_transactions() {
+		return r44_total_no_of_transactions;
+	}
+
+	public BigDecimal getR44_grand_total() {
+		return r44_grand_total;
+	}
+
+	public String getR45_country_break_down() {
+		return r45_country_break_down;
+	}
+
+	public BigDecimal getR45_no_of_transactions_financial_investment_government() {
+		return r45_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR45_amount_financial_investment_government() {
+		return r45_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR45_no_of_transactions_direct_investment_government() {
+		return r45_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR45_amount_direct_investment_government() {
+		return r45_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR45_no_of_transactions_services_government() {
+		return r45_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR45_amount_services_government() {
+		return r45_amount_services_government;
+	}
+
+	public BigDecimal getR45_no_of_transactions_trade_government() {
+		return r45_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR45_amount_trade_government() {
+		return r45_amount_trade_government;
+	}
+
+	public BigDecimal getR45_no_of_transactions_financial_investment_reserve() {
+		return r45_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR45_amount_financial_investment_reserve() {
+		return r45_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR45_no_of_transactions_direct_investment_reserve() {
+		return r45_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR45_amount_direct_investment_reserve() {
+		return r45_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR45_no_of_transactions_services_reserve() {
+		return r45_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR45_amount_services_reserve() {
+		return r45_amount_services_reserve;
+	}
+
+	public BigDecimal getR45_no_of_transactions_trade_reserve() {
+		return r45_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR45_amount_trade_reserve() {
+		return r45_amount_trade_reserve;
+	}
+
+	public BigDecimal getR45_no_of_transactions_financial_investment_gre() {
+		return r45_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR45_amount_financial_investment_gre() {
+		return r45_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR45_no_of_transactions_direct_investment_gre() {
+		return r45_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR45_amount_direct_investment_gre() {
+		return r45_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR45_no_of_transactions_services_gre() {
+		return r45_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR45_amount_services_gre() {
+		return r45_amount_services_gre;
+	}
+
+	public BigDecimal getR45_no_of_transactions_trade_gre() {
+		return r45_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR45_amount_trade_gre() {
+		return r45_amount_trade_gre;
+	}
+
+	public BigDecimal getR45_no_of_transactions_financial_investment_corporate() {
+		return r45_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR45_amount_financial_investment_corporate() {
+		return r45_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR45_no_of_transactions_direct_investment_corporate() {
+		return r45_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR45_amount_direct_investment_corporate() {
+		return r45_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR45_no_of_transactions_services_corporate() {
+		return r45_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR45_amount_services_corporate() {
+		return r45_amount_services_corporate;
+	}
+
+	public BigDecimal getR45_no_of_transactions_trade_corporate() {
+		return r45_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR45_amount_trade_corporate() {
+		return r45_amount_trade_corporate;
+	}
+
+	public BigDecimal getR45_no_of_transactions_financial_investment_sme() {
+		return r45_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR45_amount_financial_investment_sme() {
+		return r45_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR45_no_of_transactions_direct_investment_sme() {
+		return r45_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR45_amount_direct_investment_sme() {
+		return r45_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR45_no_of_transactions_services_sme() {
+		return r45_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR45_amount_services_sme() {
+		return r45_amount_services_sme;
+	}
+
+	public BigDecimal getR45_no_of_transactions_trade_sme() {
+		return r45_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR45_amount_trade_sme() {
+		return r45_amount_trade_sme;
+	}
+
+	public BigDecimal getR45_no_of_transactions_financial_investment_individual() {
+		return r45_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR45_amount_financial_investment_individual() {
+		return r45_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR45_no_of_transactions_direct_investment_individual() {
+		return r45_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR45_amount_direct_investment_individual() {
+		return r45_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR45_no_of_transactions_family_support_individual() {
+		return r45_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR45_amount_family_support_individual() {
+		return r45_amount_family_support_individual;
+	}
+
+	public BigDecimal getR45_no_of_transactions_education_individual() {
+		return r45_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR45_amount_education_individual() {
+		return r45_amount_education_individual;
+	}
+
+	public BigDecimal getR45_no_of_transactions_medical_individual() {
+		return r45_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR45_amount_medical_individual() {
+		return r45_amount_medical_individual;
+	}
+
+	public BigDecimal getR45_no_of_transactions_tourism_individual() {
+		return r45_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR45_amount_tourism_individual() {
+		return r45_amount_tourism_individual;
+	}
+
+	public BigDecimal getR45_no_of_transactions_debt_settlement_individual() {
+		return r45_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR45_amount_debt_settlement_individual() {
+		return r45_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR45_no_of_transactions_other_services_individual() {
+		return r45_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR45_amount_other_services_individual() {
+		return r45_amount_other_services_individual;
+	}
+
+	public BigDecimal getR45_total_no_of_transactions() {
+		return r45_total_no_of_transactions;
+	}
+
+	public BigDecimal getR45_grand_total() {
+		return r45_grand_total;
+	}
+
+	public String getR46_country_break_down() {
+		return r46_country_break_down;
+	}
+
+	public BigDecimal getR46_no_of_transactions_financial_investment_government() {
+		return r46_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR46_amount_financial_investment_government() {
+		return r46_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR46_no_of_transactions_direct_investment_government() {
+		return r46_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR46_amount_direct_investment_government() {
+		return r46_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR46_no_of_transactions_services_government() {
+		return r46_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR46_amount_services_government() {
+		return r46_amount_services_government;
+	}
+
+	public BigDecimal getR46_no_of_transactions_trade_government() {
+		return r46_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR46_amount_trade_government() {
+		return r46_amount_trade_government;
+	}
+
+	public BigDecimal getR46_no_of_transactions_financial_investment_reserve() {
+		return r46_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR46_amount_financial_investment_reserve() {
+		return r46_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR46_no_of_transactions_direct_investment_reserve() {
+		return r46_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR46_amount_direct_investment_reserve() {
+		return r46_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR46_no_of_transactions_services_reserve() {
+		return r46_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR46_amount_services_reserve() {
+		return r46_amount_services_reserve;
+	}
+
+	public BigDecimal getR46_no_of_transactions_trade_reserve() {
+		return r46_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR46_amount_trade_reserve() {
+		return r46_amount_trade_reserve;
+	}
+
+	public BigDecimal getR46_no_of_transactions_financial_investment_gre() {
+		return r46_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR46_amount_financial_investment_gre() {
+		return r46_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR46_no_of_transactions_direct_investment_gre() {
+		return r46_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR46_amount_direct_investment_gre() {
+		return r46_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR46_no_of_transactions_services_gre() {
+		return r46_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR46_amount_services_gre() {
+		return r46_amount_services_gre;
+	}
+
+	public BigDecimal getR46_no_of_transactions_trade_gre() {
+		return r46_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR46_amount_trade_gre() {
+		return r46_amount_trade_gre;
+	}
+
+	public BigDecimal getR46_no_of_transactions_financial_investment_corporate() {
+		return r46_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR46_amount_financial_investment_corporate() {
+		return r46_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR46_no_of_transactions_direct_investment_corporate() {
+		return r46_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR46_amount_direct_investment_corporate() {
+		return r46_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR46_no_of_transactions_services_corporate() {
+		return r46_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR46_amount_services_corporate() {
+		return r46_amount_services_corporate;
+	}
+
+	public BigDecimal getR46_no_of_transactions_trade_corporate() {
+		return r46_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR46_amount_trade_corporate() {
+		return r46_amount_trade_corporate;
+	}
+
+	public BigDecimal getR46_no_of_transactions_financial_investment_sme() {
+		return r46_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR46_amount_financial_investment_sme() {
+		return r46_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR46_no_of_transactions_direct_investment_sme() {
+		return r46_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR46_amount_direct_investment_sme() {
+		return r46_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR46_no_of_transactions_services_sme() {
+		return r46_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR46_amount_services_sme() {
+		return r46_amount_services_sme;
+	}
+
+	public BigDecimal getR46_no_of_transactions_trade_sme() {
+		return r46_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR46_amount_trade_sme() {
+		return r46_amount_trade_sme;
+	}
+
+	public BigDecimal getR46_no_of_transactions_financial_investment_individual() {
+		return r46_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR46_amount_financial_investment_individual() {
+		return r46_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR46_no_of_transactions_direct_investment_individual() {
+		return r46_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR46_amount_direct_investment_individual() {
+		return r46_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR46_no_of_transactions_family_support_individual() {
+		return r46_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR46_amount_family_support_individual() {
+		return r46_amount_family_support_individual;
+	}
+
+	public BigDecimal getR46_no_of_transactions_education_individual() {
+		return r46_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR46_amount_education_individual() {
+		return r46_amount_education_individual;
+	}
+
+	public BigDecimal getR46_no_of_transactions_medical_individual() {
+		return r46_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR46_amount_medical_individual() {
+		return r46_amount_medical_individual;
+	}
+
+	public BigDecimal getR46_no_of_transactions_tourism_individual() {
+		return r46_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR46_amount_tourism_individual() {
+		return r46_amount_tourism_individual;
+	}
+
+	public BigDecimal getR46_no_of_transactions_debt_settlement_individual() {
+		return r46_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR46_amount_debt_settlement_individual() {
+		return r46_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR46_no_of_transactions_other_services_individual() {
+		return r46_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR46_amount_other_services_individual() {
+		return r46_amount_other_services_individual;
+	}
+
+	public BigDecimal getR46_total_no_of_transactions() {
+		return r46_total_no_of_transactions;
+	}
+
+	public BigDecimal getR46_grand_total() {
+		return r46_grand_total;
+	}
+
+	public String getR47_country_break_down() {
+		return r47_country_break_down;
+	}
+
+	public BigDecimal getR47_no_of_transactions_financial_investment_government() {
+		return r47_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR47_amount_financial_investment_government() {
+		return r47_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR47_no_of_transactions_direct_investment_government() {
+		return r47_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR47_amount_direct_investment_government() {
+		return r47_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR47_no_of_transactions_services_government() {
+		return r47_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR47_amount_services_government() {
+		return r47_amount_services_government;
+	}
+
+	public BigDecimal getR47_no_of_transactions_trade_government() {
+		return r47_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR47_amount_trade_government() {
+		return r47_amount_trade_government;
+	}
+
+	public BigDecimal getR47_no_of_transactions_financial_investment_reserve() {
+		return r47_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR47_amount_financial_investment_reserve() {
+		return r47_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR47_no_of_transactions_direct_investment_reserve() {
+		return r47_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR47_amount_direct_investment_reserve() {
+		return r47_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR47_no_of_transactions_services_reserve() {
+		return r47_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR47_amount_services_reserve() {
+		return r47_amount_services_reserve;
+	}
+
+	public BigDecimal getR47_no_of_transactions_trade_reserve() {
+		return r47_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR47_amount_trade_reserve() {
+		return r47_amount_trade_reserve;
+	}
+
+	public BigDecimal getR47_no_of_transactions_financial_investment_gre() {
+		return r47_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR47_amount_financial_investment_gre() {
+		return r47_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR47_no_of_transactions_direct_investment_gre() {
+		return r47_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR47_amount_direct_investment_gre() {
+		return r47_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR47_no_of_transactions_services_gre() {
+		return r47_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR47_amount_services_gre() {
+		return r47_amount_services_gre;
+	}
+
+	public BigDecimal getR47_no_of_transactions_trade_gre() {
+		return r47_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR47_amount_trade_gre() {
+		return r47_amount_trade_gre;
+	}
+
+	public BigDecimal getR47_no_of_transactions_financial_investment_corporate() {
+		return r47_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR47_amount_financial_investment_corporate() {
+		return r47_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR47_no_of_transactions_direct_investment_corporate() {
+		return r47_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR47_amount_direct_investment_corporate() {
+		return r47_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR47_no_of_transactions_services_corporate() {
+		return r47_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR47_amount_services_corporate() {
+		return r47_amount_services_corporate;
+	}
+
+	public BigDecimal getR47_no_of_transactions_trade_corporate() {
+		return r47_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR47_amount_trade_corporate() {
+		return r47_amount_trade_corporate;
+	}
+
+	public BigDecimal getR47_no_of_transactions_financial_investment_sme() {
+		return r47_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR47_amount_financial_investment_sme() {
+		return r47_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR47_no_of_transactions_direct_investment_sme() {
+		return r47_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR47_amount_direct_investment_sme() {
+		return r47_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR47_no_of_transactions_services_sme() {
+		return r47_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR47_amount_services_sme() {
+		return r47_amount_services_sme;
+	}
+
+	public BigDecimal getR47_no_of_transactions_trade_sme() {
+		return r47_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR47_amount_trade_sme() {
+		return r47_amount_trade_sme;
+	}
+
+	public BigDecimal getR47_no_of_transactions_financial_investment_individual() {
+		return r47_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR47_amount_financial_investment_individual() {
+		return r47_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR47_no_of_transactions_direct_investment_individual() {
+		return r47_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR47_amount_direct_investment_individual() {
+		return r47_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR47_no_of_transactions_family_support_individual() {
+		return r47_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR47_amount_family_support_individual() {
+		return r47_amount_family_support_individual;
+	}
+
+	public BigDecimal getR47_no_of_transactions_education_individual() {
+		return r47_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR47_amount_education_individual() {
+		return r47_amount_education_individual;
+	}
+
+	public BigDecimal getR47_no_of_transactions_medical_individual() {
+		return r47_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR47_amount_medical_individual() {
+		return r47_amount_medical_individual;
+	}
+
+	public BigDecimal getR47_no_of_transactions_tourism_individual() {
+		return r47_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR47_amount_tourism_individual() {
+		return r47_amount_tourism_individual;
+	}
+
+	public BigDecimal getR47_no_of_transactions_debt_settlement_individual() {
+		return r47_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR47_amount_debt_settlement_individual() {
+		return r47_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR47_no_of_transactions_other_services_individual() {
+		return r47_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR47_amount_other_services_individual() {
+		return r47_amount_other_services_individual;
+	}
+
+	public BigDecimal getR47_total_no_of_transactions() {
+		return r47_total_no_of_transactions;
+	}
+
+	public BigDecimal getR47_grand_total() {
+		return r47_grand_total;
+	}
+
+	public String getR48_country_break_down() {
+		return r48_country_break_down;
+	}
+
+	public BigDecimal getR48_no_of_transactions_financial_investment_government() {
+		return r48_no_of_transactions_financial_investment_government;
+	}
+
+	public BigDecimal getR48_amount_financial_investment_government() {
+		return r48_amount_financial_investment_government;
+	}
+
+	public BigDecimal getR48_no_of_transactions_direct_investment_government() {
+		return r48_no_of_transactions_direct_investment_government;
+	}
+
+	public BigDecimal getR48_amount_direct_investment_government() {
+		return r48_amount_direct_investment_government;
+	}
+
+	public BigDecimal getR48_no_of_transactions_services_government() {
+		return r48_no_of_transactions_services_government;
+	}
+
+	public BigDecimal getR48_amount_services_government() {
+		return r48_amount_services_government;
+	}
+
+	public BigDecimal getR48_no_of_transactions_trade_government() {
+		return r48_no_of_transactions_trade_government;
+	}
+
+	public BigDecimal getR48_amount_trade_government() {
+		return r48_amount_trade_government;
+	}
+
+	public BigDecimal getR48_no_of_transactions_financial_investment_reserve() {
+		return r48_no_of_transactions_financial_investment_reserve;
+	}
+
+	public BigDecimal getR48_amount_financial_investment_reserve() {
+		return r48_amount_financial_investment_reserve;
+	}
+
+	public BigDecimal getR48_no_of_transactions_direct_investment_reserve() {
+		return r48_no_of_transactions_direct_investment_reserve;
+	}
+
+	public BigDecimal getR48_amount_direct_investment_reserve() {
+		return r48_amount_direct_investment_reserve;
+	}
+
+	public BigDecimal getR48_no_of_transactions_services_reserve() {
+		return r48_no_of_transactions_services_reserve;
+	}
+
+	public BigDecimal getR48_amount_services_reserve() {
+		return r48_amount_services_reserve;
+	}
+
+	public BigDecimal getR48_no_of_transactions_trade_reserve() {
+		return r48_no_of_transactions_trade_reserve;
+	}
+
+	public BigDecimal getR48_amount_trade_reserve() {
+		return r48_amount_trade_reserve;
+	}
+
+	public BigDecimal getR48_no_of_transactions_financial_investment_gre() {
+		return r48_no_of_transactions_financial_investment_gre;
+	}
+
+	public BigDecimal getR48_amount_financial_investment_gre() {
+		return r48_amount_financial_investment_gre;
+	}
+
+	public BigDecimal getR48_no_of_transactions_direct_investment_gre() {
+		return r48_no_of_transactions_direct_investment_gre;
+	}
+
+	public BigDecimal getR48_amount_direct_investment_gre() {
+		return r48_amount_direct_investment_gre;
+	}
+
+	public BigDecimal getR48_no_of_transactions_services_gre() {
+		return r48_no_of_transactions_services_gre;
+	}
+
+	public BigDecimal getR48_amount_services_gre() {
+		return r48_amount_services_gre;
+	}
+
+	public BigDecimal getR48_no_of_transactions_trade_gre() {
+		return r48_no_of_transactions_trade_gre;
+	}
+
+	public BigDecimal getR48_amount_trade_gre() {
+		return r48_amount_trade_gre;
+	}
+
+	public BigDecimal getR48_no_of_transactions_financial_investment_corporate() {
+		return r48_no_of_transactions_financial_investment_corporate;
+	}
+
+	public BigDecimal getR48_amount_financial_investment_corporate() {
+		return r48_amount_financial_investment_corporate;
+	}
+
+	public BigDecimal getR48_no_of_transactions_direct_investment_corporate() {
+		return r48_no_of_transactions_direct_investment_corporate;
+	}
+
+	public BigDecimal getR48_amount_direct_investment_corporate() {
+		return r48_amount_direct_investment_corporate;
+	}
+
+	public BigDecimal getR48_no_of_transactions_services_corporate() {
+		return r48_no_of_transactions_services_corporate;
+	}
+
+	public BigDecimal getR48_amount_services_corporate() {
+		return r48_amount_services_corporate;
+	}
+
+	public BigDecimal getR48_no_of_transactions_trade_corporate() {
+		return r48_no_of_transactions_trade_corporate;
+	}
+
+	public BigDecimal getR48_amount_trade_corporate() {
+		return r48_amount_trade_corporate;
+	}
+
+	public BigDecimal getR48_no_of_transactions_financial_investment_sme() {
+		return r48_no_of_transactions_financial_investment_sme;
+	}
+
+	public BigDecimal getR48_amount_financial_investment_sme() {
+		return r48_amount_financial_investment_sme;
+	}
+
+	public BigDecimal getR48_no_of_transactions_direct_investment_sme() {
+		return r48_no_of_transactions_direct_investment_sme;
+	}
+
+	public BigDecimal getR48_amount_direct_investment_sme() {
+		return r48_amount_direct_investment_sme;
+	}
+
+	public BigDecimal getR48_no_of_transactions_services_sme() {
+		return r48_no_of_transactions_services_sme;
+	}
+
+	public BigDecimal getR48_amount_services_sme() {
+		return r48_amount_services_sme;
+	}
+
+	public BigDecimal getR48_no_of_transactions_trade_sme() {
+		return r48_no_of_transactions_trade_sme;
+	}
+
+	public BigDecimal getR48_amount_trade_sme() {
+		return r48_amount_trade_sme;
+	}
+
+	public BigDecimal getR48_no_of_transactions_financial_investment_individual() {
+		return r48_no_of_transactions_financial_investment_individual;
+	}
+
+	public BigDecimal getR48_amount_financial_investment_individual() {
+		return r48_amount_financial_investment_individual;
+	}
+
+	public BigDecimal getR48_no_of_transactions_direct_investment_individual() {
+		return r48_no_of_transactions_direct_investment_individual;
+	}
+
+	public BigDecimal getR48_amount_direct_investment_individual() {
+		return r48_amount_direct_investment_individual;
+	}
+
+	public BigDecimal getR48_no_of_transactions_family_support_individual() {
+		return r48_no_of_transactions_family_support_individual;
+	}
+
+	public BigDecimal getR48_amount_family_support_individual() {
+		return r48_amount_family_support_individual;
+	}
+
+	public BigDecimal getR48_no_of_transactions_education_individual() {
+		return r48_no_of_transactions_education_individual;
+	}
+
+	public BigDecimal getR48_amount_education_individual() {
+		return r48_amount_education_individual;
+	}
+
+	public BigDecimal getR48_no_of_transactions_medical_individual() {
+		return r48_no_of_transactions_medical_individual;
+	}
+
+	public BigDecimal getR48_amount_medical_individual() {
+		return r48_amount_medical_individual;
+	}
+
+	public BigDecimal getR48_no_of_transactions_tourism_individual() {
+		return r48_no_of_transactions_tourism_individual;
+	}
+
+	public BigDecimal getR48_amount_tourism_individual() {
+		return r48_amount_tourism_individual;
+	}
+
+	public BigDecimal getR48_no_of_transactions_debt_settlement_individual() {
+		return r48_no_of_transactions_debt_settlement_individual;
+	}
+
+	public BigDecimal getR48_amount_debt_settlement_individual() {
+		return r48_amount_debt_settlement_individual;
+	}
+
+	public BigDecimal getR48_no_of_transactions_other_services_individual() {
+		return r48_no_of_transactions_other_services_individual;
+	}
+
+	public BigDecimal getR48_amount_other_services_individual() {
+		return r48_amount_other_services_individual;
+	}
+
+	public BigDecimal getR48_total_no_of_transactions() {
+		return r48_total_no_of_transactions;
+	}
+
+	public BigDecimal getR48_grand_total() {
+		return r48_grand_total;
+	}
+
+	public Date getReport_submit_date() {
+		return report_submit_date;
+	}
+
+	public Date getReport_date() {
+		return report_date;
+	}
+
+	public Date getReport_from_date() {
+		return report_from_date;
+	}
+
+	public Date getReport_to_date() {
+		return report_to_date;
+	}
+
+	public String getReport_code() {
+		return report_code;
+	}
+
+	public String getEntity_flg() {
+		return entity_flg;
+	}
+
+	public String getModify_flg() {
+		return modify_flg;
+	}
+
+	public String getDel_flg() {
+		return del_flg;
+	}
+
+	public String getRepdesc() {
+		return repdesc;
+	}
+
+	public String getFrequency() {
+		return frequency;
+	}
+
+	public void setR33_country_break_down(String r33_country_break_down) {
+		this.r33_country_break_down = r33_country_break_down;
+	}
+
+	public void setR33_no_of_transactions_financial_investment_government(
+			BigDecimal r33_no_of_transactions_financial_investment_government) {
+		this.r33_no_of_transactions_financial_investment_government = r33_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR33_amount_financial_investment_government(BigDecimal r33_amount_financial_investment_government) {
+		this.r33_amount_financial_investment_government = r33_amount_financial_investment_government;
+	}
+
+	public void setR33_no_of_transactions_direct_investment_government(
+			BigDecimal r33_no_of_transactions_direct_investment_government) {
+		this.r33_no_of_transactions_direct_investment_government = r33_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR33_amount_direct_investment_government(BigDecimal r33_amount_direct_investment_government) {
+		this.r33_amount_direct_investment_government = r33_amount_direct_investment_government;
+	}
+
+	public void setR33_no_of_transactions_services_government(BigDecimal r33_no_of_transactions_services_government) {
+		this.r33_no_of_transactions_services_government = r33_no_of_transactions_services_government;
+	}
+
+	public void setR33_amount_services_government(BigDecimal r33_amount_services_government) {
+		this.r33_amount_services_government = r33_amount_services_government;
+	}
+
+	public void setR33_no_of_transactions_trade_government(BigDecimal r33_no_of_transactions_trade_government) {
+		this.r33_no_of_transactions_trade_government = r33_no_of_transactions_trade_government;
+	}
+
+	public void setR33_amount_trade_government(BigDecimal r33_amount_trade_government) {
+		this.r33_amount_trade_government = r33_amount_trade_government;
+	}
+
+	public void setR33_no_of_transactions_financial_investment_reserve(
+			BigDecimal r33_no_of_transactions_financial_investment_reserve) {
+		this.r33_no_of_transactions_financial_investment_reserve = r33_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR33_amount_financial_investment_reserve(BigDecimal r33_amount_financial_investment_reserve) {
+		this.r33_amount_financial_investment_reserve = r33_amount_financial_investment_reserve;
+	}
+
+	public void setR33_no_of_transactions_direct_investment_reserve(
+			BigDecimal r33_no_of_transactions_direct_investment_reserve) {
+		this.r33_no_of_transactions_direct_investment_reserve = r33_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR33_amount_direct_investment_reserve(BigDecimal r33_amount_direct_investment_reserve) {
+		this.r33_amount_direct_investment_reserve = r33_amount_direct_investment_reserve;
+	}
+
+	public void setR33_no_of_transactions_services_reserve(BigDecimal r33_no_of_transactions_services_reserve) {
+		this.r33_no_of_transactions_services_reserve = r33_no_of_transactions_services_reserve;
+	}
+
+	public void setR33_amount_services_reserve(BigDecimal r33_amount_services_reserve) {
+		this.r33_amount_services_reserve = r33_amount_services_reserve;
+	}
+
+	public void setR33_no_of_transactions_trade_reserve(BigDecimal r33_no_of_transactions_trade_reserve) {
+		this.r33_no_of_transactions_trade_reserve = r33_no_of_transactions_trade_reserve;
+	}
+
+	public void setR33_amount_trade_reserve(BigDecimal r33_amount_trade_reserve) {
+		this.r33_amount_trade_reserve = r33_amount_trade_reserve;
+	}
+
+	public void setR33_no_of_transactions_financial_investment_gre(
+			BigDecimal r33_no_of_transactions_financial_investment_gre) {
+		this.r33_no_of_transactions_financial_investment_gre = r33_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR33_amount_financial_investment_gre(BigDecimal r33_amount_financial_investment_gre) {
+		this.r33_amount_financial_investment_gre = r33_amount_financial_investment_gre;
+	}
+
+	public void setR33_no_of_transactions_direct_investment_gre(
+			BigDecimal r33_no_of_transactions_direct_investment_gre) {
+		this.r33_no_of_transactions_direct_investment_gre = r33_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR33_amount_direct_investment_gre(BigDecimal r33_amount_direct_investment_gre) {
+		this.r33_amount_direct_investment_gre = r33_amount_direct_investment_gre;
+	}
+
+	public void setR33_no_of_transactions_services_gre(BigDecimal r33_no_of_transactions_services_gre) {
+		this.r33_no_of_transactions_services_gre = r33_no_of_transactions_services_gre;
+	}
+
+	public void setR33_amount_services_gre(BigDecimal r33_amount_services_gre) {
+		this.r33_amount_services_gre = r33_amount_services_gre;
+	}
+
+	public void setR33_no_of_transactions_trade_gre(BigDecimal r33_no_of_transactions_trade_gre) {
+		this.r33_no_of_transactions_trade_gre = r33_no_of_transactions_trade_gre;
+	}
+
+	public void setR33_amount_trade_gre(BigDecimal r33_amount_trade_gre) {
+		this.r33_amount_trade_gre = r33_amount_trade_gre;
+	}
+
+	public void setR33_no_of_transactions_financial_investment_corporate(
+			BigDecimal r33_no_of_transactions_financial_investment_corporate) {
+		this.r33_no_of_transactions_financial_investment_corporate = r33_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR33_amount_financial_investment_corporate(BigDecimal r33_amount_financial_investment_corporate) {
+		this.r33_amount_financial_investment_corporate = r33_amount_financial_investment_corporate;
+	}
+
+	public void setR33_no_of_transactions_direct_investment_corporate(
+			BigDecimal r33_no_of_transactions_direct_investment_corporate) {
+		this.r33_no_of_transactions_direct_investment_corporate = r33_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR33_amount_direct_investment_corporate(BigDecimal r33_amount_direct_investment_corporate) {
+		this.r33_amount_direct_investment_corporate = r33_amount_direct_investment_corporate;
+	}
+
+	public void setR33_no_of_transactions_services_corporate(BigDecimal r33_no_of_transactions_services_corporate) {
+		this.r33_no_of_transactions_services_corporate = r33_no_of_transactions_services_corporate;
+	}
+
+	public void setR33_amount_services_corporate(BigDecimal r33_amount_services_corporate) {
+		this.r33_amount_services_corporate = r33_amount_services_corporate;
+	}
+
+	public void setR33_no_of_transactions_trade_corporate(BigDecimal r33_no_of_transactions_trade_corporate) {
+		this.r33_no_of_transactions_trade_corporate = r33_no_of_transactions_trade_corporate;
+	}
+
+	public void setR33_amount_trade_corporate(BigDecimal r33_amount_trade_corporate) {
+		this.r33_amount_trade_corporate = r33_amount_trade_corporate;
+	}
+
+	public void setR33_no_of_transactions_financial_investment_sme(
+			BigDecimal r33_no_of_transactions_financial_investment_sme) {
+		this.r33_no_of_transactions_financial_investment_sme = r33_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR33_amount_financial_investment_sme(BigDecimal r33_amount_financial_investment_sme) {
+		this.r33_amount_financial_investment_sme = r33_amount_financial_investment_sme;
+	}
+
+	public void setR33_no_of_transactions_direct_investment_sme(
+			BigDecimal r33_no_of_transactions_direct_investment_sme) {
+		this.r33_no_of_transactions_direct_investment_sme = r33_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR33_amount_direct_investment_sme(BigDecimal r33_amount_direct_investment_sme) {
+		this.r33_amount_direct_investment_sme = r33_amount_direct_investment_sme;
+	}
+
+	public void setR33_no_of_transactions_services_sme(BigDecimal r33_no_of_transactions_services_sme) {
+		this.r33_no_of_transactions_services_sme = r33_no_of_transactions_services_sme;
+	}
+
+	public void setR33_amount_services_sme(BigDecimal r33_amount_services_sme) {
+		this.r33_amount_services_sme = r33_amount_services_sme;
+	}
+
+	public void setR33_no_of_transactions_trade_sme(BigDecimal r33_no_of_transactions_trade_sme) {
+		this.r33_no_of_transactions_trade_sme = r33_no_of_transactions_trade_sme;
+	}
+
+	public void setR33_amount_trade_sme(BigDecimal r33_amount_trade_sme) {
+		this.r33_amount_trade_sme = r33_amount_trade_sme;
+	}
+
+	public void setR33_no_of_transactions_financial_investment_individual(
+			BigDecimal r33_no_of_transactions_financial_investment_individual) {
+		this.r33_no_of_transactions_financial_investment_individual = r33_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR33_amount_financial_investment_individual(BigDecimal r33_amount_financial_investment_individual) {
+		this.r33_amount_financial_investment_individual = r33_amount_financial_investment_individual;
+	}
+
+	public void setR33_no_of_transactions_direct_investment_individual(
+			BigDecimal r33_no_of_transactions_direct_investment_individual) {
+		this.r33_no_of_transactions_direct_investment_individual = r33_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR33_amount_direct_investment_individual(BigDecimal r33_amount_direct_investment_individual) {
+		this.r33_amount_direct_investment_individual = r33_amount_direct_investment_individual;
+	}
+
+	public void setR33_no_of_transactions_family_support_individual(
+			BigDecimal r33_no_of_transactions_family_support_individual) {
+		this.r33_no_of_transactions_family_support_individual = r33_no_of_transactions_family_support_individual;
+	}
+
+	public void setR33_amount_family_support_individual(BigDecimal r33_amount_family_support_individual) {
+		this.r33_amount_family_support_individual = r33_amount_family_support_individual;
+	}
+
+	public void setR33_no_of_transactions_education_individual(BigDecimal r33_no_of_transactions_education_individual) {
+		this.r33_no_of_transactions_education_individual = r33_no_of_transactions_education_individual;
+	}
+
+	public void setR33_amount_education_individual(BigDecimal r33_amount_education_individual) {
+		this.r33_amount_education_individual = r33_amount_education_individual;
+	}
+
+	public void setR33_no_of_transactions_medical_individual(BigDecimal r33_no_of_transactions_medical_individual) {
+		this.r33_no_of_transactions_medical_individual = r33_no_of_transactions_medical_individual;
+	}
+
+	public void setR33_amount_medical_individual(BigDecimal r33_amount_medical_individual) {
+		this.r33_amount_medical_individual = r33_amount_medical_individual;
+	}
+
+	public void setR33_no_of_transactions_tourism_individual(BigDecimal r33_no_of_transactions_tourism_individual) {
+		this.r33_no_of_transactions_tourism_individual = r33_no_of_transactions_tourism_individual;
+	}
+
+	public void setR33_amount_tourism_individual(BigDecimal r33_amount_tourism_individual) {
+		this.r33_amount_tourism_individual = r33_amount_tourism_individual;
+	}
+
+	public void setR33_no_of_transactions_debt_settlement_individual(
+			BigDecimal r33_no_of_transactions_debt_settlement_individual) {
+		this.r33_no_of_transactions_debt_settlement_individual = r33_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR33_amount_debt_settlement_individual(BigDecimal r33_amount_debt_settlement_individual) {
+		this.r33_amount_debt_settlement_individual = r33_amount_debt_settlement_individual;
+	}
+
+	public void setR33_no_of_transactions_other_services_individual(
+			BigDecimal r33_no_of_transactions_other_services_individual) {
+		this.r33_no_of_transactions_other_services_individual = r33_no_of_transactions_other_services_individual;
+	}
+
+	public void setR33_amount_other_services_individual(BigDecimal r33_amount_other_services_individual) {
+		this.r33_amount_other_services_individual = r33_amount_other_services_individual;
+	}
+
+	public void setR33_total_no_of_transactions(BigDecimal r33_total_no_of_transactions) {
+		this.r33_total_no_of_transactions = r33_total_no_of_transactions;
+	}
+
+	public void setR33_grand_total(BigDecimal r33_grand_total) {
+		this.r33_grand_total = r33_grand_total;
+	}
+
+	public void setR34_country_break_down(String r34_country_break_down) {
+		this.r34_country_break_down = r34_country_break_down;
+	}
+
+	public void setR34_no_of_transactions_financial_investment_government(
+			BigDecimal r34_no_of_transactions_financial_investment_government) {
+		this.r34_no_of_transactions_financial_investment_government = r34_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR34_amount_financial_investment_government(BigDecimal r34_amount_financial_investment_government) {
+		this.r34_amount_financial_investment_government = r34_amount_financial_investment_government;
+	}
+
+	public void setR34_no_of_transactions_direct_investment_government(
+			BigDecimal r34_no_of_transactions_direct_investment_government) {
+		this.r34_no_of_transactions_direct_investment_government = r34_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR34_amount_direct_investment_government(BigDecimal r34_amount_direct_investment_government) {
+		this.r34_amount_direct_investment_government = r34_amount_direct_investment_government;
+	}
+
+	public void setR34_no_of_transactions_services_government(BigDecimal r34_no_of_transactions_services_government) {
+		this.r34_no_of_transactions_services_government = r34_no_of_transactions_services_government;
+	}
+
+	public void setR34_amount_services_government(BigDecimal r34_amount_services_government) {
+		this.r34_amount_services_government = r34_amount_services_government;
+	}
+
+	public void setR34_no_of_transactions_trade_government(BigDecimal r34_no_of_transactions_trade_government) {
+		this.r34_no_of_transactions_trade_government = r34_no_of_transactions_trade_government;
+	}
+
+	public void setR34_amount_trade_government(BigDecimal r34_amount_trade_government) {
+		this.r34_amount_trade_government = r34_amount_trade_government;
+	}
+
+	public void setR34_no_of_transactions_financial_investment_reserve(
+			BigDecimal r34_no_of_transactions_financial_investment_reserve) {
+		this.r34_no_of_transactions_financial_investment_reserve = r34_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR34_amount_financial_investment_reserve(BigDecimal r34_amount_financial_investment_reserve) {
+		this.r34_amount_financial_investment_reserve = r34_amount_financial_investment_reserve;
+	}
+
+	public void setR34_no_of_transactions_direct_investment_reserve(
+			BigDecimal r34_no_of_transactions_direct_investment_reserve) {
+		this.r34_no_of_transactions_direct_investment_reserve = r34_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR34_amount_direct_investment_reserve(BigDecimal r34_amount_direct_investment_reserve) {
+		this.r34_amount_direct_investment_reserve = r34_amount_direct_investment_reserve;
+	}
+
+	public void setR34_no_of_transactions_services_reserve(BigDecimal r34_no_of_transactions_services_reserve) {
+		this.r34_no_of_transactions_services_reserve = r34_no_of_transactions_services_reserve;
+	}
+
+	public void setR34_amount_services_reserve(BigDecimal r34_amount_services_reserve) {
+		this.r34_amount_services_reserve = r34_amount_services_reserve;
+	}
+
+	public void setR34_no_of_transactions_trade_reserve(BigDecimal r34_no_of_transactions_trade_reserve) {
+		this.r34_no_of_transactions_trade_reserve = r34_no_of_transactions_trade_reserve;
+	}
+
+	public void setR34_amount_trade_reserve(BigDecimal r34_amount_trade_reserve) {
+		this.r34_amount_trade_reserve = r34_amount_trade_reserve;
+	}
+
+	public void setR34_no_of_transactions_financial_investment_gre(
+			BigDecimal r34_no_of_transactions_financial_investment_gre) {
+		this.r34_no_of_transactions_financial_investment_gre = r34_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR34_amount_financial_investment_gre(BigDecimal r34_amount_financial_investment_gre) {
+		this.r34_amount_financial_investment_gre = r34_amount_financial_investment_gre;
+	}
+
+	public void setR34_no_of_transactions_direct_investment_gre(
+			BigDecimal r34_no_of_transactions_direct_investment_gre) {
+		this.r34_no_of_transactions_direct_investment_gre = r34_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR34_amount_direct_investment_gre(BigDecimal r34_amount_direct_investment_gre) {
+		this.r34_amount_direct_investment_gre = r34_amount_direct_investment_gre;
+	}
+
+	public void setR34_no_of_transactions_services_gre(BigDecimal r34_no_of_transactions_services_gre) {
+		this.r34_no_of_transactions_services_gre = r34_no_of_transactions_services_gre;
+	}
+
+	public void setR34_amount_services_gre(BigDecimal r34_amount_services_gre) {
+		this.r34_amount_services_gre = r34_amount_services_gre;
+	}
+
+	public void setR34_no_of_transactions_trade_gre(BigDecimal r34_no_of_transactions_trade_gre) {
+		this.r34_no_of_transactions_trade_gre = r34_no_of_transactions_trade_gre;
+	}
+
+	public void setR34_amount_trade_gre(BigDecimal r34_amount_trade_gre) {
+		this.r34_amount_trade_gre = r34_amount_trade_gre;
+	}
+
+	public void setR34_no_of_transactions_financial_investment_corporate(
+			BigDecimal r34_no_of_transactions_financial_investment_corporate) {
+		this.r34_no_of_transactions_financial_investment_corporate = r34_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR34_amount_financial_investment_corporate(BigDecimal r34_amount_financial_investment_corporate) {
+		this.r34_amount_financial_investment_corporate = r34_amount_financial_investment_corporate;
+	}
+
+	public void setR34_no_of_transactions_direct_investment_corporate(
+			BigDecimal r34_no_of_transactions_direct_investment_corporate) {
+		this.r34_no_of_transactions_direct_investment_corporate = r34_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR34_amount_direct_investment_corporate(BigDecimal r34_amount_direct_investment_corporate) {
+		this.r34_amount_direct_investment_corporate = r34_amount_direct_investment_corporate;
+	}
+
+	public void setR34_no_of_transactions_services_corporate(BigDecimal r34_no_of_transactions_services_corporate) {
+		this.r34_no_of_transactions_services_corporate = r34_no_of_transactions_services_corporate;
+	}
+
+	public void setR34_amount_services_corporate(BigDecimal r34_amount_services_corporate) {
+		this.r34_amount_services_corporate = r34_amount_services_corporate;
+	}
+
+	public void setR34_no_of_transactions_trade_corporate(BigDecimal r34_no_of_transactions_trade_corporate) {
+		this.r34_no_of_transactions_trade_corporate = r34_no_of_transactions_trade_corporate;
+	}
+
+	public void setR34_amount_trade_corporate(BigDecimal r34_amount_trade_corporate) {
+		this.r34_amount_trade_corporate = r34_amount_trade_corporate;
+	}
+
+	public void setR34_no_of_transactions_financial_investment_sme(
+			BigDecimal r34_no_of_transactions_financial_investment_sme) {
+		this.r34_no_of_transactions_financial_investment_sme = r34_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR34_amount_financial_investment_sme(BigDecimal r34_amount_financial_investment_sme) {
+		this.r34_amount_financial_investment_sme = r34_amount_financial_investment_sme;
+	}
+
+	public void setR34_no_of_transactions_direct_investment_sme(
+			BigDecimal r34_no_of_transactions_direct_investment_sme) {
+		this.r34_no_of_transactions_direct_investment_sme = r34_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR34_amount_direct_investment_sme(BigDecimal r34_amount_direct_investment_sme) {
+		this.r34_amount_direct_investment_sme = r34_amount_direct_investment_sme;
+	}
+
+	public void setR34_no_of_transactions_services_sme(BigDecimal r34_no_of_transactions_services_sme) {
+		this.r34_no_of_transactions_services_sme = r34_no_of_transactions_services_sme;
+	}
+
+	public void setR34_amount_services_sme(BigDecimal r34_amount_services_sme) {
+		this.r34_amount_services_sme = r34_amount_services_sme;
+	}
+
+	public void setR34_no_of_transactions_trade_sme(BigDecimal r34_no_of_transactions_trade_sme) {
+		this.r34_no_of_transactions_trade_sme = r34_no_of_transactions_trade_sme;
+	}
+
+	public void setR34_amount_trade_sme(BigDecimal r34_amount_trade_sme) {
+		this.r34_amount_trade_sme = r34_amount_trade_sme;
+	}
+
+	public void setR34_no_of_transactions_financial_investment_individual(
+			BigDecimal r34_no_of_transactions_financial_investment_individual) {
+		this.r34_no_of_transactions_financial_investment_individual = r34_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR34_amount_financial_investment_individual(BigDecimal r34_amount_financial_investment_individual) {
+		this.r34_amount_financial_investment_individual = r34_amount_financial_investment_individual;
+	}
+
+	public void setR34_no_of_transactions_direct_investment_individual(
+			BigDecimal r34_no_of_transactions_direct_investment_individual) {
+		this.r34_no_of_transactions_direct_investment_individual = r34_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR34_amount_direct_investment_individual(BigDecimal r34_amount_direct_investment_individual) {
+		this.r34_amount_direct_investment_individual = r34_amount_direct_investment_individual;
+	}
+
+	public void setR34_no_of_transactions_family_support_individual(
+			BigDecimal r34_no_of_transactions_family_support_individual) {
+		this.r34_no_of_transactions_family_support_individual = r34_no_of_transactions_family_support_individual;
+	}
+
+	public void setR34_amount_family_support_individual(BigDecimal r34_amount_family_support_individual) {
+		this.r34_amount_family_support_individual = r34_amount_family_support_individual;
+	}
+
+	public void setR34_no_of_transactions_education_individual(BigDecimal r34_no_of_transactions_education_individual) {
+		this.r34_no_of_transactions_education_individual = r34_no_of_transactions_education_individual;
+	}
+
+	public void setR34_amount_education_individual(BigDecimal r34_amount_education_individual) {
+		this.r34_amount_education_individual = r34_amount_education_individual;
+	}
+
+	public void setR34_no_of_transactions_medical_individual(BigDecimal r34_no_of_transactions_medical_individual) {
+		this.r34_no_of_transactions_medical_individual = r34_no_of_transactions_medical_individual;
+	}
+
+	public void setR34_amount_medical_individual(BigDecimal r34_amount_medical_individual) {
+		this.r34_amount_medical_individual = r34_amount_medical_individual;
+	}
+
+	public void setR34_no_of_transactions_tourism_individual(BigDecimal r34_no_of_transactions_tourism_individual) {
+		this.r34_no_of_transactions_tourism_individual = r34_no_of_transactions_tourism_individual;
+	}
+
+	public void setR34_amount_tourism_individual(BigDecimal r34_amount_tourism_individual) {
+		this.r34_amount_tourism_individual = r34_amount_tourism_individual;
+	}
+
+	public void setR34_no_of_transactions_debt_settlement_individual(
+			BigDecimal r34_no_of_transactions_debt_settlement_individual) {
+		this.r34_no_of_transactions_debt_settlement_individual = r34_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR34_amount_debt_settlement_individual(BigDecimal r34_amount_debt_settlement_individual) {
+		this.r34_amount_debt_settlement_individual = r34_amount_debt_settlement_individual;
+	}
+
+	public void setR34_no_of_transactions_other_services_individual(
+			BigDecimal r34_no_of_transactions_other_services_individual) {
+		this.r34_no_of_transactions_other_services_individual = r34_no_of_transactions_other_services_individual;
+	}
+
+	public void setR34_amount_other_services_individual(BigDecimal r34_amount_other_services_individual) {
+		this.r34_amount_other_services_individual = r34_amount_other_services_individual;
+	}
+
+	public void setR34_total_no_of_transactions(BigDecimal r34_total_no_of_transactions) {
+		this.r34_total_no_of_transactions = r34_total_no_of_transactions;
+	}
+
+	public void setR34_grand_total(BigDecimal r34_grand_total) {
+		this.r34_grand_total = r34_grand_total;
+	}
+
+	public void setR35_country_break_down(String r35_country_break_down) {
+		this.r35_country_break_down = r35_country_break_down;
+	}
+
+	public void setR35_no_of_transactions_financial_investment_government(
+			BigDecimal r35_no_of_transactions_financial_investment_government) {
+		this.r35_no_of_transactions_financial_investment_government = r35_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR35_amount_financial_investment_government(BigDecimal r35_amount_financial_investment_government) {
+		this.r35_amount_financial_investment_government = r35_amount_financial_investment_government;
+	}
+
+	public void setR35_no_of_transactions_direct_investment_government(
+			BigDecimal r35_no_of_transactions_direct_investment_government) {
+		this.r35_no_of_transactions_direct_investment_government = r35_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR35_amount_direct_investment_government(BigDecimal r35_amount_direct_investment_government) {
+		this.r35_amount_direct_investment_government = r35_amount_direct_investment_government;
+	}
+
+	public void setR35_no_of_transactions_services_government(BigDecimal r35_no_of_transactions_services_government) {
+		this.r35_no_of_transactions_services_government = r35_no_of_transactions_services_government;
+	}
+
+	public void setR35_amount_services_government(BigDecimal r35_amount_services_government) {
+		this.r35_amount_services_government = r35_amount_services_government;
+	}
+
+	public void setR35_no_of_transactions_trade_government(BigDecimal r35_no_of_transactions_trade_government) {
+		this.r35_no_of_transactions_trade_government = r35_no_of_transactions_trade_government;
+	}
+
+	public void setR35_amount_trade_government(BigDecimal r35_amount_trade_government) {
+		this.r35_amount_trade_government = r35_amount_trade_government;
+	}
+
+	public void setR35_no_of_transactions_financial_investment_reserve(
+			BigDecimal r35_no_of_transactions_financial_investment_reserve) {
+		this.r35_no_of_transactions_financial_investment_reserve = r35_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR35_amount_financial_investment_reserve(BigDecimal r35_amount_financial_investment_reserve) {
+		this.r35_amount_financial_investment_reserve = r35_amount_financial_investment_reserve;
+	}
+
+	public void setR35_no_of_transactions_direct_investment_reserve(
+			BigDecimal r35_no_of_transactions_direct_investment_reserve) {
+		this.r35_no_of_transactions_direct_investment_reserve = r35_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR35_amount_direct_investment_reserve(BigDecimal r35_amount_direct_investment_reserve) {
+		this.r35_amount_direct_investment_reserve = r35_amount_direct_investment_reserve;
+	}
+
+	public void setR35_no_of_transactions_services_reserve(BigDecimal r35_no_of_transactions_services_reserve) {
+		this.r35_no_of_transactions_services_reserve = r35_no_of_transactions_services_reserve;
+	}
+
+	public void setR35_amount_services_reserve(BigDecimal r35_amount_services_reserve) {
+		this.r35_amount_services_reserve = r35_amount_services_reserve;
+	}
+
+	public void setR35_no_of_transactions_trade_reserve(BigDecimal r35_no_of_transactions_trade_reserve) {
+		this.r35_no_of_transactions_trade_reserve = r35_no_of_transactions_trade_reserve;
+	}
+
+	public void setR35_amount_trade_reserve(BigDecimal r35_amount_trade_reserve) {
+		this.r35_amount_trade_reserve = r35_amount_trade_reserve;
+	}
+
+	public void setR35_no_of_transactions_financial_investment_gre(
+			BigDecimal r35_no_of_transactions_financial_investment_gre) {
+		this.r35_no_of_transactions_financial_investment_gre = r35_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR35_amount_financial_investment_gre(BigDecimal r35_amount_financial_investment_gre) {
+		this.r35_amount_financial_investment_gre = r35_amount_financial_investment_gre;
+	}
+
+	public void setR35_no_of_transactions_direct_investment_gre(
+			BigDecimal r35_no_of_transactions_direct_investment_gre) {
+		this.r35_no_of_transactions_direct_investment_gre = r35_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR35_amount_direct_investment_gre(BigDecimal r35_amount_direct_investment_gre) {
+		this.r35_amount_direct_investment_gre = r35_amount_direct_investment_gre;
+	}
+
+	public void setR35_no_of_transactions_services_gre(BigDecimal r35_no_of_transactions_services_gre) {
+		this.r35_no_of_transactions_services_gre = r35_no_of_transactions_services_gre;
+	}
+
+	public void setR35_amount_services_gre(BigDecimal r35_amount_services_gre) {
+		this.r35_amount_services_gre = r35_amount_services_gre;
+	}
+
+	public void setR35_no_of_transactions_trade_gre(BigDecimal r35_no_of_transactions_trade_gre) {
+		this.r35_no_of_transactions_trade_gre = r35_no_of_transactions_trade_gre;
+	}
+
+	public void setR35_amount_trade_gre(BigDecimal r35_amount_trade_gre) {
+		this.r35_amount_trade_gre = r35_amount_trade_gre;
+	}
+
+	public void setR35_no_of_transactions_financial_investment_corporate(
+			BigDecimal r35_no_of_transactions_financial_investment_corporate) {
+		this.r35_no_of_transactions_financial_investment_corporate = r35_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR35_amount_financial_investment_corporate(BigDecimal r35_amount_financial_investment_corporate) {
+		this.r35_amount_financial_investment_corporate = r35_amount_financial_investment_corporate;
+	}
+
+	public void setR35_no_of_transactions_direct_investment_corporate(
+			BigDecimal r35_no_of_transactions_direct_investment_corporate) {
+		this.r35_no_of_transactions_direct_investment_corporate = r35_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR35_amount_direct_investment_corporate(BigDecimal r35_amount_direct_investment_corporate) {
+		this.r35_amount_direct_investment_corporate = r35_amount_direct_investment_corporate;
+	}
+
+	public void setR35_no_of_transactions_services_corporate(BigDecimal r35_no_of_transactions_services_corporate) {
+		this.r35_no_of_transactions_services_corporate = r35_no_of_transactions_services_corporate;
+	}
+
+	public void setR35_amount_services_corporate(BigDecimal r35_amount_services_corporate) {
+		this.r35_amount_services_corporate = r35_amount_services_corporate;
+	}
+
+	public void setR35_no_of_transactions_trade_corporate(BigDecimal r35_no_of_transactions_trade_corporate) {
+		this.r35_no_of_transactions_trade_corporate = r35_no_of_transactions_trade_corporate;
+	}
+
+	public void setR35_amount_trade_corporate(BigDecimal r35_amount_trade_corporate) {
+		this.r35_amount_trade_corporate = r35_amount_trade_corporate;
+	}
+
+	public void setR35_no_of_transactions_financial_investment_sme(
+			BigDecimal r35_no_of_transactions_financial_investment_sme) {
+		this.r35_no_of_transactions_financial_investment_sme = r35_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR35_amount_financial_investment_sme(BigDecimal r35_amount_financial_investment_sme) {
+		this.r35_amount_financial_investment_sme = r35_amount_financial_investment_sme;
+	}
+
+	public void setR35_no_of_transactions_direct_investment_sme(
+			BigDecimal r35_no_of_transactions_direct_investment_sme) {
+		this.r35_no_of_transactions_direct_investment_sme = r35_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR35_amount_direct_investment_sme(BigDecimal r35_amount_direct_investment_sme) {
+		this.r35_amount_direct_investment_sme = r35_amount_direct_investment_sme;
+	}
+
+	public void setR35_no_of_transactions_services_sme(BigDecimal r35_no_of_transactions_services_sme) {
+		this.r35_no_of_transactions_services_sme = r35_no_of_transactions_services_sme;
+	}
+
+	public void setR35_amount_services_sme(BigDecimal r35_amount_services_sme) {
+		this.r35_amount_services_sme = r35_amount_services_sme;
+	}
+
+	public void setR35_no_of_transactions_trade_sme(BigDecimal r35_no_of_transactions_trade_sme) {
+		this.r35_no_of_transactions_trade_sme = r35_no_of_transactions_trade_sme;
+	}
+
+	public void setR35_amount_trade_sme(BigDecimal r35_amount_trade_sme) {
+		this.r35_amount_trade_sme = r35_amount_trade_sme;
+	}
+
+	public void setR35_no_of_transactions_financial_investment_individual(
+			BigDecimal r35_no_of_transactions_financial_investment_individual) {
+		this.r35_no_of_transactions_financial_investment_individual = r35_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR35_amount_financial_investment_individual(BigDecimal r35_amount_financial_investment_individual) {
+		this.r35_amount_financial_investment_individual = r35_amount_financial_investment_individual;
+	}
+
+	public void setR35_no_of_transactions_direct_investment_individual(
+			BigDecimal r35_no_of_transactions_direct_investment_individual) {
+		this.r35_no_of_transactions_direct_investment_individual = r35_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR35_amount_direct_investment_individual(BigDecimal r35_amount_direct_investment_individual) {
+		this.r35_amount_direct_investment_individual = r35_amount_direct_investment_individual;
+	}
+
+	public void setR35_no_of_transactions_family_support_individual(
+			BigDecimal r35_no_of_transactions_family_support_individual) {
+		this.r35_no_of_transactions_family_support_individual = r35_no_of_transactions_family_support_individual;
+	}
+
+	public void setR35_amount_family_support_individual(BigDecimal r35_amount_family_support_individual) {
+		this.r35_amount_family_support_individual = r35_amount_family_support_individual;
+	}
+
+	public void setR35_no_of_transactions_education_individual(BigDecimal r35_no_of_transactions_education_individual) {
+		this.r35_no_of_transactions_education_individual = r35_no_of_transactions_education_individual;
+	}
+
+	public void setR35_amount_education_individual(BigDecimal r35_amount_education_individual) {
+		this.r35_amount_education_individual = r35_amount_education_individual;
+	}
+
+	public void setR35_no_of_transactions_medical_individual(BigDecimal r35_no_of_transactions_medical_individual) {
+		this.r35_no_of_transactions_medical_individual = r35_no_of_transactions_medical_individual;
+	}
+
+	public void setR35_amount_medical_individual(BigDecimal r35_amount_medical_individual) {
+		this.r35_amount_medical_individual = r35_amount_medical_individual;
+	}
+
+	public void setR35_no_of_transactions_tourism_individual(BigDecimal r35_no_of_transactions_tourism_individual) {
+		this.r35_no_of_transactions_tourism_individual = r35_no_of_transactions_tourism_individual;
+	}
+
+	public void setR35_amount_tourism_individual(BigDecimal r35_amount_tourism_individual) {
+		this.r35_amount_tourism_individual = r35_amount_tourism_individual;
+	}
+
+	public void setR35_no_of_transactions_debt_settlement_individual(
+			BigDecimal r35_no_of_transactions_debt_settlement_individual) {
+		this.r35_no_of_transactions_debt_settlement_individual = r35_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR35_amount_debt_settlement_individual(BigDecimal r35_amount_debt_settlement_individual) {
+		this.r35_amount_debt_settlement_individual = r35_amount_debt_settlement_individual;
+	}
+
+	public void setR35_no_of_transactions_other_services_individual(
+			BigDecimal r35_no_of_transactions_other_services_individual) {
+		this.r35_no_of_transactions_other_services_individual = r35_no_of_transactions_other_services_individual;
+	}
+
+	public void setR35_amount_other_services_individual(BigDecimal r35_amount_other_services_individual) {
+		this.r35_amount_other_services_individual = r35_amount_other_services_individual;
+	}
+
+	public void setR35_total_no_of_transactions(BigDecimal r35_total_no_of_transactions) {
+		this.r35_total_no_of_transactions = r35_total_no_of_transactions;
+	}
+
+	public void setR35_grand_total(BigDecimal r35_grand_total) {
+		this.r35_grand_total = r35_grand_total;
+	}
+
+	public void setR36_country_break_down(String r36_country_break_down) {
+		this.r36_country_break_down = r36_country_break_down;
+	}
+
+	public void setR36_no_of_transactions_financial_investment_government(
+			BigDecimal r36_no_of_transactions_financial_investment_government) {
+		this.r36_no_of_transactions_financial_investment_government = r36_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR36_amount_financial_investment_government(BigDecimal r36_amount_financial_investment_government) {
+		this.r36_amount_financial_investment_government = r36_amount_financial_investment_government;
+	}
+
+	public void setR36_no_of_transactions_direct_investment_government(
+			BigDecimal r36_no_of_transactions_direct_investment_government) {
+		this.r36_no_of_transactions_direct_investment_government = r36_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR36_amount_direct_investment_government(BigDecimal r36_amount_direct_investment_government) {
+		this.r36_amount_direct_investment_government = r36_amount_direct_investment_government;
+	}
+
+	public void setR36_no_of_transactions_services_government(BigDecimal r36_no_of_transactions_services_government) {
+		this.r36_no_of_transactions_services_government = r36_no_of_transactions_services_government;
+	}
+
+	public void setR36_amount_services_government(BigDecimal r36_amount_services_government) {
+		this.r36_amount_services_government = r36_amount_services_government;
+	}
+
+	public void setR36_no_of_transactions_trade_government(BigDecimal r36_no_of_transactions_trade_government) {
+		this.r36_no_of_transactions_trade_government = r36_no_of_transactions_trade_government;
+	}
+
+	public void setR36_amount_trade_government(BigDecimal r36_amount_trade_government) {
+		this.r36_amount_trade_government = r36_amount_trade_government;
+	}
+
+	public void setR36_no_of_transactions_financial_investment_reserve(
+			BigDecimal r36_no_of_transactions_financial_investment_reserve) {
+		this.r36_no_of_transactions_financial_investment_reserve = r36_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR36_amount_financial_investment_reserve(BigDecimal r36_amount_financial_investment_reserve) {
+		this.r36_amount_financial_investment_reserve = r36_amount_financial_investment_reserve;
+	}
+
+	public void setR36_no_of_transactions_direct_investment_reserve(
+			BigDecimal r36_no_of_transactions_direct_investment_reserve) {
+		this.r36_no_of_transactions_direct_investment_reserve = r36_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR36_amount_direct_investment_reserve(BigDecimal r36_amount_direct_investment_reserve) {
+		this.r36_amount_direct_investment_reserve = r36_amount_direct_investment_reserve;
+	}
+
+	public void setR36_no_of_transactions_services_reserve(BigDecimal r36_no_of_transactions_services_reserve) {
+		this.r36_no_of_transactions_services_reserve = r36_no_of_transactions_services_reserve;
+	}
+
+	public void setR36_amount_services_reserve(BigDecimal r36_amount_services_reserve) {
+		this.r36_amount_services_reserve = r36_amount_services_reserve;
+	}
+
+	public void setR36_no_of_transactions_trade_reserve(BigDecimal r36_no_of_transactions_trade_reserve) {
+		this.r36_no_of_transactions_trade_reserve = r36_no_of_transactions_trade_reserve;
+	}
+
+	public void setR36_amount_trade_reserve(BigDecimal r36_amount_trade_reserve) {
+		this.r36_amount_trade_reserve = r36_amount_trade_reserve;
+	}
+
+	public void setR36_no_of_transactions_financial_investment_gre(
+			BigDecimal r36_no_of_transactions_financial_investment_gre) {
+		this.r36_no_of_transactions_financial_investment_gre = r36_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR36_amount_financial_investment_gre(BigDecimal r36_amount_financial_investment_gre) {
+		this.r36_amount_financial_investment_gre = r36_amount_financial_investment_gre;
+	}
+
+	public void setR36_no_of_transactions_direct_investment_gre(
+			BigDecimal r36_no_of_transactions_direct_investment_gre) {
+		this.r36_no_of_transactions_direct_investment_gre = r36_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR36_amount_direct_investment_gre(BigDecimal r36_amount_direct_investment_gre) {
+		this.r36_amount_direct_investment_gre = r36_amount_direct_investment_gre;
+	}
+
+	public void setR36_no_of_transactions_services_gre(BigDecimal r36_no_of_transactions_services_gre) {
+		this.r36_no_of_transactions_services_gre = r36_no_of_transactions_services_gre;
+	}
+
+	public void setR36_amount_services_gre(BigDecimal r36_amount_services_gre) {
+		this.r36_amount_services_gre = r36_amount_services_gre;
+	}
+
+	public void setR36_no_of_transactions_trade_gre(BigDecimal r36_no_of_transactions_trade_gre) {
+		this.r36_no_of_transactions_trade_gre = r36_no_of_transactions_trade_gre;
+	}
+
+	public void setR36_amount_trade_gre(BigDecimal r36_amount_trade_gre) {
+		this.r36_amount_trade_gre = r36_amount_trade_gre;
+	}
+
+	public void setR36_no_of_transactions_financial_investment_corporate(
+			BigDecimal r36_no_of_transactions_financial_investment_corporate) {
+		this.r36_no_of_transactions_financial_investment_corporate = r36_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR36_amount_financial_investment_corporate(BigDecimal r36_amount_financial_investment_corporate) {
+		this.r36_amount_financial_investment_corporate = r36_amount_financial_investment_corporate;
+	}
+
+	public void setR36_no_of_transactions_direct_investment_corporate(
+			BigDecimal r36_no_of_transactions_direct_investment_corporate) {
+		this.r36_no_of_transactions_direct_investment_corporate = r36_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR36_amount_direct_investment_corporate(BigDecimal r36_amount_direct_investment_corporate) {
+		this.r36_amount_direct_investment_corporate = r36_amount_direct_investment_corporate;
+	}
+
+	public void setR36_no_of_transactions_services_corporate(BigDecimal r36_no_of_transactions_services_corporate) {
+		this.r36_no_of_transactions_services_corporate = r36_no_of_transactions_services_corporate;
+	}
+
+	public void setR36_amount_services_corporate(BigDecimal r36_amount_services_corporate) {
+		this.r36_amount_services_corporate = r36_amount_services_corporate;
+	}
+
+	public void setR36_no_of_transactions_trade_corporate(BigDecimal r36_no_of_transactions_trade_corporate) {
+		this.r36_no_of_transactions_trade_corporate = r36_no_of_transactions_trade_corporate;
+	}
+
+	public void setR36_amount_trade_corporate(BigDecimal r36_amount_trade_corporate) {
+		this.r36_amount_trade_corporate = r36_amount_trade_corporate;
+	}
+
+	public void setR36_no_of_transactions_financial_investment_sme(
+			BigDecimal r36_no_of_transactions_financial_investment_sme) {
+		this.r36_no_of_transactions_financial_investment_sme = r36_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR36_amount_financial_investment_sme(BigDecimal r36_amount_financial_investment_sme) {
+		this.r36_amount_financial_investment_sme = r36_amount_financial_investment_sme;
+	}
+
+	public void setR36_no_of_transactions_direct_investment_sme(
+			BigDecimal r36_no_of_transactions_direct_investment_sme) {
+		this.r36_no_of_transactions_direct_investment_sme = r36_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR36_amount_direct_investment_sme(BigDecimal r36_amount_direct_investment_sme) {
+		this.r36_amount_direct_investment_sme = r36_amount_direct_investment_sme;
+	}
+
+	public void setR36_no_of_transactions_services_sme(BigDecimal r36_no_of_transactions_services_sme) {
+		this.r36_no_of_transactions_services_sme = r36_no_of_transactions_services_sme;
+	}
+
+	public void setR36_amount_services_sme(BigDecimal r36_amount_services_sme) {
+		this.r36_amount_services_sme = r36_amount_services_sme;
+	}
+
+	public void setR36_no_of_transactions_trade_sme(BigDecimal r36_no_of_transactions_trade_sme) {
+		this.r36_no_of_transactions_trade_sme = r36_no_of_transactions_trade_sme;
+	}
+
+	public void setR36_amount_trade_sme(BigDecimal r36_amount_trade_sme) {
+		this.r36_amount_trade_sme = r36_amount_trade_sme;
+	}
+
+	public void setR36_no_of_transactions_financial_investment_individual(
+			BigDecimal r36_no_of_transactions_financial_investment_individual) {
+		this.r36_no_of_transactions_financial_investment_individual = r36_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR36_amount_financial_investment_individual(BigDecimal r36_amount_financial_investment_individual) {
+		this.r36_amount_financial_investment_individual = r36_amount_financial_investment_individual;
+	}
+
+	public void setR36_no_of_transactions_direct_investment_individual(
+			BigDecimal r36_no_of_transactions_direct_investment_individual) {
+		this.r36_no_of_transactions_direct_investment_individual = r36_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR36_amount_direct_investment_individual(BigDecimal r36_amount_direct_investment_individual) {
+		this.r36_amount_direct_investment_individual = r36_amount_direct_investment_individual;
+	}
+
+	public void setR36_no_of_transactions_family_support_individual(
+			BigDecimal r36_no_of_transactions_family_support_individual) {
+		this.r36_no_of_transactions_family_support_individual = r36_no_of_transactions_family_support_individual;
+	}
+
+	public void setR36_amount_family_support_individual(BigDecimal r36_amount_family_support_individual) {
+		this.r36_amount_family_support_individual = r36_amount_family_support_individual;
+	}
+
+	public void setR36_no_of_transactions_education_individual(BigDecimal r36_no_of_transactions_education_individual) {
+		this.r36_no_of_transactions_education_individual = r36_no_of_transactions_education_individual;
+	}
+
+	public void setR36_amount_education_individual(BigDecimal r36_amount_education_individual) {
+		this.r36_amount_education_individual = r36_amount_education_individual;
+	}
+
+	public void setR36_no_of_transactions_medical_individual(BigDecimal r36_no_of_transactions_medical_individual) {
+		this.r36_no_of_transactions_medical_individual = r36_no_of_transactions_medical_individual;
+	}
+
+	public void setR36_amount_medical_individual(BigDecimal r36_amount_medical_individual) {
+		this.r36_amount_medical_individual = r36_amount_medical_individual;
+	}
+
+	public void setR36_no_of_transactions_tourism_individual(BigDecimal r36_no_of_transactions_tourism_individual) {
+		this.r36_no_of_transactions_tourism_individual = r36_no_of_transactions_tourism_individual;
+	}
+
+	public void setR36_amount_tourism_individual(BigDecimal r36_amount_tourism_individual) {
+		this.r36_amount_tourism_individual = r36_amount_tourism_individual;
+	}
+
+	public void setR36_no_of_transactions_debt_settlement_individual(
+			BigDecimal r36_no_of_transactions_debt_settlement_individual) {
+		this.r36_no_of_transactions_debt_settlement_individual = r36_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR36_amount_debt_settlement_individual(BigDecimal r36_amount_debt_settlement_individual) {
+		this.r36_amount_debt_settlement_individual = r36_amount_debt_settlement_individual;
+	}
+
+	public void setR36_no_of_transactions_other_services_individual(
+			BigDecimal r36_no_of_transactions_other_services_individual) {
+		this.r36_no_of_transactions_other_services_individual = r36_no_of_transactions_other_services_individual;
+	}
+
+	public void setR36_amount_other_services_individual(BigDecimal r36_amount_other_services_individual) {
+		this.r36_amount_other_services_individual = r36_amount_other_services_individual;
+	}
+
+	public void setR36_total_no_of_transactions(BigDecimal r36_total_no_of_transactions) {
+		this.r36_total_no_of_transactions = r36_total_no_of_transactions;
+	}
+
+	public void setR36_grand_total(BigDecimal r36_grand_total) {
+		this.r36_grand_total = r36_grand_total;
+	}
+
+	public void setR37_country_break_down(String r37_country_break_down) {
+		this.r37_country_break_down = r37_country_break_down;
+	}
+
+	public void setR37_no_of_transactions_financial_investment_government(
+			BigDecimal r37_no_of_transactions_financial_investment_government) {
+		this.r37_no_of_transactions_financial_investment_government = r37_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR37_amount_financial_investment_government(BigDecimal r37_amount_financial_investment_government) {
+		this.r37_amount_financial_investment_government = r37_amount_financial_investment_government;
+	}
+
+	public void setR37_no_of_transactions_direct_investment_government(
+			BigDecimal r37_no_of_transactions_direct_investment_government) {
+		this.r37_no_of_transactions_direct_investment_government = r37_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR37_amount_direct_investment_government(BigDecimal r37_amount_direct_investment_government) {
+		this.r37_amount_direct_investment_government = r37_amount_direct_investment_government;
+	}
+
+	public void setR37_no_of_transactions_services_government(BigDecimal r37_no_of_transactions_services_government) {
+		this.r37_no_of_transactions_services_government = r37_no_of_transactions_services_government;
+	}
+
+	public void setR37_amount_services_government(BigDecimal r37_amount_services_government) {
+		this.r37_amount_services_government = r37_amount_services_government;
+	}
+
+	public void setR37_no_of_transactions_trade_government(BigDecimal r37_no_of_transactions_trade_government) {
+		this.r37_no_of_transactions_trade_government = r37_no_of_transactions_trade_government;
+	}
+
+	public void setR37_amount_trade_government(BigDecimal r37_amount_trade_government) {
+		this.r37_amount_trade_government = r37_amount_trade_government;
+	}
+
+	public void setR37_no_of_transactions_financial_investment_reserve(
+			BigDecimal r37_no_of_transactions_financial_investment_reserve) {
+		this.r37_no_of_transactions_financial_investment_reserve = r37_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR37_amount_financial_investment_reserve(BigDecimal r37_amount_financial_investment_reserve) {
+		this.r37_amount_financial_investment_reserve = r37_amount_financial_investment_reserve;
+	}
+
+	public void setR37_no_of_transactions_direct_investment_reserve(
+			BigDecimal r37_no_of_transactions_direct_investment_reserve) {
+		this.r37_no_of_transactions_direct_investment_reserve = r37_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR37_amount_direct_investment_reserve(BigDecimal r37_amount_direct_investment_reserve) {
+		this.r37_amount_direct_investment_reserve = r37_amount_direct_investment_reserve;
+	}
+
+	public void setR37_no_of_transactions_services_reserve(BigDecimal r37_no_of_transactions_services_reserve) {
+		this.r37_no_of_transactions_services_reserve = r37_no_of_transactions_services_reserve;
+	}
+
+	public void setR37_amount_services_reserve(BigDecimal r37_amount_services_reserve) {
+		this.r37_amount_services_reserve = r37_amount_services_reserve;
+	}
+
+	public void setR37_no_of_transactions_trade_reserve(BigDecimal r37_no_of_transactions_trade_reserve) {
+		this.r37_no_of_transactions_trade_reserve = r37_no_of_transactions_trade_reserve;
+	}
+
+	public void setR37_amount_trade_reserve(BigDecimal r37_amount_trade_reserve) {
+		this.r37_amount_trade_reserve = r37_amount_trade_reserve;
+	}
+
+	public void setR37_no_of_transactions_financial_investment_gre(
+			BigDecimal r37_no_of_transactions_financial_investment_gre) {
+		this.r37_no_of_transactions_financial_investment_gre = r37_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR37_amount_financial_investment_gre(BigDecimal r37_amount_financial_investment_gre) {
+		this.r37_amount_financial_investment_gre = r37_amount_financial_investment_gre;
+	}
+
+	public void setR37_no_of_transactions_direct_investment_gre(
+			BigDecimal r37_no_of_transactions_direct_investment_gre) {
+		this.r37_no_of_transactions_direct_investment_gre = r37_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR37_amount_direct_investment_gre(BigDecimal r37_amount_direct_investment_gre) {
+		this.r37_amount_direct_investment_gre = r37_amount_direct_investment_gre;
+	}
+
+	public void setR37_no_of_transactions_services_gre(BigDecimal r37_no_of_transactions_services_gre) {
+		this.r37_no_of_transactions_services_gre = r37_no_of_transactions_services_gre;
+	}
+
+	public void setR37_amount_services_gre(BigDecimal r37_amount_services_gre) {
+		this.r37_amount_services_gre = r37_amount_services_gre;
+	}
+
+	public void setR37_no_of_transactions_trade_gre(BigDecimal r37_no_of_transactions_trade_gre) {
+		this.r37_no_of_transactions_trade_gre = r37_no_of_transactions_trade_gre;
+	}
+
+	public void setR37_amount_trade_gre(BigDecimal r37_amount_trade_gre) {
+		this.r37_amount_trade_gre = r37_amount_trade_gre;
+	}
+
+	public void setR37_no_of_transactions_financial_investment_corporate(
+			BigDecimal r37_no_of_transactions_financial_investment_corporate) {
+		this.r37_no_of_transactions_financial_investment_corporate = r37_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR37_amount_financial_investment_corporate(BigDecimal r37_amount_financial_investment_corporate) {
+		this.r37_amount_financial_investment_corporate = r37_amount_financial_investment_corporate;
+	}
+
+	public void setR37_no_of_transactions_direct_investment_corporate(
+			BigDecimal r37_no_of_transactions_direct_investment_corporate) {
+		this.r37_no_of_transactions_direct_investment_corporate = r37_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR37_amount_direct_investment_corporate(BigDecimal r37_amount_direct_investment_corporate) {
+		this.r37_amount_direct_investment_corporate = r37_amount_direct_investment_corporate;
+	}
+
+	public void setR37_no_of_transactions_services_corporate(BigDecimal r37_no_of_transactions_services_corporate) {
+		this.r37_no_of_transactions_services_corporate = r37_no_of_transactions_services_corporate;
+	}
+
+	public void setR37_amount_services_corporate(BigDecimal r37_amount_services_corporate) {
+		this.r37_amount_services_corporate = r37_amount_services_corporate;
+	}
+
+	public void setR37_no_of_transactions_trade_corporate(BigDecimal r37_no_of_transactions_trade_corporate) {
+		this.r37_no_of_transactions_trade_corporate = r37_no_of_transactions_trade_corporate;
+	}
+
+	public void setR37_amount_trade_corporate(BigDecimal r37_amount_trade_corporate) {
+		this.r37_amount_trade_corporate = r37_amount_trade_corporate;
+	}
+
+	public void setR37_no_of_transactions_financial_investment_sme(
+			BigDecimal r37_no_of_transactions_financial_investment_sme) {
+		this.r37_no_of_transactions_financial_investment_sme = r37_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR37_amount_financial_investment_sme(BigDecimal r37_amount_financial_investment_sme) {
+		this.r37_amount_financial_investment_sme = r37_amount_financial_investment_sme;
+	}
+
+	public void setR37_no_of_transactions_direct_investment_sme(
+			BigDecimal r37_no_of_transactions_direct_investment_sme) {
+		this.r37_no_of_transactions_direct_investment_sme = r37_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR37_amount_direct_investment_sme(BigDecimal r37_amount_direct_investment_sme) {
+		this.r37_amount_direct_investment_sme = r37_amount_direct_investment_sme;
+	}
+
+	public void setR37_no_of_transactions_services_sme(BigDecimal r37_no_of_transactions_services_sme) {
+		this.r37_no_of_transactions_services_sme = r37_no_of_transactions_services_sme;
+	}
+
+	public void setR37_amount_services_sme(BigDecimal r37_amount_services_sme) {
+		this.r37_amount_services_sme = r37_amount_services_sme;
+	}
+
+	public void setR37_no_of_transactions_trade_sme(BigDecimal r37_no_of_transactions_trade_sme) {
+		this.r37_no_of_transactions_trade_sme = r37_no_of_transactions_trade_sme;
+	}
+
+	public void setR37_amount_trade_sme(BigDecimal r37_amount_trade_sme) {
+		this.r37_amount_trade_sme = r37_amount_trade_sme;
+	}
+
+	public void setR37_no_of_transactions_financial_investment_individual(
+			BigDecimal r37_no_of_transactions_financial_investment_individual) {
+		this.r37_no_of_transactions_financial_investment_individual = r37_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR37_amount_financial_investment_individual(BigDecimal r37_amount_financial_investment_individual) {
+		this.r37_amount_financial_investment_individual = r37_amount_financial_investment_individual;
+	}
+
+	public void setR37_no_of_transactions_direct_investment_individual(
+			BigDecimal r37_no_of_transactions_direct_investment_individual) {
+		this.r37_no_of_transactions_direct_investment_individual = r37_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR37_amount_direct_investment_individual(BigDecimal r37_amount_direct_investment_individual) {
+		this.r37_amount_direct_investment_individual = r37_amount_direct_investment_individual;
+	}
+
+	public void setR37_no_of_transactions_family_support_individual(
+			BigDecimal r37_no_of_transactions_family_support_individual) {
+		this.r37_no_of_transactions_family_support_individual = r37_no_of_transactions_family_support_individual;
+	}
+
+	public void setR37_amount_family_support_individual(BigDecimal r37_amount_family_support_individual) {
+		this.r37_amount_family_support_individual = r37_amount_family_support_individual;
+	}
+
+	public void setR37_no_of_transactions_education_individual(BigDecimal r37_no_of_transactions_education_individual) {
+		this.r37_no_of_transactions_education_individual = r37_no_of_transactions_education_individual;
+	}
+
+	public void setR37_amount_education_individual(BigDecimal r37_amount_education_individual) {
+		this.r37_amount_education_individual = r37_amount_education_individual;
+	}
+
+	public void setR37_no_of_transactions_medical_individual(BigDecimal r37_no_of_transactions_medical_individual) {
+		this.r37_no_of_transactions_medical_individual = r37_no_of_transactions_medical_individual;
+	}
+
+	public void setR37_amount_medical_individual(BigDecimal r37_amount_medical_individual) {
+		this.r37_amount_medical_individual = r37_amount_medical_individual;
+	}
+
+	public void setR37_no_of_transactions_tourism_individual(BigDecimal r37_no_of_transactions_tourism_individual) {
+		this.r37_no_of_transactions_tourism_individual = r37_no_of_transactions_tourism_individual;
+	}
+
+	public void setR37_amount_tourism_individual(BigDecimal r37_amount_tourism_individual) {
+		this.r37_amount_tourism_individual = r37_amount_tourism_individual;
+	}
+
+	public void setR37_no_of_transactions_debt_settlement_individual(
+			BigDecimal r37_no_of_transactions_debt_settlement_individual) {
+		this.r37_no_of_transactions_debt_settlement_individual = r37_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR37_amount_debt_settlement_individual(BigDecimal r37_amount_debt_settlement_individual) {
+		this.r37_amount_debt_settlement_individual = r37_amount_debt_settlement_individual;
+	}
+
+	public void setR37_no_of_transactions_other_services_individual(
+			BigDecimal r37_no_of_transactions_other_services_individual) {
+		this.r37_no_of_transactions_other_services_individual = r37_no_of_transactions_other_services_individual;
+	}
+
+	public void setR37_amount_other_services_individual(BigDecimal r37_amount_other_services_individual) {
+		this.r37_amount_other_services_individual = r37_amount_other_services_individual;
+	}
+
+	public void setR37_total_no_of_transactions(BigDecimal r37_total_no_of_transactions) {
+		this.r37_total_no_of_transactions = r37_total_no_of_transactions;
+	}
+
+	public void setR37_grand_total(BigDecimal r37_grand_total) {
+		this.r37_grand_total = r37_grand_total;
+	}
+
+	public void setR38_country_break_down(String r38_country_break_down) {
+		this.r38_country_break_down = r38_country_break_down;
+	}
+
+	public void setR38_no_of_transactions_financial_investment_government(
+			BigDecimal r38_no_of_transactions_financial_investment_government) {
+		this.r38_no_of_transactions_financial_investment_government = r38_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR38_amount_financial_investment_government(BigDecimal r38_amount_financial_investment_government) {
+		this.r38_amount_financial_investment_government = r38_amount_financial_investment_government;
+	}
+
+	public void setR38_no_of_transactions_direct_investment_government(
+			BigDecimal r38_no_of_transactions_direct_investment_government) {
+		this.r38_no_of_transactions_direct_investment_government = r38_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR38_amount_direct_investment_government(BigDecimal r38_amount_direct_investment_government) {
+		this.r38_amount_direct_investment_government = r38_amount_direct_investment_government;
+	}
+
+	public void setR38_no_of_transactions_services_government(BigDecimal r38_no_of_transactions_services_government) {
+		this.r38_no_of_transactions_services_government = r38_no_of_transactions_services_government;
+	}
+
+	public void setR38_amount_services_government(BigDecimal r38_amount_services_government) {
+		this.r38_amount_services_government = r38_amount_services_government;
+	}
+
+	public void setR38_no_of_transactions_trade_government(BigDecimal r38_no_of_transactions_trade_government) {
+		this.r38_no_of_transactions_trade_government = r38_no_of_transactions_trade_government;
+	}
+
+	public void setR38_amount_trade_government(BigDecimal r38_amount_trade_government) {
+		this.r38_amount_trade_government = r38_amount_trade_government;
+	}
+
+	public void setR38_no_of_transactions_financial_investment_reserve(
+			BigDecimal r38_no_of_transactions_financial_investment_reserve) {
+		this.r38_no_of_transactions_financial_investment_reserve = r38_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR38_amount_financial_investment_reserve(BigDecimal r38_amount_financial_investment_reserve) {
+		this.r38_amount_financial_investment_reserve = r38_amount_financial_investment_reserve;
+	}
+
+	public void setR38_no_of_transactions_direct_investment_reserve(
+			BigDecimal r38_no_of_transactions_direct_investment_reserve) {
+		this.r38_no_of_transactions_direct_investment_reserve = r38_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR38_amount_direct_investment_reserve(BigDecimal r38_amount_direct_investment_reserve) {
+		this.r38_amount_direct_investment_reserve = r38_amount_direct_investment_reserve;
+	}
+
+	public void setR38_no_of_transactions_services_reserve(BigDecimal r38_no_of_transactions_services_reserve) {
+		this.r38_no_of_transactions_services_reserve = r38_no_of_transactions_services_reserve;
+	}
+
+	public void setR38_amount_services_reserve(BigDecimal r38_amount_services_reserve) {
+		this.r38_amount_services_reserve = r38_amount_services_reserve;
+	}
+
+	public void setR38_no_of_transactions_trade_reserve(BigDecimal r38_no_of_transactions_trade_reserve) {
+		this.r38_no_of_transactions_trade_reserve = r38_no_of_transactions_trade_reserve;
+	}
+
+	public void setR38_amount_trade_reserve(BigDecimal r38_amount_trade_reserve) {
+		this.r38_amount_trade_reserve = r38_amount_trade_reserve;
+	}
+
+	public void setR38_no_of_transactions_financial_investment_gre(
+			BigDecimal r38_no_of_transactions_financial_investment_gre) {
+		this.r38_no_of_transactions_financial_investment_gre = r38_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR38_amount_financial_investment_gre(BigDecimal r38_amount_financial_investment_gre) {
+		this.r38_amount_financial_investment_gre = r38_amount_financial_investment_gre;
+	}
+
+	public void setR38_no_of_transactions_direct_investment_gre(
+			BigDecimal r38_no_of_transactions_direct_investment_gre) {
+		this.r38_no_of_transactions_direct_investment_gre = r38_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR38_amount_direct_investment_gre(BigDecimal r38_amount_direct_investment_gre) {
+		this.r38_amount_direct_investment_gre = r38_amount_direct_investment_gre;
+	}
+
+	public void setR38_no_of_transactions_services_gre(BigDecimal r38_no_of_transactions_services_gre) {
+		this.r38_no_of_transactions_services_gre = r38_no_of_transactions_services_gre;
+	}
+
+	public void setR38_amount_services_gre(BigDecimal r38_amount_services_gre) {
+		this.r38_amount_services_gre = r38_amount_services_gre;
+	}
+
+	public void setR38_no_of_transactions_trade_gre(BigDecimal r38_no_of_transactions_trade_gre) {
+		this.r38_no_of_transactions_trade_gre = r38_no_of_transactions_trade_gre;
+	}
+
+	public void setR38_amount_trade_gre(BigDecimal r38_amount_trade_gre) {
+		this.r38_amount_trade_gre = r38_amount_trade_gre;
+	}
+
+	public void setR38_no_of_transactions_financial_investment_corporate(
+			BigDecimal r38_no_of_transactions_financial_investment_corporate) {
+		this.r38_no_of_transactions_financial_investment_corporate = r38_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR38_amount_financial_investment_corporate(BigDecimal r38_amount_financial_investment_corporate) {
+		this.r38_amount_financial_investment_corporate = r38_amount_financial_investment_corporate;
+	}
+
+	public void setR38_no_of_transactions_direct_investment_corporate(
+			BigDecimal r38_no_of_transactions_direct_investment_corporate) {
+		this.r38_no_of_transactions_direct_investment_corporate = r38_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR38_amount_direct_investment_corporate(BigDecimal r38_amount_direct_investment_corporate) {
+		this.r38_amount_direct_investment_corporate = r38_amount_direct_investment_corporate;
+	}
+
+	public void setR38_no_of_transactions_services_corporate(BigDecimal r38_no_of_transactions_services_corporate) {
+		this.r38_no_of_transactions_services_corporate = r38_no_of_transactions_services_corporate;
+	}
+
+	public void setR38_amount_services_corporate(BigDecimal r38_amount_services_corporate) {
+		this.r38_amount_services_corporate = r38_amount_services_corporate;
+	}
+
+	public void setR38_no_of_transactions_trade_corporate(BigDecimal r38_no_of_transactions_trade_corporate) {
+		this.r38_no_of_transactions_trade_corporate = r38_no_of_transactions_trade_corporate;
+	}
+
+	public void setR38_amount_trade_corporate(BigDecimal r38_amount_trade_corporate) {
+		this.r38_amount_trade_corporate = r38_amount_trade_corporate;
+	}
+
+	public void setR38_no_of_transactions_financial_investment_sme(
+			BigDecimal r38_no_of_transactions_financial_investment_sme) {
+		this.r38_no_of_transactions_financial_investment_sme = r38_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR38_amount_financial_investment_sme(BigDecimal r38_amount_financial_investment_sme) {
+		this.r38_amount_financial_investment_sme = r38_amount_financial_investment_sme;
+	}
+
+	public void setR38_no_of_transactions_direct_investment_sme(
+			BigDecimal r38_no_of_transactions_direct_investment_sme) {
+		this.r38_no_of_transactions_direct_investment_sme = r38_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR38_amount_direct_investment_sme(BigDecimal r38_amount_direct_investment_sme) {
+		this.r38_amount_direct_investment_sme = r38_amount_direct_investment_sme;
+	}
+
+	public void setR38_no_of_transactions_services_sme(BigDecimal r38_no_of_transactions_services_sme) {
+		this.r38_no_of_transactions_services_sme = r38_no_of_transactions_services_sme;
+	}
+
+	public void setR38_amount_services_sme(BigDecimal r38_amount_services_sme) {
+		this.r38_amount_services_sme = r38_amount_services_sme;
+	}
+
+	public void setR38_no_of_transactions_trade_sme(BigDecimal r38_no_of_transactions_trade_sme) {
+		this.r38_no_of_transactions_trade_sme = r38_no_of_transactions_trade_sme;
+	}
+
+	public void setR38_amount_trade_sme(BigDecimal r38_amount_trade_sme) {
+		this.r38_amount_trade_sme = r38_amount_trade_sme;
+	}
+
+	public void setR38_no_of_transactions_financial_investment_individual(
+			BigDecimal r38_no_of_transactions_financial_investment_individual) {
+		this.r38_no_of_transactions_financial_investment_individual = r38_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR38_amount_financial_investment_individual(BigDecimal r38_amount_financial_investment_individual) {
+		this.r38_amount_financial_investment_individual = r38_amount_financial_investment_individual;
+	}
+
+	public void setR38_no_of_transactions_direct_investment_individual(
+			BigDecimal r38_no_of_transactions_direct_investment_individual) {
+		this.r38_no_of_transactions_direct_investment_individual = r38_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR38_amount_direct_investment_individual(BigDecimal r38_amount_direct_investment_individual) {
+		this.r38_amount_direct_investment_individual = r38_amount_direct_investment_individual;
+	}
+
+	public void setR38_no_of_transactions_family_support_individual(
+			BigDecimal r38_no_of_transactions_family_support_individual) {
+		this.r38_no_of_transactions_family_support_individual = r38_no_of_transactions_family_support_individual;
+	}
+
+	public void setR38_amount_family_support_individual(BigDecimal r38_amount_family_support_individual) {
+		this.r38_amount_family_support_individual = r38_amount_family_support_individual;
+	}
+
+	public void setR38_no_of_transactions_education_individual(BigDecimal r38_no_of_transactions_education_individual) {
+		this.r38_no_of_transactions_education_individual = r38_no_of_transactions_education_individual;
+	}
+
+	public void setR38_amount_education_individual(BigDecimal r38_amount_education_individual) {
+		this.r38_amount_education_individual = r38_amount_education_individual;
+	}
+
+	public void setR38_no_of_transactions_medical_individual(BigDecimal r38_no_of_transactions_medical_individual) {
+		this.r38_no_of_transactions_medical_individual = r38_no_of_transactions_medical_individual;
+	}
+
+	public void setR38_amount_medical_individual(BigDecimal r38_amount_medical_individual) {
+		this.r38_amount_medical_individual = r38_amount_medical_individual;
+	}
+
+	public void setR38_no_of_transactions_tourism_individual(BigDecimal r38_no_of_transactions_tourism_individual) {
+		this.r38_no_of_transactions_tourism_individual = r38_no_of_transactions_tourism_individual;
+	}
+
+	public void setR38_amount_tourism_individual(BigDecimal r38_amount_tourism_individual) {
+		this.r38_amount_tourism_individual = r38_amount_tourism_individual;
+	}
+
+	public void setR38_no_of_transactions_debt_settlement_individual(
+			BigDecimal r38_no_of_transactions_debt_settlement_individual) {
+		this.r38_no_of_transactions_debt_settlement_individual = r38_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR38_amount_debt_settlement_individual(BigDecimal r38_amount_debt_settlement_individual) {
+		this.r38_amount_debt_settlement_individual = r38_amount_debt_settlement_individual;
+	}
+
+	public void setR38_no_of_transactions_other_services_individual(
+			BigDecimal r38_no_of_transactions_other_services_individual) {
+		this.r38_no_of_transactions_other_services_individual = r38_no_of_transactions_other_services_individual;
+	}
+
+	public void setR38_amount_other_services_individual(BigDecimal r38_amount_other_services_individual) {
+		this.r38_amount_other_services_individual = r38_amount_other_services_individual;
+	}
+
+	public void setR38_total_no_of_transactions(BigDecimal r38_total_no_of_transactions) {
+		this.r38_total_no_of_transactions = r38_total_no_of_transactions;
+	}
+
+	public void setR38_grand_total(BigDecimal r38_grand_total) {
+		this.r38_grand_total = r38_grand_total;
+	}
+
+	public void setR39_country_break_down(String r39_country_break_down) {
+		this.r39_country_break_down = r39_country_break_down;
+	}
+
+	public void setR39_no_of_transactions_financial_investment_government(
+			BigDecimal r39_no_of_transactions_financial_investment_government) {
+		this.r39_no_of_transactions_financial_investment_government = r39_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR39_amount_financial_investment_government(BigDecimal r39_amount_financial_investment_government) {
+		this.r39_amount_financial_investment_government = r39_amount_financial_investment_government;
+	}
+
+	public void setR39_no_of_transactions_direct_investment_government(
+			BigDecimal r39_no_of_transactions_direct_investment_government) {
+		this.r39_no_of_transactions_direct_investment_government = r39_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR39_amount_direct_investment_government(BigDecimal r39_amount_direct_investment_government) {
+		this.r39_amount_direct_investment_government = r39_amount_direct_investment_government;
+	}
+
+	public void setR39_no_of_transactions_services_government(BigDecimal r39_no_of_transactions_services_government) {
+		this.r39_no_of_transactions_services_government = r39_no_of_transactions_services_government;
+	}
+
+	public void setR39_amount_services_government(BigDecimal r39_amount_services_government) {
+		this.r39_amount_services_government = r39_amount_services_government;
+	}
+
+	public void setR39_no_of_transactions_trade_government(BigDecimal r39_no_of_transactions_trade_government) {
+		this.r39_no_of_transactions_trade_government = r39_no_of_transactions_trade_government;
+	}
+
+	public void setR39_amount_trade_government(BigDecimal r39_amount_trade_government) {
+		this.r39_amount_trade_government = r39_amount_trade_government;
+	}
+
+	public void setR39_no_of_transactions_financial_investment_reserve(
+			BigDecimal r39_no_of_transactions_financial_investment_reserve) {
+		this.r39_no_of_transactions_financial_investment_reserve = r39_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR39_amount_financial_investment_reserve(BigDecimal r39_amount_financial_investment_reserve) {
+		this.r39_amount_financial_investment_reserve = r39_amount_financial_investment_reserve;
+	}
+
+	public void setR39_no_of_transactions_direct_investment_reserve(
+			BigDecimal r39_no_of_transactions_direct_investment_reserve) {
+		this.r39_no_of_transactions_direct_investment_reserve = r39_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR39_amount_direct_investment_reserve(BigDecimal r39_amount_direct_investment_reserve) {
+		this.r39_amount_direct_investment_reserve = r39_amount_direct_investment_reserve;
+	}
+
+	public void setR39_no_of_transactions_services_reserve(BigDecimal r39_no_of_transactions_services_reserve) {
+		this.r39_no_of_transactions_services_reserve = r39_no_of_transactions_services_reserve;
+	}
+
+	public void setR39_amount_services_reserve(BigDecimal r39_amount_services_reserve) {
+		this.r39_amount_services_reserve = r39_amount_services_reserve;
+	}
+
+	public void setR39_no_of_transactions_trade_reserve(BigDecimal r39_no_of_transactions_trade_reserve) {
+		this.r39_no_of_transactions_trade_reserve = r39_no_of_transactions_trade_reserve;
+	}
+
+	public void setR39_amount_trade_reserve(BigDecimal r39_amount_trade_reserve) {
+		this.r39_amount_trade_reserve = r39_amount_trade_reserve;
+	}
+
+	public void setR39_no_of_transactions_financial_investment_gre(
+			BigDecimal r39_no_of_transactions_financial_investment_gre) {
+		this.r39_no_of_transactions_financial_investment_gre = r39_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR39_amount_financial_investment_gre(BigDecimal r39_amount_financial_investment_gre) {
+		this.r39_amount_financial_investment_gre = r39_amount_financial_investment_gre;
+	}
+
+	public void setR39_no_of_transactions_direct_investment_gre(
+			BigDecimal r39_no_of_transactions_direct_investment_gre) {
+		this.r39_no_of_transactions_direct_investment_gre = r39_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR39_amount_direct_investment_gre(BigDecimal r39_amount_direct_investment_gre) {
+		this.r39_amount_direct_investment_gre = r39_amount_direct_investment_gre;
+	}
+
+	public void setR39_no_of_transactions_services_gre(BigDecimal r39_no_of_transactions_services_gre) {
+		this.r39_no_of_transactions_services_gre = r39_no_of_transactions_services_gre;
+	}
+
+	public void setR39_amount_services_gre(BigDecimal r39_amount_services_gre) {
+		this.r39_amount_services_gre = r39_amount_services_gre;
+	}
+
+	public void setR39_no_of_transactions_trade_gre(BigDecimal r39_no_of_transactions_trade_gre) {
+		this.r39_no_of_transactions_trade_gre = r39_no_of_transactions_trade_gre;
+	}
+
+	public void setR39_amount_trade_gre(BigDecimal r39_amount_trade_gre) {
+		this.r39_amount_trade_gre = r39_amount_trade_gre;
+	}
+
+	public void setR39_no_of_transactions_financial_investment_corporate(
+			BigDecimal r39_no_of_transactions_financial_investment_corporate) {
+		this.r39_no_of_transactions_financial_investment_corporate = r39_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR39_amount_financial_investment_corporate(BigDecimal r39_amount_financial_investment_corporate) {
+		this.r39_amount_financial_investment_corporate = r39_amount_financial_investment_corporate;
+	}
+
+	public void setR39_no_of_transactions_direct_investment_corporate(
+			BigDecimal r39_no_of_transactions_direct_investment_corporate) {
+		this.r39_no_of_transactions_direct_investment_corporate = r39_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR39_amount_direct_investment_corporate(BigDecimal r39_amount_direct_investment_corporate) {
+		this.r39_amount_direct_investment_corporate = r39_amount_direct_investment_corporate;
+	}
+
+	public void setR39_no_of_transactions_services_corporate(BigDecimal r39_no_of_transactions_services_corporate) {
+		this.r39_no_of_transactions_services_corporate = r39_no_of_transactions_services_corporate;
+	}
+
+	public void setR39_amount_services_corporate(BigDecimal r39_amount_services_corporate) {
+		this.r39_amount_services_corporate = r39_amount_services_corporate;
+	}
+
+	public void setR39_no_of_transactions_trade_corporate(BigDecimal r39_no_of_transactions_trade_corporate) {
+		this.r39_no_of_transactions_trade_corporate = r39_no_of_transactions_trade_corporate;
+	}
+
+	public void setR39_amount_trade_corporate(BigDecimal r39_amount_trade_corporate) {
+		this.r39_amount_trade_corporate = r39_amount_trade_corporate;
+	}
+
+	public void setR39_no_of_transactions_financial_investment_sme(
+			BigDecimal r39_no_of_transactions_financial_investment_sme) {
+		this.r39_no_of_transactions_financial_investment_sme = r39_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR39_amount_financial_investment_sme(BigDecimal r39_amount_financial_investment_sme) {
+		this.r39_amount_financial_investment_sme = r39_amount_financial_investment_sme;
+	}
+
+	public void setR39_no_of_transactions_direct_investment_sme(
+			BigDecimal r39_no_of_transactions_direct_investment_sme) {
+		this.r39_no_of_transactions_direct_investment_sme = r39_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR39_amount_direct_investment_sme(BigDecimal r39_amount_direct_investment_sme) {
+		this.r39_amount_direct_investment_sme = r39_amount_direct_investment_sme;
+	}
+
+	public void setR39_no_of_transactions_services_sme(BigDecimal r39_no_of_transactions_services_sme) {
+		this.r39_no_of_transactions_services_sme = r39_no_of_transactions_services_sme;
+	}
+
+	public void setR39_amount_services_sme(BigDecimal r39_amount_services_sme) {
+		this.r39_amount_services_sme = r39_amount_services_sme;
+	}
+
+	public void setR39_no_of_transactions_trade_sme(BigDecimal r39_no_of_transactions_trade_sme) {
+		this.r39_no_of_transactions_trade_sme = r39_no_of_transactions_trade_sme;
+	}
+
+	public void setR39_amount_trade_sme(BigDecimal r39_amount_trade_sme) {
+		this.r39_amount_trade_sme = r39_amount_trade_sme;
+	}
+
+	public void setR39_no_of_transactions_financial_investment_individual(
+			BigDecimal r39_no_of_transactions_financial_investment_individual) {
+		this.r39_no_of_transactions_financial_investment_individual = r39_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR39_amount_financial_investment_individual(BigDecimal r39_amount_financial_investment_individual) {
+		this.r39_amount_financial_investment_individual = r39_amount_financial_investment_individual;
+	}
+
+	public void setR39_no_of_transactions_direct_investment_individual(
+			BigDecimal r39_no_of_transactions_direct_investment_individual) {
+		this.r39_no_of_transactions_direct_investment_individual = r39_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR39_amount_direct_investment_individual(BigDecimal r39_amount_direct_investment_individual) {
+		this.r39_amount_direct_investment_individual = r39_amount_direct_investment_individual;
+	}
+
+	public void setR39_no_of_transactions_family_support_individual(
+			BigDecimal r39_no_of_transactions_family_support_individual) {
+		this.r39_no_of_transactions_family_support_individual = r39_no_of_transactions_family_support_individual;
+	}
+
+	public void setR39_amount_family_support_individual(BigDecimal r39_amount_family_support_individual) {
+		this.r39_amount_family_support_individual = r39_amount_family_support_individual;
+	}
+
+	public void setR39_no_of_transactions_education_individual(BigDecimal r39_no_of_transactions_education_individual) {
+		this.r39_no_of_transactions_education_individual = r39_no_of_transactions_education_individual;
+	}
+
+	public void setR39_amount_education_individual(BigDecimal r39_amount_education_individual) {
+		this.r39_amount_education_individual = r39_amount_education_individual;
+	}
+
+	public void setR39_no_of_transactions_medical_individual(BigDecimal r39_no_of_transactions_medical_individual) {
+		this.r39_no_of_transactions_medical_individual = r39_no_of_transactions_medical_individual;
+	}
+
+	public void setR39_amount_medical_individual(BigDecimal r39_amount_medical_individual) {
+		this.r39_amount_medical_individual = r39_amount_medical_individual;
+	}
+
+	public void setR39_no_of_transactions_tourism_individual(BigDecimal r39_no_of_transactions_tourism_individual) {
+		this.r39_no_of_transactions_tourism_individual = r39_no_of_transactions_tourism_individual;
+	}
+
+	public void setR39_amount_tourism_individual(BigDecimal r39_amount_tourism_individual) {
+		this.r39_amount_tourism_individual = r39_amount_tourism_individual;
+	}
+
+	public void setR39_no_of_transactions_debt_settlement_individual(
+			BigDecimal r39_no_of_transactions_debt_settlement_individual) {
+		this.r39_no_of_transactions_debt_settlement_individual = r39_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR39_amount_debt_settlement_individual(BigDecimal r39_amount_debt_settlement_individual) {
+		this.r39_amount_debt_settlement_individual = r39_amount_debt_settlement_individual;
+	}
+
+	public void setR39_no_of_transactions_other_services_individual(
+			BigDecimal r39_no_of_transactions_other_services_individual) {
+		this.r39_no_of_transactions_other_services_individual = r39_no_of_transactions_other_services_individual;
+	}
+
+	public void setR39_amount_other_services_individual(BigDecimal r39_amount_other_services_individual) {
+		this.r39_amount_other_services_individual = r39_amount_other_services_individual;
+	}
+
+	public void setR39_total_no_of_transactions(BigDecimal r39_total_no_of_transactions) {
+		this.r39_total_no_of_transactions = r39_total_no_of_transactions;
+	}
+
+	public void setR39_grand_total(BigDecimal r39_grand_total) {
+		this.r39_grand_total = r39_grand_total;
+	}
+
+	public void setR40_country_break_down(String r40_country_break_down) {
+		this.r40_country_break_down = r40_country_break_down;
+	}
+
+	public void setR40_no_of_transactions_financial_investment_government(
+			BigDecimal r40_no_of_transactions_financial_investment_government) {
+		this.r40_no_of_transactions_financial_investment_government = r40_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR40_amount_financial_investment_government(BigDecimal r40_amount_financial_investment_government) {
+		this.r40_amount_financial_investment_government = r40_amount_financial_investment_government;
+	}
+
+	public void setR40_no_of_transactions_direct_investment_government(
+			BigDecimal r40_no_of_transactions_direct_investment_government) {
+		this.r40_no_of_transactions_direct_investment_government = r40_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR40_amount_direct_investment_government(BigDecimal r40_amount_direct_investment_government) {
+		this.r40_amount_direct_investment_government = r40_amount_direct_investment_government;
+	}
+
+	public void setR40_no_of_transactions_services_government(BigDecimal r40_no_of_transactions_services_government) {
+		this.r40_no_of_transactions_services_government = r40_no_of_transactions_services_government;
+	}
+
+	public void setR40_amount_services_government(BigDecimal r40_amount_services_government) {
+		this.r40_amount_services_government = r40_amount_services_government;
+	}
+
+	public void setR40_no_of_transactions_trade_government(BigDecimal r40_no_of_transactions_trade_government) {
+		this.r40_no_of_transactions_trade_government = r40_no_of_transactions_trade_government;
+	}
+
+	public void setR40_amount_trade_government(BigDecimal r40_amount_trade_government) {
+		this.r40_amount_trade_government = r40_amount_trade_government;
+	}
+
+	public void setR40_no_of_transactions_financial_investment_reserve(
+			BigDecimal r40_no_of_transactions_financial_investment_reserve) {
+		this.r40_no_of_transactions_financial_investment_reserve = r40_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR40_amount_financial_investment_reserve(BigDecimal r40_amount_financial_investment_reserve) {
+		this.r40_amount_financial_investment_reserve = r40_amount_financial_investment_reserve;
+	}
+
+	public void setR40_no_of_transactions_direct_investment_reserve(
+			BigDecimal r40_no_of_transactions_direct_investment_reserve) {
+		this.r40_no_of_transactions_direct_investment_reserve = r40_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR40_amount_direct_investment_reserve(BigDecimal r40_amount_direct_investment_reserve) {
+		this.r40_amount_direct_investment_reserve = r40_amount_direct_investment_reserve;
+	}
+
+	public void setR40_no_of_transactions_services_reserve(BigDecimal r40_no_of_transactions_services_reserve) {
+		this.r40_no_of_transactions_services_reserve = r40_no_of_transactions_services_reserve;
+	}
+
+	public void setR40_amount_services_reserve(BigDecimal r40_amount_services_reserve) {
+		this.r40_amount_services_reserve = r40_amount_services_reserve;
+	}
+
+	public void setR40_no_of_transactions_trade_reserve(BigDecimal r40_no_of_transactions_trade_reserve) {
+		this.r40_no_of_transactions_trade_reserve = r40_no_of_transactions_trade_reserve;
+	}
+
+	public void setR40_amount_trade_reserve(BigDecimal r40_amount_trade_reserve) {
+		this.r40_amount_trade_reserve = r40_amount_trade_reserve;
+	}
+
+	public void setR40_no_of_transactions_financial_investment_gre(
+			BigDecimal r40_no_of_transactions_financial_investment_gre) {
+		this.r40_no_of_transactions_financial_investment_gre = r40_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR40_amount_financial_investment_gre(BigDecimal r40_amount_financial_investment_gre) {
+		this.r40_amount_financial_investment_gre = r40_amount_financial_investment_gre;
+	}
+
+	public void setR40_no_of_transactions_direct_investment_gre(
+			BigDecimal r40_no_of_transactions_direct_investment_gre) {
+		this.r40_no_of_transactions_direct_investment_gre = r40_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR40_amount_direct_investment_gre(BigDecimal r40_amount_direct_investment_gre) {
+		this.r40_amount_direct_investment_gre = r40_amount_direct_investment_gre;
+	}
+
+	public void setR40_no_of_transactions_services_gre(BigDecimal r40_no_of_transactions_services_gre) {
+		this.r40_no_of_transactions_services_gre = r40_no_of_transactions_services_gre;
+	}
+
+	public void setR40_amount_services_gre(BigDecimal r40_amount_services_gre) {
+		this.r40_amount_services_gre = r40_amount_services_gre;
+	}
+
+	public void setR40_no_of_transactions_trade_gre(BigDecimal r40_no_of_transactions_trade_gre) {
+		this.r40_no_of_transactions_trade_gre = r40_no_of_transactions_trade_gre;
+	}
+
+	public void setR40_amount_trade_gre(BigDecimal r40_amount_trade_gre) {
+		this.r40_amount_trade_gre = r40_amount_trade_gre;
+	}
+
+	public void setR40_no_of_transactions_financial_investment_corporate(
+			BigDecimal r40_no_of_transactions_financial_investment_corporate) {
+		this.r40_no_of_transactions_financial_investment_corporate = r40_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR40_amount_financial_investment_corporate(BigDecimal r40_amount_financial_investment_corporate) {
+		this.r40_amount_financial_investment_corporate = r40_amount_financial_investment_corporate;
+	}
+
+	public void setR40_no_of_transactions_direct_investment_corporate(
+			BigDecimal r40_no_of_transactions_direct_investment_corporate) {
+		this.r40_no_of_transactions_direct_investment_corporate = r40_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR40_amount_direct_investment_corporate(BigDecimal r40_amount_direct_investment_corporate) {
+		this.r40_amount_direct_investment_corporate = r40_amount_direct_investment_corporate;
+	}
+
+	public void setR40_no_of_transactions_services_corporate(BigDecimal r40_no_of_transactions_services_corporate) {
+		this.r40_no_of_transactions_services_corporate = r40_no_of_transactions_services_corporate;
+	}
+
+	public void setR40_amount_services_corporate(BigDecimal r40_amount_services_corporate) {
+		this.r40_amount_services_corporate = r40_amount_services_corporate;
+	}
+
+	public void setR40_no_of_transactions_trade_corporate(BigDecimal r40_no_of_transactions_trade_corporate) {
+		this.r40_no_of_transactions_trade_corporate = r40_no_of_transactions_trade_corporate;
+	}
+
+	public void setR40_amount_trade_corporate(BigDecimal r40_amount_trade_corporate) {
+		this.r40_amount_trade_corporate = r40_amount_trade_corporate;
+	}
+
+	public void setR40_no_of_transactions_financial_investment_sme(
+			BigDecimal r40_no_of_transactions_financial_investment_sme) {
+		this.r40_no_of_transactions_financial_investment_sme = r40_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR40_amount_financial_investment_sme(BigDecimal r40_amount_financial_investment_sme) {
+		this.r40_amount_financial_investment_sme = r40_amount_financial_investment_sme;
+	}
+
+	public void setR40_no_of_transactions_direct_investment_sme(
+			BigDecimal r40_no_of_transactions_direct_investment_sme) {
+		this.r40_no_of_transactions_direct_investment_sme = r40_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR40_amount_direct_investment_sme(BigDecimal r40_amount_direct_investment_sme) {
+		this.r40_amount_direct_investment_sme = r40_amount_direct_investment_sme;
+	}
+
+	public void setR40_no_of_transactions_services_sme(BigDecimal r40_no_of_transactions_services_sme) {
+		this.r40_no_of_transactions_services_sme = r40_no_of_transactions_services_sme;
+	}
+
+	public void setR40_amount_services_sme(BigDecimal r40_amount_services_sme) {
+		this.r40_amount_services_sme = r40_amount_services_sme;
+	}
+
+	public void setR40_no_of_transactions_trade_sme(BigDecimal r40_no_of_transactions_trade_sme) {
+		this.r40_no_of_transactions_trade_sme = r40_no_of_transactions_trade_sme;
+	}
+
+	public void setR40_amount_trade_sme(BigDecimal r40_amount_trade_sme) {
+		this.r40_amount_trade_sme = r40_amount_trade_sme;
+	}
+
+	public void setR40_no_of_transactions_financial_investment_individual(
+			BigDecimal r40_no_of_transactions_financial_investment_individual) {
+		this.r40_no_of_transactions_financial_investment_individual = r40_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR40_amount_financial_investment_individual(BigDecimal r40_amount_financial_investment_individual) {
+		this.r40_amount_financial_investment_individual = r40_amount_financial_investment_individual;
+	}
+
+	public void setR40_no_of_transactions_direct_investment_individual(
+			BigDecimal r40_no_of_transactions_direct_investment_individual) {
+		this.r40_no_of_transactions_direct_investment_individual = r40_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR40_amount_direct_investment_individual(BigDecimal r40_amount_direct_investment_individual) {
+		this.r40_amount_direct_investment_individual = r40_amount_direct_investment_individual;
+	}
+
+	public void setR40_no_of_transactions_family_support_individual(
+			BigDecimal r40_no_of_transactions_family_support_individual) {
+		this.r40_no_of_transactions_family_support_individual = r40_no_of_transactions_family_support_individual;
+	}
+
+	public void setR40_amount_family_support_individual(BigDecimal r40_amount_family_support_individual) {
+		this.r40_amount_family_support_individual = r40_amount_family_support_individual;
+	}
+
+	public void setR40_no_of_transactions_education_individual(BigDecimal r40_no_of_transactions_education_individual) {
+		this.r40_no_of_transactions_education_individual = r40_no_of_transactions_education_individual;
+	}
+
+	public void setR40_amount_education_individual(BigDecimal r40_amount_education_individual) {
+		this.r40_amount_education_individual = r40_amount_education_individual;
+	}
+
+	public void setR40_no_of_transactions_medical_individual(BigDecimal r40_no_of_transactions_medical_individual) {
+		this.r40_no_of_transactions_medical_individual = r40_no_of_transactions_medical_individual;
+	}
+
+	public void setR40_amount_medical_individual(BigDecimal r40_amount_medical_individual) {
+		this.r40_amount_medical_individual = r40_amount_medical_individual;
+	}
+
+	public void setR40_no_of_transactions_tourism_individual(BigDecimal r40_no_of_transactions_tourism_individual) {
+		this.r40_no_of_transactions_tourism_individual = r40_no_of_transactions_tourism_individual;
+	}
+
+	public void setR40_amount_tourism_individual(BigDecimal r40_amount_tourism_individual) {
+		this.r40_amount_tourism_individual = r40_amount_tourism_individual;
+	}
+
+	public void setR40_no_of_transactions_debt_settlement_individual(
+			BigDecimal r40_no_of_transactions_debt_settlement_individual) {
+		this.r40_no_of_transactions_debt_settlement_individual = r40_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR40_amount_debt_settlement_individual(BigDecimal r40_amount_debt_settlement_individual) {
+		this.r40_amount_debt_settlement_individual = r40_amount_debt_settlement_individual;
+	}
+
+	public void setR40_no_of_transactions_other_services_individual(
+			BigDecimal r40_no_of_transactions_other_services_individual) {
+		this.r40_no_of_transactions_other_services_individual = r40_no_of_transactions_other_services_individual;
+	}
+
+	public void setR40_amount_other_services_individual(BigDecimal r40_amount_other_services_individual) {
+		this.r40_amount_other_services_individual = r40_amount_other_services_individual;
+	}
+
+	public void setR40_total_no_of_transactions(BigDecimal r40_total_no_of_transactions) {
+		this.r40_total_no_of_transactions = r40_total_no_of_transactions;
+	}
+
+	public void setR40_grand_total(BigDecimal r40_grand_total) {
+		this.r40_grand_total = r40_grand_total;
+	}
+
+	public void setR41_country_break_down(String r41_country_break_down) {
+		this.r41_country_break_down = r41_country_break_down;
+	}
+
+	public void setR41_no_of_transactions_financial_investment_government(
+			BigDecimal r41_no_of_transactions_financial_investment_government) {
+		this.r41_no_of_transactions_financial_investment_government = r41_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR41_amount_financial_investment_government(BigDecimal r41_amount_financial_investment_government) {
+		this.r41_amount_financial_investment_government = r41_amount_financial_investment_government;
+	}
+
+	public void setR41_no_of_transactions_direct_investment_government(
+			BigDecimal r41_no_of_transactions_direct_investment_government) {
+		this.r41_no_of_transactions_direct_investment_government = r41_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR41_amount_direct_investment_government(BigDecimal r41_amount_direct_investment_government) {
+		this.r41_amount_direct_investment_government = r41_amount_direct_investment_government;
+	}
+
+	public void setR41_no_of_transactions_services_government(BigDecimal r41_no_of_transactions_services_government) {
+		this.r41_no_of_transactions_services_government = r41_no_of_transactions_services_government;
+	}
+
+	public void setR41_amount_services_government(BigDecimal r41_amount_services_government) {
+		this.r41_amount_services_government = r41_amount_services_government;
+	}
+
+	public void setR41_no_of_transactions_trade_government(BigDecimal r41_no_of_transactions_trade_government) {
+		this.r41_no_of_transactions_trade_government = r41_no_of_transactions_trade_government;
+	}
+
+	public void setR41_amount_trade_government(BigDecimal r41_amount_trade_government) {
+		this.r41_amount_trade_government = r41_amount_trade_government;
+	}
+
+	public void setR41_no_of_transactions_financial_investment_reserve(
+			BigDecimal r41_no_of_transactions_financial_investment_reserve) {
+		this.r41_no_of_transactions_financial_investment_reserve = r41_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR41_amount_financial_investment_reserve(BigDecimal r41_amount_financial_investment_reserve) {
+		this.r41_amount_financial_investment_reserve = r41_amount_financial_investment_reserve;
+	}
+
+	public void setR41_no_of_transactions_direct_investment_reserve(
+			BigDecimal r41_no_of_transactions_direct_investment_reserve) {
+		this.r41_no_of_transactions_direct_investment_reserve = r41_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR41_amount_direct_investment_reserve(BigDecimal r41_amount_direct_investment_reserve) {
+		this.r41_amount_direct_investment_reserve = r41_amount_direct_investment_reserve;
+	}
+
+	public void setR41_no_of_transactions_services_reserve(BigDecimal r41_no_of_transactions_services_reserve) {
+		this.r41_no_of_transactions_services_reserve = r41_no_of_transactions_services_reserve;
+	}
+
+	public void setR41_amount_services_reserve(BigDecimal r41_amount_services_reserve) {
+		this.r41_amount_services_reserve = r41_amount_services_reserve;
+	}
+
+	public void setR41_no_of_transactions_trade_reserve(BigDecimal r41_no_of_transactions_trade_reserve) {
+		this.r41_no_of_transactions_trade_reserve = r41_no_of_transactions_trade_reserve;
+	}
+
+	public void setR41_amount_trade_reserve(BigDecimal r41_amount_trade_reserve) {
+		this.r41_amount_trade_reserve = r41_amount_trade_reserve;
+	}
+
+	public void setR41_no_of_transactions_financial_investment_gre(
+			BigDecimal r41_no_of_transactions_financial_investment_gre) {
+		this.r41_no_of_transactions_financial_investment_gre = r41_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR41_amount_financial_investment_gre(BigDecimal r41_amount_financial_investment_gre) {
+		this.r41_amount_financial_investment_gre = r41_amount_financial_investment_gre;
+	}
+
+	public void setR41_no_of_transactions_direct_investment_gre(
+			BigDecimal r41_no_of_transactions_direct_investment_gre) {
+		this.r41_no_of_transactions_direct_investment_gre = r41_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR41_amount_direct_investment_gre(BigDecimal r41_amount_direct_investment_gre) {
+		this.r41_amount_direct_investment_gre = r41_amount_direct_investment_gre;
+	}
+
+	public void setR41_no_of_transactions_services_gre(BigDecimal r41_no_of_transactions_services_gre) {
+		this.r41_no_of_transactions_services_gre = r41_no_of_transactions_services_gre;
+	}
+
+	public void setR41_amount_services_gre(BigDecimal r41_amount_services_gre) {
+		this.r41_amount_services_gre = r41_amount_services_gre;
+	}
+
+	public void setR41_no_of_transactions_trade_gre(BigDecimal r41_no_of_transactions_trade_gre) {
+		this.r41_no_of_transactions_trade_gre = r41_no_of_transactions_trade_gre;
+	}
+
+	public void setR41_amount_trade_gre(BigDecimal r41_amount_trade_gre) {
+		this.r41_amount_trade_gre = r41_amount_trade_gre;
+	}
+
+	public void setR41_no_of_transactions_financial_investment_corporate(
+			BigDecimal r41_no_of_transactions_financial_investment_corporate) {
+		this.r41_no_of_transactions_financial_investment_corporate = r41_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR41_amount_financial_investment_corporate(BigDecimal r41_amount_financial_investment_corporate) {
+		this.r41_amount_financial_investment_corporate = r41_amount_financial_investment_corporate;
+	}
+
+	public void setR41_no_of_transactions_direct_investment_corporate(
+			BigDecimal r41_no_of_transactions_direct_investment_corporate) {
+		this.r41_no_of_transactions_direct_investment_corporate = r41_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR41_amount_direct_investment_corporate(BigDecimal r41_amount_direct_investment_corporate) {
+		this.r41_amount_direct_investment_corporate = r41_amount_direct_investment_corporate;
+	}
+
+	public void setR41_no_of_transactions_services_corporate(BigDecimal r41_no_of_transactions_services_corporate) {
+		this.r41_no_of_transactions_services_corporate = r41_no_of_transactions_services_corporate;
+	}
+
+	public void setR41_amount_services_corporate(BigDecimal r41_amount_services_corporate) {
+		this.r41_amount_services_corporate = r41_amount_services_corporate;
+	}
+
+	public void setR41_no_of_transactions_trade_corporate(BigDecimal r41_no_of_transactions_trade_corporate) {
+		this.r41_no_of_transactions_trade_corporate = r41_no_of_transactions_trade_corporate;
+	}
+
+	public void setR41_amount_trade_corporate(BigDecimal r41_amount_trade_corporate) {
+		this.r41_amount_trade_corporate = r41_amount_trade_corporate;
+	}
+
+	public void setR41_no_of_transactions_financial_investment_sme(
+			BigDecimal r41_no_of_transactions_financial_investment_sme) {
+		this.r41_no_of_transactions_financial_investment_sme = r41_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR41_amount_financial_investment_sme(BigDecimal r41_amount_financial_investment_sme) {
+		this.r41_amount_financial_investment_sme = r41_amount_financial_investment_sme;
+	}
+
+	public void setR41_no_of_transactions_direct_investment_sme(
+			BigDecimal r41_no_of_transactions_direct_investment_sme) {
+		this.r41_no_of_transactions_direct_investment_sme = r41_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR41_amount_direct_investment_sme(BigDecimal r41_amount_direct_investment_sme) {
+		this.r41_amount_direct_investment_sme = r41_amount_direct_investment_sme;
+	}
+
+	public void setR41_no_of_transactions_services_sme(BigDecimal r41_no_of_transactions_services_sme) {
+		this.r41_no_of_transactions_services_sme = r41_no_of_transactions_services_sme;
+	}
+
+	public void setR41_amount_services_sme(BigDecimal r41_amount_services_sme) {
+		this.r41_amount_services_sme = r41_amount_services_sme;
+	}
+
+	public void setR41_no_of_transactions_trade_sme(BigDecimal r41_no_of_transactions_trade_sme) {
+		this.r41_no_of_transactions_trade_sme = r41_no_of_transactions_trade_sme;
+	}
+
+	public void setR41_amount_trade_sme(BigDecimal r41_amount_trade_sme) {
+		this.r41_amount_trade_sme = r41_amount_trade_sme;
+	}
+
+	public void setR41_no_of_transactions_financial_investment_individual(
+			BigDecimal r41_no_of_transactions_financial_investment_individual) {
+		this.r41_no_of_transactions_financial_investment_individual = r41_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR41_amount_financial_investment_individual(BigDecimal r41_amount_financial_investment_individual) {
+		this.r41_amount_financial_investment_individual = r41_amount_financial_investment_individual;
+	}
+
+	public void setR41_no_of_transactions_direct_investment_individual(
+			BigDecimal r41_no_of_transactions_direct_investment_individual) {
+		this.r41_no_of_transactions_direct_investment_individual = r41_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR41_amount_direct_investment_individual(BigDecimal r41_amount_direct_investment_individual) {
+		this.r41_amount_direct_investment_individual = r41_amount_direct_investment_individual;
+	}
+
+	public void setR41_no_of_transactions_family_support_individual(
+			BigDecimal r41_no_of_transactions_family_support_individual) {
+		this.r41_no_of_transactions_family_support_individual = r41_no_of_transactions_family_support_individual;
+	}
+
+	public void setR41_amount_family_support_individual(BigDecimal r41_amount_family_support_individual) {
+		this.r41_amount_family_support_individual = r41_amount_family_support_individual;
+	}
+
+	public void setR41_no_of_transactions_education_individual(BigDecimal r41_no_of_transactions_education_individual) {
+		this.r41_no_of_transactions_education_individual = r41_no_of_transactions_education_individual;
+	}
+
+	public void setR41_amount_education_individual(BigDecimal r41_amount_education_individual) {
+		this.r41_amount_education_individual = r41_amount_education_individual;
+	}
+
+	public void setR41_no_of_transactions_medical_individual(BigDecimal r41_no_of_transactions_medical_individual) {
+		this.r41_no_of_transactions_medical_individual = r41_no_of_transactions_medical_individual;
+	}
+
+	public void setR41_amount_medical_individual(BigDecimal r41_amount_medical_individual) {
+		this.r41_amount_medical_individual = r41_amount_medical_individual;
+	}
+
+	public void setR41_no_of_transactions_tourism_individual(BigDecimal r41_no_of_transactions_tourism_individual) {
+		this.r41_no_of_transactions_tourism_individual = r41_no_of_transactions_tourism_individual;
+	}
+
+	public void setR41_amount_tourism_individual(BigDecimal r41_amount_tourism_individual) {
+		this.r41_amount_tourism_individual = r41_amount_tourism_individual;
+	}
+
+	public void setR41_no_of_transactions_debt_settlement_individual(
+			BigDecimal r41_no_of_transactions_debt_settlement_individual) {
+		this.r41_no_of_transactions_debt_settlement_individual = r41_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR41_amount_debt_settlement_individual(BigDecimal r41_amount_debt_settlement_individual) {
+		this.r41_amount_debt_settlement_individual = r41_amount_debt_settlement_individual;
+	}
+
+	public void setR41_no_of_transactions_other_services_individual(
+			BigDecimal r41_no_of_transactions_other_services_individual) {
+		this.r41_no_of_transactions_other_services_individual = r41_no_of_transactions_other_services_individual;
+	}
+
+	public void setR41_amount_other_services_individual(BigDecimal r41_amount_other_services_individual) {
+		this.r41_amount_other_services_individual = r41_amount_other_services_individual;
+	}
+
+	public void setR41_total_no_of_transactions(BigDecimal r41_total_no_of_transactions) {
+		this.r41_total_no_of_transactions = r41_total_no_of_transactions;
+	}
+
+	public void setR41_grand_total(BigDecimal r41_grand_total) {
+		this.r41_grand_total = r41_grand_total;
+	}
+
+	public void setR42_country_break_down(String r42_country_break_down) {
+		this.r42_country_break_down = r42_country_break_down;
+	}
+
+	public void setR42_no_of_transactions_financial_investment_government(
+			BigDecimal r42_no_of_transactions_financial_investment_government) {
+		this.r42_no_of_transactions_financial_investment_government = r42_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR42_amount_financial_investment_government(BigDecimal r42_amount_financial_investment_government) {
+		this.r42_amount_financial_investment_government = r42_amount_financial_investment_government;
+	}
+
+	public void setR42_no_of_transactions_direct_investment_government(
+			BigDecimal r42_no_of_transactions_direct_investment_government) {
+		this.r42_no_of_transactions_direct_investment_government = r42_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR42_amount_direct_investment_government(BigDecimal r42_amount_direct_investment_government) {
+		this.r42_amount_direct_investment_government = r42_amount_direct_investment_government;
+	}
+
+	public void setR42_no_of_transactions_services_government(BigDecimal r42_no_of_transactions_services_government) {
+		this.r42_no_of_transactions_services_government = r42_no_of_transactions_services_government;
+	}
+
+	public void setR42_amount_services_government(BigDecimal r42_amount_services_government) {
+		this.r42_amount_services_government = r42_amount_services_government;
+	}
+
+	public void setR42_no_of_transactions_trade_government(BigDecimal r42_no_of_transactions_trade_government) {
+		this.r42_no_of_transactions_trade_government = r42_no_of_transactions_trade_government;
+	}
+
+	public void setR42_amount_trade_government(BigDecimal r42_amount_trade_government) {
+		this.r42_amount_trade_government = r42_amount_trade_government;
+	}
+
+	public void setR42_no_of_transactions_financial_investment_reserve(
+			BigDecimal r42_no_of_transactions_financial_investment_reserve) {
+		this.r42_no_of_transactions_financial_investment_reserve = r42_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR42_amount_financial_investment_reserve(BigDecimal r42_amount_financial_investment_reserve) {
+		this.r42_amount_financial_investment_reserve = r42_amount_financial_investment_reserve;
+	}
+
+	public void setR42_no_of_transactions_direct_investment_reserve(
+			BigDecimal r42_no_of_transactions_direct_investment_reserve) {
+		this.r42_no_of_transactions_direct_investment_reserve = r42_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR42_amount_direct_investment_reserve(BigDecimal r42_amount_direct_investment_reserve) {
+		this.r42_amount_direct_investment_reserve = r42_amount_direct_investment_reserve;
+	}
+
+	public void setR42_no_of_transactions_services_reserve(BigDecimal r42_no_of_transactions_services_reserve) {
+		this.r42_no_of_transactions_services_reserve = r42_no_of_transactions_services_reserve;
+	}
+
+	public void setR42_amount_services_reserve(BigDecimal r42_amount_services_reserve) {
+		this.r42_amount_services_reserve = r42_amount_services_reserve;
+	}
+
+	public void setR42_no_of_transactions_trade_reserve(BigDecimal r42_no_of_transactions_trade_reserve) {
+		this.r42_no_of_transactions_trade_reserve = r42_no_of_transactions_trade_reserve;
+	}
+
+	public void setR42_amount_trade_reserve(BigDecimal r42_amount_trade_reserve) {
+		this.r42_amount_trade_reserve = r42_amount_trade_reserve;
+	}
+
+	public void setR42_no_of_transactions_financial_investment_gre(
+			BigDecimal r42_no_of_transactions_financial_investment_gre) {
+		this.r42_no_of_transactions_financial_investment_gre = r42_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR42_amount_financial_investment_gre(BigDecimal r42_amount_financial_investment_gre) {
+		this.r42_amount_financial_investment_gre = r42_amount_financial_investment_gre;
+	}
+
+	public void setR42_no_of_transactions_direct_investment_gre(
+			BigDecimal r42_no_of_transactions_direct_investment_gre) {
+		this.r42_no_of_transactions_direct_investment_gre = r42_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR42_amount_direct_investment_gre(BigDecimal r42_amount_direct_investment_gre) {
+		this.r42_amount_direct_investment_gre = r42_amount_direct_investment_gre;
+	}
+
+	public void setR42_no_of_transactions_services_gre(BigDecimal r42_no_of_transactions_services_gre) {
+		this.r42_no_of_transactions_services_gre = r42_no_of_transactions_services_gre;
+	}
+
+	public void setR42_amount_services_gre(BigDecimal r42_amount_services_gre) {
+		this.r42_amount_services_gre = r42_amount_services_gre;
+	}
+
+	public void setR42_no_of_transactions_trade_gre(BigDecimal r42_no_of_transactions_trade_gre) {
+		this.r42_no_of_transactions_trade_gre = r42_no_of_transactions_trade_gre;
+	}
+
+	public void setR42_amount_trade_gre(BigDecimal r42_amount_trade_gre) {
+		this.r42_amount_trade_gre = r42_amount_trade_gre;
+	}
+
+	public void setR42_no_of_transactions_financial_investment_corporate(
+			BigDecimal r42_no_of_transactions_financial_investment_corporate) {
+		this.r42_no_of_transactions_financial_investment_corporate = r42_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR42_amount_financial_investment_corporate(BigDecimal r42_amount_financial_investment_corporate) {
+		this.r42_amount_financial_investment_corporate = r42_amount_financial_investment_corporate;
+	}
+
+	public void setR42_no_of_transactions_direct_investment_corporate(
+			BigDecimal r42_no_of_transactions_direct_investment_corporate) {
+		this.r42_no_of_transactions_direct_investment_corporate = r42_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR42_amount_direct_investment_corporate(BigDecimal r42_amount_direct_investment_corporate) {
+		this.r42_amount_direct_investment_corporate = r42_amount_direct_investment_corporate;
+	}
+
+	public void setR42_no_of_transactions_services_corporate(BigDecimal r42_no_of_transactions_services_corporate) {
+		this.r42_no_of_transactions_services_corporate = r42_no_of_transactions_services_corporate;
+	}
+
+	public void setR42_amount_services_corporate(BigDecimal r42_amount_services_corporate) {
+		this.r42_amount_services_corporate = r42_amount_services_corporate;
+	}
+
+	public void setR42_no_of_transactions_trade_corporate(BigDecimal r42_no_of_transactions_trade_corporate) {
+		this.r42_no_of_transactions_trade_corporate = r42_no_of_transactions_trade_corporate;
+	}
+
+	public void setR42_amount_trade_corporate(BigDecimal r42_amount_trade_corporate) {
+		this.r42_amount_trade_corporate = r42_amount_trade_corporate;
+	}
+
+	public void setR42_no_of_transactions_financial_investment_sme(
+			BigDecimal r42_no_of_transactions_financial_investment_sme) {
+		this.r42_no_of_transactions_financial_investment_sme = r42_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR42_amount_financial_investment_sme(BigDecimal r42_amount_financial_investment_sme) {
+		this.r42_amount_financial_investment_sme = r42_amount_financial_investment_sme;
+	}
+
+	public void setR42_no_of_transactions_direct_investment_sme(
+			BigDecimal r42_no_of_transactions_direct_investment_sme) {
+		this.r42_no_of_transactions_direct_investment_sme = r42_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR42_amount_direct_investment_sme(BigDecimal r42_amount_direct_investment_sme) {
+		this.r42_amount_direct_investment_sme = r42_amount_direct_investment_sme;
+	}
+
+	public void setR42_no_of_transactions_services_sme(BigDecimal r42_no_of_transactions_services_sme) {
+		this.r42_no_of_transactions_services_sme = r42_no_of_transactions_services_sme;
+	}
+
+	public void setR42_amount_services_sme(BigDecimal r42_amount_services_sme) {
+		this.r42_amount_services_sme = r42_amount_services_sme;
+	}
+
+	public void setR42_no_of_transactions_trade_sme(BigDecimal r42_no_of_transactions_trade_sme) {
+		this.r42_no_of_transactions_trade_sme = r42_no_of_transactions_trade_sme;
+	}
+
+	public void setR42_amount_trade_sme(BigDecimal r42_amount_trade_sme) {
+		this.r42_amount_trade_sme = r42_amount_trade_sme;
+	}
+
+	public void setR42_no_of_transactions_financial_investment_individual(
+			BigDecimal r42_no_of_transactions_financial_investment_individual) {
+		this.r42_no_of_transactions_financial_investment_individual = r42_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR42_amount_financial_investment_individual(BigDecimal r42_amount_financial_investment_individual) {
+		this.r42_amount_financial_investment_individual = r42_amount_financial_investment_individual;
+	}
+
+	public void setR42_no_of_transactions_direct_investment_individual(
+			BigDecimal r42_no_of_transactions_direct_investment_individual) {
+		this.r42_no_of_transactions_direct_investment_individual = r42_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR42_amount_direct_investment_individual(BigDecimal r42_amount_direct_investment_individual) {
+		this.r42_amount_direct_investment_individual = r42_amount_direct_investment_individual;
+	}
+
+	public void setR42_no_of_transactions_family_support_individual(
+			BigDecimal r42_no_of_transactions_family_support_individual) {
+		this.r42_no_of_transactions_family_support_individual = r42_no_of_transactions_family_support_individual;
+	}
+
+	public void setR42_amount_family_support_individual(BigDecimal r42_amount_family_support_individual) {
+		this.r42_amount_family_support_individual = r42_amount_family_support_individual;
+	}
+
+	public void setR42_no_of_transactions_education_individual(BigDecimal r42_no_of_transactions_education_individual) {
+		this.r42_no_of_transactions_education_individual = r42_no_of_transactions_education_individual;
+	}
+
+	public void setR42_amount_education_individual(BigDecimal r42_amount_education_individual) {
+		this.r42_amount_education_individual = r42_amount_education_individual;
+	}
+
+	public void setR42_no_of_transactions_medical_individual(BigDecimal r42_no_of_transactions_medical_individual) {
+		this.r42_no_of_transactions_medical_individual = r42_no_of_transactions_medical_individual;
+	}
+
+	public void setR42_amount_medical_individual(BigDecimal r42_amount_medical_individual) {
+		this.r42_amount_medical_individual = r42_amount_medical_individual;
+	}
+
+	public void setR42_no_of_transactions_tourism_individual(BigDecimal r42_no_of_transactions_tourism_individual) {
+		this.r42_no_of_transactions_tourism_individual = r42_no_of_transactions_tourism_individual;
+	}
+
+	public void setR42_amount_tourism_individual(BigDecimal r42_amount_tourism_individual) {
+		this.r42_amount_tourism_individual = r42_amount_tourism_individual;
+	}
+
+	public void setR42_no_of_transactions_debt_settlement_individual(
+			BigDecimal r42_no_of_transactions_debt_settlement_individual) {
+		this.r42_no_of_transactions_debt_settlement_individual = r42_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR42_amount_debt_settlement_individual(BigDecimal r42_amount_debt_settlement_individual) {
+		this.r42_amount_debt_settlement_individual = r42_amount_debt_settlement_individual;
+	}
+
+	public void setR42_no_of_transactions_other_services_individual(
+			BigDecimal r42_no_of_transactions_other_services_individual) {
+		this.r42_no_of_transactions_other_services_individual = r42_no_of_transactions_other_services_individual;
+	}
+
+	public void setR42_amount_other_services_individual(BigDecimal r42_amount_other_services_individual) {
+		this.r42_amount_other_services_individual = r42_amount_other_services_individual;
+	}
+
+	public void setR42_total_no_of_transactions(BigDecimal r42_total_no_of_transactions) {
+		this.r42_total_no_of_transactions = r42_total_no_of_transactions;
+	}
+
+	public void setR42_grand_total(BigDecimal r42_grand_total) {
+		this.r42_grand_total = r42_grand_total;
+	}
+
+	public void setR43_country_break_down(String r43_country_break_down) {
+		this.r43_country_break_down = r43_country_break_down;
+	}
+
+	public void setR43_no_of_transactions_financial_investment_government(
+			BigDecimal r43_no_of_transactions_financial_investment_government) {
+		this.r43_no_of_transactions_financial_investment_government = r43_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR43_amount_financial_investment_government(BigDecimal r43_amount_financial_investment_government) {
+		this.r43_amount_financial_investment_government = r43_amount_financial_investment_government;
+	}
+
+	public void setR43_no_of_transactions_direct_investment_government(
+			BigDecimal r43_no_of_transactions_direct_investment_government) {
+		this.r43_no_of_transactions_direct_investment_government = r43_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR43_amount_direct_investment_government(BigDecimal r43_amount_direct_investment_government) {
+		this.r43_amount_direct_investment_government = r43_amount_direct_investment_government;
+	}
+
+	public void setR43_no_of_transactions_services_government(BigDecimal r43_no_of_transactions_services_government) {
+		this.r43_no_of_transactions_services_government = r43_no_of_transactions_services_government;
+	}
+
+	public void setR43_amount_services_government(BigDecimal r43_amount_services_government) {
+		this.r43_amount_services_government = r43_amount_services_government;
+	}
+
+	public void setR43_no_of_transactions_trade_government(BigDecimal r43_no_of_transactions_trade_government) {
+		this.r43_no_of_transactions_trade_government = r43_no_of_transactions_trade_government;
+	}
+
+	public void setR43_amount_trade_government(BigDecimal r43_amount_trade_government) {
+		this.r43_amount_trade_government = r43_amount_trade_government;
+	}
+
+	public void setR43_no_of_transactions_financial_investment_reserve(
+			BigDecimal r43_no_of_transactions_financial_investment_reserve) {
+		this.r43_no_of_transactions_financial_investment_reserve = r43_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR43_amount_financial_investment_reserve(BigDecimal r43_amount_financial_investment_reserve) {
+		this.r43_amount_financial_investment_reserve = r43_amount_financial_investment_reserve;
+	}
+
+	public void setR43_no_of_transactions_direct_investment_reserve(
+			BigDecimal r43_no_of_transactions_direct_investment_reserve) {
+		this.r43_no_of_transactions_direct_investment_reserve = r43_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR43_amount_direct_investment_reserve(BigDecimal r43_amount_direct_investment_reserve) {
+		this.r43_amount_direct_investment_reserve = r43_amount_direct_investment_reserve;
+	}
+
+	public void setR43_no_of_transactions_services_reserve(BigDecimal r43_no_of_transactions_services_reserve) {
+		this.r43_no_of_transactions_services_reserve = r43_no_of_transactions_services_reserve;
+	}
+
+	public void setR43_amount_services_reserve(BigDecimal r43_amount_services_reserve) {
+		this.r43_amount_services_reserve = r43_amount_services_reserve;
+	}
+
+	public void setR43_no_of_transactions_trade_reserve(BigDecimal r43_no_of_transactions_trade_reserve) {
+		this.r43_no_of_transactions_trade_reserve = r43_no_of_transactions_trade_reserve;
+	}
+
+	public void setR43_amount_trade_reserve(BigDecimal r43_amount_trade_reserve) {
+		this.r43_amount_trade_reserve = r43_amount_trade_reserve;
+	}
+
+	public void setR43_no_of_transactions_financial_investment_gre(
+			BigDecimal r43_no_of_transactions_financial_investment_gre) {
+		this.r43_no_of_transactions_financial_investment_gre = r43_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR43_amount_financial_investment_gre(BigDecimal r43_amount_financial_investment_gre) {
+		this.r43_amount_financial_investment_gre = r43_amount_financial_investment_gre;
+	}
+
+	public void setR43_no_of_transactions_direct_investment_gre(
+			BigDecimal r43_no_of_transactions_direct_investment_gre) {
+		this.r43_no_of_transactions_direct_investment_gre = r43_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR43_amount_direct_investment_gre(BigDecimal r43_amount_direct_investment_gre) {
+		this.r43_amount_direct_investment_gre = r43_amount_direct_investment_gre;
+	}
+
+	public void setR43_no_of_transactions_services_gre(BigDecimal r43_no_of_transactions_services_gre) {
+		this.r43_no_of_transactions_services_gre = r43_no_of_transactions_services_gre;
+	}
+
+	public void setR43_amount_services_gre(BigDecimal r43_amount_services_gre) {
+		this.r43_amount_services_gre = r43_amount_services_gre;
+	}
+
+	public void setR43_no_of_transactions_trade_gre(BigDecimal r43_no_of_transactions_trade_gre) {
+		this.r43_no_of_transactions_trade_gre = r43_no_of_transactions_trade_gre;
+	}
+
+	public void setR43_amount_trade_gre(BigDecimal r43_amount_trade_gre) {
+		this.r43_amount_trade_gre = r43_amount_trade_gre;
+	}
+
+	public void setR43_no_of_transactions_financial_investment_corporate(
+			BigDecimal r43_no_of_transactions_financial_investment_corporate) {
+		this.r43_no_of_transactions_financial_investment_corporate = r43_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR43_amount_financial_investment_corporate(BigDecimal r43_amount_financial_investment_corporate) {
+		this.r43_amount_financial_investment_corporate = r43_amount_financial_investment_corporate;
+	}
+
+	public void setR43_no_of_transactions_direct_investment_corporate(
+			BigDecimal r43_no_of_transactions_direct_investment_corporate) {
+		this.r43_no_of_transactions_direct_investment_corporate = r43_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR43_amount_direct_investment_corporate(BigDecimal r43_amount_direct_investment_corporate) {
+		this.r43_amount_direct_investment_corporate = r43_amount_direct_investment_corporate;
+	}
+
+	public void setR43_no_of_transactions_services_corporate(BigDecimal r43_no_of_transactions_services_corporate) {
+		this.r43_no_of_transactions_services_corporate = r43_no_of_transactions_services_corporate;
+	}
+
+	public void setR43_amount_services_corporate(BigDecimal r43_amount_services_corporate) {
+		this.r43_amount_services_corporate = r43_amount_services_corporate;
+	}
+
+	public void setR43_no_of_transactions_trade_corporate(BigDecimal r43_no_of_transactions_trade_corporate) {
+		this.r43_no_of_transactions_trade_corporate = r43_no_of_transactions_trade_corporate;
+	}
+
+	public void setR43_amount_trade_corporate(BigDecimal r43_amount_trade_corporate) {
+		this.r43_amount_trade_corporate = r43_amount_trade_corporate;
+	}
+
+	public void setR43_no_of_transactions_financial_investment_sme(
+			BigDecimal r43_no_of_transactions_financial_investment_sme) {
+		this.r43_no_of_transactions_financial_investment_sme = r43_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR43_amount_financial_investment_sme(BigDecimal r43_amount_financial_investment_sme) {
+		this.r43_amount_financial_investment_sme = r43_amount_financial_investment_sme;
+	}
+
+	public void setR43_no_of_transactions_direct_investment_sme(
+			BigDecimal r43_no_of_transactions_direct_investment_sme) {
+		this.r43_no_of_transactions_direct_investment_sme = r43_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR43_amount_direct_investment_sme(BigDecimal r43_amount_direct_investment_sme) {
+		this.r43_amount_direct_investment_sme = r43_amount_direct_investment_sme;
+	}
+
+	public void setR43_no_of_transactions_services_sme(BigDecimal r43_no_of_transactions_services_sme) {
+		this.r43_no_of_transactions_services_sme = r43_no_of_transactions_services_sme;
+	}
+
+	public void setR43_amount_services_sme(BigDecimal r43_amount_services_sme) {
+		this.r43_amount_services_sme = r43_amount_services_sme;
+	}
+
+	public void setR43_no_of_transactions_trade_sme(BigDecimal r43_no_of_transactions_trade_sme) {
+		this.r43_no_of_transactions_trade_sme = r43_no_of_transactions_trade_sme;
+	}
+
+	public void setR43_amount_trade_sme(BigDecimal r43_amount_trade_sme) {
+		this.r43_amount_trade_sme = r43_amount_trade_sme;
+	}
+
+	public void setR43_no_of_transactions_financial_investment_individual(
+			BigDecimal r43_no_of_transactions_financial_investment_individual) {
+		this.r43_no_of_transactions_financial_investment_individual = r43_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR43_amount_financial_investment_individual(BigDecimal r43_amount_financial_investment_individual) {
+		this.r43_amount_financial_investment_individual = r43_amount_financial_investment_individual;
+	}
+
+	public void setR43_no_of_transactions_direct_investment_individual(
+			BigDecimal r43_no_of_transactions_direct_investment_individual) {
+		this.r43_no_of_transactions_direct_investment_individual = r43_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR43_amount_direct_investment_individual(BigDecimal r43_amount_direct_investment_individual) {
+		this.r43_amount_direct_investment_individual = r43_amount_direct_investment_individual;
+	}
+
+	public void setR43_no_of_transactions_family_support_individual(
+			BigDecimal r43_no_of_transactions_family_support_individual) {
+		this.r43_no_of_transactions_family_support_individual = r43_no_of_transactions_family_support_individual;
+	}
+
+	public void setR43_amount_family_support_individual(BigDecimal r43_amount_family_support_individual) {
+		this.r43_amount_family_support_individual = r43_amount_family_support_individual;
+	}
+
+	public void setR43_no_of_transactions_education_individual(BigDecimal r43_no_of_transactions_education_individual) {
+		this.r43_no_of_transactions_education_individual = r43_no_of_transactions_education_individual;
+	}
+
+	public void setR43_amount_education_individual(BigDecimal r43_amount_education_individual) {
+		this.r43_amount_education_individual = r43_amount_education_individual;
+	}
+
+	public void setR43_no_of_transactions_medical_individual(BigDecimal r43_no_of_transactions_medical_individual) {
+		this.r43_no_of_transactions_medical_individual = r43_no_of_transactions_medical_individual;
+	}
+
+	public void setR43_amount_medical_individual(BigDecimal r43_amount_medical_individual) {
+		this.r43_amount_medical_individual = r43_amount_medical_individual;
+	}
+
+	public void setR43_no_of_transactions_tourism_individual(BigDecimal r43_no_of_transactions_tourism_individual) {
+		this.r43_no_of_transactions_tourism_individual = r43_no_of_transactions_tourism_individual;
+	}
+
+	public void setR43_amount_tourism_individual(BigDecimal r43_amount_tourism_individual) {
+		this.r43_amount_tourism_individual = r43_amount_tourism_individual;
+	}
+
+	public void setR43_no_of_transactions_debt_settlement_individual(
+			BigDecimal r43_no_of_transactions_debt_settlement_individual) {
+		this.r43_no_of_transactions_debt_settlement_individual = r43_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR43_amount_debt_settlement_individual(BigDecimal r43_amount_debt_settlement_individual) {
+		this.r43_amount_debt_settlement_individual = r43_amount_debt_settlement_individual;
+	}
+
+	public void setR43_no_of_transactions_other_services_individual(
+			BigDecimal r43_no_of_transactions_other_services_individual) {
+		this.r43_no_of_transactions_other_services_individual = r43_no_of_transactions_other_services_individual;
+	}
+
+	public void setR43_amount_other_services_individual(BigDecimal r43_amount_other_services_individual) {
+		this.r43_amount_other_services_individual = r43_amount_other_services_individual;
+	}
+
+	public void setR43_total_no_of_transactions(BigDecimal r43_total_no_of_transactions) {
+		this.r43_total_no_of_transactions = r43_total_no_of_transactions;
+	}
+
+	public void setR43_grand_total(BigDecimal r43_grand_total) {
+		this.r43_grand_total = r43_grand_total;
+	}
+
+	public void setR44_country_break_down(String r44_country_break_down) {
+		this.r44_country_break_down = r44_country_break_down;
+	}
+
+	public void setR44_no_of_transactions_financial_investment_government(
+			BigDecimal r44_no_of_transactions_financial_investment_government) {
+		this.r44_no_of_transactions_financial_investment_government = r44_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR44_amount_financial_investment_government(BigDecimal r44_amount_financial_investment_government) {
+		this.r44_amount_financial_investment_government = r44_amount_financial_investment_government;
+	}
+
+	public void setR44_no_of_transactions_direct_investment_government(
+			BigDecimal r44_no_of_transactions_direct_investment_government) {
+		this.r44_no_of_transactions_direct_investment_government = r44_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR44_amount_direct_investment_government(BigDecimal r44_amount_direct_investment_government) {
+		this.r44_amount_direct_investment_government = r44_amount_direct_investment_government;
+	}
+
+	public void setR44_no_of_transactions_services_government(BigDecimal r44_no_of_transactions_services_government) {
+		this.r44_no_of_transactions_services_government = r44_no_of_transactions_services_government;
+	}
+
+	public void setR44_amount_services_government(BigDecimal r44_amount_services_government) {
+		this.r44_amount_services_government = r44_amount_services_government;
+	}
+
+	public void setR44_no_of_transactions_trade_government(BigDecimal r44_no_of_transactions_trade_government) {
+		this.r44_no_of_transactions_trade_government = r44_no_of_transactions_trade_government;
+	}
+
+	public void setR44_amount_trade_government(BigDecimal r44_amount_trade_government) {
+		this.r44_amount_trade_government = r44_amount_trade_government;
+	}
+
+	public void setR44_no_of_transactions_financial_investment_reserve(
+			BigDecimal r44_no_of_transactions_financial_investment_reserve) {
+		this.r44_no_of_transactions_financial_investment_reserve = r44_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR44_amount_financial_investment_reserve(BigDecimal r44_amount_financial_investment_reserve) {
+		this.r44_amount_financial_investment_reserve = r44_amount_financial_investment_reserve;
+	}
+
+	public void setR44_no_of_transactions_direct_investment_reserve(
+			BigDecimal r44_no_of_transactions_direct_investment_reserve) {
+		this.r44_no_of_transactions_direct_investment_reserve = r44_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR44_amount_direct_investment_reserve(BigDecimal r44_amount_direct_investment_reserve) {
+		this.r44_amount_direct_investment_reserve = r44_amount_direct_investment_reserve;
+	}
+
+	public void setR44_no_of_transactions_services_reserve(BigDecimal r44_no_of_transactions_services_reserve) {
+		this.r44_no_of_transactions_services_reserve = r44_no_of_transactions_services_reserve;
+	}
+
+	public void setR44_amount_services_reserve(BigDecimal r44_amount_services_reserve) {
+		this.r44_amount_services_reserve = r44_amount_services_reserve;
+	}
+
+	public void setR44_no_of_transactions_trade_reserve(BigDecimal r44_no_of_transactions_trade_reserve) {
+		this.r44_no_of_transactions_trade_reserve = r44_no_of_transactions_trade_reserve;
+	}
+
+	public void setR44_amount_trade_reserve(BigDecimal r44_amount_trade_reserve) {
+		this.r44_amount_trade_reserve = r44_amount_trade_reserve;
+	}
+
+	public void setR44_no_of_transactions_financial_investment_gre(
+			BigDecimal r44_no_of_transactions_financial_investment_gre) {
+		this.r44_no_of_transactions_financial_investment_gre = r44_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR44_amount_financial_investment_gre(BigDecimal r44_amount_financial_investment_gre) {
+		this.r44_amount_financial_investment_gre = r44_amount_financial_investment_gre;
+	}
+
+	public void setR44_no_of_transactions_direct_investment_gre(
+			BigDecimal r44_no_of_transactions_direct_investment_gre) {
+		this.r44_no_of_transactions_direct_investment_gre = r44_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR44_amount_direct_investment_gre(BigDecimal r44_amount_direct_investment_gre) {
+		this.r44_amount_direct_investment_gre = r44_amount_direct_investment_gre;
+	}
+
+	public void setR44_no_of_transactions_services_gre(BigDecimal r44_no_of_transactions_services_gre) {
+		this.r44_no_of_transactions_services_gre = r44_no_of_transactions_services_gre;
+	}
+
+	public void setR44_amount_services_gre(BigDecimal r44_amount_services_gre) {
+		this.r44_amount_services_gre = r44_amount_services_gre;
+	}
+
+	public void setR44_no_of_transactions_trade_gre(BigDecimal r44_no_of_transactions_trade_gre) {
+		this.r44_no_of_transactions_trade_gre = r44_no_of_transactions_trade_gre;
+	}
+
+	public void setR44_amount_trade_gre(BigDecimal r44_amount_trade_gre) {
+		this.r44_amount_trade_gre = r44_amount_trade_gre;
+	}
+
+	public void setR44_no_of_transactions_financial_investment_corporate(
+			BigDecimal r44_no_of_transactions_financial_investment_corporate) {
+		this.r44_no_of_transactions_financial_investment_corporate = r44_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR44_amount_financial_investment_corporate(BigDecimal r44_amount_financial_investment_corporate) {
+		this.r44_amount_financial_investment_corporate = r44_amount_financial_investment_corporate;
+	}
+
+	public void setR44_no_of_transactions_direct_investment_corporate(
+			BigDecimal r44_no_of_transactions_direct_investment_corporate) {
+		this.r44_no_of_transactions_direct_investment_corporate = r44_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR44_amount_direct_investment_corporate(BigDecimal r44_amount_direct_investment_corporate) {
+		this.r44_amount_direct_investment_corporate = r44_amount_direct_investment_corporate;
+	}
+
+	public void setR44_no_of_transactions_services_corporate(BigDecimal r44_no_of_transactions_services_corporate) {
+		this.r44_no_of_transactions_services_corporate = r44_no_of_transactions_services_corporate;
+	}
+
+	public void setR44_amount_services_corporate(BigDecimal r44_amount_services_corporate) {
+		this.r44_amount_services_corporate = r44_amount_services_corporate;
+	}
+
+	public void setR44_no_of_transactions_trade_corporate(BigDecimal r44_no_of_transactions_trade_corporate) {
+		this.r44_no_of_transactions_trade_corporate = r44_no_of_transactions_trade_corporate;
+	}
+
+	public void setR44_amount_trade_corporate(BigDecimal r44_amount_trade_corporate) {
+		this.r44_amount_trade_corporate = r44_amount_trade_corporate;
+	}
+
+	public void setR44_no_of_transactions_financial_investment_sme(
+			BigDecimal r44_no_of_transactions_financial_investment_sme) {
+		this.r44_no_of_transactions_financial_investment_sme = r44_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR44_amount_financial_investment_sme(BigDecimal r44_amount_financial_investment_sme) {
+		this.r44_amount_financial_investment_sme = r44_amount_financial_investment_sme;
+	}
+
+	public void setR44_no_of_transactions_direct_investment_sme(
+			BigDecimal r44_no_of_transactions_direct_investment_sme) {
+		this.r44_no_of_transactions_direct_investment_sme = r44_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR44_amount_direct_investment_sme(BigDecimal r44_amount_direct_investment_sme) {
+		this.r44_amount_direct_investment_sme = r44_amount_direct_investment_sme;
+	}
+
+	public void setR44_no_of_transactions_services_sme(BigDecimal r44_no_of_transactions_services_sme) {
+		this.r44_no_of_transactions_services_sme = r44_no_of_transactions_services_sme;
+	}
+
+	public void setR44_amount_services_sme(BigDecimal r44_amount_services_sme) {
+		this.r44_amount_services_sme = r44_amount_services_sme;
+	}
+
+	public void setR44_no_of_transactions_trade_sme(BigDecimal r44_no_of_transactions_trade_sme) {
+		this.r44_no_of_transactions_trade_sme = r44_no_of_transactions_trade_sme;
+	}
+
+	public void setR44_amount_trade_sme(BigDecimal r44_amount_trade_sme) {
+		this.r44_amount_trade_sme = r44_amount_trade_sme;
+	}
+
+	public void setR44_no_of_transactions_financial_investment_individual(
+			BigDecimal r44_no_of_transactions_financial_investment_individual) {
+		this.r44_no_of_transactions_financial_investment_individual = r44_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR44_amount_financial_investment_individual(BigDecimal r44_amount_financial_investment_individual) {
+		this.r44_amount_financial_investment_individual = r44_amount_financial_investment_individual;
+	}
+
+	public void setR44_no_of_transactions_direct_investment_individual(
+			BigDecimal r44_no_of_transactions_direct_investment_individual) {
+		this.r44_no_of_transactions_direct_investment_individual = r44_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR44_amount_direct_investment_individual(BigDecimal r44_amount_direct_investment_individual) {
+		this.r44_amount_direct_investment_individual = r44_amount_direct_investment_individual;
+	}
+
+	public void setR44_no_of_transactions_family_support_individual(
+			BigDecimal r44_no_of_transactions_family_support_individual) {
+		this.r44_no_of_transactions_family_support_individual = r44_no_of_transactions_family_support_individual;
+	}
+
+	public void setR44_amount_family_support_individual(BigDecimal r44_amount_family_support_individual) {
+		this.r44_amount_family_support_individual = r44_amount_family_support_individual;
+	}
+
+	public void setR44_no_of_transactions_education_individual(BigDecimal r44_no_of_transactions_education_individual) {
+		this.r44_no_of_transactions_education_individual = r44_no_of_transactions_education_individual;
+	}
+
+	public void setR44_amount_education_individual(BigDecimal r44_amount_education_individual) {
+		this.r44_amount_education_individual = r44_amount_education_individual;
+	}
+
+	public void setR44_no_of_transactions_medical_individual(BigDecimal r44_no_of_transactions_medical_individual) {
+		this.r44_no_of_transactions_medical_individual = r44_no_of_transactions_medical_individual;
+	}
+
+	public void setR44_amount_medical_individual(BigDecimal r44_amount_medical_individual) {
+		this.r44_amount_medical_individual = r44_amount_medical_individual;
+	}
+
+	public void setR44_no_of_transactions_tourism_individual(BigDecimal r44_no_of_transactions_tourism_individual) {
+		this.r44_no_of_transactions_tourism_individual = r44_no_of_transactions_tourism_individual;
+	}
+
+	public void setR44_amount_tourism_individual(BigDecimal r44_amount_tourism_individual) {
+		this.r44_amount_tourism_individual = r44_amount_tourism_individual;
+	}
+
+	public void setR44_no_of_transactions_debt_settlement_individual(
+			BigDecimal r44_no_of_transactions_debt_settlement_individual) {
+		this.r44_no_of_transactions_debt_settlement_individual = r44_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR44_amount_debt_settlement_individual(BigDecimal r44_amount_debt_settlement_individual) {
+		this.r44_amount_debt_settlement_individual = r44_amount_debt_settlement_individual;
+	}
+
+	public void setR44_no_of_transactions_other_services_individual(
+			BigDecimal r44_no_of_transactions_other_services_individual) {
+		this.r44_no_of_transactions_other_services_individual = r44_no_of_transactions_other_services_individual;
+	}
+
+	public void setR44_amount_other_services_individual(BigDecimal r44_amount_other_services_individual) {
+		this.r44_amount_other_services_individual = r44_amount_other_services_individual;
+	}
+
+	public void setR44_total_no_of_transactions(BigDecimal r44_total_no_of_transactions) {
+		this.r44_total_no_of_transactions = r44_total_no_of_transactions;
+	}
+
+	public void setR44_grand_total(BigDecimal r44_grand_total) {
+		this.r44_grand_total = r44_grand_total;
+	}
+
+	public void setR45_country_break_down(String r45_country_break_down) {
+		this.r45_country_break_down = r45_country_break_down;
+	}
+
+	public void setR45_no_of_transactions_financial_investment_government(
+			BigDecimal r45_no_of_transactions_financial_investment_government) {
+		this.r45_no_of_transactions_financial_investment_government = r45_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR45_amount_financial_investment_government(BigDecimal r45_amount_financial_investment_government) {
+		this.r45_amount_financial_investment_government = r45_amount_financial_investment_government;
+	}
+
+	public void setR45_no_of_transactions_direct_investment_government(
+			BigDecimal r45_no_of_transactions_direct_investment_government) {
+		this.r45_no_of_transactions_direct_investment_government = r45_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR45_amount_direct_investment_government(BigDecimal r45_amount_direct_investment_government) {
+		this.r45_amount_direct_investment_government = r45_amount_direct_investment_government;
+	}
+
+	public void setR45_no_of_transactions_services_government(BigDecimal r45_no_of_transactions_services_government) {
+		this.r45_no_of_transactions_services_government = r45_no_of_transactions_services_government;
+	}
+
+	public void setR45_amount_services_government(BigDecimal r45_amount_services_government) {
+		this.r45_amount_services_government = r45_amount_services_government;
+	}
+
+	public void setR45_no_of_transactions_trade_government(BigDecimal r45_no_of_transactions_trade_government) {
+		this.r45_no_of_transactions_trade_government = r45_no_of_transactions_trade_government;
+	}
+
+	public void setR45_amount_trade_government(BigDecimal r45_amount_trade_government) {
+		this.r45_amount_trade_government = r45_amount_trade_government;
+	}
+
+	public void setR45_no_of_transactions_financial_investment_reserve(
+			BigDecimal r45_no_of_transactions_financial_investment_reserve) {
+		this.r45_no_of_transactions_financial_investment_reserve = r45_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR45_amount_financial_investment_reserve(BigDecimal r45_amount_financial_investment_reserve) {
+		this.r45_amount_financial_investment_reserve = r45_amount_financial_investment_reserve;
+	}
+
+	public void setR45_no_of_transactions_direct_investment_reserve(
+			BigDecimal r45_no_of_transactions_direct_investment_reserve) {
+		this.r45_no_of_transactions_direct_investment_reserve = r45_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR45_amount_direct_investment_reserve(BigDecimal r45_amount_direct_investment_reserve) {
+		this.r45_amount_direct_investment_reserve = r45_amount_direct_investment_reserve;
+	}
+
+	public void setR45_no_of_transactions_services_reserve(BigDecimal r45_no_of_transactions_services_reserve) {
+		this.r45_no_of_transactions_services_reserve = r45_no_of_transactions_services_reserve;
+	}
+
+	public void setR45_amount_services_reserve(BigDecimal r45_amount_services_reserve) {
+		this.r45_amount_services_reserve = r45_amount_services_reserve;
+	}
+
+	public void setR45_no_of_transactions_trade_reserve(BigDecimal r45_no_of_transactions_trade_reserve) {
+		this.r45_no_of_transactions_trade_reserve = r45_no_of_transactions_trade_reserve;
+	}
+
+	public void setR45_amount_trade_reserve(BigDecimal r45_amount_trade_reserve) {
+		this.r45_amount_trade_reserve = r45_amount_trade_reserve;
+	}
+
+	public void setR45_no_of_transactions_financial_investment_gre(
+			BigDecimal r45_no_of_transactions_financial_investment_gre) {
+		this.r45_no_of_transactions_financial_investment_gre = r45_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR45_amount_financial_investment_gre(BigDecimal r45_amount_financial_investment_gre) {
+		this.r45_amount_financial_investment_gre = r45_amount_financial_investment_gre;
+	}
+
+	public void setR45_no_of_transactions_direct_investment_gre(
+			BigDecimal r45_no_of_transactions_direct_investment_gre) {
+		this.r45_no_of_transactions_direct_investment_gre = r45_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR45_amount_direct_investment_gre(BigDecimal r45_amount_direct_investment_gre) {
+		this.r45_amount_direct_investment_gre = r45_amount_direct_investment_gre;
+	}
+
+	public void setR45_no_of_transactions_services_gre(BigDecimal r45_no_of_transactions_services_gre) {
+		this.r45_no_of_transactions_services_gre = r45_no_of_transactions_services_gre;
+	}
+
+	public void setR45_amount_services_gre(BigDecimal r45_amount_services_gre) {
+		this.r45_amount_services_gre = r45_amount_services_gre;
+	}
+
+	public void setR45_no_of_transactions_trade_gre(BigDecimal r45_no_of_transactions_trade_gre) {
+		this.r45_no_of_transactions_trade_gre = r45_no_of_transactions_trade_gre;
+	}
+
+	public void setR45_amount_trade_gre(BigDecimal r45_amount_trade_gre) {
+		this.r45_amount_trade_gre = r45_amount_trade_gre;
+	}
+
+	public void setR45_no_of_transactions_financial_investment_corporate(
+			BigDecimal r45_no_of_transactions_financial_investment_corporate) {
+		this.r45_no_of_transactions_financial_investment_corporate = r45_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR45_amount_financial_investment_corporate(BigDecimal r45_amount_financial_investment_corporate) {
+		this.r45_amount_financial_investment_corporate = r45_amount_financial_investment_corporate;
+	}
+
+	public void setR45_no_of_transactions_direct_investment_corporate(
+			BigDecimal r45_no_of_transactions_direct_investment_corporate) {
+		this.r45_no_of_transactions_direct_investment_corporate = r45_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR45_amount_direct_investment_corporate(BigDecimal r45_amount_direct_investment_corporate) {
+		this.r45_amount_direct_investment_corporate = r45_amount_direct_investment_corporate;
+	}
+
+	public void setR45_no_of_transactions_services_corporate(BigDecimal r45_no_of_transactions_services_corporate) {
+		this.r45_no_of_transactions_services_corporate = r45_no_of_transactions_services_corporate;
+	}
+
+	public void setR45_amount_services_corporate(BigDecimal r45_amount_services_corporate) {
+		this.r45_amount_services_corporate = r45_amount_services_corporate;
+	}
+
+	public void setR45_no_of_transactions_trade_corporate(BigDecimal r45_no_of_transactions_trade_corporate) {
+		this.r45_no_of_transactions_trade_corporate = r45_no_of_transactions_trade_corporate;
+	}
+
+	public void setR45_amount_trade_corporate(BigDecimal r45_amount_trade_corporate) {
+		this.r45_amount_trade_corporate = r45_amount_trade_corporate;
+	}
+
+	public void setR45_no_of_transactions_financial_investment_sme(
+			BigDecimal r45_no_of_transactions_financial_investment_sme) {
+		this.r45_no_of_transactions_financial_investment_sme = r45_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR45_amount_financial_investment_sme(BigDecimal r45_amount_financial_investment_sme) {
+		this.r45_amount_financial_investment_sme = r45_amount_financial_investment_sme;
+	}
+
+	public void setR45_no_of_transactions_direct_investment_sme(
+			BigDecimal r45_no_of_transactions_direct_investment_sme) {
+		this.r45_no_of_transactions_direct_investment_sme = r45_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR45_amount_direct_investment_sme(BigDecimal r45_amount_direct_investment_sme) {
+		this.r45_amount_direct_investment_sme = r45_amount_direct_investment_sme;
+	}
+
+	public void setR45_no_of_transactions_services_sme(BigDecimal r45_no_of_transactions_services_sme) {
+		this.r45_no_of_transactions_services_sme = r45_no_of_transactions_services_sme;
+	}
+
+	public void setR45_amount_services_sme(BigDecimal r45_amount_services_sme) {
+		this.r45_amount_services_sme = r45_amount_services_sme;
+	}
+
+	public void setR45_no_of_transactions_trade_sme(BigDecimal r45_no_of_transactions_trade_sme) {
+		this.r45_no_of_transactions_trade_sme = r45_no_of_transactions_trade_sme;
+	}
+
+	public void setR45_amount_trade_sme(BigDecimal r45_amount_trade_sme) {
+		this.r45_amount_trade_sme = r45_amount_trade_sme;
+	}
+
+	public void setR45_no_of_transactions_financial_investment_individual(
+			BigDecimal r45_no_of_transactions_financial_investment_individual) {
+		this.r45_no_of_transactions_financial_investment_individual = r45_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR45_amount_financial_investment_individual(BigDecimal r45_amount_financial_investment_individual) {
+		this.r45_amount_financial_investment_individual = r45_amount_financial_investment_individual;
+	}
+
+	public void setR45_no_of_transactions_direct_investment_individual(
+			BigDecimal r45_no_of_transactions_direct_investment_individual) {
+		this.r45_no_of_transactions_direct_investment_individual = r45_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR45_amount_direct_investment_individual(BigDecimal r45_amount_direct_investment_individual) {
+		this.r45_amount_direct_investment_individual = r45_amount_direct_investment_individual;
+	}
+
+	public void setR45_no_of_transactions_family_support_individual(
+			BigDecimal r45_no_of_transactions_family_support_individual) {
+		this.r45_no_of_transactions_family_support_individual = r45_no_of_transactions_family_support_individual;
+	}
+
+	public void setR45_amount_family_support_individual(BigDecimal r45_amount_family_support_individual) {
+		this.r45_amount_family_support_individual = r45_amount_family_support_individual;
+	}
+
+	public void setR45_no_of_transactions_education_individual(BigDecimal r45_no_of_transactions_education_individual) {
+		this.r45_no_of_transactions_education_individual = r45_no_of_transactions_education_individual;
+	}
+
+	public void setR45_amount_education_individual(BigDecimal r45_amount_education_individual) {
+		this.r45_amount_education_individual = r45_amount_education_individual;
+	}
+
+	public void setR45_no_of_transactions_medical_individual(BigDecimal r45_no_of_transactions_medical_individual) {
+		this.r45_no_of_transactions_medical_individual = r45_no_of_transactions_medical_individual;
+	}
+
+	public void setR45_amount_medical_individual(BigDecimal r45_amount_medical_individual) {
+		this.r45_amount_medical_individual = r45_amount_medical_individual;
+	}
+
+	public void setR45_no_of_transactions_tourism_individual(BigDecimal r45_no_of_transactions_tourism_individual) {
+		this.r45_no_of_transactions_tourism_individual = r45_no_of_transactions_tourism_individual;
+	}
+
+	public void setR45_amount_tourism_individual(BigDecimal r45_amount_tourism_individual) {
+		this.r45_amount_tourism_individual = r45_amount_tourism_individual;
+	}
+
+	public void setR45_no_of_transactions_debt_settlement_individual(
+			BigDecimal r45_no_of_transactions_debt_settlement_individual) {
+		this.r45_no_of_transactions_debt_settlement_individual = r45_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR45_amount_debt_settlement_individual(BigDecimal r45_amount_debt_settlement_individual) {
+		this.r45_amount_debt_settlement_individual = r45_amount_debt_settlement_individual;
+	}
+
+	public void setR45_no_of_transactions_other_services_individual(
+			BigDecimal r45_no_of_transactions_other_services_individual) {
+		this.r45_no_of_transactions_other_services_individual = r45_no_of_transactions_other_services_individual;
+	}
+
+	public void setR45_amount_other_services_individual(BigDecimal r45_amount_other_services_individual) {
+		this.r45_amount_other_services_individual = r45_amount_other_services_individual;
+	}
+
+	public void setR45_total_no_of_transactions(BigDecimal r45_total_no_of_transactions) {
+		this.r45_total_no_of_transactions = r45_total_no_of_transactions;
+	}
+
+	public void setR45_grand_total(BigDecimal r45_grand_total) {
+		this.r45_grand_total = r45_grand_total;
+	}
+
+	public void setR46_country_break_down(String r46_country_break_down) {
+		this.r46_country_break_down = r46_country_break_down;
+	}
+
+	public void setR46_no_of_transactions_financial_investment_government(
+			BigDecimal r46_no_of_transactions_financial_investment_government) {
+		this.r46_no_of_transactions_financial_investment_government = r46_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR46_amount_financial_investment_government(BigDecimal r46_amount_financial_investment_government) {
+		this.r46_amount_financial_investment_government = r46_amount_financial_investment_government;
+	}
+
+	public void setR46_no_of_transactions_direct_investment_government(
+			BigDecimal r46_no_of_transactions_direct_investment_government) {
+		this.r46_no_of_transactions_direct_investment_government = r46_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR46_amount_direct_investment_government(BigDecimal r46_amount_direct_investment_government) {
+		this.r46_amount_direct_investment_government = r46_amount_direct_investment_government;
+	}
+
+	public void setR46_no_of_transactions_services_government(BigDecimal r46_no_of_transactions_services_government) {
+		this.r46_no_of_transactions_services_government = r46_no_of_transactions_services_government;
+	}
+
+	public void setR46_amount_services_government(BigDecimal r46_amount_services_government) {
+		this.r46_amount_services_government = r46_amount_services_government;
+	}
+
+	public void setR46_no_of_transactions_trade_government(BigDecimal r46_no_of_transactions_trade_government) {
+		this.r46_no_of_transactions_trade_government = r46_no_of_transactions_trade_government;
+	}
+
+	public void setR46_amount_trade_government(BigDecimal r46_amount_trade_government) {
+		this.r46_amount_trade_government = r46_amount_trade_government;
+	}
+
+	public void setR46_no_of_transactions_financial_investment_reserve(
+			BigDecimal r46_no_of_transactions_financial_investment_reserve) {
+		this.r46_no_of_transactions_financial_investment_reserve = r46_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR46_amount_financial_investment_reserve(BigDecimal r46_amount_financial_investment_reserve) {
+		this.r46_amount_financial_investment_reserve = r46_amount_financial_investment_reserve;
+	}
+
+	public void setR46_no_of_transactions_direct_investment_reserve(
+			BigDecimal r46_no_of_transactions_direct_investment_reserve) {
+		this.r46_no_of_transactions_direct_investment_reserve = r46_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR46_amount_direct_investment_reserve(BigDecimal r46_amount_direct_investment_reserve) {
+		this.r46_amount_direct_investment_reserve = r46_amount_direct_investment_reserve;
+	}
+
+	public void setR46_no_of_transactions_services_reserve(BigDecimal r46_no_of_transactions_services_reserve) {
+		this.r46_no_of_transactions_services_reserve = r46_no_of_transactions_services_reserve;
+	}
+
+	public void setR46_amount_services_reserve(BigDecimal r46_amount_services_reserve) {
+		this.r46_amount_services_reserve = r46_amount_services_reserve;
+	}
+
+	public void setR46_no_of_transactions_trade_reserve(BigDecimal r46_no_of_transactions_trade_reserve) {
+		this.r46_no_of_transactions_trade_reserve = r46_no_of_transactions_trade_reserve;
+	}
+
+	public void setR46_amount_trade_reserve(BigDecimal r46_amount_trade_reserve) {
+		this.r46_amount_trade_reserve = r46_amount_trade_reserve;
+	}
+
+	public void setR46_no_of_transactions_financial_investment_gre(
+			BigDecimal r46_no_of_transactions_financial_investment_gre) {
+		this.r46_no_of_transactions_financial_investment_gre = r46_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR46_amount_financial_investment_gre(BigDecimal r46_amount_financial_investment_gre) {
+		this.r46_amount_financial_investment_gre = r46_amount_financial_investment_gre;
+	}
+
+	public void setR46_no_of_transactions_direct_investment_gre(
+			BigDecimal r46_no_of_transactions_direct_investment_gre) {
+		this.r46_no_of_transactions_direct_investment_gre = r46_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR46_amount_direct_investment_gre(BigDecimal r46_amount_direct_investment_gre) {
+		this.r46_amount_direct_investment_gre = r46_amount_direct_investment_gre;
+	}
+
+	public void setR46_no_of_transactions_services_gre(BigDecimal r46_no_of_transactions_services_gre) {
+		this.r46_no_of_transactions_services_gre = r46_no_of_transactions_services_gre;
+	}
+
+	public void setR46_amount_services_gre(BigDecimal r46_amount_services_gre) {
+		this.r46_amount_services_gre = r46_amount_services_gre;
+	}
+
+	public void setR46_no_of_transactions_trade_gre(BigDecimal r46_no_of_transactions_trade_gre) {
+		this.r46_no_of_transactions_trade_gre = r46_no_of_transactions_trade_gre;
+	}
+
+	public void setR46_amount_trade_gre(BigDecimal r46_amount_trade_gre) {
+		this.r46_amount_trade_gre = r46_amount_trade_gre;
+	}
+
+	public void setR46_no_of_transactions_financial_investment_corporate(
+			BigDecimal r46_no_of_transactions_financial_investment_corporate) {
+		this.r46_no_of_transactions_financial_investment_corporate = r46_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR46_amount_financial_investment_corporate(BigDecimal r46_amount_financial_investment_corporate) {
+		this.r46_amount_financial_investment_corporate = r46_amount_financial_investment_corporate;
+	}
+
+	public void setR46_no_of_transactions_direct_investment_corporate(
+			BigDecimal r46_no_of_transactions_direct_investment_corporate) {
+		this.r46_no_of_transactions_direct_investment_corporate = r46_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR46_amount_direct_investment_corporate(BigDecimal r46_amount_direct_investment_corporate) {
+		this.r46_amount_direct_investment_corporate = r46_amount_direct_investment_corporate;
+	}
+
+	public void setR46_no_of_transactions_services_corporate(BigDecimal r46_no_of_transactions_services_corporate) {
+		this.r46_no_of_transactions_services_corporate = r46_no_of_transactions_services_corporate;
+	}
+
+	public void setR46_amount_services_corporate(BigDecimal r46_amount_services_corporate) {
+		this.r46_amount_services_corporate = r46_amount_services_corporate;
+	}
+
+	public void setR46_no_of_transactions_trade_corporate(BigDecimal r46_no_of_transactions_trade_corporate) {
+		this.r46_no_of_transactions_trade_corporate = r46_no_of_transactions_trade_corporate;
+	}
+
+	public void setR46_amount_trade_corporate(BigDecimal r46_amount_trade_corporate) {
+		this.r46_amount_trade_corporate = r46_amount_trade_corporate;
+	}
+
+	public void setR46_no_of_transactions_financial_investment_sme(
+			BigDecimal r46_no_of_transactions_financial_investment_sme) {
+		this.r46_no_of_transactions_financial_investment_sme = r46_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR46_amount_financial_investment_sme(BigDecimal r46_amount_financial_investment_sme) {
+		this.r46_amount_financial_investment_sme = r46_amount_financial_investment_sme;
+	}
+
+	public void setR46_no_of_transactions_direct_investment_sme(
+			BigDecimal r46_no_of_transactions_direct_investment_sme) {
+		this.r46_no_of_transactions_direct_investment_sme = r46_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR46_amount_direct_investment_sme(BigDecimal r46_amount_direct_investment_sme) {
+		this.r46_amount_direct_investment_sme = r46_amount_direct_investment_sme;
+	}
+
+	public void setR46_no_of_transactions_services_sme(BigDecimal r46_no_of_transactions_services_sme) {
+		this.r46_no_of_transactions_services_sme = r46_no_of_transactions_services_sme;
+	}
+
+	public void setR46_amount_services_sme(BigDecimal r46_amount_services_sme) {
+		this.r46_amount_services_sme = r46_amount_services_sme;
+	}
+
+	public void setR46_no_of_transactions_trade_sme(BigDecimal r46_no_of_transactions_trade_sme) {
+		this.r46_no_of_transactions_trade_sme = r46_no_of_transactions_trade_sme;
+	}
+
+	public void setR46_amount_trade_sme(BigDecimal r46_amount_trade_sme) {
+		this.r46_amount_trade_sme = r46_amount_trade_sme;
+	}
+
+	public void setR46_no_of_transactions_financial_investment_individual(
+			BigDecimal r46_no_of_transactions_financial_investment_individual) {
+		this.r46_no_of_transactions_financial_investment_individual = r46_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR46_amount_financial_investment_individual(BigDecimal r46_amount_financial_investment_individual) {
+		this.r46_amount_financial_investment_individual = r46_amount_financial_investment_individual;
+	}
+
+	public void setR46_no_of_transactions_direct_investment_individual(
+			BigDecimal r46_no_of_transactions_direct_investment_individual) {
+		this.r46_no_of_transactions_direct_investment_individual = r46_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR46_amount_direct_investment_individual(BigDecimal r46_amount_direct_investment_individual) {
+		this.r46_amount_direct_investment_individual = r46_amount_direct_investment_individual;
+	}
+
+	public void setR46_no_of_transactions_family_support_individual(
+			BigDecimal r46_no_of_transactions_family_support_individual) {
+		this.r46_no_of_transactions_family_support_individual = r46_no_of_transactions_family_support_individual;
+	}
+
+	public void setR46_amount_family_support_individual(BigDecimal r46_amount_family_support_individual) {
+		this.r46_amount_family_support_individual = r46_amount_family_support_individual;
+	}
+
+	public void setR46_no_of_transactions_education_individual(BigDecimal r46_no_of_transactions_education_individual) {
+		this.r46_no_of_transactions_education_individual = r46_no_of_transactions_education_individual;
+	}
+
+	public void setR46_amount_education_individual(BigDecimal r46_amount_education_individual) {
+		this.r46_amount_education_individual = r46_amount_education_individual;
+	}
+
+	public void setR46_no_of_transactions_medical_individual(BigDecimal r46_no_of_transactions_medical_individual) {
+		this.r46_no_of_transactions_medical_individual = r46_no_of_transactions_medical_individual;
+	}
+
+	public void setR46_amount_medical_individual(BigDecimal r46_amount_medical_individual) {
+		this.r46_amount_medical_individual = r46_amount_medical_individual;
+	}
+
+	public void setR46_no_of_transactions_tourism_individual(BigDecimal r46_no_of_transactions_tourism_individual) {
+		this.r46_no_of_transactions_tourism_individual = r46_no_of_transactions_tourism_individual;
+	}
+
+	public void setR46_amount_tourism_individual(BigDecimal r46_amount_tourism_individual) {
+		this.r46_amount_tourism_individual = r46_amount_tourism_individual;
+	}
+
+	public void setR46_no_of_transactions_debt_settlement_individual(
+			BigDecimal r46_no_of_transactions_debt_settlement_individual) {
+		this.r46_no_of_transactions_debt_settlement_individual = r46_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR46_amount_debt_settlement_individual(BigDecimal r46_amount_debt_settlement_individual) {
+		this.r46_amount_debt_settlement_individual = r46_amount_debt_settlement_individual;
+	}
+
+	public void setR46_no_of_transactions_other_services_individual(
+			BigDecimal r46_no_of_transactions_other_services_individual) {
+		this.r46_no_of_transactions_other_services_individual = r46_no_of_transactions_other_services_individual;
+	}
+
+	public void setR46_amount_other_services_individual(BigDecimal r46_amount_other_services_individual) {
+		this.r46_amount_other_services_individual = r46_amount_other_services_individual;
+	}
+
+	public void setR46_total_no_of_transactions(BigDecimal r46_total_no_of_transactions) {
+		this.r46_total_no_of_transactions = r46_total_no_of_transactions;
+	}
+
+	public void setR46_grand_total(BigDecimal r46_grand_total) {
+		this.r46_grand_total = r46_grand_total;
+	}
+
+	public void setR47_country_break_down(String r47_country_break_down) {
+		this.r47_country_break_down = r47_country_break_down;
+	}
+
+	public void setR47_no_of_transactions_financial_investment_government(
+			BigDecimal r47_no_of_transactions_financial_investment_government) {
+		this.r47_no_of_transactions_financial_investment_government = r47_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR47_amount_financial_investment_government(BigDecimal r47_amount_financial_investment_government) {
+		this.r47_amount_financial_investment_government = r47_amount_financial_investment_government;
+	}
+
+	public void setR47_no_of_transactions_direct_investment_government(
+			BigDecimal r47_no_of_transactions_direct_investment_government) {
+		this.r47_no_of_transactions_direct_investment_government = r47_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR47_amount_direct_investment_government(BigDecimal r47_amount_direct_investment_government) {
+		this.r47_amount_direct_investment_government = r47_amount_direct_investment_government;
+	}
+
+	public void setR47_no_of_transactions_services_government(BigDecimal r47_no_of_transactions_services_government) {
+		this.r47_no_of_transactions_services_government = r47_no_of_transactions_services_government;
+	}
+
+	public void setR47_amount_services_government(BigDecimal r47_amount_services_government) {
+		this.r47_amount_services_government = r47_amount_services_government;
+	}
+
+	public void setR47_no_of_transactions_trade_government(BigDecimal r47_no_of_transactions_trade_government) {
+		this.r47_no_of_transactions_trade_government = r47_no_of_transactions_trade_government;
+	}
+
+	public void setR47_amount_trade_government(BigDecimal r47_amount_trade_government) {
+		this.r47_amount_trade_government = r47_amount_trade_government;
+	}
+
+	public void setR47_no_of_transactions_financial_investment_reserve(
+			BigDecimal r47_no_of_transactions_financial_investment_reserve) {
+		this.r47_no_of_transactions_financial_investment_reserve = r47_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR47_amount_financial_investment_reserve(BigDecimal r47_amount_financial_investment_reserve) {
+		this.r47_amount_financial_investment_reserve = r47_amount_financial_investment_reserve;
+	}
+
+	public void setR47_no_of_transactions_direct_investment_reserve(
+			BigDecimal r47_no_of_transactions_direct_investment_reserve) {
+		this.r47_no_of_transactions_direct_investment_reserve = r47_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR47_amount_direct_investment_reserve(BigDecimal r47_amount_direct_investment_reserve) {
+		this.r47_amount_direct_investment_reserve = r47_amount_direct_investment_reserve;
+	}
+
+	public void setR47_no_of_transactions_services_reserve(BigDecimal r47_no_of_transactions_services_reserve) {
+		this.r47_no_of_transactions_services_reserve = r47_no_of_transactions_services_reserve;
+	}
+
+	public void setR47_amount_services_reserve(BigDecimal r47_amount_services_reserve) {
+		this.r47_amount_services_reserve = r47_amount_services_reserve;
+	}
+
+	public void setR47_no_of_transactions_trade_reserve(BigDecimal r47_no_of_transactions_trade_reserve) {
+		this.r47_no_of_transactions_trade_reserve = r47_no_of_transactions_trade_reserve;
+	}
+
+	public void setR47_amount_trade_reserve(BigDecimal r47_amount_trade_reserve) {
+		this.r47_amount_trade_reserve = r47_amount_trade_reserve;
+	}
+
+	public void setR47_no_of_transactions_financial_investment_gre(
+			BigDecimal r47_no_of_transactions_financial_investment_gre) {
+		this.r47_no_of_transactions_financial_investment_gre = r47_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR47_amount_financial_investment_gre(BigDecimal r47_amount_financial_investment_gre) {
+		this.r47_amount_financial_investment_gre = r47_amount_financial_investment_gre;
+	}
+
+	public void setR47_no_of_transactions_direct_investment_gre(
+			BigDecimal r47_no_of_transactions_direct_investment_gre) {
+		this.r47_no_of_transactions_direct_investment_gre = r47_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR47_amount_direct_investment_gre(BigDecimal r47_amount_direct_investment_gre) {
+		this.r47_amount_direct_investment_gre = r47_amount_direct_investment_gre;
+	}
+
+	public void setR47_no_of_transactions_services_gre(BigDecimal r47_no_of_transactions_services_gre) {
+		this.r47_no_of_transactions_services_gre = r47_no_of_transactions_services_gre;
+	}
+
+	public void setR47_amount_services_gre(BigDecimal r47_amount_services_gre) {
+		this.r47_amount_services_gre = r47_amount_services_gre;
+	}
+
+	public void setR47_no_of_transactions_trade_gre(BigDecimal r47_no_of_transactions_trade_gre) {
+		this.r47_no_of_transactions_trade_gre = r47_no_of_transactions_trade_gre;
+	}
+
+	public void setR47_amount_trade_gre(BigDecimal r47_amount_trade_gre) {
+		this.r47_amount_trade_gre = r47_amount_trade_gre;
+	}
+
+	public void setR47_no_of_transactions_financial_investment_corporate(
+			BigDecimal r47_no_of_transactions_financial_investment_corporate) {
+		this.r47_no_of_transactions_financial_investment_corporate = r47_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR47_amount_financial_investment_corporate(BigDecimal r47_amount_financial_investment_corporate) {
+		this.r47_amount_financial_investment_corporate = r47_amount_financial_investment_corporate;
+	}
+
+	public void setR47_no_of_transactions_direct_investment_corporate(
+			BigDecimal r47_no_of_transactions_direct_investment_corporate) {
+		this.r47_no_of_transactions_direct_investment_corporate = r47_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR47_amount_direct_investment_corporate(BigDecimal r47_amount_direct_investment_corporate) {
+		this.r47_amount_direct_investment_corporate = r47_amount_direct_investment_corporate;
+	}
+
+	public void setR47_no_of_transactions_services_corporate(BigDecimal r47_no_of_transactions_services_corporate) {
+		this.r47_no_of_transactions_services_corporate = r47_no_of_transactions_services_corporate;
+	}
+
+	public void setR47_amount_services_corporate(BigDecimal r47_amount_services_corporate) {
+		this.r47_amount_services_corporate = r47_amount_services_corporate;
+	}
+
+	public void setR47_no_of_transactions_trade_corporate(BigDecimal r47_no_of_transactions_trade_corporate) {
+		this.r47_no_of_transactions_trade_corporate = r47_no_of_transactions_trade_corporate;
+	}
+
+	public void setR47_amount_trade_corporate(BigDecimal r47_amount_trade_corporate) {
+		this.r47_amount_trade_corporate = r47_amount_trade_corporate;
+	}
+
+	public void setR47_no_of_transactions_financial_investment_sme(
+			BigDecimal r47_no_of_transactions_financial_investment_sme) {
+		this.r47_no_of_transactions_financial_investment_sme = r47_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR47_amount_financial_investment_sme(BigDecimal r47_amount_financial_investment_sme) {
+		this.r47_amount_financial_investment_sme = r47_amount_financial_investment_sme;
+	}
+
+	public void setR47_no_of_transactions_direct_investment_sme(
+			BigDecimal r47_no_of_transactions_direct_investment_sme) {
+		this.r47_no_of_transactions_direct_investment_sme = r47_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR47_amount_direct_investment_sme(BigDecimal r47_amount_direct_investment_sme) {
+		this.r47_amount_direct_investment_sme = r47_amount_direct_investment_sme;
+	}
+
+	public void setR47_no_of_transactions_services_sme(BigDecimal r47_no_of_transactions_services_sme) {
+		this.r47_no_of_transactions_services_sme = r47_no_of_transactions_services_sme;
+	}
+
+	public void setR47_amount_services_sme(BigDecimal r47_amount_services_sme) {
+		this.r47_amount_services_sme = r47_amount_services_sme;
+	}
+
+	public void setR47_no_of_transactions_trade_sme(BigDecimal r47_no_of_transactions_trade_sme) {
+		this.r47_no_of_transactions_trade_sme = r47_no_of_transactions_trade_sme;
+	}
+
+	public void setR47_amount_trade_sme(BigDecimal r47_amount_trade_sme) {
+		this.r47_amount_trade_sme = r47_amount_trade_sme;
+	}
+
+	public void setR47_no_of_transactions_financial_investment_individual(
+			BigDecimal r47_no_of_transactions_financial_investment_individual) {
+		this.r47_no_of_transactions_financial_investment_individual = r47_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR47_amount_financial_investment_individual(BigDecimal r47_amount_financial_investment_individual) {
+		this.r47_amount_financial_investment_individual = r47_amount_financial_investment_individual;
+	}
+
+	public void setR47_no_of_transactions_direct_investment_individual(
+			BigDecimal r47_no_of_transactions_direct_investment_individual) {
+		this.r47_no_of_transactions_direct_investment_individual = r47_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR47_amount_direct_investment_individual(BigDecimal r47_amount_direct_investment_individual) {
+		this.r47_amount_direct_investment_individual = r47_amount_direct_investment_individual;
+	}
+
+	public void setR47_no_of_transactions_family_support_individual(
+			BigDecimal r47_no_of_transactions_family_support_individual) {
+		this.r47_no_of_transactions_family_support_individual = r47_no_of_transactions_family_support_individual;
+	}
+
+	public void setR47_amount_family_support_individual(BigDecimal r47_amount_family_support_individual) {
+		this.r47_amount_family_support_individual = r47_amount_family_support_individual;
+	}
+
+	public void setR47_no_of_transactions_education_individual(BigDecimal r47_no_of_transactions_education_individual) {
+		this.r47_no_of_transactions_education_individual = r47_no_of_transactions_education_individual;
+	}
+
+	public void setR47_amount_education_individual(BigDecimal r47_amount_education_individual) {
+		this.r47_amount_education_individual = r47_amount_education_individual;
+	}
+
+	public void setR47_no_of_transactions_medical_individual(BigDecimal r47_no_of_transactions_medical_individual) {
+		this.r47_no_of_transactions_medical_individual = r47_no_of_transactions_medical_individual;
+	}
+
+	public void setR47_amount_medical_individual(BigDecimal r47_amount_medical_individual) {
+		this.r47_amount_medical_individual = r47_amount_medical_individual;
+	}
+
+	public void setR47_no_of_transactions_tourism_individual(BigDecimal r47_no_of_transactions_tourism_individual) {
+		this.r47_no_of_transactions_tourism_individual = r47_no_of_transactions_tourism_individual;
+	}
+
+	public void setR47_amount_tourism_individual(BigDecimal r47_amount_tourism_individual) {
+		this.r47_amount_tourism_individual = r47_amount_tourism_individual;
+	}
+
+	public void setR47_no_of_transactions_debt_settlement_individual(
+			BigDecimal r47_no_of_transactions_debt_settlement_individual) {
+		this.r47_no_of_transactions_debt_settlement_individual = r47_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR47_amount_debt_settlement_individual(BigDecimal r47_amount_debt_settlement_individual) {
+		this.r47_amount_debt_settlement_individual = r47_amount_debt_settlement_individual;
+	}
+
+	public void setR47_no_of_transactions_other_services_individual(
+			BigDecimal r47_no_of_transactions_other_services_individual) {
+		this.r47_no_of_transactions_other_services_individual = r47_no_of_transactions_other_services_individual;
+	}
+
+	public void setR47_amount_other_services_individual(BigDecimal r47_amount_other_services_individual) {
+		this.r47_amount_other_services_individual = r47_amount_other_services_individual;
+	}
+
+	public void setR47_total_no_of_transactions(BigDecimal r47_total_no_of_transactions) {
+		this.r47_total_no_of_transactions = r47_total_no_of_transactions;
+	}
+
+	public void setR47_grand_total(BigDecimal r47_grand_total) {
+		this.r47_grand_total = r47_grand_total;
+	}
+
+	public void setR48_country_break_down(String r48_country_break_down) {
+		this.r48_country_break_down = r48_country_break_down;
+	}
+
+	public void setR48_no_of_transactions_financial_investment_government(
+			BigDecimal r48_no_of_transactions_financial_investment_government) {
+		this.r48_no_of_transactions_financial_investment_government = r48_no_of_transactions_financial_investment_government;
+	}
+
+	public void setR48_amount_financial_investment_government(BigDecimal r48_amount_financial_investment_government) {
+		this.r48_amount_financial_investment_government = r48_amount_financial_investment_government;
+	}
+
+	public void setR48_no_of_transactions_direct_investment_government(
+			BigDecimal r48_no_of_transactions_direct_investment_government) {
+		this.r48_no_of_transactions_direct_investment_government = r48_no_of_transactions_direct_investment_government;
+	}
+
+	public void setR48_amount_direct_investment_government(BigDecimal r48_amount_direct_investment_government) {
+		this.r48_amount_direct_investment_government = r48_amount_direct_investment_government;
+	}
+
+	public void setR48_no_of_transactions_services_government(BigDecimal r48_no_of_transactions_services_government) {
+		this.r48_no_of_transactions_services_government = r48_no_of_transactions_services_government;
+	}
+
+	public void setR48_amount_services_government(BigDecimal r48_amount_services_government) {
+		this.r48_amount_services_government = r48_amount_services_government;
+	}
+
+	public void setR48_no_of_transactions_trade_government(BigDecimal r48_no_of_transactions_trade_government) {
+		this.r48_no_of_transactions_trade_government = r48_no_of_transactions_trade_government;
+	}
+
+	public void setR48_amount_trade_government(BigDecimal r48_amount_trade_government) {
+		this.r48_amount_trade_government = r48_amount_trade_government;
+	}
+
+	public void setR48_no_of_transactions_financial_investment_reserve(
+			BigDecimal r48_no_of_transactions_financial_investment_reserve) {
+		this.r48_no_of_transactions_financial_investment_reserve = r48_no_of_transactions_financial_investment_reserve;
+	}
+
+	public void setR48_amount_financial_investment_reserve(BigDecimal r48_amount_financial_investment_reserve) {
+		this.r48_amount_financial_investment_reserve = r48_amount_financial_investment_reserve;
+	}
+
+	public void setR48_no_of_transactions_direct_investment_reserve(
+			BigDecimal r48_no_of_transactions_direct_investment_reserve) {
+		this.r48_no_of_transactions_direct_investment_reserve = r48_no_of_transactions_direct_investment_reserve;
+	}
+
+	public void setR48_amount_direct_investment_reserve(BigDecimal r48_amount_direct_investment_reserve) {
+		this.r48_amount_direct_investment_reserve = r48_amount_direct_investment_reserve;
+	}
+
+	public void setR48_no_of_transactions_services_reserve(BigDecimal r48_no_of_transactions_services_reserve) {
+		this.r48_no_of_transactions_services_reserve = r48_no_of_transactions_services_reserve;
+	}
+
+	public void setR48_amount_services_reserve(BigDecimal r48_amount_services_reserve) {
+		this.r48_amount_services_reserve = r48_amount_services_reserve;
+	}
+
+	public void setR48_no_of_transactions_trade_reserve(BigDecimal r48_no_of_transactions_trade_reserve) {
+		this.r48_no_of_transactions_trade_reserve = r48_no_of_transactions_trade_reserve;
+	}
+
+	public void setR48_amount_trade_reserve(BigDecimal r48_amount_trade_reserve) {
+		this.r48_amount_trade_reserve = r48_amount_trade_reserve;
+	}
+
+	public void setR48_no_of_transactions_financial_investment_gre(
+			BigDecimal r48_no_of_transactions_financial_investment_gre) {
+		this.r48_no_of_transactions_financial_investment_gre = r48_no_of_transactions_financial_investment_gre;
+	}
+
+	public void setR48_amount_financial_investment_gre(BigDecimal r48_amount_financial_investment_gre) {
+		this.r48_amount_financial_investment_gre = r48_amount_financial_investment_gre;
+	}
+
+	public void setR48_no_of_transactions_direct_investment_gre(
+			BigDecimal r48_no_of_transactions_direct_investment_gre) {
+		this.r48_no_of_transactions_direct_investment_gre = r48_no_of_transactions_direct_investment_gre;
+	}
+
+	public void setR48_amount_direct_investment_gre(BigDecimal r48_amount_direct_investment_gre) {
+		this.r48_amount_direct_investment_gre = r48_amount_direct_investment_gre;
+	}
+
+	public void setR48_no_of_transactions_services_gre(BigDecimal r48_no_of_transactions_services_gre) {
+		this.r48_no_of_transactions_services_gre = r48_no_of_transactions_services_gre;
+	}
+
+	public void setR48_amount_services_gre(BigDecimal r48_amount_services_gre) {
+		this.r48_amount_services_gre = r48_amount_services_gre;
+	}
+
+	public void setR48_no_of_transactions_trade_gre(BigDecimal r48_no_of_transactions_trade_gre) {
+		this.r48_no_of_transactions_trade_gre = r48_no_of_transactions_trade_gre;
+	}
+
+	public void setR48_amount_trade_gre(BigDecimal r48_amount_trade_gre) {
+		this.r48_amount_trade_gre = r48_amount_trade_gre;
+	}
+
+	public void setR48_no_of_transactions_financial_investment_corporate(
+			BigDecimal r48_no_of_transactions_financial_investment_corporate) {
+		this.r48_no_of_transactions_financial_investment_corporate = r48_no_of_transactions_financial_investment_corporate;
+	}
+
+	public void setR48_amount_financial_investment_corporate(BigDecimal r48_amount_financial_investment_corporate) {
+		this.r48_amount_financial_investment_corporate = r48_amount_financial_investment_corporate;
+	}
+
+	public void setR48_no_of_transactions_direct_investment_corporate(
+			BigDecimal r48_no_of_transactions_direct_investment_corporate) {
+		this.r48_no_of_transactions_direct_investment_corporate = r48_no_of_transactions_direct_investment_corporate;
+	}
+
+	public void setR48_amount_direct_investment_corporate(BigDecimal r48_amount_direct_investment_corporate) {
+		this.r48_amount_direct_investment_corporate = r48_amount_direct_investment_corporate;
+	}
+
+	public void setR48_no_of_transactions_services_corporate(BigDecimal r48_no_of_transactions_services_corporate) {
+		this.r48_no_of_transactions_services_corporate = r48_no_of_transactions_services_corporate;
+	}
+
+	public void setR48_amount_services_corporate(BigDecimal r48_amount_services_corporate) {
+		this.r48_amount_services_corporate = r48_amount_services_corporate;
+	}
+
+	public void setR48_no_of_transactions_trade_corporate(BigDecimal r48_no_of_transactions_trade_corporate) {
+		this.r48_no_of_transactions_trade_corporate = r48_no_of_transactions_trade_corporate;
+	}
+
+	public void setR48_amount_trade_corporate(BigDecimal r48_amount_trade_corporate) {
+		this.r48_amount_trade_corporate = r48_amount_trade_corporate;
+	}
+
+	public void setR48_no_of_transactions_financial_investment_sme(
+			BigDecimal r48_no_of_transactions_financial_investment_sme) {
+		this.r48_no_of_transactions_financial_investment_sme = r48_no_of_transactions_financial_investment_sme;
+	}
+
+	public void setR48_amount_financial_investment_sme(BigDecimal r48_amount_financial_investment_sme) {
+		this.r48_amount_financial_investment_sme = r48_amount_financial_investment_sme;
+	}
+
+	public void setR48_no_of_transactions_direct_investment_sme(
+			BigDecimal r48_no_of_transactions_direct_investment_sme) {
+		this.r48_no_of_transactions_direct_investment_sme = r48_no_of_transactions_direct_investment_sme;
+	}
+
+	public void setR48_amount_direct_investment_sme(BigDecimal r48_amount_direct_investment_sme) {
+		this.r48_amount_direct_investment_sme = r48_amount_direct_investment_sme;
+	}
+
+	public void setR48_no_of_transactions_services_sme(BigDecimal r48_no_of_transactions_services_sme) {
+		this.r48_no_of_transactions_services_sme = r48_no_of_transactions_services_sme;
+	}
+
+	public void setR48_amount_services_sme(BigDecimal r48_amount_services_sme) {
+		this.r48_amount_services_sme = r48_amount_services_sme;
+	}
+
+	public void setR48_no_of_transactions_trade_sme(BigDecimal r48_no_of_transactions_trade_sme) {
+		this.r48_no_of_transactions_trade_sme = r48_no_of_transactions_trade_sme;
+	}
+
+	public void setR48_amount_trade_sme(BigDecimal r48_amount_trade_sme) {
+		this.r48_amount_trade_sme = r48_amount_trade_sme;
+	}
+
+	public void setR48_no_of_transactions_financial_investment_individual(
+			BigDecimal r48_no_of_transactions_financial_investment_individual) {
+		this.r48_no_of_transactions_financial_investment_individual = r48_no_of_transactions_financial_investment_individual;
+	}
+
+	public void setR48_amount_financial_investment_individual(BigDecimal r48_amount_financial_investment_individual) {
+		this.r48_amount_financial_investment_individual = r48_amount_financial_investment_individual;
+	}
+
+	public void setR48_no_of_transactions_direct_investment_individual(
+			BigDecimal r48_no_of_transactions_direct_investment_individual) {
+		this.r48_no_of_transactions_direct_investment_individual = r48_no_of_transactions_direct_investment_individual;
+	}
+
+	public void setR48_amount_direct_investment_individual(BigDecimal r48_amount_direct_investment_individual) {
+		this.r48_amount_direct_investment_individual = r48_amount_direct_investment_individual;
+	}
+
+	public void setR48_no_of_transactions_family_support_individual(
+			BigDecimal r48_no_of_transactions_family_support_individual) {
+		this.r48_no_of_transactions_family_support_individual = r48_no_of_transactions_family_support_individual;
+	}
+
+	public void setR48_amount_family_support_individual(BigDecimal r48_amount_family_support_individual) {
+		this.r48_amount_family_support_individual = r48_amount_family_support_individual;
+	}
+
+	public void setR48_no_of_transactions_education_individual(BigDecimal r48_no_of_transactions_education_individual) {
+		this.r48_no_of_transactions_education_individual = r48_no_of_transactions_education_individual;
+	}
+
+	public void setR48_amount_education_individual(BigDecimal r48_amount_education_individual) {
+		this.r48_amount_education_individual = r48_amount_education_individual;
+	}
+
+	public void setR48_no_of_transactions_medical_individual(BigDecimal r48_no_of_transactions_medical_individual) {
+		this.r48_no_of_transactions_medical_individual = r48_no_of_transactions_medical_individual;
+	}
+
+	public void setR48_amount_medical_individual(BigDecimal r48_amount_medical_individual) {
+		this.r48_amount_medical_individual = r48_amount_medical_individual;
+	}
+
+	public void setR48_no_of_transactions_tourism_individual(BigDecimal r48_no_of_transactions_tourism_individual) {
+		this.r48_no_of_transactions_tourism_individual = r48_no_of_transactions_tourism_individual;
+	}
+
+	public void setR48_amount_tourism_individual(BigDecimal r48_amount_tourism_individual) {
+		this.r48_amount_tourism_individual = r48_amount_tourism_individual;
+	}
+
+	public void setR48_no_of_transactions_debt_settlement_individual(
+			BigDecimal r48_no_of_transactions_debt_settlement_individual) {
+		this.r48_no_of_transactions_debt_settlement_individual = r48_no_of_transactions_debt_settlement_individual;
+	}
+
+	public void setR48_amount_debt_settlement_individual(BigDecimal r48_amount_debt_settlement_individual) {
+		this.r48_amount_debt_settlement_individual = r48_amount_debt_settlement_individual;
+	}
+
+	public void setR48_no_of_transactions_other_services_individual(
+			BigDecimal r48_no_of_transactions_other_services_individual) {
+		this.r48_no_of_transactions_other_services_individual = r48_no_of_transactions_other_services_individual;
+	}
+
+	public void setR48_amount_other_services_individual(BigDecimal r48_amount_other_services_individual) {
+		this.r48_amount_other_services_individual = r48_amount_other_services_individual;
+	}
+
+	public void setR48_total_no_of_transactions(BigDecimal r48_total_no_of_transactions) {
+		this.r48_total_no_of_transactions = r48_total_no_of_transactions;
+	}
+
+	public void setR48_grand_total(BigDecimal r48_grand_total) {
+		this.r48_grand_total = r48_grand_total;
+	}
+
+	public void setReport_submit_date(Date report_submit_date) {
+		this.report_submit_date = report_submit_date;
+	}
+
+	public void setReport_date(Date report_date) {
+		this.report_date = report_date;
+	}
+
+	public void setReport_from_date(Date report_from_date) {
+		this.report_from_date = report_from_date;
+	}
+
+	public void setReport_to_date(Date report_to_date) {
+		this.report_to_date = report_to_date;
+	}
+
+	public void setReport_code(String report_code) {
+		this.report_code = report_code;
+	}
+
+	public void setEntity_flg(String entity_flg) {
+		this.entity_flg = entity_flg;
+	}
+
+	public void setModify_flg(String modify_flg) {
+		this.modify_flg = modify_flg;
+	}
+
+	public void setDel_flg(String del_flg) {
+		this.del_flg = del_flg;
+	}
+
+	public void setRepdesc(String repdesc) {
+		this.repdesc = repdesc;
+	}
+
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
+
+	public BRF93_SUMMARYENTITY3() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+}

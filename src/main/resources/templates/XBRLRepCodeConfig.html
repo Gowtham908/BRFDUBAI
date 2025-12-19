@@ -1,0 +1,549 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+
+<script>
+	
+	
+	function getddl1() 
+	{
+		alert("worked")
+		var select = document.getElementById('report_code').value;
+		alert(select)
+       
+        document.getElementById('refcodeviewdesc').value = select;
+		clickthis();
+	}
+	
+	
+	function clickthis() {
+
+			$('#placelist').empty();
+
+			var a=document.getElementById("report_code").value;
+			alert(a);
+			$('#placelist').empty();
+			// Your existing codea
+
+			$.ajax({
+				url: 'entry_userss',
+				type: 'GET',
+				dataType: 'json',
+				data: {              // Add the data to be sent as query parameters
+        report_code: a,       // Assuming 'paramA' is the parameter name, and 'a' is its value
+        // Add other parameters if needed
+    },
+				// Change to 'json' as you are expecting JSON response
+				// Your other settings...
+
+				success: function (response) {
+
+
+
+					const b = response; // Store the parsed JSON response in variable b
+
+					var trHTML = ''
+					$.each(b, function (key, value) {
+						trHTML += '<tr id=' + value.report_code + '>'
+						
+							+ '<td style="text-align:left;">' + value.row_101 + '</td> '
+						   + '<td style="text-align:left;">' + value.row_102 + '</td>  <br>'
+							+ '<td style="text-align:left;">' + value.row_103 + '</td>  <br>'
+							+ '<td style="text-align:left;">' + value.row_104 + '</td>  <br>'  // Corrected field name
+							+ '<td style="text-align:left;">' + value.row_105 + '</td>  <br>'  // Corrected field name
+							+ '<td style="text-align:left;">' + value.row_106 + '</td>  <br>'
+							+ '<td style="text-align:left;">' + value.row_107 + '</td>  <br>'
+							+ '<td style="text-align:left;">' + value.row_108 + '</td>  <br>'
+							+ '<td style="text-align:left;">' + value.row_109 + '</td>  <br>'
+							+ '<td style="text-align:left;">' + value.row_110 + '</td>  <br>' // Corrected field name
+							+ '</tr>';
+					});
+					$('#placelist').empty().append(trHTML); // Use $('#placelist') to update the table
+
+					}
+			});
+		}
+		function showRefCodeView() {
+
+		var selectedIndex = $("#report_code option:selected").index();
+		var refCodeType = selectedRefCode[selectedIndex - 1];
+
+		refCodeDesc = refCodeType.refCodeDesc;
+		$("#refcodeconfig").empty();
+		/* $("#refcodeviewdesc").text(refCodeType.refCodeDesc); */
+
+		if (refCodeType.refCode == null) {
+			refCodeType.refCode = "";
+		}
+		if (refCodeType.refCodeDesc == null) {
+			refCodeType.refCodeDesc = "";
+		}
+		if (refCodeType.sourceSysCode == null) {
+			refCodeType.sourceSysCode = "";
+		}
+		$("#addIcon").show();
+		var sourceCode;
+		for (var i = 0; i < selectedRefCode.length; i++) {
+			if (selectedRefCode[i].refCode == $("#report_code").val()) {
+				// console.log(selectedRefCode[i].sourceSysCode);
+				if (selectedRefCode[i].sourceSysCode != "") {
+					sourceCode = selectedRefCode[i].sourceSysCode;
+					
+				} else {
+					sourceCode = "src";
+					
+				}
+				$("#refcodeconfig")
+						.append(
+								"<tr class="+ sourceCode + ">"
+										+ "<td><a href='#' data-toggle='tooltip' class='editrec' onclick=fnedit('"
+										+ selectedRefCode[i].refCode
+										+ "','"
+										+ selectedRefCode[i].refCodeDesc
+												.replace(/ /g, '_')
+										+ "','"
+										+ selectedRefCode[i].sourceSysCode
+										+ "')><i class='fas fa-edit'></i></a></td>"
+										+ "<td><a href='#' data-toggle='tooltip' class='editrec' onclick=fndelete('"
+										+ selectedRefCode[i].refCode
+										+ "','"
+										+ selectedRefCode[i].refCodeDesc
+												.replace(/ /g, '_')
+										+ "','"
+										+ selectedRefCode[i].sourceSysCode
+										+ "')><i class='fas fa-minus-circle'></i></a></td>"
+										+ "<td>"
+										+ selectedRefCode[i].refCode
+										+ "</td>"
+										+ "<td>"
+										+ selectedRefCode[i].refCodeDesc
+										+ "</td>"
+										+ "<td>"
+										+ selectedRefCode[i].sourceSysCode
+										+ "</td>" + "</tr>");
+			}
+		}
+
+	};
+	refcodeviewdesc();
+
+	/*]]>*/
+</script>
+<script>
+	function fnedit(refcode, refdesc, syscode) {
+		$("#addedit").modal("toggle");
+		$("#btnSubmit").attr("onclick", "submitdataform()");
+		$("#refcode").val(refcode).prop("disabled", true);
+		$("#refCodeDesc").val(refdesc.replace(/_/g, " "))
+				.prop("disabled", true);
+		$("#sourceSysCode").val(syscode);
+		if(syscode!=""){
+			$("#trClass").val(syscode);
+		}
+		else{
+			$("#trClass").val("src");
+		}
+		$("#errorMsg").text("");
+
+	}
+	function fnadd() {
+		$("#addedit").modal("toggle");
+		$("#btnSubmit").attr("onclick", "submitaddform()");
+		$("#refcode").val($("#refcodeview").val()).prop("disabled", true);
+		$("#refCodeDesc").val($("#refcodelist").val()).prop("disabled", true);
+		$("#errorMsg").text("");
+		$("#sourceSysCode").val("");
+
+	}
+	function submitdataform() {
+		if ($("#sourceSysCode").val() == "") {
+			$("#errorMsg").text("Enter Source System Code").show().css("color",
+					"red");
+		} else {
+			var clname = "." + $("#trClass").val();
+
+			var Callurl = './ReferenceCode/refEdit?refCode='
+					+ $("#refcodeview").val() + '&refType='
+					+ $("#refcodelist").val() + '&oldSourceCode='
+					+ $("#trClass").val() + '&newSourceCode='
+					+ $("#sourceSysCode").val();
+			$.ajax({
+				type : 'post',
+				url : Callurl,
+				success : function(data) {
+					
+					if (data > 0) {
+						$(clname).find("td:last-child").text(
+								$("#sourceSysCode").val());
+						$("#addedit").modal("hide");
+						$("#alert").modal("toggle");
+						$("#alertmsg").text("Edited Successfully").css("color",
+								"green");
+					} else {
+						$("#addedit").modal("hide");
+						$("#alert").modal("toggle");
+						$("#alertmsg").text("Try again..").css("color", "red");
+					}
+
+				}
+			});
+		}
+	}
+	function submitaddform() {
+		var sourceCode = $("#sourceSysCode").val();
+		var refCode = $("#refcodeview").val();
+		var refType = $("#refcodelist").val();
+		var refDesc = $("#refcodeview option:selected").text();
+		if (sourceCode == "") {
+			$("#errorMsg").text("Enter Source System Code").show().css("color",
+					"red");
+		} else {
+			var Callurl = './ReferenceCode/refAdd?refCode=' + refCode
+					+ '&refType=' + refType + '&SourceCode=' + sourceCode;
+			$
+					.ajax({
+						type : 'post',
+						url : Callurl,
+						success : function(data) {
+							if (data > 0) {
+
+								$("#refcodeconfig")
+										.append(
+												"<tr class="+ sourceCode + ">"
+														+ "<td><a href='#' data-toggle='tooltip' class='editrec' onclick=fnedit('"
+														+ refCode
+														+ "','"
+														+ refType
+														+ "','"
+														+ sourceCode
+														+ "')><i class='fas fa-edit'></i></a></td>"
+														+ "<td><a href='#' data-toggle='tooltip' class='editrec' onclick=fndelete('"
+														+ refCode
+														+ "','"
+														+ refType
+														+ "','"
+														+ sourceCode
+														+ "')><i class='fas fa-minus-circle'></i></a></td>"
+														+ "<td>"
+														+ refCode
+														+ "</td>"
+														+ "<td>"
+														+ refDesc
+														+ "</td>"
+														+ "<td>"
+														+ sourceCode
+														+ "</td>" + "</tr>");
+								$("#addedit").modal("hide");
+								$("#alert").modal("toggle");
+								$("#alertmsg").text("Added Successfully").css(
+										"color", "green");
+							} else {
+								$("#addedit").modal("hide");
+								$("#alert").modal("toggle");
+								$("#alertmsg").text("Try again..").css("color",
+										"red");
+							}
+
+						}
+					});
+		}
+	}
+	function fndelete(refcode, refdesc, syscode) {
+		$("#datadelete").modal("toggle");
+		$("#delrefcode").val(refcode).prop("disabled", true);
+		$("#delrefCodeDesc").val(refdesc.replace(/_/g, " ")).prop("disabled",
+				true);
+		$("#delsourceSysCode").val(syscode);
+		
+		if(syscode!=""){
+			$("#trClassd").val(syscode);
+		}
+		else{
+			$("#trClassd").val("src");
+		}
+	}
+
+	function submitdeleteform() {
+		var clname = "." + $("#trClassd").val();
+		var sourceCode = $("#delsourceSysCode").val();
+		var refCode = $("#refcodeview").val();
+		var refType = $("#refcodelist").val();
+		var Callurl = './ReferenceCode/refDelete?refCode=' + refCode
+				+ '&refType=' + refType + '&SourceCode=' + sourceCode;
+
+		$.ajax({
+			type : 'post',
+			url : Callurl,
+			success : function(data) {
+				if (data > 0) {
+					$(clname).remove();
+					$("#datadelete").modal("hide");
+					$("#alert").modal("toggle");
+					$("#alertmsg").text("Deleted Successfully").css("color",
+							"green");
+				} else {
+					$("#datadelete").modal("hide");
+					$("#alert").modal("toggle");
+					$("#alertmsg").text("Try again..").css("color", "red");
+				}
+
+			}
+		});
+	}
+</script>
+
+</head>
+<title>XBRL</title>
+<style>
+	
+	.custom-input {
+    border: none;
+    background-color: transparent;
+    border-bottom: 0px solid black; /* Show only the bottom border as the input line */
+    outline: none; /* Remove the focus outline */
+    width: 200px; /* Adjust the width as needed */
+    color: blue;
+}
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+</style>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<div class="card">
+					<div class="card-header">
+						<h4>REPORT REFERENCE CODE MASTER</h4>
+					</div>
+					<div class="card-body">
+
+						<div class="row">
+							<label class="col-sm-2 control-label">Report Code
+			                </label> 
+			                <select th:object="${refCodeTypeList}" name="report_code"
+								id="report_code" onchange="getddl1();"
+								class="col-sm-2 form-control form-control-sm">
+								<option value="Select">Select</option>
+								<option th:each="refcode : ${refCodeTypeList}"
+									th:value="${refcode?.report_desc}"
+									th:text="${refcode?.report_code}"></option>
+							</select> 
+								
+								<label class="col-sm-2 control-label">Report Name</label> 
+								
+								<input  id="refcodeviewdesc" class="custom-input" style="width:500px;" />
+								</div>
+
+						<br>
+
+						<div class="refdesc">
+							<div class="row" th:fragment="viewlist">
+								
+							</div>
+
+						</div>
+						<br>
+						<div>
+							<table
+								class="table  table-bordered table-hover table-condensed table-sm">
+								<thead class="thead-light">
+									<tr>
+
+										<tr>
+									    
+										<th style="text-align: center;">Level 1</th>
+										<th style="text-align: center;">Level 2</th>
+										<!--<th style="text-align: center;">Field Code</th>-->
+										<th style="text-align: center;">FIELD DESCRIPTION</th>
+										<th style="text-align: center;">HEADER</th>
+										<th style="text-align: center;">Remarks</th>
+									</tr>
+								</thead>
+								<tbody  th:each="report : ${refCodeTypeList}" class="repCodes" id="placelist">
+									
+									<tr>
+									<td th:text="${report.row_1}" id="row_1">CHENNAI</td>
+								
+									
+									</tr>
+									<!--<tr>
+									<td th:text="${report.row_102}" id="row_102">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.report_code}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_103}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_104}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_105}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_106}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_107}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_108}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_109}">123</td>
+									</tr>
+									<tr>
+									<td th:text="${report.row_110}">123</td>
+									</tr>--> 
+								</tbody>
+							</table>
+						</div>
+						
+						
+					</div>
+					<div class="card-footer text-center">
+
+							<button type="button" class="btn btn-xs btn-primary"  onclick="home();">
+								Home</button>
+							<button type="button" class="btn btn-xs btn-primary" onclick="back();">
+								Back</button>
+
+						</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+	<div class="modal fade" id="addedit" >
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Add/Edit Records</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${referdetail} id="dataedit" method="post">
+						<input type="hidden" id="trClass" />
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6" for="refcode">Reference Code</label> <input
+									class="form-control col-sm-5" type="text" 
+									id="refcode" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="refCodeDesc">Ref Code Type</label>
+								<input class="form-control col-sm-5" type="text"
+								id="refCodeDesc" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="sourceSysCode">Source
+									System Code</label> <input class="form-control col-sm-5" type="text"
+									 id="sourceSysCode" required />
+							</div>
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<span id="errorMsg" style="display: none;"></span>
+					<button type="button" class="btn btn-primary" id="btnSubmit"
+						onclick="submitdataform();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details edit modal form----------------------------------------------------->
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+	<div class="modal fade" id="datadelete">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Are you Sure want to delete?</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${referdetail} id="dataeditdelete" method="post">
+						<input type="hidden" id="trClassd" />
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6" for="refcode">Reference Code</label> <input
+									class="form-control col-sm-5" type="text" disabled
+									id="delrefcode" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="refCodeDesc">Ref Code Type</label>
+								<input class="form-control col-sm-5" type="text" disabled
+									id="delrefCodeDesc" />
+							</div>
+							<div class="row">
+								<label class="col-sm-6" for="sourceSysCode">Source
+									System Code</label> <input class="form-control col-sm-5" type="text"
+									disabled id="delsourceSysCode" />
+							</div>
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitdeleteform();">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details delete modal dialog------------------------------------------------------>
+	
+</body>
+</html>

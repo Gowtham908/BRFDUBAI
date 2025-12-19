@@ -1,0 +1,4051 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function resident(a) {
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue !== '0' && cellValue !== '0.00') {
+				// Append '0.00' to cellValue
+				//      cellValue += '0.00';
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				});
+			} else {
+				alert("No Records available for this selected Criteria");
+			}
+		}
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+			location.href = "/BRBS/quarterly1";
+
+		}
+		function back() {
+			window.history.back();
+		}
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function home() {
+
+			location.href = "/BRBS/BRFArchival";
+
+
+		}
+
+
+
+	</script>
+
+
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-14 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 25000);
+		}
+	</script>
+
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-014-A' + ".xlsx";
+					} else {
+						a.download = '011-BRF-014-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					if (filetype == "excel" || filetype == "detailexcel") {
+						$('#customAlertBody').text('011-BRF-014-A ' + ".xlsx");
+					} else {
+						$('#customAlertBody').text('011-BRF-014-A ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+	</script>
+	<script>
+		function showAlertMessage() {
+			alert("Details page not available for Nil Report");
+		}
+	</script>
+	<title>XBRL</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true" onclick="docEmb('Report')" id="ques"></i>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BANKING AND MONETARY STATISTICS- LCR
+					Reporting (Detailed) (AED IN 000s) </b>
+				<th><b style="color: white; margin-left: 1%;">
+					</b></th>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showAlertMessage();"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive" style="border-right: 1px solid #dee2e6">
+							<table style="width: 1500px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead>
+									<tr style="background-color: #bdbec2">
+										<th>1.00</th>
+										<th>Stock of high quality liquid assets
+											(HQLA)</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr>
+										<th colspan="2">1.1. Level 1 Assets</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Market Value</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+								</thead>
+								<tbody th:each="report: ${reportsummary}">
+									<tr>
+										<td style="text-align: right">1.1.1</td>
+										<th th:text="${report.r10_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r10_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r10_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r10_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.2</td>
+										<th th:text="${report.r11_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r11_market_value	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r11_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color:#bdbec2"
+											th:text="${#numbers.formatDecimal(report.r11_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.2.1</td>
+										<td th:text="${report.r12_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td s
+											th:text="${#numbers.formatDecimal(report.r12_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r12_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r12_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.3</td>
+										<th th:text="${report.r13_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_market_value	,1,'COMMA',0,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r13_weight_amount	,1,'COMMA',0,'POINT')}">
+											CHENNAI</th>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.3.1</td>
+										<td th:text="${report.r14_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r14_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r14_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r14_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.3.2</td>
+										<td th:text="${report.r15_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r15_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r15_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r15_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.3.3</td>
+										<td th:text="${report.r16_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r16_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW107">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r16_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r16_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.3.4</td>
+										<td th:text="${report.r17_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r17_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW108">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r17_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r17_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.3.5</td>
+										<td th:text="${report.r18_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r18_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW109">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r18_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r18_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.4</td>
+										<th th:text="${report.r19_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_market_value	,1,'COMMA',0,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r19_weight_amount	,1,'COMMA',0,'POINT')}">
+											CHENNAI</th>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.4.1</td>
+										<td style="background-color: #FFFF00" th:text="${report.r20_product}">CHENNAI
+										</td>
+										<td style="background-color: #FFFF00"></td>
+										<td style="background-color: #FFFF00"></td>
+										<td style="background-color: #FFFF00"
+											th:text="${#numbers.formatDecimal(report.r20_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW111">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r20_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r20_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.4.2</td>
+										<td style="background-color: #FFFF00" th:text="${report.r21_product}">CHENNAI
+										</td>
+										<td style="background-color: #FFFF00"></td>
+										<td style="background-color: #FFFF00"></td>
+										<td style="background-color: #FFFF00"
+											th:text="${#numbers.formatDecimal(report.r21_market_value	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW112">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r21_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r21_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.5</td>
+										<th th:text="${report.r22_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r22_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r22_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.6</td>
+										<th th:text="${report.r23_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r23_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW114">CHENNAI</td>
+										<td style="background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r23_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.7</td>
+										<td>Adjustment to stock of Level 1 assets</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r24_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW115">CHENNAI</td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.1.8</td>
+										<td>Adjustment amount of Level 1 assets</td>
+										<td></td>
+										<td></td>
+
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r25_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<th colspan="2">1.2. Level 2A Assets</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<td></td>
+										<td></td>
+										<th style="text-align: center">Market Value</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.2.1</td>
+										<th>Marketable Securities with a 20% risk weight</th>
+										<td></td>
+										<td></td>
+										<th style="text-align: right">0</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.2.1.1</td>
+										<td>issued by sovereigns</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r29_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW121">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r29_weight	,1,'COMMA',2,'POINT')}"
+											align="right" style="background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r29_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.1.2</td>
+										<td>guaranteed by sovereigns></td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r30_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW122">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r30_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r30_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.1.3</td>
+										<td>issued or guaranteed by central banks</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r31_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW123">CHENNAI </td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r31_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r31_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.1.4</td>
+										<td> issued or guaranteed by PSEs</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r32_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW124">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r32_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r32_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.1.5</td>
+										<td>issued or guaranteed by MDBS></td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r33_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r33_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r33_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.1.6</td>
+										<td>Non-financial corporate bonds, rated AA- or better ></td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r34_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r34_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r34_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.1.7</td>
+										<td>Covered bonds, not self-issued, rated AA- or better</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r35_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW127">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r35_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r35_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.1.8</td>
+										<td>Unrated UAE PSE/ GRE</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r36_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW125">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r36_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r36_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.2</td>
+										<th>Total stock of Level 2A assets</th>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r37_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right ;background-color: #bdbec2"
+											onclick="resident(this)" id="ROW126">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r37_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r37_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.2.3</td>
+										<td>Adjustment to stock of Level 2A assets</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r38_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r38_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="text-align: right; background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.2.4</td>
+
+										<td>Adjusted amount of Level 2A assets</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r39_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r39_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r39_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+
+									</tr>
+
+									<tr>
+										<th colspan="2">1.3. Level 2B Assets</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<td></td>
+										<td></td>
+										<th style="text-align: center">Market Value</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.3.1</td>
+										<td>Residential mortgage-backed securities (RMBS), rated AA or better</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r42_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW133">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r42_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r42_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.3.2</td>
+										<td>Non-financial corporate bonds, rated BBB- to A+ </td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r43_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW134">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r43_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r43_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.3.3</td>
+										<td>Non-financial common equity shares </td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r44_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW135">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r44_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r44_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.3.4</td>
+										<td>Sovereign or central bank debt securities, rated BBB- to BBB+</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r45_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW136">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r45_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r45_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.3.5</td>
+										<th>Total stock of Level 2B RMBS assets</th>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r46_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r46_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r46_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.3.6</td>
+										<td>Adjustment to stock of Level 2B RMBS assets</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r47_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r47_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="text-align: right; background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.3.7</td>
+										<td>Adjusted amount of Level 2B RMBS assets</td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r48_market_value	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r48_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r48_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.3.8</td>
+										<th>Total stock of Level 2B non-RMBS assets</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r49_market_value	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r49_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r49_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.3.9</td>
+										<th>Adjustment to stock of Level 2B non-RMBS assets</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r50_market_value	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r50_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="text-align: right; background-color: #bdbec2"></td>
+
+									</tr>
+
+
+									<tr>
+										<td style="text-align: right">1.3.10</td>
+										<td>Adjusted amount of Level 2B non-RMBS assets</td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r51_market_value	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r51_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r51_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.3.11</td>
+										<td>Adjusted amount of Level 2B (RMBS and non-RMBS) assets
+										</td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r52_market_value	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r52_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r52_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.3.12</td>
+										<td>Adjustment to stock of HQLA due to cap on Level 2B assets</td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2" align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r53_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r53_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">1.3.13</td>
+										<td>Adjustment to stock of HQLA due to cap on Level 2 assets</td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2" align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r54_weight	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r54_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right">CHENNAI</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<th style="text-align: right">1.4</th>
+										<th>Total stock of HQLA</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r53_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></th>
+									</tr>
+									<tr>
+										<th colspan="3">1.5. Additional Information for HQLA</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+
+									</tr>
+
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<td></td>
+										<td></td>
+
+										<th style="text-align: center">Market Value</th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.1</td>
+										<td>
+											Market value of Level 1 Assets held at the entity level, but excluded from
+											the consolidated stock of HQLA ></td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r54_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW151">CHENNAI</td>
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.2</td>
+										<td>Market value of Level 2A Assets held at the entity level, but excluded from
+											the consolidated stock of HQLACHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r55_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW152">CHENNAI< /td>
+
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.3</td>
+										<td>"Market value of Level 2B - RMBS Assets held at the entity level, but
+											excluded from the consolidated stock of HQLA"
+										<td></td>
+
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r56_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW153">CHENNAI</td>
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.4</td>
+										<td>"Market value of Level 2B - non RMBS Assets held at the entity level, but
+											excluded from the consolidated stock of HQLA"
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r57_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW154">CHENNAI</td>
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.5</td>
+										<td>"Market value of Level 1 Assets excluded from the stock of high quality
+											liquid assets due to operational restrictions
+											"
+										</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r58_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW155">CHENNAI</td>
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.6</td>
+										<td>"Market Value of Level 2A Assets excluded from the stock of high quality
+											liquid assets due to operational restrictions
+											"
+										</td>
+										<td></td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r59_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW156">CHENNAI</td>
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.7</td>
+										<td>"Market value of Level 2B - RMBS Assets excluded from the stock of high
+											quality liquid assets due to operational restrictions
+											"
+										</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r60_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW157">CHENNAI</td>
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">1.5.8</td>
+										<td>"Market value of Level 2B - non RMBS Assets excluded from the stock of high
+											quality liquid assets due to operational restrictions
+											"
+										</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r61_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW158">CHENNAI</td>
+										<td style="background-color: #bdbec2;"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+
+									<tr>
+
+										<th colspan="2">2. Net cash outflows</th>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<th colspan="2">2.1. Cash outflows</th>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<th colspan="2">2.1.1. Retail deposit run-off</th>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Amount</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.1.1</td>
+										<th th:text="${report.r72_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r72_amount	,1,'COMMA',0,'POINT')}">
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.1</td>
+										<th th:text="${report.r73_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2;; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r73_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.1.1</td>
+										<td th:text="${report.r74_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r74_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW166"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r74_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r74_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.1.2</td>
+										<td th:text="${report.r75_product}" onclick="resident(this)" id="ROW167">CHENNAI
+										</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r75_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r75_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r75_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.2</td>
+										<th th:text="${report.r76_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r76_amount	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW181"></th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.2.1</td>
+										<td th:text="${report.r77_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r77_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW182"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r77_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r77_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.2.2</td>
+										<td th:text="${report.r78_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r78_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW183"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r78_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r78_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.2.3</td>
+										<td th:text="${report.r79_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r79_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW184"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r79_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r79_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.2.4</td>
+										<td th:text="${report.r80_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r80_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW185"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r80_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r80_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.1.2.5</td>
+										<td th:text="${report.r81_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r81_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW186"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r81_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r81_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.2</td>
+										<th th:text="${report.r82_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.1.3</td>
+										<th th:text="${report.r83_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2;"></td>
+									</tr>
+
+									<tr>
+										<th colspan="2">2.1.2. Unsecured wholesale funding
+											run-off</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Amount</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.2.1</td>
+										<th th:text="${report.r86_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r86_amount	,1,'COMMA',0,'POINT')}"
+											onclick="resident(this)" id="ROW191"></th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1</td>
+										<th th:text="${report.r87_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r87_amount	,1,'COMMA',0,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW192"></th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+									<tr>
+										<td style="text-align:right">2.1.2.1.1.1</td>
+										<th th:text="${report.r88_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r88_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.1.1</td>
+										<td th:text="${report.r89_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r89_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW194"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r89_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r89_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.1.2</td>
+										<td th:text="${report.r90_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r90_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW195"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r90_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r90_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.1.3</td>
+										<td th:text="${report.r91_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r91_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW196"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r91_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r91_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.1.4</td>
+										<td th:text="${report.r92_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r92_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW197"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r92_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r92_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.2</td>
+										<th th:text="${report.r93_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r93_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.2.1</td>
+										<td th:text="${report.r94_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r94_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW199"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r94_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r94_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.2.2</td>
+										<td th:text="${report.r95_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r95_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW200"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r95_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r95_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.2.3</td>
+										<td th:text="${report.r96_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r96_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW201"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r96_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r96_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.3</td>
+										<th th:text="${report.r97_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r97_amount	,1,'COMMA',0,'POINT')}"
+											onclick="resident(this)" id="ROW202"></th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.3.1</td>
+										<td th:text="${report.r98_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r98_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r98_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r98_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.3.2</td>
+										<td th:text="${report.r99_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r99_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW203"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r99_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r99_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.3.3</td>
+										<td th:text="${report.r100_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r100_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW204"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r100_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r100_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.4</td>
+										<th th:text="${report.r101_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r101_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.4.1</td>
+										<td th:text="${report.r102_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r102_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW206"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r102_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r102_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.4.2</td>
+										<td th:text="${report.r103_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r103_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW207"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r103_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r103_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.1.4.3</td>
+										<td th:text="${report.r104_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r104_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW208"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r104_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r104_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.2</td>
+										<th th:text="${report.r105_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r105_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.2.1</td>
+										<td th:text="${report.r106_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r106_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<th style="background-color: #bdbec2"></th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.2.1.2.1.1</td>
+										<td th:text="${report.r107_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r107_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW213"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r107_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r107_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.2.1.2.1.2</td>
+										<td th:text="${report.r108_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r108_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW214"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r108_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r108_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.2.2</td>
+										<td th:text="${report.r109_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r109_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW215"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r109_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r109_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.2.3</td>
+										<td th:text="${report.r110_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r110_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW216"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r110_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r110_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.2.4</td>
+										<td th:text="${report.r111_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r111_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW217"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r111_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r111_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.1.2.5</td>
+										<td th:text="${report.r112_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r112_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW218"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r112_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r112_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.2</td>
+										<th th:text="${report.r113_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r113_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.3</td>
+										<th th:text="${report.r114_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r114_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.4</td>
+										<th th:text="${report.r115_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r115_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.2.5</td>
+										<th th:text="${report.r116_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r116_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<th colspan="2">2.1.3. Secured funding run-off</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th colspan="1">Particulars</th>
+										<th></th>
+										<th style="text-align: center">Amount Received</th>
+										<th style="text-align: center">Market Value of Extended
+											Collateral</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.1</td>
+										<th th:text="${report.r119_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r119_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.1</td>
+										<th th:text="${report.r120_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r120_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.1.1</td>
+										<td th:text="${report.r121_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r121_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW227">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r121_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW227"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r121_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r121_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.1.2</td>
+										<td th:text="${report.r122_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r122_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW228">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r122_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW228"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r122_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r122_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.2</td>
+										<th th:text="${report.r123_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r123_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.2.1</td>
+										<td th:text="${report.r124_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r124_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW230">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r124_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW230"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r124_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r124_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.2.2</td>
+										<td th:text="${report.r125_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r125_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW231">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r125_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r125_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r125_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.3</td>
+										<th th:text="${report.r126_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r126_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.1.3.1</td>
+										<td th:text="${report.r127_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r127_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW233">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r127_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW233"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r127_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r127_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.3.2</td>
+										<td th:text="${report.r128_product}">CHENNAI</td>
+
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r128_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW234">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r128_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW234"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r128_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r128_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.1.4</td>
+										<th th:text="${report.r129_product}">CHENNAI</th>
+
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r129_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.1.4.1</td>
+										<td th:text="${report.r130_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r130_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW222">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r130_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW222"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r130_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r130_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.4.2</td>
+										<td th:text="${report.r131_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r131_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW223">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r131_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW223"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r131_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r131_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.1.4.3</td>
+										<td th:text="${report.r132_product}">CHENNAI</td>
+
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r132_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW224">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r132_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW224"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r132_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r132_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.2</td>
+										<th th:text="${report.r133_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r133_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.2.1</td>
+										<td th:text="${report.r134_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r134_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW226">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r134_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW226"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r134_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r134_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.2.2</td>
+										<td th:text="${report.r135_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r135_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW227">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r135_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW227"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r135_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r135_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+
+									<tr>
+										<td style="text-align: right">2.1.3.3</td>
+										<th th:text="${report.r136_product}">CHENNAI</th>
+
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r136_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.3.1</td>
+										<td th:text="${report.r137_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r137_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW229">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r137_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW229"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r137_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r137_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.3.2</td>
+										<td th:text="${report.r138_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r138_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW230">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r138_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW230"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r138_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r138_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.4</td>
+										<th th:text="${report.r139_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r139_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.4.1</td>
+										<td th:text="${report.r140_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r140_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW232">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r140_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW232"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r140_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r140_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.4.2</td>
+										<td th:text="${report.r141_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r141_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW233">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r141_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW233"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r141_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r141_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5</td>
+										<th th:text="${report.r142_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r142_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.3.5.1</td>
+										<th th:text="${report.r143_product}">CHENNAI</th>
+										<td></td>
+
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r143_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.1.1</td>
+										<td th:text="${report.r144_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r144_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW236">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r144_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW236"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r144_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r144_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.1.2</td>
+										<td th:text="${report.r145_product}">CHENNAI</td>
+										<td></td>
+
+										<td th:text="${#numbers.formatDecimal(report.r145_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW237">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r145_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW237"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r145_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r145_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.2</td>
+										<th th:text="${report.r146_product}">CHENNAI</th>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r146_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.2.1</td>
+										<td th:text="${report.r147_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r147_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW239">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r147_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW239"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r147_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r147_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.2.2</td>
+										<td th:text="${report.r148_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r148_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW240">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r148_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW240"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r148_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r148_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.3</td>
+										<th th:text="${report.r149_product}">CHENNAI</th>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r149_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.3.1</td>
+										<td th:text="${report.r150_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r150_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW242">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r150_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW242"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r150_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r150_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.5.3.2</td>
+										<td th:text="${report.r151_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r151_amount_recevied	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW243">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r151_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW243"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r151_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r151_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.3.6</td>
+										<th th:text="${report.r152_product}">CHENNAI</th>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r152_amount_recevied	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r152_weight_amount	,0,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<th colspan="2">2.1.4. Additional requirements</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Amount</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.1</td>
+										<td th:text="${report.r155_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r155_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW247"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r155_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r155_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.2</td>
+										<td th:text="${report.r156_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r156_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW248"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r156_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r156_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.3</td>
+										<td th:text="${report.r157_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r157_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.3.1</td>
+										<td th:text="${report.r158_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r158_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW250"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r158_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r158_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.3.2</td>
+										<td th:text="${report.r159_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r159_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW251"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r159_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r159_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.4</td>
+										<td th:text="${report.r160_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r160_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW252"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r160_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r160_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.5</td>
+										<td th:text="${report.r161_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r161_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW253"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r161_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r161_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.6</td>
+										<td th:text="${report.r162_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r162_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW254"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r162_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r162_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.7</td>
+										<td th:text="${report.r163_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r163_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW255"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r163_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r163_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.8</td>
+										<td th:text="${report.r164_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r164_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW256"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r164_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r164_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.9</td>
+										<td th:text="${report.r165_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r165_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW257"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r165_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r165_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.10</td>
+										<th th:text="${report.r166_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r166_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.10.1</td>
+										<td th:text="${report.r167_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r167_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW259"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r167_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r167_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.10.2</td>
+										<td th:text="${report.r168_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r168_amount	,1,'COMMA',0,'POINT')}"
+											onclick="resident(this)" id="ROW260" style="text-align: right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r168_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r168_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.10.3</td>
+										<td th:text="${report.r169_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r169_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW261"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r169_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r169_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.11</td>
+										<th th:text="${report.r170_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r170_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW262"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r170_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r170_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.12</td>
+										<th th:text="${report.r171_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r171_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.12.1</td>
+										<td th:text="${report.r172_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r172_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW264"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r172_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r172_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.12.2</td>
+										<td th:text="${report.r173_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r173_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW265"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r173_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r173_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.12.3</td>
+										<td th:text="${report.r174_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r174_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW266"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r174_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r174_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.12.4</td>
+										<td th:text="${report.r175_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r175_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW267"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r175_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r175_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.12.5</td>
+										<td th:text="${report.r176_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r176_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW268"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r176_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r176_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.13</td>
+										<th th:text="${report.r177_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r177_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.13.1</td>
+										<td th:text="${report.r178_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r178_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW270"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r178_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r178_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.13.2</td>
+										<td th:text="${report.r179_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r179_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW271"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r179_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r179_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.13.3</td>
+										<td th:text="${report.r180_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r180_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW272"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r180_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r180_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.13.4</td>
+										<td th:text="${report.r181_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r181_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW273"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r181_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r181_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.4.13.5</td>
+										<td style="background-color: #FFFF00" th:text="${report.r182_product}">CHENNAI
+										</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r182_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW274"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r182_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r182_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.1.4.14</td>
+										<th style="background-color: #bdbec2">Other
+											contractual obligations to extend funds to:</th>
+										<th style="text-align: center; background-color: #bdbec2">Amount
+										</th>
+										<th style="text-align: center; background-color: #bdbec2">Roll-over
+											of Inflows</th>
+										<th style="text-align: center; background-color: #bdbec2">Excess
+											Outflows</th>
+										<th style="text-align: center; background-color: #bdbec2">Weight
+										</th>
+										<th style="text-align: center; background-color: #bdbec2">Weighted
+											Amount</th>
+									</tr>
+
+
+									<tr>
+										<td>2.1.4.14.1</td>
+										<td th:text="${report.r184_product}">CHENNAI</td>
+
+										<td th:text="${#numbers.formatDecimal(report.r184_amount	,1,'COMMA',2,'POINT')}"
+											style="text-align: right"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r184_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r184_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td>2.1.4.14.2</td>
+										<td th:text="${report.r185_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r185_amount	,1,'COMMA',2,'POINT')}"
+											style="text-align: right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r185_roll_over,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td>2.1.4.14.3</td>
+										<td th:text="${report.r186_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r186_amount	,1,'COMMA',2,'POINT')}"
+											style="text-align: right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r186_roll_over,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td>2.1.4.14.4</td>
+										<td th:text="${report.r187_product}">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r187_amount	,1,'COMMA',2,'POINT')}"
+											style="text-align: right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r187_roll_over,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td>2.1.4.14.5</td>
+										<td th:text="${report.r188_product}">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r188_amount	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r188_roll_over,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td>2.1.4.15</td>
+										<td th:text="${report.r189_product}">CHENNAI</td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r189_amount	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r189_roll_over,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r189_excess,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r189_weight,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r189_weight_amount,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td>2.1.4.16</td>
+										<th th:text="${report.r190_product}">CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r190_weight_amount,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td></td>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: center">Weighted
+											Amount</th>
+									</tr>
+									<tr>
+										<td></td>
+										<th th:text="${report.r192_product}"></th>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r192_amount,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<th colspan="2">2.1.5. Other contingent funding
+											obligations</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Amount</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.5.1</td>
+										<th th:text="${report.r195_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r195_amount	,1,'COMMA',0,'POINT')}">
+										</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.5.1.1</td>
+										<td th:text="${report.r196_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r196_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW288"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r196_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r196_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.5.1.2</td>
+										<td th:text="${report.r197_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r197_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW289"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r197_weight	,1,'COMMA',2,'POINT')}"
+											align="right"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r197_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.1.5.2</td>
+										<th th:text="${report.r198_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r198_weight_amount	,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+
+									<tr>
+										<th colspan="2">2.1.6. Total cash outflows</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr>
+										<td></td>
+										<td th:text="${report.r200_product}"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #bdbec2"
+											th:text="${#numbers.formatDecimal(report.r200_weight_amount,1,'COMMA',0,'POINT')}"
+											align="right"></td>
+									</tr>
+									<tr>
+
+										<th colspan="2">2.2. Cash inflows</th>
+										<td></td>
+										<td></td>
+										<td></td>
+
+
+										<td></td>
+										<td></td>
+
+									</tr>
+									<tr>
+										<th colspan="2">2.2.1. Secured lending including reverse
+											repo and securities borrowing</th>
+										<td></td>
+										<td></td>
+										<td></td>
+
+
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+
+										<th></th>
+										<th style="text-align: center">Amount Extended</th>
+										<th style="text-align: center">Market Value of Received
+											Collateral</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td>2.2.1.1</td>
+										<td th:text="${report.r204_product}">CHENNAI</td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r204_amount_extended	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1</td>
+										<td th:text="${report.r205_product}">CHENNAI</td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r205_amount_extended	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td>2.2.1.1.1.1</td>
+										<td th:text="${report.r206_product}">CHENNAI</td>
+										<td></td>
+										<th style="background-color: #bdbec2; text-align: right"
+											th:text="${#numbers.formatDecimal(report.r206_amount_extended	,1,'COMMA',2,'POINT')}">
+											CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: left">2.2.1.1.1.1.1</td>
+										<td th:text="${report.r207_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r207_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW299">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r207_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW299"></td>
+										<td th:text="${#numbers.formatDecimal(report.r207_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r207_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.1.2</td>
+										<td th:text="${report.r208_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r208_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW300">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r208_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW300"></td>
+										<td th:text="${#numbers.formatDecimal(report.r208_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r208_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+
+									<tr>
+										<td>2.2.1.1.1.2</td>
+										<td th:text="${report.r209_product}">CHENNAI</td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r209_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.1</td>
+										<td th:text="${report.r210_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r210_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW302">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r210_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW302"></td>
+										<td th:text="${#numbers.formatDecimal(report.r210_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r210_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.2</td>
+										<td th:text="${report.r211_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r211_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW303">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r211_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW303"></td>
+										<td th:text="${#numbers.formatDecimal(report.r211_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r211_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+
+									<tr>
+										<td>2.2.1.1.1.3</td>
+										<td th:text="${report.r212_product}">CHENNAI</td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r212_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.3.1</td>
+										<td th:text="${report.r213_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r213_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW305">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r213_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW305"></td>
+										<td th:text="${#numbers.formatDecimal(report.r213_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r213_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.3.2</td>
+										<td th:text="${report.r214_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r214_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW306">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r214_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW306"></td>
+										<td th:text="${#numbers.formatDecimal(report.r214_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r214_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+
+									<tr>
+										<td>2.2.1.1.1.4</td>
+										<td th:text="${report.r215_product}">CHENNAI</td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r215_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.4.1</td>
+										<td th:text="${report.r216_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r216_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW308">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r216_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW308"></td>
+										<td th:text="${#numbers.formatDecimal(report.r216_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r216_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.4.2</td>
+										<td th:text="${report.r217_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r217_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW309">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r217_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW309"></td>
+										<td th:text="${#numbers.formatDecimal(report.r217_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r217_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.4.3</td>
+										<td th:text="${report.r218_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r218_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW310">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r218_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW310"></td>
+										<td th:text="${#numbers.formatDecimal(report.r218_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r218_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.4.4</td>
+										<td th:text="${report.r219_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r219_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW311">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r219_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW311"></td>
+										<td th:text="${#numbers.formatDecimal(report.r219_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r219_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+
+									<tr>
+										<td>2.2.1.1.1.2</td>
+										<td th:text="${report.r220_product}">CHENNAI</td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r220_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.1</td>
+										<td th:text="${report.r221_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r221_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW313">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r221_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW313"></td>
+										<td th:text="${#numbers.formatDecimal(report.r221_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r221_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.2</td>
+										<td th:text="${report.r222_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r222_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW314">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r222_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW314"></td>
+										<td th:text="${#numbers.formatDecimal(report.r222_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r222_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.3</td>
+										<td th:text="${report.r223_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r223_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW315">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r223_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW315"></td>
+										<td th:text="${#numbers.formatDecimal(report.r223_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r223_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.4</td>
+										<td th:text="${report.r224_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r224_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW316">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r224_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW316"></td>
+										<td th:text="${#numbers.formatDecimal(report.r224_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r224_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.5</td>
+										<td th:text="${report.r225_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r225_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW317">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r225_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW317"></td>
+										<td th:text="${#numbers.formatDecimal(report.r225_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r225_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.1.1.1.2.6</td>
+										<td th:text="${report.r226_product}">CHENNAI</td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r226_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW318">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(report.r226_market_value	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW318"></td>
+										<td th:text="${#numbers.formatDecimal(report.r226_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r226_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.1.2</td>
+										<th th:text="${report.r227_product}">CHENNAI</th>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r227_amount_extended	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #bdbec2">CHENNAI</th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r227_weight_amount	,0,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<th colspan="2">2.2.2. Other inflows by counterparty</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Amount</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.2.1</td>
+										<td th:text="${report.r230_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r230_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.2.1.1</td>
+										<td th:text="${report.r231_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r231_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right"></td>
+										<td th:text="${#numbers.formatDecimal(report.r231_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r231_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.2.1.2</td>
+										<td th:text="${report.r232_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r232_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW323"></td>
+										<td th:text="${#numbers.formatDecimal(report.r232_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r232_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.2.1.3</td>
+										<td th:text="${report.r233_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r233_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW324"></td>
+										<td th:text="${#numbers.formatDecimal(report.r233_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r233_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.2.1.4</td>
+										<td th:text="${report.r234_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r234_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW325"></td>
+										<td th:text="${#numbers.formatDecimal(report.r234_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r234_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.2.1.5</td>
+										<td th:text="${report.r235_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r235_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW326"></td>
+										<td th:text="${#numbers.formatDecimal(report.r235_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r235_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.2.1.6</td>
+										<td th:text="${report.r236_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r236_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW327"></td>
+										<td th:text="${#numbers.formatDecimal(report.r236_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r236_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.2.1.7</td>
+										<td th:text="${report.r237_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r237_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW328"></td>
+										<td th:text="${#numbers.formatDecimal(report.r237_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r237_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.2.2</td>
+										<th th:text="${report.r238_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r238_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></th>
+										<td th:text="${#numbers.formatDecimal(report.r238_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<th colspan="2">2.2.3. Other cash inflows</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Amount</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.3.1</td>
+										<td th:text="${report.r241_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r241_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></th>
+										<td style="background-color: #bdbec2"></td>
+										<td style="background-color: #bdbec2"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.3.1.1</td>
+										<td th:text="${report.r242_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r242_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW334"></td>
+										<td th:text="${#numbers.formatDecimal(report.r242_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r242_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.3.1.2</td>
+										<td th:text="${report.r243_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r243_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW335"></td>
+										<td th:text="${#numbers.formatDecimal(report.r243_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r243_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.3.1.3</td>
+										<td th:text="${report.r244_product}">CHENNAI</td>
+										<td></td>
+										<td></td>
+										<td th:text="${#numbers.formatDecimal(report.r244_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right" onclick="resident(this)" id="ROW336"></td>
+										<td th:text="${#numbers.formatDecimal(report.r244_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r244_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.3.5</td>
+										<th th:text="${report.r245_product}">CHENNAI</th>
+										<td></td>
+										<td></td>
+										<th th:text="${#numbers.formatDecimal(report.r245_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></th>
+										<td style="background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r245_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></td>
+									</tr>
+
+									<tr>
+										<th>2.2.4. Total cash inflows</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+									</tr>
+									<tr style="background-color: #bdbec2">
+										<th>Sr No</th>
+										<th>Particulars</th>
+										<th></th>
+										<th></th>
+										<th style="text-align: center">Amount</th>
+										<th style="text-align: center">Weight</th>
+										<th style="text-align: center">Weighted Amount</th>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.4.1</td>
+										<th th:text="${report.r248_product}">CHENNAI</th>
+										<th></th>
+										<th></th>
+										<th th:text="${#numbers.formatDecimal(report.r248_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #bdbec2"></th>
+										<td style="text-align: right; background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r248_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+
+									<tr>
+										<td style="text-align: right">2.2.4.2</td>
+										<td th:text="${report.r249_product}">CHENNAI</td>
+										<th></th>
+										<th></th>
+										<td th:text="${#numbers.formatDecimal(report.r249_amount_extended	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r249_weight	,1,'COMMA',2,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+										<td th:text="${#numbers.formatDecimal(report.r249_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">2.2.4.3</td>
+										<td th:text="${report.r250_product}">CHENNAI</td>
+										<th></th>
+										<th></th>
+										<td style="text-align: right; background-color: #bdbec2"></td>
+										<td style="text-align: right; background-color: #bdbec2"></td>
+										<td th:text="${#numbers.formatDecimal(report.r250_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<th colspan="2">3. LCR</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+
+									</tr>
+									<tr>
+										<td style="text-align: right">3.10</td>
+										<td th:text="${report.r252_product}">CHENNAI</td>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<td th:text="${#numbers.formatDecimal(report.r252_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">3.20</td>
+										<td th:text="${report.r253_product}">CHENNAI</td>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<td th:text="${#numbers.formatDecimal(report.r253_weight_amount	,1,'COMMA',0,'POINT')}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td style="text-align: right">3.30</td>
+										<td th:text="${report.r254_product1}">CHENNAI</td>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<td th:text="${#numbers.formatPercent(report.r254_weight_amount1,1,2)}"
+											style="text-align: right; background-color: #e0dcdc"></td>
+									</tr>
+									<tr>
+										<td></td>
+										<th style="background-color: #bdbec2">Form No: BSD/BRF 14_2 -LCR/JUN2020</th>
+										<td colspan="6"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="window.history.back();">Back</button>
+
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT_NAME_1</th>
+								<th>REPORT_LABEL_1</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center; font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCR BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT ADDL CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

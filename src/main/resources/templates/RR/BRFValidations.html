@@ -1,0 +1,441 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+
+<style>
+.row1 {
+	padding: 7px;
+}
+
+.error {
+	color: red;
+	padding-left: 10px;
+}
+
+.underline {
+	text-decoration: underline;
+	color: #08a6f1;
+	cursor: pointer;
+}
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.btn-primary:not (:disabled ):not (.disabled ).active, .btn-primary:not
+	 (:disabled ):not (.disabled ):active, .show>.btn-primary.dropdown-toggle
+	{
+	color: #fff;
+	background-color: #cc000000;
+	border-color: #161617;
+}
+</style>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	var reportlist = /*[[${reportlist}]]*/null;
+	var frequency;
+	function check(a) {
+		//alert("responseText");
+		//alert("CHECK1");
+
+		var srl_no = a.getAttribute("data-srl_no");
+		var rpt_code = a.getAttribute("data-rpt_code");
+		var report_date = a.getAttribute("data-todate");
+		var url = "./BRFValidationsChk?srl_no=" + srl_no + "&rpt_code="
+				+ rpt_code + "&report_date=" + report_date;
+		//alert(url);
+		//alert("CHECK2");
+
+		$("#reportform").attr('action', url);
+
+		//alert("CHECK3");
+		var options = {
+			success : showResponse
+		// post-submit callback 
+		};
+
+		$("#reportform").ajaxSubmit(options);
+
+		//alert("CHECK4");
+		function showResponse(responseText, statusText, xhr, $form) {
+
+			//alert("CHECK5");
+			if (responseText.genID == "1") {
+
+				alert(responseText.status);
+
+				location.reload();
+
+			} else {
+				alert(responseText.status);
+
+				//	location.href="/BRBS/ReportCodeMapping?rptcode=" + reportid;
+
+				//location.reload = '/BRBS/BRFValidations?rptcode=' + reportid+'&todate=' + todate;
+			}
+
+		}
+		;
+	}
+
+	function refreshpage(a) {
+		location.href = "brfValidations?rpt_code="
+				+ $("#disablerpt_code").val();
+	}
+
+	function back(a) {
+	    var remarks = a.getAttribute("data-remarks");
+	    var roleid = a.getAttribute("data-roleId");
+	    /* alert(roleid); */
+	    if (roleid === "ADM" || roleid === "GEN") {
+	        if (remarks) {
+	            var rest = remarks.replace(/\s/g, "");
+	            var res = rest.toLowerCase();
+	            location.href = "/BRBS/" + res;
+	        } else {
+	            var reportcode = a.getAttribute("data-reportcode");
+	            var todate = a.getAttribute("data-todate");
+	            if (reportcode && todate) {
+	                location.href = "/BRBS/BRFValidations?rptcode=" + reportcode + "&todate=" + todate;
+	            } else {
+	                window.history.back();
+	            }
+	        }
+	    } else {
+	        if (roleid === "HR") {
+	            location.href = "/BRBS/hrmodel";
+	        } else if (roleid === "IT") {
+	            location.href = "/BRBS/itmodel";
+	        } else if (roleid === "OP") {
+	            location.href = "/BRBS/opmodel";
+	        } else if (roleid === "AC") {
+	            location.href = "/BRBS/acmodel";
+	        }   
+	    }
+	}
+
+	/* function back(a) {
+	    var remarks = a.getAttribute("data-remarks");
+	    if (remarks) {
+	        var rest = remarks.replace(/\s/g, "");
+	        var res = rest.toLowerCase();
+	        location.href = "/BRBS/" + res;
+	    } else {
+	        var reportcode = a.getAttribute("data-reportcode");
+	        var todate = a.getAttribute("data-todate");
+	        if (reportcode && todate) {
+	            location.href = "/BRBS/BRFValidations?rptcode=" + reportcode + "&todate=" + todate;
+	        } else {
+	            window.history.back();
+	        }
+	    }
+	}
+	 */
+
+	/* 	function submitform(a){
+	
+	 var todate = $('#disableDate').val();
+	 //alert("hii"+todate);
+	 var reportid = "RBSGENERATION";
+	 var todate = $('#disableDate').val();
+	 //alert("hii"+todate);
+	 var currency = "mur";
+	 var type ="excel";
+	 var reportid = "RBSGENERATION";
+	 $("#reportform").attr('action', './Reports/' +reportid +'/RBSDownload?todate=' + todate+ '&fromdate='+ todate +'&asondate='+ todate +'&currency='+currency + '&filetype=' + type );
+
+	
+	 var Callurl;	
+	 Callurl =  './Reports/' + reportid + '/PrecheckRbs?todate=' + todate+ '&fromdate='+ todate;
+	 $.ajax({
+	 type : 'get',
+	 url : Callurl,
+	 success : function(data) {
+	 if (data == 'success') {
+	 alert(data);
+	 form.submit();
+	 } else {
+	 $("#alertmsg").text("No data Available for Verification");
+	 $("#alert").modal("toggle");			
+	 }
+	 }
+	 });
+	 } */
+
+	 function getReport(a) {
+		    // Show loader
+		    $('#loader1').modal('show');
+
+		    // Retrieve data attributes
+		    var fromdate = a.getAttribute("data-fromdate");
+		    var todate = a.getAttribute("data-todate");
+		    var asondate = a.getAttribute("data-todate");
+		    var reportid = a.getAttribute("data-rptcode");
+
+		    var form = $('#reportform')[0];
+		    $("#reportform").attr('action', `Reports/${reportid}?dtltype=report&fromdate=${fromdate}&todate=${todate}&asondate=${asondate}`);
+
+		    let showModal = false;
+		    $('tbody .userlist').each(function () {
+		        var cur_status = $(this).find('td').eq(4).text().trim();
+		        if (cur_status === 'Not ok') {
+		            showModal = true;
+		        }
+		    });
+
+		    if (showModal) {
+		        // Hide loader before showing the modal
+		        $('#loader1').modal('hide');
+
+		        $('#validationModal').modal('show');
+		        $('#confirmGenerateReport').off('click').one('click', function () {
+		            if (confirm("Do you want to open report?")) {
+		                $('#loader1').modal('show'); // Show again before submission
+		                const type = 'RBS';
+		                $("#reportform").attr('action', `Reports/${reportid}?dtltype=report&fromdate=${fromdate}&todate=${todate}&type=${type}&asondate=${asondate}`);
+		                form.submit();
+		            }
+		        });
+		    } else {
+		        const callUrl = `./Reports/${reportid}/PrecheckRR?fromdate=${fromdate}&todate=${todate}`;
+
+		        $.ajax({
+		            type: 'GET',
+		            url: callUrl,
+		            success: function (data) {
+		                if (data === 'success') {
+		                    if (confirm("Do you want to open report?")) {
+		                        const type = 'RBS';
+		                        $("#reportform").attr('action', `Reports/${reportid}?dtltype=report&fromdate=${fromdate}&todate=${todate}&type=${type}&asondate=${asondate}`);
+		                        form.submit();
+		                    }
+		                    $('#loader1').modal('hide');
+		                } else {
+		                    $('#loader1').modal('hide');
+		                    $("#alertmsg").text(data);
+		                    $("#alert").modal("toggle");
+		                }
+		            },
+		            error: function (xhr, status, error) {
+		                console.error("Error occurred:", error);
+		                $('#loader1').modal('hide');
+		                $("#alertmsg").text("Error occurred while processing the request.");
+		                $("#alert").modal("toggle");
+		            }
+		        });
+		    }
+		}
+
+
+
+	 $(document).ready(function () {
+		    // Hide loader when validation modal is shown
+		    $('#validationModal').on('shown.bs.modal', function () {
+		        $('#loader1').modal('hide');
+		    });
+		});
+
+
+
+
+	function getexcelTest() {
+
+		var todate = $('#disableDate').val();
+		var fromdate = $('#disableDate').val();
+
+		location.href = 'Reports/RBSDownload?reportid=RBSGENERATION&currency=mur&filetype=excel&fromdate='
+				+ fromdate + '&todate=' + todate + '&asondate=' + todate;
+	}
+	/*]]>*/
+</script>
+</head>
+<title>BCDRS</title>
+<body>
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<!-- <i class="fa fa-question-circle" aria-hidden="true"
+		onclick="docEmb('Report')" id="ques"></i> -->
+	<div class="container content">
+		<div class="card" style="width: 1325px">
+			<div class="card-header " id="modheadtitle" style="width: 1325px;background-color:#376275;">
+				<b STYLE="color:white;"> BRF Report Validations </b>
+
+				<div class="float-right">
+
+					<div class="row formline">
+
+						<label style="color: white; padding-right: 20px;font-size: medium;font-weight: bolder;">Report
+							Date : </label>
+						<div>
+							<input type="text" style="margin-top: -3px;font-size: medium;font-weight: bolder;" readonly 
+								th:value="${rpt_date}" id="disableDate1" value=""
+								class="form-control form-control-sm" autocomplete="off" />
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+
+					<form action="#" th:object="${reportform}" method="post"
+						autocomplete="off" id="reportform">
+						<input type="hidden" th:value="${reportDate1}" id="reportdates">
+						<table class="table table-bordered  table-hover table-sm"
+							style="width: 100%" id="usertable">
+							<thead class="thead-light">
+
+								<tr>
+									<th>Validation Details</th>
+									<th>Tables</th>
+									<th>Check</th>
+									<th>Validation</th>
+									<th>Description</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								<tr th:each="userProfile : ${reportlist}" class="userlist">
+
+
+
+									<td style="display: none;"><input type="text"
+										name="todate" id="disableDate" th:value="${reportDate1}"
+										class="col-sm-3 form-control" placeholder="dd/mm/yyyy" /></td>
+
+
+									<!-- <td th:text="${userProfile.srl_no}"></td> -->
+									<td th:text="${userProfile.val_det}"></td>
+									<td th:text="${userProfile.val_tables}"></td>
+									<td><button class="btn-primary" type="button"
+											th:attr="data-srl_no=${userProfile.srl_no},data-todate=${rpt_date}"
+											form="reportform" onclick="check(this);">Check</button></td>
+									<th:block th:switch="${userProfile?.cur_status}">
+										<td th:case="'Y'" style="color: green;">Ok</td>
+										<td th:case="'N'" style="color: red;">Not ok</td>
+
+										<td th:case="*" style="color: red;"></td>
+										<td th:text="${userProfile.remarks2}"></td>
+									</th:block>
+									<!-- <th:block th:if="${reportDate1}!=${testDate}"
+													th:switch="${userProfile?.pre_status}">
+													<td th:case="'Y'" style="color: green;">Ok</td>
+													<td th:case="'N'" style="color: red;">Not ok</td>
+													<td th:case="*" style="color: red;"></td>
+												</th:block> -->
+
+								</tr>
+							</tbody>
+						</table>
+						<div class="card-footer text-center" style="background-color:#376275">
+
+							<button type="button" class="btn btn-xs btn-primary"
+								id="btnDownload"
+								th:attr="data-rptcode=${reportlist1.rpt_code},data-fromdate=${#dates.format(reportlist1.start_date, 'dd/MM/yyyy')},data-todate=${#dates.format(reportlist1.end_date, 'dd/MM/yyyy')}"
+								onclick="getReport(this);" form="reportform">Report</button>
+
+							<button type="button" class="btn btn-xs btn-primary"
+								th:attr="data-remarks=${reportlist1.remarks_4}, data-roleId=${RoleId}"
+								id="btnBack" onclick="back(this);">Back</button>
+						</div>
+					</form>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<div class="modal fade" id="validationModal" tabindex="-1" role="dialog" aria-labelledby="validationModalLabel" aria-hidden="true">
+	    <div class="modal-dialog" role="document">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="validationModalLabel">Validation Failed</h5>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	                <p>Validation failed: Do you still want to generate the report?</p>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	                <button type="button" class="btn btn-primary" id="confirmGenerateReport">Generate Report</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+
+
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<div class="modal fade" id="loader1" data-backdrop="static"
+			data-keyboard="false">
+			<div
+				class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content" style="background: transparent;">
+					<div class="modal-body" style="text-align: center">
+						<div>
+							<img th:src=@{/images/loader.gif} id="bfirelogo"
+								style="width: 153px; height: auto; margin-left: 18px; background-color: transparent;
+								border-color: transparent;"
+								alt="Bornfire">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>	
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+
+
+</body>
+
+</html>

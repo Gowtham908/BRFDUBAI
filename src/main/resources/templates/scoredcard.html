@@ -1,0 +1,279 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	:SANJEEVI S  
+CREATED ON	:05-JUNE-2024
+PURPOSE		: FRONT ENT DEVLOPMENT PROCESS
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel=”stylesheet”
+	href=”https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css” />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"
+	rel="stylesheet">
+
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+<style>
+.table .thead-light th {
+	border-color: #b3b6b9;
+}
+
+.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+	curser: pointer;
+}
+
+.tabcontent {
+	display: none;
+	padding: 20px;
+	border-top: 1px solid #ccc;
+}
+
+.active {
+	background-color: #2084a9;
+}
+
+.btn-primary:hover {
+	background-color: #337ab7;
+	/* Change this color to the desired hover color */
+	border-color: #2e6da4;
+	/* Change this color to match the hover background color */
+	color: #fff; /* Change this color to match the hover text color */
+}
+
+/* Add this CSS to highlight the active tab */
+.active-tab {
+	background-color: #337ab7;
+	border-color: #2e6da4;
+	color: #fff;
+}
+</style>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+
+<script>
+
+function home() {
+	location.href = 'Dashboard'
+}
+
+function back() {
+	window.history.back();
+}
+</script>
+<script th:inline="javascript">
+    var pdbrValues = /*[[${getPDBRvalue}]]*/ []; // Fetching PDBR values from Thymeleaf
+    var incomeValues = /*[[${getIncomevalue}]]*/ []; // Fetching Income values from Thymeleaf
+
+    function calculateScore(selectElement) {
+        var row = $(selectElement).closest('tr');
+        var binValue = $(selectElement).val(); // Get selected bin_value
+        var effectivePartialScoreField = row.find('.effectivePartialScore');
+        var effectivePartialScore = 0;
+
+        if (selectElement.name === 'bin_value_pdb') {
+            pdbrValues.forEach(function(item) {
+                if (item.bin_value === binValue) {
+                    effectivePartialScore = item.effactive_partial_score;
+                }
+            });
+        } else if (selectElement.name === 'bin_value_income') {
+            incomeValues.forEach(function(item) {
+                if (item.bin_value === binValue) {
+                    effectivePartialScore = item.effactive_partial_score;
+                }
+            });
+        }
+
+        effectivePartialScoreField.val(effectivePartialScore);
+        updateTotalScore();
+    }
+
+    function updateTotalScore() {
+        var totalScore = 0;
+        $('.effectivePartialScore').each(function() {
+            totalScore += parseFloat($(this).val()) || 0;
+        });
+
+        $('#totalScore').text(totalScore.toFixed(2));
+
+        var riskLevel;
+        if (totalScore >= 0 && totalScore <= 30) {
+            riskLevel = "VERY HIGH";
+        } else if (totalScore >= 31 && totalScore <= 55) {
+            riskLevel = "HIGH";
+        } else if (totalScore >= 56 && totalScore <= 70) {
+            riskLevel = "MODERATE";
+        } else if (totalScore >= 71 && totalScore <= 85) {
+            riskLevel = "LOW";
+        } else if (totalScore >= 86 && totalScore <= 100) {
+            riskLevel = "VERY LOW";
+        }
+
+        $('#riskLevel').text(riskLevel);
+    }
+
+    $(document).ready(function() {
+        updateTotalScore(); // Initial update
+    });
+</script>
+</head>
+<title>XBRL</title>
+
+<body>
+<div th:insert="XBRLHeaderMenu :: header"></div>
+<div class="container content">
+    <div class="card" style="width: 1600px; margin-left: -100px; margin-top: 50px;">
+        <div class="card-header" style="background-color: #4d8cb9; color: white;">
+            <div class="row">
+                <h4 style="margin-top: 5px; margin-left: 20px;">ScoreCardParameter</h4>
+                <div class="btn-group nav-buttons float-left" style="margin-left: 1190px;">
+                    <button type="button" class="btn btn-xs btn-primary btns" id="btnAdd" onclick="adduser();">Add</button>
+                    <button type="button" class="btn btn-xs btn-primary btns active" id="btnInq" onclick="list();">List</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Display list of scorecard parameters -->
+            <div th:if="${formmode == 'list'}">
+                <table id="totalScoreTable" class="table table-bordered table-hover table-sm" style="margin-bottom: 0px">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Customer Id</th>
+                        <th>Customer Name</th>
+                        <th>Account Number</th>
+                        <th>Total Score</th>
+                        <th>Risk Level</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Iterate over items in getPLvalue -->
+                    <tr th:each="item : ${getPLvalue}">
+                        <td th:text="${item.customer_id}"></td>
+                        <td th:text="${item.customer_name}"></td>
+                        <td th:text="${item.account_number}"></td>
+                        <td id="totalScore" th:text="${item.total_score}"></td>
+                        <td id="riskLevel" th:text="${item.risk_level}"></td>
+                        <td th:text="${item.entry_date}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Display scorecard calculation parameters for edit mode -->
+			<div th:if="${formmode == 'edit' || formmode == 'add'}">
+			    <h4 style="margin-top: 5px; margin-left: 20px;">ScoreCardCalculation</h4>
+			    <div class="card-body">
+			        <form id="scoreForm" th:action="@{/submitScores}" method="post">
+			            <table class="table table-bordered table-hover table-sm" style="margin-bottom: 0px" id="usertable">
+			                <thead class="thead-light">
+			                    <tr>
+			                        <th>Sl No</th>
+			                        <th>Variable</th>
+			                        <th>Variable bin</th>
+			                        <th>Score</th>
+			                    </tr>
+			                </thead>
+			                <tbody>
+			                    <!-- Iterate over the fetched CAL values -->
+			                    <tr th:each="cal, rowStat : ${getCALvalue}">
+			                        <td th:text="${rowStat.index + 1}">1</td>
+			                        <td th:text="${cal.variable}">Variable Name</td>
+			                        <td>
+			                            <select th:if="${cal.variable == '(DBR)Total Monthly Obligaton/ Income (In percentage)'}" class="bin_value" name="bin_value_pdb"
+			                                    onchange="calculateScore(this);">
+			                                <option value="">Select Option</option>
+			                                <option th:each="option : ${getPDBRvalue}" th:value="${option.bin_value}"
+			                                        th:text="${option.bin_value}"></option>
+			                            </select>
+			                            <select th:if="${cal.variable == 'Income of the applicant (Annual)'}" class="bin_value" name="bin_value_income"
+			                                    onchange="calculateScore(this);">
+			                                <option value="">Select Option</option>
+			                                <option th:each="option : ${getIncomevalue}" th:value="${option.bin_value}"
+			                                        th:text="${option.bin_value}"></option>
+			                            </select>
+			                        </td>
+			                        <td>
+			                            <input type="text" class="effectivePartialScore" name="effectivePartialScore" readonly/>
+			                        </td>
+			                    </tr>
+			                </tbody>
+			            </table>
+			            <button type="button" onclick="submitScores()">Submit Scores</button>
+			        </form>
+			    </div>
+			</div>
+			
+			<div>
+			    <p>Total Score: <span id="totalScore"></span></p>
+			    <p>Risk Level: <span id="riskLevel"></span></p>
+			</div>
+
+  <div class="card-footer text-center"
+							style="background-color: #386276">
+							<button type="button" class="btn btn-xs btn-primary"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="submit"
+								style="display: none;" onclick="subdbr();">Submit</button>
+							<button type="button" class="btn btn-xs btn-primary"
+								onclick="back();">Back</button>
+						</div>
+
+    </div>
+</div>
+
+<script>
+    function adduser() {
+        location.href = 'PLscorecard?formmode=edit';
+    }
+
+    function list() {
+        location.href = 'PLscorecard?formmode=list';
+    }
+
+
+</script>
+
+</body>
+</html>
+
+
+
+

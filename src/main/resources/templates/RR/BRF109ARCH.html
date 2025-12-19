@@ -1,0 +1,2150 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: 
+CREATED ON	: 
+PURPOSE		: QUARTELY REPORT
+TESTING     : NISHANTHINI-27.2.24
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+			location.href = "/BRBS/BRFArchival";
+
+		}
+		function back() {
+			window.history.back();
+		}
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+
+
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue !== '0' && cellValue !== '0.00000') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+
+
+	</script>
+
+	<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf109',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+
+
+	</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-109ARCH ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 5000);
+		}
+	</script>
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-109-A' + ".xlsx";
+					} else {
+						a.download = '011-BRF-109-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					if (filetype == "excel" || filetype == "detailexcel") {
+						$('#customAlertBody').text('011-BRF-109-A ' + ".xlsx");
+					} else {
+						$('#customAlertBody').text('011-BRF-109-A ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+	</script>
+	<script>
+		function showAlertMessage() {
+			alert("Details page not available for Nil Report");
+		}
+	</script>
+	<title>XBRL</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<i class="fa fa-question-circle" aria-hidden="true" onclick="docEmb('Report')" id="ques"></i>
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BANKING RETURN FORMS - COMPUTATION OF STANDALONE CAPITAL ADEQUACY RATIO (CAR)
+					AS PER BASEL III- BRF 109 (AED 000) </b>
+				<th><b style="color: white; margin-left: 15%;">Report Date
+						- <span th:text="${todate}"></span>
+					</b></th>
+
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showAlertMessage();"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive" style="border-right: 1px solid #dee2e6">
+							<table style="width: 1500px"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead th:each="report: ${reportsummary}">
+									<tr style="background-color: #b3b6b9;text-align: center;">
+										<th>NO.</th>
+										<th colspan="2">Standalone Reporting Capital Levels </th>
+										<th>Ratios</th>
+										<th>NO.</th>
+										<th colspan="2">Bank's Standalone Capital Ratio </th>
+										<th>Ratios</th>
+
+									</tr>
+
+								</thead>
+								<tbody th:each="report: ${reportsummary}">
+									<tr style="text-align:center">
+										<td>1</td>
+										<td>1.1</td>
+										<td style="text-align:left" th:text="${report.R1_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.07000</td>
+										<td>2</td>
+										<td>2.1</td>
+										<td style="text-align:left" th:text="${report.R1_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.00000</td>
+									</tr>
+
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>1.2</td>
+										<td style="text-align:left" th:text="${report.R2_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.08500</td>
+										<td></td>
+										<td>2.1.1</td>
+										<td style="text-align:left" th:text="${report.R2_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.00000</td>
+									</tr>
+
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>1.3</td>
+										<td style="text-align:left" th:text="${report.R3_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.10500</td>
+										<td></td>
+										<td>2.2</td>
+										<td style="text-align:left" th:text="${report.R3_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.00000</td>
+									</tr>
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>1.4</td>
+										<td style="text-align:left" th:text="${report.R4_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.02500</td>
+										<td></td>
+										<td>2.2.1</td>
+										<td style="text-align:left" th:text="${report.R4_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.00000</td>
+									</tr>
+
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>1.4.1</td>
+										<td style="text-align:left" th:text="${report.R5_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.02500</td>
+										<td></td>
+										<td>2.3</td>
+										<td style="text-align:left" th:text="${report.R5_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.00000</td>
+									</tr>
+
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>1.4.2.1</td>
+										<td style="text-align:left" th:text="${report.R6_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.00000</td>
+										<td></td>
+										<td>2.4</td>
+										<td style="text-align:left" th:text="${report.R6_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">-0.10500</td>
+									</tr>
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>1.4.2.2</td>
+										<td style="text-align:left">Effective Countercyclical Buffer (CCyB) of the bank
+											<span style="color:red">(All banks need to amend this ratio based on CCyB as
+												per Capital Supply Standard)</span>
+										</td>
+										<td onclick="resident(this)" id="ROW107">0.00000</td>
+										<td></td>
+										<td>2.5</td>
+										<td style="text-align:left" th:text="${report.R7_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">Below minimum; 100% conservation</td>
+									</tr>
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>1.4.3</td>
+										<td style="text-align:left">Domestic Systemically Important Bank Buffer
+											<span style="color:red">(DSIB banks need to change this accordingly) </span>
+										</td>
+										<td onclick="resident(this)" id="ROW108">0.00000</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<th colspan="8"></th>
+									</tr>
+
+									<tr style="background-color: #b3b6b9;text-align: center;">
+										<th>NO.</th>
+										<th colspan="2">Supervisory Capital Guidance (SCG): Minimum Capital Requirements
+										</th>
+										<th>Ratios</th>
+										<th>NO.</th>
+										<th colspan="2">Bank's Standalone Capital Ratio </th>
+										<th>Ratios</th>
+									</tr>
+
+									<tr style="text-align:center">
+										<td>3</td>
+										<td>3.1</td>
+										<td style="text-align:left">Supervisory Capital Guidance incl. SCG
+											<span style="color:red">(All banks need to amend this ratio as per Capital
+												Supply Standard)</span>
+										</td>
+										<td onclick="resident(this)" id="ROW109">0.00000</td>
+										<td>4</td>
+										<td>4.1</td>
+										<td style="text-align:left" th:text="${report.R9_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">-0.10500</td>
+									</tr>
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>3.2</td>
+										<td style="text-align:left" th:text="${report.R10_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.07000</td>
+										<td></td>
+										<td>4.2</td>
+										<td style="text-align:left" th:text="${report.R10_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">Below minimum; 100% conservation</td>
+									</tr>
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>3.3</td>
+										<td style="text-align:left" th:text="${report.R11_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.08500</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>3.4</td>
+										<td style="text-align:left" th:text="${report.R12_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.10500</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr style="text-align:center">
+										<td></td>
+										<td>3.5</td>
+										<td style="text-align:left" th:text="${report.R13_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9">0.02500</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+
+									<tr>
+										<th colspan="8"></th>
+									</tr>
+
+									<tr style="background-color: #b3b6b9;text-align: center;">
+										<th>NO.</th>
+										<th colspan="2">Details </th>
+										<th>Amount</th>
+										<th>NO.</th>
+										<th colspan="2">Details </th>
+										<th>Amount</th>
+									</tr>
+
+
+									<tr style="background-color: #b3b6b9;text-align: center;">
+										<th>5</th>
+										<th colspan="2" style="text-align:left" th:text="${report.R14_STANDALONE}"></th>
+										<th
+											th:text="${#numbers.formatDecimal(report.R14_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<th>5.3</th>
+										<th colspan="2" style="text-align:left" th:text="${report.R14_BANK_STANDALONE}">
+										</th>
+										<th
+											th:text="${#numbers.formatDecimal(report.R14_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="text-align: center;">
+										<th style="background-color: #b3b6b9">5.1</th>
+										<th colspan="2" style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R15_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R15_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<td></td>
+										<td>5.3.1</td>
+										<td style="text-align:left" th:text="${report.R15_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R15_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW115"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.1</td>
+										<td style="text-align:left" th:text="${report.R16_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R16_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW116"></td>
+										<td></td>
+										<td>5.3.2</td>
+										<td style="text-align:left" th:text="${report.R16_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R16_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW116"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<th></th>
+										<td>5.1.2</td>
+										<td style="text-align:left" th:text="${report.R17_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R17_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW117"></td>
+										<td></td>
+										<td>5.3.3</td>
+										<td style="text-align:left">Instruments which are eligible for inclusion of Tier
+											2 e.g. subordinated loan (After Grandfathering and/or Amortisation)
+											<span style="color:red">(All banks need to enter total original issuance
+												amount AFTER Grandfathering/Amortisation, if any)</span>
+										</td>
+										<td th:text="${#numbers.formatDecimal(report.R17_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW117"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9">5.1.3</td>
+										<td style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R18_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R18_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+										<td></td>
+										<td>5.3.3.1</td>
+										<td style="text-align:left">Instruments which are eligible for inclusion of Tier
+											2 (Before Grandfathering and/or Amortisation)
+											<span style="color:red">(All banks need to enter total original issuance
+												amount BEFORE Grandfathering/Amortisation, if any)</span>
+										</td>
+										<td th:text="${#numbers.formatDecimal(report.R18_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW118"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.3.1</td>
+										<td style="text-align:left" th:text="${report.R19_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R19_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW119"></td>
+										<td></td>
+										<td>5.3.4</td>
+										<td style="text-align:left" th:text="${report.R19_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R19_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW119"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.3.2</td>
+										<td style="text-align:left" th:text="${report.R20_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R20_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW120"></td>
+										<td></td>
+										<td>5.3.5</td>
+										<td style="text-align:left" th:text="${report.R20_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R20_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW120"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.3.3</td>
+										<td style="text-align:left" th:text="${report.R21_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R21_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW121"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<th style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R21_BANK_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R21_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.3.4</td>
+										<td style="text-align:left" th:text="${report.R22_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R22_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW122"></td>
+										<td style="background-color: #b3b6b9">6</td>
+										<th colspan="2" style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R22_BANK_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R22_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9">5.1.4</td>
+										<td style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R23_STANDALONE}"></td>
+										<td
+											th:text="${#numbers.formatDecimal(report.R23_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9">6.1</td>
+										<th colspan="2" style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R23_BANK_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R23_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.4.1</td>
+										<td style="text-align:left" th:text="${report.R24_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R24_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW124"></td>
+										<td></td>
+										<td>6.1.1</td>
+										<td style="text-align:left" th:text="${report.R24_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R24_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW124"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.4.2</td>
+										<td style="text-align:left" th:text="${report.R25_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R25_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW125"></td>
+										<td></td>
+										<td>6.1.2</td>
+										<td style="text-align:left" th:text="${report.R25_BANK_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R25_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.4.3</td>
+										<td style="text-align:left" th:text="${report.R26_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R26_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW126"></td>
+										<td></td>
+										<td>6.1.2.1</td>
+										<td style="text-align:left" th:text="${report.R26_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R26_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW126"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.4.4</td>
+										<td style="text-align:left">IFRS transitional arrangement: Partial addback of
+											ECL impact to CET1
+											<span style="color:red">(MANDATORY)</span>
+										</td>
+										<td th:text="${#numbers.formatDecimal(report.R27_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW127"></td>
+										<td></td>
+										<td>6.1.2.2</td>
+										<td style="text-align:left" th:text="${report.R27_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R27_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW127"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.4.5</td>
+										<td style="text-align:left" th:text="${report.R28_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R28_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW128"></td>
+										<td></td>
+										<td>6.1.2.3</td>
+										<td style="text-align:left" th:text="${report.R28_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R28_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW128"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.5</td>
+										<td style="text-align:left" th:text="${report.R29_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R29_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW129"></td>
+										<td></td>
+										<td>6.1.3</td>
+										<td style="text-align:left" th:text="${report.R29_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R29_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW129"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.6</td>
+										<td style="text-align:left" th:text="${report.R30_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R30_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW130"></td>
+										<td></td>
+										<td>6.1.4</td>
+										<td style="text-align:left" th:text="${report.R30_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R30_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW130"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.1.7</td>
+										<td style="text-align:left" th:text="${report.R31_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R31_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW131"></td>
+										<td></td>
+										<td>6.1.5</td>
+										<td style="text-align:left" th:text="${report.R31_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R31_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW131"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R32_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R32_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+										<td></td>
+										<td>6.1.6</td>
+										<td style="text-align:left" th:text="${report.R32_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R32_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW132"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9">5.1.8</td>
+										<td style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R33_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R33_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+										<td></td>
+										<td>6.1.7</td>
+										<td style="text-align:left" th:text="${report.R33_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R33_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW133"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.1</td>
+										<td style="text-align:left" th:text="${report.R34_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R34_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW134"></td>
+										<td></td>
+										<td>6.1.8</td>
+										<td style="text-align:left" th:text="${report.R34_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R34_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW134"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.2</td>
+										<td style="text-align:left" th:text="${report.R35_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R35_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW135"></td>
+										<td></td>
+										<td>6.1.9</td>
+										<td style="text-align:left" th:text="${report.R35_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R35_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW135"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.3</td>
+										<td style="text-align:left" th:text="${report.R36_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R36_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW136"></td>
+										<td></td>
+										<td>6.1.10</td>
+										<td style="text-align:left" th:text="${report.R36_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R36_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW136"></td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.4</td>
+										<td style="text-align:left" th:text="${report.R37_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R37_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW137"></td>
+										<td></td>
+										<td>6.1.11</td>
+										<td style="text-align:left" th:text="${report.R37_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R37_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW137"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.5</td>
+										<td style="text-align:left" th:text="${report.R38_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R38_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW138"></td>
+										<td></td>
+										<td>6.1.12</td>
+										<td style="text-align:left" th:text="${report.R38_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R38_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW138"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.6</td>
+										<td style="text-align:left" th:text="${report.R39_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R39_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW139"></td>
+										<td></td>
+										<td>6.1.13</td>
+										<td style="text-align:left" th:text="${report.R39_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R39_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW139"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.7</td>
+										<td style="text-align:left" th:text="${report.R40_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R40_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW140"></td>
+										<td></td>
+										<td>6.1.14</td>
+										<td style="text-align:left" th:text="${report.R40_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R40_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW140"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.8</td>
+										<td style="text-align:left" th:text="${report.R41_STANDALONE}"></td>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R41_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<td></td>
+										<td>6.1.15</td>
+										<td style="text-align:left" th:text="${report.R41_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R41_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW141"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.8.1</td>
+										<td style="text-align:left" th:text="${report.R42_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R42_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW142"></td>
+										<td></td>
+										<td>6.1.16</td>
+										<td style="text-align:left" th:text="${report.R42_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R42_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW142"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.8.2</td>
+										<td style="text-align:left" th:text="${report.R43_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R43_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW143"></td>
+										<td></td>
+										<td>6.1.17</td>
+										<td style="text-align:left" th:text="${report.R43_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R43_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW143"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.8.3</td>
+										<td style="text-align:left" th:text="${report.R44_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R44_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW144"></td>
+
+										<th style="background-color: #b3b6b9">6.2</th>
+										<th colspan="2" style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R44_BANK_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R44_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<th style="background-color: #b3b6b9"> </th>
+										<th style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R45_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R45_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<td></td>
+										<td>6.2.1</td>
+										<td style="text-align:left" th:text="${report.R45_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R45_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW145"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9"> 5.1.8.9</td>
+										<td style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R46_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R46_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+										<td></td>
+										<td>6.2.2</td>
+										<td style="text-align:left" th:text="${report.R46_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R46_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW146"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.9.1</td>
+										<td style="text-align:left" th:text="${report.R47_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R47_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW147"></td>
+										<td></td>
+										<td>6.2.3</td>
+										<td style="text-align:left" th:text="${report.R47_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R47_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW147"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.9.2</td>
+										<td style="text-align:left" th:text="${report.R48_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R48_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW148"></td>
+										<td></td>
+										<td>6.2.4</td>
+										<td style="text-align:left" th:text="${report.R48_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R48_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW148"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.9.3</td>
+										<td style="text-align:left" th:text="${report.R49_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R49_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW149"></td>
+										<td></td>
+										<td>6.2.5</td>
+										<td style="text-align:left" th:text="${report.R49_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R49_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW149"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<th style="background-color: #b3b6b9"> </th>
+										<th style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R50_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R50_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+
+										<th style="background-color: #b3b6b9">6.3</th>
+										<th colspan="2" style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R50_BANK_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R50_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9"> 5.1.8.10</th>
+										<td style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R51_STANDALONE}"></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R51_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+										<td></td>
+										<td>6.3.1</td>
+										<td style="text-align:left" th:text="${report.R51_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R51_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW151"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.10.1</td>
+										<td style="text-align:left" th:text="${report.R52_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R52_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW152"></td>
+										<td></td>
+										<td>6.3.2</td>
+										<td style="text-align:left" th:text="${report.R52_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R52_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW152"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.10.2</td>
+										<td style="text-align:left" th:text="${report.R53_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R53_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW153"></td>
+
+										<td colspan="4"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.8.10.3</td>
+										<td style="text-align:left" th:text="${report.R54_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R54_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW154"></td>
+
+										<th style="background-color: #b3b6b9">7</th>
+										<th colspan="2" style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R54_BANK_STANDALONE}"></th>
+										<td style="background-color: #b3b6b9"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9"> </td>
+										<th style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R55_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R55_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td style="background-color: #b3b6b9"> 5.1.9</td>
+										<th style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R56_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R56_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R56_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.9.1</td>
+										<td style="text-align:left" th:text="${report.R57_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R57_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW157"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R57_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.9.2</td>
+										<td style="text-align:left" th:text="${report.R58_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R58_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW158"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R58_RATIOS1, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+									</tr>
+
+
+									<tr style="background-color: #b3b6b9;text-align: center;">
+										<td></td>
+										<td> </td>
+										<th style="text-align:left" th:text="${report.R59_STANDALONE}"></th>
+										<th
+											th:text="${#numbers.formatDecimal(report.R59_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+
+										<th>8</th>
+										<th colspan="2" style="text-align:left" th:text="${report.R59_BANK_STANDALONE}">
+										</th>
+										<td></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td> 5.1.9.3</td>
+										<td style="text-align:left" th:text="${report.R60_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R60_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW160"></td>
+										<td></td>
+										<td style="background-color: #b3b6b9">8.1</td>
+										<td style="text-align:left" th:text="${report.R60_BANK_STANDALONE}"></td>
+										<td onclick="resident(this)" id="ROW160">0.00000</td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<th style="background-color: #b3b6b9"></th>
+										<td style="background-color: #b3b6b9"></td>
+										<th style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R61_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R61_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<td></td>
+										<td style="background-color: #b3b6b9">8.2</td>
+										<td style="text-align:left" th:text="${report.R61_BANK_STANDALONE}"></td>
+										<td onclick="resident(this)" id="ROW161">0.00000</td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<th style="background-color: #b3b6b9">5.2</th>
+
+										<th colspan="2" style="background-color: #b3b6b9;text-align:left"
+											th:text="${report.R62_STANDALONE}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal(report.R62_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+										<td></td>
+										<td style="background-color: #b3b6b9">8.3</td>
+										<td style="text-align:left" th:text="${report.R62_BANK_STANDALONE}"></td>
+										<td onclick="resident(this)" id="ROW162">0.00000</td>
+									</tr>
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.2.1</td>
+
+										<td style="text-align: left">Eligible AT1 capital (After Grandfathering and/or
+											Amortisation)
+											<span style="color:red">(All banks need to enter total original issuance
+												amount AFTER Grandfathering/Amortisation, if any)</span>
+										</td>
+										<td th:text="${#numbers.formatDecimal(report.R63_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW163"></td>
+										<td></td>
+										<td style="background-color: #b3b6b9">8.3</td>
+										<td style="text-align:left" th:text="${report.R63_BANK_STANDALONE}"></td>
+										<td onclick="resident(this)" id="ROW163">0.00000</td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.2.1.1</td>
+
+										<td style="text-align: left">AT capital (Before Grandfathering and/or
+											Amortisation)
+											<span style="color:red">(All banks need to enter total original issuance
+												amount BEFORE Grandfathering/Amortisation, if any)</span>
+										</td>
+										<td th:text="${#numbers.formatDecimal(report.R64_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW164"></td>
+										<td></td>
+										<td style="background-color: #b3b6b9">8.5</td>
+										<td style="text-align:left" th:text="${report.R64_BANK_STANDALONE}"></td>
+										<td>NA</td>
+
+									</tr>
+
+
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.2.2</td>
+										<td style="text-align:left" th:text="${report.R65_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R65_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW165"></td>
+										<td></td>
+										<td style="background-color: #b3b6b9">8.6</td>
+										<td style="text-align:left" th:text="${report.R65_BANK_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R65_RATIOS1, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW165"></td>
+									</tr>
+
+									<tr style="text-align: center;">
+										<td></td>
+										<td>5.2.3</td>
+										<td style="text-align:left" th:text="${report.R66_STANDALONE}"></td>
+										<td th:text="${#numbers.formatDecimal(report.R66_RATIOS, 0, 'COMMA', 0, 'POINT')}"
+											onclick="resident(this)" id="ROW166"></td>
+										<td colspan="4" rowspan="3"></td>
+									</tr>
+
+									<tr style="background-color: #b3b6b9;text-align: center;">
+										<td></td>
+										<td></td>
+										<th style="text-align:left" th:text="${report.R67_STANDALONE}"></th>
+										<th
+											th:text="${#numbers.formatDecimal(report.R67_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="background-color: #b3b6b9;text-align: center;">
+										<td></td>
+										<td></td>
+										<th style="text-align:left" th:text="${report.R68_STANDALONE}"></th>
+										<th
+											th:text="${#numbers.formatDecimal(report.R68_RATIOS, 0, 'COMMA', 0, 'POINT')}">
+										</th>
+									</tr>
+
+									<tr>
+										<td style="background-color: #b3b6b9;text-align: center;">1</td>
+										<td colspan="7">The amount of cumulative unrealized losses shall be fully
+											deducted in the calculation of CET1 Capital.
+											Revaluation reserves or cumulative unrealized gains shall be added to CET 1
+											with a haircut of 55%.
+											The amount of cumulative unrealized gains arising from the changes in the
+											fair value or revaluation of bank’s own premises and real estate investment
+											are not allowed to be included as part of Asset Revaluation reserve for
+											regulatory purposes.
+										</td>
+									</tr>
+
+									<tr>
+										<td style="background-color: #b3b6b9;text-align: center;">2</td>
+										<td colspan="7">Amount of CET1 = Total CET1 (prior to deduction) – All the
+											deduction except the threshold deduction (i.e. all deduction outlined in
+											para 44 to 67) minus the total amount of both DTA that rely on future
+											profitability and arise from temporary difference and significant
+											investments in the unconsolidated financial institutions.</td>
+									</tr>
+
+									<tr>
+										<td style="background-color: #b3b6b9;text-align: center;">3</td>
+										<td colspan="7">Note, that for example "Other unallocated provisions for
+											impaired assets" as per BRF 2 (25.2.2) should not be part of general
+											provision.</td>
+									</tr>
+
+
+									<tr>
+										<td colspan="8"></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:CENTER">Buffer requirement</td>
+										<td style="text-align:CENTER">Quartile</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">-0.105</td>
+										<td>Below minimum; 100% conservation</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">0</td>
+										<td>1st quartile; 100% conservation</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">0.00625</td>
+										<td>2nd quartile; 80% conservation</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">0.0125</td>
+										<td>3rd quartile; 60% conservation</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">0.01875</td>
+										<td>4th quartile; 40% conservation</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:right">0.025</td>
+										<td>Above buffer; 0% conservation</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td>Availbale capital above minimum requirements</td>
+										<td colspan="2"> Freely availbale Tier capital</td>
+										<td>Availbale capital above minimum requirements</td>
+										<td></td>
+
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:left">CET1</td>
+										<td style="text-align:center">-0.07</td>
+										<td style="text-align:right">0</td>
+										<td style="text-align:left">CET1</td>
+										<td style="text-align:right">-0.07</td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:left">AT1</td>
+										<td style="text-align:center">-0.015</td>
+										<td style="text-align:right">0</td>
+										<td style="text-align:left">AT1</td>
+										<td style="text-align:right">-0.015</td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td style="text-align:left">Tier 2</td>
+										<td style="text-align:center">-0.02</td>
+										<td style="text-align:right"></td>
+										<td style="text-align:left">Tier 2</td>
+										<td style="text-align:right"></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+
+
+
+
+
+
+								</tbody>
+
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="window.history.back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACT BALANCE AMT LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT NAME 1</th>
+								<th>REPORT LABEL 1</th>
+								<th>REPORT ADDL CRITERIA 1</th>
+								<th>REPORT DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center: font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_label_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+					style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+						onclick="window.history.back();">Back</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+	<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+	<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+		<div style="overflow-x: inherit; border-right: 1px solid #dee2e6" th:class="${searchmsg == null}?'inner'">
+			<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+				id="detailtb">
+				<thead class="thead-light">
+					<tr style="text-align: center">
+						<th></th>
+
+						<th>CUST ID</th>
+						<th>ACCT NO</th>
+						<th>ACCT NAME</th>
+						<th>ACT BALANCE AMT LC</th>
+						<!-- <th>IND</th> -->
+						<th>REPORT NAME 1</th>
+						<th>REPORT LABEL 1</th>
+						<th>REPORT ADDL CRITERIA 1</th>
+						<th>REPORT DATE</th>
+
+					</tr>
+
+				</thead>
+				<tbody th:each="report,iterator : ${reportdetails}">
+
+
+					<tr style="text-align: center: font-weight: bold;">
+						<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+						<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+									th:classappend="${session.PERMISSIONS == 'W'}  ? addedit " class="fas fa-edit"
+									th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+						<td th:text="${report.cust_id}"></td>
+						<td th:text="${report.foracid}"></td>
+						<td th:text="${report.acct_name}">CHENNAI</td>
+						<td style="text-align: right;"
+							th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+							CHENNAI</td>
+						<!-- 	<td th:text="${report.remarks}"></td> -->
+						<td th:text="${report.report_name_1}"></td>
+						<td th:text="${report.report_label_1}">CHENNAI</td>
+						<td th:text="${report.report_addl_criteria_1}"></td>
+						<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="card-footer text-center" style="background-color: #386276" ;>
+			<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+			<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+		</div>
+		<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+		<div class="modal fade" id="addedit" th:fragment="dataedit">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">Add/Edit Records</h4>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+					<div class="modal-body" style="text-align: center">
+						<form id="dataedit" method="post">
+							<div class="form-group">
+
+								<div class="row">
+									<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+										id="cust_id" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+										id="foracid" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">Acct Name</label> <input class="form-control col-sm-5"
+										id="acct_name" readonly />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">ACCR BALANCE LC</label> <input class="form-control col-sm-5"
+										id="act_balance_amt_lc" />
+								</div>
+								<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+								<div class="row">
+									<label class="col-sm-5">REPORT NAME_1</label> <input class="form-control col-sm-5"
+										id=report_name_1 name="report_name_1" />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">REPORT LABEL 1</label> <input class="form-control col-sm-5"
+										id="report_label_1" />
+								</div>
+								<div class="row">
+									<label class="col-sm-5">REPORT ADDL CRITERIA 1</label> <input
+										class="form-control col-sm-5" id="report_addl_criteria_1" />
+								</div>
+
+								<div class="row">
+									<label class="col-sm-5">REPORT DATE</label> <input class="form-control col-sm-5"
+										id="report_date" readonly />
+								</div>
+							</div>
+						</form>
+						<div class="modal-footer">
+
+							<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+								id="edit">Submit</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!-------------------------------------Details edit modal form----------------------------------------------------->
+			<div class="modal fade" id="datadelete">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="modal-body" style="text-align: center">
+							<button type="button" class="close" data-dismiss="modal">×</button>
+							Are you Sure want to delete?
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary"
+								onclick="submitdataformdelete(this);">Submit</button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- -----------------------------------Search modal form----------------------------------------------------->
+		<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+		<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+		<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+	</div>
+	<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+	</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

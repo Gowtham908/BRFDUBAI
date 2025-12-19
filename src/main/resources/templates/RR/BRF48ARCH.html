@@ -1,0 +1,1188 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: MANIVANNAN BASKAR.
+CREATED ON	: 13-OCT-2020
+PURPOSE		: T1 RBS REPORT
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+
+			location.href = "/BRBS/BRFArchival";
+
+		}
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not (:disabled):not (.disabled).active,
+		.btn-primary:not (:disabled):not (.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0.00') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+		function addRecord() {
+			$("#edit").hide();
+			if (permission == 'W') {
+				//var url1 = /*[[@{'/customeradd/'+${reportid}+'/Details'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				//Callurl = Callurl+"&instancecode="+instancecode;
+				document.getElementById("dataedit").reset();
+
+				//make readonly false to unique fields
+				//Make readonly fields
+				$("#custid").attr("readonly", false);
+				$("#custname").attr("readonly", false);
+				$("#custtype").attr("readonly", false);
+				$("#custrating").attr("readonly", false);
+				$("#accnum").attr("readonly", false);
+				$("#tratype").attr("readonly", false);
+				$("#trasubtype").attr("readonly", false);
+				$("#tradate").attr("readonly", false);
+				$("#partialtraid").attr("readonly", false);
+				$("#partialtratype").attr("readonly", false);
+				$("#tracurr").attr("readonly", false);
+				$("#traamount").attr("readonly", false);
+				$("#tracat").attr("readonly", false);
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editRecord(a) {
+			$("#add").hide();
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-custrating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+				$("#addedit").modal("toggle");
+
+				//Make readonly fields
+				$("#tradate").attr("readonly", true);
+
+			}
+
+		};
+
+		function deleteRecord(a) {
+			$("#add").hide();
+			$("#edit").hide();
+
+			alert(a.getAttribute("data-custid"));
+			if (permission == 'W') {
+				var url3 = "/customerdelete?";
+				$("#dataedit").attr('action', url3);
+
+				//Assign selected values to the model box fields
+				$("#custid").val(a.getAttribute("data-custid"));
+				$("#custname").val(a.getAttribute("data-custname"));
+				$("#custtype").val(a.getAttribute("data-custtype"));
+				$("#custrating").val(a.getAttribute("data-custrating"));
+				$("#accnum").val(a.getAttribute("data-accnum"));
+				$("#accname").val(a.getAttribute("data-accname"));
+				$("#tratype").val(a.getAttribute("data-tratype"));
+				$("#trasubtype").val(a.getAttribute("data-trasubtype"));
+				$("#tradate").val(a.getAttribute("data-tradate"));
+				$("#traid").val(a.getAttribute("data-traid"));
+				$("#partialtraid").val(a.getAttribute("data-partialtraid"));
+				$("#partialtratype").val(a.getAttribute("data-partialtratype"));
+				$("#tracurr").val(a.getAttribute("data-tracurr"));
+				$("#traamount").val(a.getAttribute("data-traamount"));
+				$("#tracat").val(a.getAttribute("data-tracat"));
+
+				$("#datadelete").modal("toggle");
+
+			}
+
+		};
+
+		function submitdataform(a) {
+			$("#edit").hide();
+
+			var url4 = "./customeradd?";
+
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+		function submitdataformedit(a) {
+			//$("#add").hide();
+			var url = "./customeredit?";
+
+			$("#dataedit").attr('action', url);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf48',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+		function submitdataformdelete(a) {
+
+			var url4 = "./customerdelete?";
+			$("#dataedit").attr('action', url4);
+			var options = {
+				success: showResponse
+				// post-submit callback 
+			};
+
+			$('#dataedit').ajaxSubmit(options);
+
+			function showResponse(responseText, statusText, xhr, $form) {
+
+				$("#alertmsg").text(responseText);
+
+				if ($('#addedit').is(':visible')) {
+					$('#addedit').modal("hide");
+
+				}
+				;
+				if ($('#datadelete').is(':visible')) {
+					$('#datadelete').modal("hide");
+
+				}
+				;
+				$('#alert').modal("toggle");
+
+			}
+
+		}
+
+		/*]]>*/
+	</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-48 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 3000);
+		}
+
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-048-A' + ".xlsx"; // assuming .xlsx extension for Excel files
+					} else {
+						a.download = '011-BRF-048-A' + ".pdf"; // assuming .pdf extension for PDF files
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+
+					// Set the appropriate message based on the downloaded filetype
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-48 ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text('Downloaded BRF-48 Detail Excel' + ".xlsx");
+					} else {
+						$('#customAlertBody').text('Downloaded BRF-48 ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+	</script>
+
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+	<script>
+		function showAlertMessage() {
+			alert("Details page not available for Nil Report");
+		}
+	</script>
+	<title>XBRL</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+				<b style="color: white;"> BANKING AND MONETARY STATISTICS:
+					ELIGIBLE SECURITIES FOR MARGINAL LENDING FACILITY (MLF) AND
+					COLLATERALIZED MURABAHA FACILITY - BRF 48 (AED 000) </b>
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showAlertMessage();"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode}== 'detail' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+
+						</ul>
+					</div>
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive" style="border-right: 1px solid #dee2e6">
+							<table style="width: 1500px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead style="font-size: 18px;">
+									<tr align="center" style="background-color: #b3b6b9">
+										<th></th>
+										<th>Securities</th>
+										<th>Market Value (MV)</th>
+										<th>Eligible Value (EV)</th>
+										<th>MV of Unencumbered Securities</th>
+										<th>EV of Unencumbered Securities</th>
+										<th>MV of encumbered with the central bank</th>
+										<th>EV of encumbered with the central bank</th>
+									</tr>
+
+								</thead>
+								<tbody th:each="repdetail: ${reportsummary}" style="font-size: 16px;">
+									<tr>
+										<td align="right">1.1</td>
+										<td th:text="${repdetail.r10_class_a	}" align="">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r10_market_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r10_eligible_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r10_mv_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r10_ev_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r10_mv_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r10_ev_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW101">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">1.2</td>
+										<td th:text="${repdetail.r11_class_b	}" align="">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r11_market_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r11_eligible_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r11_mv_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r11_ev_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r11_mv_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r11_ev_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW102">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">1.3</td>
+										<td th:text="${repdetail.r12_class_c}" align="">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r12_market_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r12_eligible_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r12_mv_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r12_ev_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r12_mv_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r12_ev_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW103">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">1.4</td>
+										<td th:text="${repdetail.r13_class_d	}" align="">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r13_market_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r13_eligible_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r13_mv_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r13_ev_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r13_mv_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r13_ev_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW104">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">1.5</td>
+										<td th:text="${repdetail.r14_class_e	}" align="">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r14_market_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r14_eligible_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r14_mv_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r14_ev_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r14_mv_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r14_ev_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW105">CHENNAI</td>
+									</tr>
+									<tr>
+										<td align="right">1.6</td>
+										<td th:text="${repdetail.r15_non_elegible	}" align="">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r15_market_values	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${repdetail.r15_eligible_values	}" align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r15_mv_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${repdetail.r15_ev_unencumbered	}" align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r15_mv_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right" onclick="resident(this)" id="ROW106">CHENNAI</td>
+										<td th:text="${repdetail.r15_ev_encumbered	}" align="right">CHENNAI</td>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<td align="right"></td>
+										<td th:text="${repdetail.r16_total	}" align="">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r16_market_values	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r16_eligible_values	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r16_mv_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r16_ev_unencumbered	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r16_mv_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+										<td th:text="${#numbers.formatDecimal(repdetail.r16_ev_encumbered	,1,'COMMA',2,'POINT')}"
+											align="right">CHENNAI</td>
+
+									</tr>
+									<tr>
+										<td></td>
+										<td>Form No: BSD/BRF 48 -ES/JAN18</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="window.history.back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<th></th>
+
+								<th>CUST ID</th>
+								<th>ACCT NO</th>
+								<th>ACCT NAME</th>
+								<th>ACCT BAL LC</th>
+								<!-- <th>IND</th> -->
+								<th>REPORT_NAME_1</th>
+								<th>REPORT_LABEL_1</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center; font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<td><a data-toggle="tooltip" class="editrec" title="Click to Edit this Record"><i
+											th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+											class="fas fa-edit" th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.foracid},
+								        data-acct_name=${report.acct_name},																			
+										data-accr_balance_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_lable_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}" onclick="editRecord(this)"></i></a></td>
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.foracid}"></td>
+								<td th:text="${report.acct_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.act_balance_amt_lc, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+								<!-- 	<td th:text="${report.remarks}"></td> -->
+								<td th:text="${report.report_name_1}"></td>
+								<td th:text="${report.report_labeL_1}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria_1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back1();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACCR BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT_ADDL_CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

@@ -1,0 +1,2723 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!-- 
+CREATED BY	: Dhanalakshmi
+CREATED ON	: 
+PURPOSE		: QUARTELY REPORT
+TESTING     : ARUN R -23.1.24
+ -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+		th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.9.0/css/all.min.css"
+		th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+	<link rel="stylesheet" type="text/css" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+		th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+	<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+
+
+	<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+		th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+	<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+		th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+	<script src="/webjars/jquery/3.4.1/jquery.min.js" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+	<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+		th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+
+	<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+		th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+	<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
+		th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
+
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var subreportid = /*[[${subreportid}]]*/null;
+
+		var secid = /*[[${secid}]]*/null;
+
+		var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+		var dtltype = /*[[${dtltype}]]*/null;
+
+		$(function () {
+
+			//to make the summary button active on load
+			$("#summarybtn").addClass("active");
+
+		});
+
+		//When report type change: set subreportid and secid and show summary.
+		function changeReptype() {
+
+			subreportid = $("#reporttype").find(':selected').val();
+
+			secid = "1";
+
+			showsummary();
+
+		};
+
+		/*to show details page - 3 parameters
+			mode - valid values are : nextpage, prevpage, givenpage, firstpage
+			num - page number to show to the user
+			maxpage - maximum number of pages avaialble in the data
+		 */
+		function showdetails(mode, num, maxpage) {
+			var filter = $("#filters").val();
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			if (filter != null) {
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			} else {
+
+				var filter = null;
+
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+					//	Callurl = Callurl+"&instancecode="+instancecode;
+					Callurl = Callurl + "&filter=" + filter;
+			}
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#detailsbtn").addClass("active");
+					/*]]>*/
+
+				}
+			})
+		}
+
+		//to fetch summary from the database - called from the summary button
+		function showsummary(mode, num, maxpage) {
+
+			var n = parseInt(num);
+			var max = parseInt(maxpage);
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+				Callurl = Callurl + "&subreportid=" + subreportid + "&secid=" + secid;
+			switch (mode) {
+				case "nextpage":
+					n = n + 1;
+					if (n > max) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "prevpage":
+					n = n - 1;
+					if (n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+					break;
+				case "givenpage":
+					n = parseInt($("#pageno").val()) - 1;
+					if (n > max || n < 0) {
+						break;
+					}
+					Callurl = Callurl + "&page=" + n;
+			}
+
+			$.ajax({
+				type: 'get',
+				url: Callurl,
+				success: function (data) {
+
+					/*<![CDATA[*/
+
+					$('.content').html(data);
+					$("#summarybtn").addClass("active");
+
+					/*]]>*/
+				}
+			})
+		}
+
+		function sectionChange(a) {
+
+			secid = a;
+
+			showsummary();
+
+		};
+
+		function home() {
+
+			location.href = "/BRBS/BRFArchival";
+
+
+		}
+
+
+		function back() {
+			window.history.back();
+		}
+
+		function back1() {
+			var Callurl = /*[[@{'/Reports/'+${reportid}+'/Summary'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/
+
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+
+						$('.content').html(data);
+						$("#summarybtn").addClass("active");
+
+						/*]]>*/
+					}
+				})
+		}
+
+		/*]]>*/
+	</script>
+
+	<style>
+		.nav-buttons {
+			float: right;
+		}
+
+		.reptitle {
+			float: left;
+		}
+
+		.reptitle>p {
+			margin-top: 0px;
+		}
+
+		.customcol {
+			padding-left: 0px;
+			padding-right: 0px;
+			min-width: 1500px;
+		}
+
+		.btn-primary {
+			background-color: #E77400;
+			border-color: #0c0c0c;
+		}
+
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.show>.btn-primary.dropdown-toggle {
+			color: #fff;
+			background-color: #cc000000;
+			border-color: #161617;
+		}
+
+		.table .thead-light th {
+			border-color: #b3b6b9;
+		}
+
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
+
+		.first_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 0;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.second_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 30px;
+			width: 30px;
+			margin-top: -2px;
+		}
+
+		.third_left {
+			position: absolute;
+			*position: relative;
+			/*ie7*/
+			left: 60px;
+			width: 150px;
+			margin-top: -2px;
+		}
+
+		.inner {
+			overflow-x: scroll;
+			overflow-y: visible;
+			/* margin-left: 60px; */
+		}
+
+		.table-bordered thead td,
+		.table-bordered thead th {
+			border-bottom-width: 0px;
+		}
+
+		.table-bordered {
+			border: 0px;
+		}
+
+		.addedit {
+			color: #007bff;
+		}
+
+		.addedit:hover {
+			color: #0056b3;
+		}
+	</style>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var currlist = /*[[${currlist}]]*/null;
+		function editsum(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#addedit").modal("toggle");
+
+			}
+		};
+
+		function editsubmitform() {
+
+			var reportdate = $("#report_date").val();
+			//	alert(reportdate);
+
+			if ($("#dataedit").valid()) {
+
+				var url = "./T1Edit?";
+
+				$("#dataedit").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataedit").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			}
+		};
+		function verifyscreen(a) {
+
+			if (permission == 'W' && dtltype == 'report') {
+				//Assign action url for the edit/add form
+				var url = /*[[@{'/Reports/'+${reportid}+'/Changes/fim0800add'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency})}]]*/
+					$("#dataedit").attr('action', url);
+				//Reset form if any data present
+				document.getElementById("dataedit").reset();
+
+				/* //make readonly false to unique fields
+				//Make readonly fields
+				$("#cntprty_code").attr("readonly",false);
+				$("#report_date").attr("readonly",false); */
+
+				//Reset errors
+				var validator = $("#dataedit").validate();
+				validator.resetForm();
+
+				$("#verify").modal("toggle");
+
+			}
+		};
+		function verifysubmitform(a) {
+
+			if ($("#dataverify").valid()) {
+				var entry = $("#ENTRY_USER").val();
+				var modify = $("#MODIFY_USER").val();
+				var verify = $("#VERIFY_USER").val();
+
+				//var formmode = a.getAttribute("data-formmode");
+				var url = "./T1Verify?";
+
+				$("#dataverify").attr('action', url);
+
+				var options = {
+					success: showResponse
+					// post-submit callback 
+				};
+
+				$("#dataverify").ajaxSubmit(options);
+
+				function showResponse(responseText, statusText, xhr, $form) {
+
+					$("#alertmsg").text(responseText);
+
+					$('#alert').modal("toggle");
+
+				}
+				;
+			} else {
+				$("#alertmsg").text("Same User Cannot Verify!");
+				$('#alert').modal("toggle");
+
+			}
+
+		};
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function resident(a) {
+
+			var filter = a.id;
+			var cellValue = a.textContent || a.innerText;
+			if (cellValue != '0') {
+				//alert("rwo"+cellValue)
+				alert(filter);
+				var Callurl = /*[[@{'/Reports/'+${reportid}+'/DetailsARCH'(asondate=${asondate},fromdate=${fromdate},todate=${todate},currency=${currency},dtltype=${dtltype})}]]*/;
+				Callurl = Callurl + "&filter=" + filter;
+				$.ajax({
+					type: 'get',
+					url: Callurl,
+					success: function (data) {
+
+						/*<![CDATA[*/
+						$('.content').html(data);
+						$("#detailsbtn").addClass("active");
+						/*]]>*/
+					}
+				})
+			} else {
+				alert("No Records available for this selected Criteria")
+			}
+
+		}
+
+
+
+	</script>
+	<script type="text/javascript">
+		function editRecord(a) {
+
+			if (permission == 'W') {
+
+				var url2 = "./customeredit?";
+				$("#dataedit").attr('action', url2);
+				//Assign selected values to the model box fields
+				$("#cust_id").val(a.getAttribute("data-cust_id"));
+				$("#foracid").val(a.getAttribute("data-foracid"));
+				$("#acct_name").val(a.getAttribute("data-acct_name"));
+				$("#act_balance_amt_lc").val(a.getAttribute("data-act_balance_amt_lc"));
+				$("#report_name_1").val(a.getAttribute("data-report_name_1"));
+				$("#report_label_1").val(a.getAttribute("data-report_label_1"));
+				$("#report_addl_criteria_1").val(a.getAttribute("data-report_addl_criteria_1"));
+				$("#report_date").val(a.getAttribute("data-report_date"));
+
+				$("#addedit").modal("toggle");
+
+			}
+
+		};
+
+
+		function submitdataformedit() {
+			var foracid = document.getElementById('foracid').value;
+			var report_label_1 = document.getElementById('report_label_1').value;
+			var act_balance_amt_lc = document.getElementById('act_balance_amt_lc').value;
+			var report_name_1 = document.getElementById('report_name_1').value;
+			var report_addl_criteria_1 = document.getElementById('report_addl_criteria_1').value;
+
+			$.ajax({
+				url: './CustomerDetailEditBrf107',
+				type: 'POST',
+				data: {
+					foracid: foracid,
+					report_label_1: report_label_1,
+					act_balance_amt_lc: act_balance_amt_lc,
+					report_name_1: report_name_1,
+					report_addl_criteria_1: report_addl_criteria_1
+				},
+				success: function (data) {
+					// Handle the response data as needed
+					alert(data);
+
+					// Reload the page
+					location.reload();
+				},
+				error: function (error) {
+					// Handle any errors that occur during the AJAX request
+					console.error("Error: " + JSON.stringify(error));
+				}
+			});
+		}
+
+
+	</script>
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-107 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 4000);
+		}
+	</script>
+
+	<script>
+		function downloadFile(filetype) {
+			// Show the download processing modal
+			$('#downloadProcessingModal').modal('show');
+
+			// Simulate a delay (3 seconds in this case) to mimic a download process
+			setTimeout(function () {
+
+
+				// Display a centered custom alert
+				$('#customAlertBody').text('Downloaded BRF-151 ' + filetype);
+				$('#customAlertModal').modal('show');
+
+				// Hide the download processing modal
+				$('#downloadProcessingModal').modal('hide');
+			}, 25000);
+		}
+	</script>
+
+	<script>
+		function downloadexcel(button) {
+			var reportid = button.getAttribute('data-reportid');
+			var asondate = button.getAttribute('data-asondate');
+			var fromdate = button.getAttribute('data-fromdate');
+			var todate = button.getAttribute('data-todate');
+			var currency = button.getAttribute('data-currency');
+			var subreportid = button.getAttribute('data-subreportid');
+			var secid = button.getAttribute('data-secid');
+			var dtltype = button.getAttribute('data-dtltype');
+			var filetype = button.getAttribute('data-filetype');
+
+			console.log(filetype);
+
+			$('#downloadProcessingModal').modal('show');
+
+			$.ajax({
+				url: '/BRBS/Reports/' + reportid + '/Download',
+				data: {
+					asondate: asondate,
+					fromdate: fromdate,
+					todate: todate,
+					currency: currency,
+					subreportid: subreportid,
+					secid: secid,
+					dtltype: dtltype,
+					filetype: filetype
+				},
+				type: 'POST',
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function (data) {
+					$('#downloadProcessingModal').modal('hide');
+					var blob = new Blob([data], {
+						type: 'application/octet-stream'
+					});
+					var url = window.URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.href = url;
+					if (filetype == "excel" || filetype == "detailexcel") {
+						a.download = '011-BRF-107-A' + ".xlsx";
+					} else if (filetype == "BRF") {
+						a.download = '011-BRF-107-A' + ".xls"; // assuming .pdf extension for PDF files
+					} else {
+						a.download = '011-BRF-107-A' + ".pdf";
+					}
+
+					document.body.appendChild(a);
+					a.click();
+					window.URL.revokeObjectURL(url);
+					if (filetype == "excel") {
+						$('#customAlertBody').text('Downloaded BRF-107-ARCH ' + ".xlsx");
+					} else if (filetype == "detailexcel") {
+						$('#customAlertBody').text('Downloaded BRF-107 Detail Excel' + ".xlsx");
+					} else if (filetype == "BRF") {
+						$('#customAlertBody').text('Downloaded BRF 107-ARCH ' + ".xls"); // assuming .pdf extension for PDF files
+					} else {
+						$('#customAlertBody').text('Downloaded BRF-107-ARCH ' + ".pdf");
+					}
+					$('#customAlertModal').modal('show');
+				}
+			});
+		}
+
+	</script>
+	<style>
+		.dropdown-menu li a:hover {
+			background-color: orange;
+			/* Orange color for hover */
+			color: white;
+			/* White text for better contrast */
+		}
+	</style>
+	<title>XBRL</title>
+</head>
+
+<body>
+	<!----------------------------------------------------- Header Section starts ----------------------------------------------------->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+
+	<!----------------------------------------------------- Header Section Ends ------------------------------------------------------->
+	<div class="container content" th:fragment="reportcontent">
+		<!--------------------------------------------------------------- Report title starts -------------------------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #4d8cb9; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+				<b style="color: white;"> BANKING AND MONETARY STATISTICS - UAE
+					BANKING BORROWER TYPE AS PER IFRS - 9 STAGES BRF 107 (AED 000) </b>
+				<th id="date"><b style="color: white; margin-left: 5%;">Report
+						Date - <span th:text="${todate}"></span>
+					</b></th>
+				<!--  -->
+				<div class="btn-group nav-buttons">
+					<button type="button" class="btn btn-primary" onclick="showdetails('firstpage','1','0');"
+						id="detailsbtn">Details</button>
+					<button type="button" class="btn btn-primary" onclick="showsummary();"
+						id="summarybtn">Summary</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Download <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li th:if="${displaymode}=='summary' or ${displaymode}==null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='pdf'" onclick="downloadexcel(this)">Pdf</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='excel'" onclick="downloadexcel(this)">Excel</a>
+							</li>
+							<li th:if="${displaymode} == 'summary' or ${displaymode} == null">
+								<a class="text-primary" th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='BRF'" onclick="downloadexcel(this)">BRF FINAL</a>
+							</li>
+
+							<li th:if="${displaymode}=='detail'"><a th:attr="data-reportid=${reportid}, 
+							            data-asondate=${asondate}, 
+							            data-fromdate=${fromdate}, 
+							            data-todate=${todate}, 
+							            data-currency=${currency}, 
+							            data-subreportid=${subreportid}, 
+							            data-secid=${secid}, 
+							            data-dtltype=${dtltype}, 
+							            data-filetype='detailexcel'" onclick="downloadexcel(this)">Excel</a></li>
+						</ul>
+					</div>
+
+					<!-- Download Message -->
+					<span id="downloadMessage"></span>
+
+					<!-- Download Processing Modal -->
+					<div class="modal fade" id="downloadProcessingModal" tabindex="-1" role="dialog"
+						aria-labelledby="downloadProcessingModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered d-flex align-items-center" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="downloadProcessingModalLabel">Download
+										Processing...</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Download Message -->
+					<div class="modal fade" id="customAlertModal" tabindex="-1" role="dialog"
+						aria-labelledby="customAlertModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="customAlertModalLabel">Successfully</h5>
+								</div>
+								<div class="modal-body" id="customAlertBody"></div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Download End -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 customcol"
+				style="background-color: #dadddf; padding-top: 10px; padding-bottom: 10px; padding-left: 5px;">
+
+
+				<div class="btn-group nav-buttons" th:if="${type} =='RBS'">
+					<button type="button" class="btn btn-primary" onclick="editsum(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Modify</button>
+					<button type="button" class="btn btn-primary"
+						style="margin-right: 0px; margin-top: -10px; padding: 3px; background-color: #4d8cb9;"
+						title="view the records" id="addRecord">Inquiry</button>
+					<button type="button" class="btn btn-primary"
+						th:if="${report?.entity_flg}=='N' AND  ${type} !='ARCHIVAL'" onclick="verifyscreen(this);"
+						style="margin-top: -10px; padding: 3px;" title="Click to EDIT Records"
+						th:classappend="${session.PERMISSIONS == 'W'} AND ${dtltype == 'report'} ? addedit "
+						id="addRecord">Verify</button>
+				</div>
+			</div>
+		</div>
+
+		<!--------------------------------------------------------------- Report title ends ------------------------------------------------->
+
+		<!------------------------------ Report summary section starts it will shown only if summary button clicked------------------------->
+		<div class="row">
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='summary' or ${displaymode}==null">
+				<div class="row">
+
+					<div class="col-sm-12">
+
+						<div class="table-responsive" style="border-right: 1px solid #dee2e6">
+							<!-- <div style="margin: 0 auto; width: 656px;text-align:center;">
+								<button type="button" class="btn btn-xs btn-primary" id="btnInsert"
+									onclick="insert();">Insert</button>
+								<button type="button" class="btn btn-xs btn-primary" id="btnDelete"
+									onclick="delete();">Delete</button>
+							</div> -->
+
+							<table style="width: 3800px;"
+								class="table  table-bordered table-hover table-sm table-condensed">
+								<thead style="background-color: #b3b6b9">
+									<tr>
+										<th style="background-color: #b3b6b9; text-align: center" colspan="40">Gross
+											loans and advances as per IFRS - 9 (Gross Loans and advances include Trade
+											bills (line item: 7 of BRF 1) BORROWER WISE</th>
+									</tr>
+									<tr style="text-align: center">
+										<th rowspan="2">S.No</th>
+										<th style="width: 400px" rowspan="2" colspan="2">IFRS - 9 Stages. CBUAE
+											Classification and quarterly movement</th>
+										<th colspan="2">NBFI (Gross)</th>
+										<th colspan="2">Federal Govt (Gross)</th>
+										<th colspan="2">Non Commercial entities (Federal Govt)
+											(Gross)</th>
+										<th colspan="2">Emirates Governments (Gross)</th>
+										<th colspan="2">Non-commercial entities (Emirates Govt)
+											(Gross)</th>
+										<th colspan="2">GREs (Govt ownership more than 50%) (BRF
+											79 & 80) (Gross)</th>
+										<th colspan="2">Corporates with Govt ownership of less
+											than 50% (Gross)</th>
+										<th colspan="2">Other corporates(Gross)</th>
+										<th colspan="2">High Net worth Individuals (HNI) (Gross)
+										</th>
+										<th colspan="2">Small & Medium Enterprises (SMEs) (Gross)
+										</th>
+										<th colspan="2">Individuals (Gross)</th>
+										<th colspan="2">Gross loans and advances</th>
+									</tr>
+									<tr>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+										<th>Outstanding</th>
+										<th>Provision</th>
+									</tr>
+								</thead>
+								<tbody th:each="report: ${reportsummary}">
+
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R1_S_NO}"></td>
+										<th style="background-color: #b3b6b9; vertical-align: middle" rowspan="5">Stage
+											1</th>
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R1_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal(report.R1_OUTSTANDING_NBFI, 0, 'COMMA', 0, 'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW101"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<th onclick="resident(this)" id="ROW101" style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R1_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th onclick="resident(this)" id="ROW101" style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R1_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R2_S_NO}"></td>
+										<th style="background-color: yellow;text-decoration: line-through; text-align: left"
+											th:text="${report.R2_STAGES	}"></th>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW102"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R2_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R2_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R3_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R3_STAGES	}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_GOVT_GROSS,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R3_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R3_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R4_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R4_STAGES	}"></th>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+
+
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R5_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R5_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW105"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R5_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"></th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R6_S_NO}"></td>
+										<th style="background-color: #b3b6b9; vertical-align: middle; text-align: center"
+											rowspan="6">Stage 2</th>
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R6_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW106"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R6_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R6_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R7_S_NO}"></td>
+										<th style="background-color: yellow;text-decoration: line-through; text-align: left"
+											th:text="${report.R7_STAGES	}"></th>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9" onclick="resident(this)" id="ROW107"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R7_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R7_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R8_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R8_STAGES	}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R8_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R8_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R4_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R4_STAGES	}"></th>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R10_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R10_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW110"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R10_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<td style="background-color: #b3b6b9"></td>
+
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R11_S_NO}"></td>
+
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R11_STAGES	}"></th>
+
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW111"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R11_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<td style="background-color: #b3b6b9"></td>
+									</tr>
+
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R12_S_NO}"></td>
+										<th style="background-color: #b3b6b9; vertical-align: middle" rowspan="7">Stage
+											3</th>
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R12_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW112"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R12_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R12_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R13_S_NO}"></td>
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R13_STAGES	}"></th>
+
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW113"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R13_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R13_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R14_S_NO}"></td>
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R14_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW114"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R14_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R14_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R15_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R15_STAGES	}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+											</td>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R15_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R15_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R16_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R16_STAGES	}"></th>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+										<td style="background-color: #b3b6b9"></td>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R17_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R17_STAGES	}"></th>
+
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW117"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R17_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"></th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R18_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R18_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<td onclick="resident(this)" id="ROW118"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td style="background-color: #b3b6b9"></td>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R18_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"></th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R19_S_NO}"></td>
+										<th style="background-color: #b3b6b9; vertical-align: middle" rowspan="6">POCI
+										</th>
+										<th style="background-color: #FFFF00; text-align: left"
+											th:text="${report.R19_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW119"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R19_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R19_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R20_S_NO}"></td>
+										<th style="background-color: #FFFF00; text-align: left"
+											th:text="${report.R20_STAGES	}"></th>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW120"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R20_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R20_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R21_S_NO}"></td>
+
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R21_STAGES	}"></th>
+
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW121"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R21_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R21_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R22_S_NO}"></td>
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R22_STAGES	}"></th>
+
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW122"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R22_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R22_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R23_S_NO}"></td>
+										<th style="background-color: yellow; text-align: left"
+											th:text="${report.R23_STAGES	}"></th>
+
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</td>
+										<td onclick="resident(this)" id="ROW123"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</td>
+
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R23_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R23_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R24_S_NO}"></td>
+										<th style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R24_STAGES	}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R24_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R24_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="text-align: right">
+										<td style="text-align: center" th:text="${report.R25_S_NO}"></td>
+										<th COLSPAN="2" style="background-color: #b3b6b9; text-align: left"
+											th:text="${report.R25_STAGES	}"></th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_NBFI ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_NBFI ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_FEDERAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_FEDERAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_NON_COMMERCIAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISON_NON_COMMERCIAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_EMIRATES ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_EMIRATES ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_GOVT_GROSS ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_GOVT_GROSS ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_GRE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_GRE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_OTHER_CORPORATE ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_OTHER_CORPORATE ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_HIGH ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_HIGH ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_SMALL	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_SMALL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_INDIVIDUAL ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_INDIVIDUAL ,0,'COMMA',0,'POINT')}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal( report.R25_OUTSTANDING_GROSS	 ,0,'COMMA',0,'POINT')	}">
+										</th>
+										<th style="background-color: #b3b6b9"
+											th:text="${#numbers.formatDecimal (report.R25_PROVISION_GROSS  ,0,'COMMA',0,'POINT')}">
+										</th>
+									</tr>
+									<tr style="background-color: #b3b6b9">
+										<th colspan="27">FORM NO: BSD/BRF107 UAE BANKING BORROWER
+											TYPE/DEC2021</th>
+									</tr>
+								</tbody>
+
+							</table>
+						</div>
+						<div class="card-footer text-center" th:if="${displaymode}=='summary' or ${displaymode}==null"
+							style="background-color: #386276" ;>
+							<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+								onclick="home();">Home</button>
+							<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+								onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!------------------------------ Report summary section ends it will shown only if summary button clicked------------------------->
+			<!------------------------------ Report Details section starts it will shown only if Details button clicked------------------------->
+
+			<div class="col-sm-12 customcol" th:if="${displaymode}=='detail'" th:fragment="detail">
+				<div style="overflow-x: inherit; border-right: 1px solid #dee2e6"
+					th:class="${searchmsg == null}?'inner'">
+					<table th:if="${searchmsg} == null" class="table table-bordered table-sm" style="width: 1498px"
+						id="detailtb">
+						<thead class="thead-light">
+							<tr style="text-align: center">
+								<!-- <th></th> -->
+
+								<th>CUST ID</th>
+								<th>CUST NAME</th>
+								<th>BRANCH NAME</th>
+								<!-- <th>ACCT BALANCE LC</th> -->
+								<TH>EAD</TH>
+								<!-- <th>IND</th> -->
+								<!-- 	<th>REPORT_NAME_1</th> -->
+								<th>REPORT LABEL</th>
+								<th>REPORT_ADDL_CRITERIA_1</th>
+								<th>REPORT_DATE</th>
+
+							</tr>
+
+						</thead>
+						<tbody th:each="report,iterator : ${reportdetails}">
+
+
+							<tr style="text-align: center: font-weight: bold;">
+								<!-- <td style="text-align: right;" th:text="${iterator.index + 1}"></td> -->
+								<!-- <td><a data-toggle="tooltip" class="editrec"
+									title="Click to Edit this Record"><i
+										th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+										class="fas fa-edit"
+										th:attr="
+										data-cust_id=${report.cust_id},
+										data-foracid=${report.cust_name},
+								        data-acct_name=${report.acct_name},																			
+										data-act_balance_amt_lc=${report.act_balance_amt_lc},						
+										data-report_name_1=${report.report_name_1},
+										data-report_label_1=${report.report_label_1},
+										data-report_addl_criteria_1=${report.report_addl_criteria_1},
+										data-report_date=${#dates.format(report.report_date, 'dd-MM-yyyy')}"
+										onclick="editRecord(this)"></i></a></td> -->
+
+								<td th:text="${report.cust_id}"></td>
+								<td th:text="${report.cust_name}"></td>
+								<td th:text="${report.branch_name}">CHENNAI</td>
+								<td style="text-align: right;"
+									th:text="${#numbers.formatDecimal(#strings.replace(#strings.replace(report.ead, '+', ''), '-', ''), 1, 'COMMA', 3, 'POINT')}">
+									CHENNAI</td>
+
+								<!-- <td th:text="${report.report_name_1}"></td> -->
+								<td th:text="${report.report_lable}">CHENNAI</td>
+								<td th:text="${report.report_addl_criteria1}"></td>
+								<td th:text="${#dates.format(report.report_date, 'dd-MM-yyyy')}"></td>
+
+
+
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="card-footer text-center" style="background-color: #386276" ;>
+					<button type="button" class="btn btn-xs btn-primary" id="btnHome" onclick="home();">Home</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btnBack" onclick="back();">Back</button>
+				</div>
+				<!-- -----------------------------------Details edit modal form----------------------------------------------------->
+				<div class="modal fade" id="addedit" th:fragment="dataedit">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Add/Edit Records</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+							<div class="modal-body" style="text-align: center">
+								<form id="dataedit" method="post">
+									<div class="form-group">
+
+										<div class="row">
+											<label class="col-sm-5">CUST ID</label> <input class="form-control col-sm-5"
+												id="cust_id" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct No</label> <input class="form-control col-sm-5"
+												id="foracid" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">Acct Name</label> <input
+												class="form-control col-sm-5" id="acct_name" readonly />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">ACT BALANCE LC</label> <input
+												class="form-control col-sm-5" id="act_balance_amt_lc" />
+										</div>
+										<!-- <div class="row">
+											<label class="col-sm-5">IND</label> <input
+												class="form-control col-sm-5" id="remarks"  />
+										</div> -->
+
+
+										<div class="row">
+											<label class="col-sm-5">REPORT NAME_1</label> <input
+												class="form-control col-sm-5" id=report_name_1 name="report_name_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT LABLE_1</label> <input
+												class="form-control col-sm-5" id="report_label_1" />
+										</div>
+										<div class="row">
+											<label class="col-sm-5">REPORT_ADDL_CRITERIA_1</label> <input
+												class="form-control col-sm-5" id="report_addl_criteria_1" />
+										</div>
+
+										<div class="row">
+											<label class="col-sm-5">REPORT DATE</label> <input
+												class="form-control col-sm-5" id="report_date" readonly />
+										</div>
+									</div>
+								</form>
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-primary" onclick="submitdataformedit(this);"
+										id="edit">Submit</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+					<!-------------------------------------Details edit modal form----------------------------------------------------->
+					<div class="modal fade" id="datadelete">
+						<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+							<div class="modal-content">
+								<div class="modal-body" style="text-align: center">
+									<button type="button" class="close" data-dismiss="modal">×</button>
+									Are you Sure want to delete?
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary"
+										onclick="submitdataformdelete(this);">Submit</button>
+									<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- -----------------------------------Search modal form----------------------------------------------------->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+				<!-- <div class="float-right" th:if="${reportdetails.totalPages} gt 1">
+					<a href="#"><i class="fas fa-caret-left fa-2x"
+						th:onclick="|showdetails('prevpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+					<input type="text" id="pageno" style="width: 30px"
+						th:value="${reportdetails.number+1}"
+						th:onchange="|showdetails('givenpage',${reportdetails.number},${reportdetails.totalPages});|"></input>
+					of <font th:text="${reportdetails.totalPages}"></font> <a href="#"><i
+						class="fas fa-caret-right fa-2x"
+						th:onclick="|showdetails('nextpage',${reportdetails.number},${reportdetails.totalPages});|"></i></a>
+				</div> -->
+				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
+			</div>
+			<!------------------------------ Report Details section ends it will shown only if Details button clicked------------------------->
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="refreshPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+
+</html>

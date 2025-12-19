@@ -1,0 +1,510 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/font-awesome/5.9.0/css/all.min.css"
+	th:href="@{/webjars/font-awesome/5.9.0/css/all.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
+	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
+<link rel="stylesheet" type="text/css"
+	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
+	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
+<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+<link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
+	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
+	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"
+	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
+	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
+<script
+	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
+	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
+
+
+<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
+	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
+
+
+</head>
+
+<title>BCDRS</title>
+<style>
+	.customcol {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+
+	table {
+		border-collapse: collapse;
+		border: 1px solid black;
+		border-color: #e9ecef;
+	}
+	.btn-primary {
+	background-color: #E77400;
+	border-color: #0c0c0c;
+}	
+	.modal-backdrop {
+		background-color: rgba(0, 0, 0, 0.5);
+		zoom: 1;
+	}
+
+	.addedit {
+		color: #007bff;
+	}
+
+.headderbutton {
+    background-color: #007bff !important;
+    color: white !important;
+    width: 70px;
+    margin-right: 3px; /* adds gap between buttons */
+}
+#usertable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+#usertable thead th {
+  position: sticky;
+  top: 0;
+  background: #e9ecf0;
+  z-index: 1;
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#usertable tbody {
+  display: block;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#usertable thead,
+#usertable tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+#usertable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.dataTables_wrapper .dataTables_filter input {
+    margin-left: -0.5em;
+}
+</style>
+<script>
+$(document).ready(function() {
+    $('#usertable').DataTable({
+        "paging": true, 
+        "searching": false, 
+        "ordering": false, 
+        "lengthChange": false, 
+        "pageLength": 30, 
+        "responsive": false, 
+        "info": false
+    });
+});
+
+</script>
+
+<!----------------------------------------Scripts to edit report details-------------------------------------------->
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	$(function () {
+
+		$("#repDate").datepicker({
+			changeMonth: true,
+			changeYear: true,
+			maxDate: new Date(),
+			dateFormat: "dd-mm-yy"
+		});
+
+	});
+
+	var permission = /*[[${session.PERMISSIONS}]]*/null;
+
+	function editRecord(a) {
+
+		if (permission == 'W') {
+
+			var url = /*[[@{'/bankmasteredit'}]]*/
+				$("#dataedit").attr('action', url);
+			//Assign selected values to the model box fields
+			$("#repDate").val(a.getAttribute("data-repdate"));
+			$("#tier1").val(a.getAttribute("data-tier1"));
+			$("#tier2").val(a.getAttribute("data-tier2"));
+			$("#tier3").val(a.getAttribute("data-tier3"));
+			$("#basedepositerate").val(a.getAttribute("data-base_deposit_rate"));
+			$("#stareserve").val(a.getAttribute("data-staturoty_reserve"));
+			$("#assignedcapital").val(a.getAttribute("data-assigned_capital"));
+			$("#assigned_capital_fc").val(a.getAttribute("data-assigned_capital_fc"));
+			$("#retained_earnings_fc").val(a.getAttribute("data-retained_earnings_fc"));
+			$("#other_reserves").val(a.getAttribute("data-other_reserves"));
+			$("#capital_base").val(a.getAttribute("data-capital_base"));
+			$("#base_loan_rate").val(a.getAttribute("data-base_loan_rate"));
+
+			$("#addedit").modal("toggle");
+
+			//Make readonly fields
+			$("#repDate").attr("readonly", true);
+
+		}
+
+	};
+	function addRecord() {
+
+		if (permission == 'W') {
+			//Assign action url for the edit/add form
+			var url = /*[[@{'bankmasteradd'}]]*/
+				$("#dataedit").attr('action', url);
+			//Reset form if any data present
+			document.getElementById("dataedit").reset();
+
+			//make readonly false to unique fields
+			//Make readonly fields
+			$("#repDate").attr("readonly", false);
+			$("#tier1").attr("readonly", false);
+			$("#tier2").attr("readonly", false);
+			$("#tier3").attr("readonly", false);
+			$("#basedepositerate").attr("readonly", false);
+			$("#stareserve").attr("readonly", false);
+			$("#assignedcapital").attr("readonly", false);
+			$("#assigned_capital_fc").attr("readonly", false);
+			$("#retained_earnings_fc").attr("readonly", false);
+			$("#other_reserves").attr("readonly", false);
+			$("#capital_base").attr("readonly", false);
+			$("#base_loan").attr("readonly", false);
+
+
+			$("#addedit").modal("toggle");
+
+		}
+	};
+
+	function deleteRecord(a) {
+
+		if (permission == 'W') {
+
+			//Assign action url for the edit/add form
+			var url = /*[[@{'bankmasterdelete'}]]*/
+				$("#dataedit").attr('action', url);
+
+			//Assign selected values to the model box fields
+			$("#repDate").val(a.getAttribute("data-repdate"));
+			$("#tier1").val(a.getAttribute("data-tier1"));
+			$("#tier2").val(a.getAttribute("data-tier2"));
+			$("#tier3").val(a.getAttribute("data-tier3"));
+			$("#basedepositerate").val(a.getAttribute("data-base_deposit_rate"));
+			$("#stareserve").val(a.getAttribute("data-staturoty_reserve"));
+			$("#assignedcapital").val(a.getAttribute("data-assigned_capital"));
+			$("#assigned_capital_fc").val(a.getAttribute("data-assigned_capital_fc"));
+			$("#retained_earnings_fc").val(a.getAttribute("data-retained_earnings_fc"));
+			$("#other_reserves").val(a.getAttribute("data-other_reserves"));
+			$("#capital_base").val(a.getAttribute("data-capital_base"));
+
+			$("#datadelete").modal("toggle");
+
+		}
+
+	};
+
+	function submitdataform() {
+
+		var options = {
+			success: showResponse
+			// post-submit callback 
+		};
+
+		$('#dataedit').ajaxSubmit(options);
+
+		function showResponse(responseText, statusText, xhr, $form) {
+
+			$("#alertmsg").text(responseText);
+
+			if ($('#addedit').is(':visible')) {
+				$('#addedit').modal("hide");
+
+			}
+			;
+			if ($('#datadelete').is(':visible')) {
+				$('#datadelete').modal("hide");
+
+			}
+			;
+			$('#alert').modal("toggle");
+
+		}
+
+	}
+	
+	function goHome() {
+		// Redirect to the home page (adjust the URL as needed)
+		window.location.href = '/BRBS/Dashboard'; // Replace with your actual home page URL
+	}
+	function goBack() {
+		window.history.back();
+	}
+	/*]]>*/
+	
+	
+</script>
+
+<body>
+	<!-- --------------------------------------------------- Header Section starts --------------------------------------------------- -->
+	<div th:insert="XBRLHeaderMenu :: header"></div>
+	<!-- --------------------------------------------------- Header Section Ends ----------------------------------------------------- -->
+	<i class="fa fa-question-circle" aria-hidden="true" onclick="docEmb('Report')" id="ques"></i>
+	<div class="container content" th:fragment="reportcontent">
+
+		<div class="row">
+			<div class="col-sm-12 customcol">
+				<div class="card" style="width: 1440px; margin-left: -20px;">
+					<div class="card-header" style="background-color: #376275;">
+						<div class="float-left" style="color: white;">
+							<h4>BANK LEVEL PARAMETERS </h4>
+						</div>
+					</div>
+						<div style="overflow-x: auto; border-right: 1px solid #dee2e6">
+							<table  style="width: 1500px;"
+							class="table table-striped table-bordered table-hover " id="usertable">
+								<thead class="thead-light" style="background-color:#e9ecf0">
+									<tr>
+										<th style="width:50px; text-align: center;"><a data-toggle="tooltip" class="editrec" title="Click to add new Records">
+										<i
+													th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+													class="fa fa-plus-circle" style="color: green;" onclick="addRecord();"
+													aria-hidden="true"></i></a></th>
+										<th style="width:50px;"></th>
+										<th>Report Date</th>
+										<th>Tier1 Capital Adequacy</th>
+										<th>Tier2 Capital Adequacy</th>
+										<th>Tier3 Capital Adequacy</th>
+										<th>Base Deposit Rate</th>
+										<th>Statutory Reserve</th>
+										<th>Assigned Capital</th>
+										<th>Assigned Capital FC</th>
+										<th>Retained Earnings FC</th>
+										<th>Other Reserves</th>
+										<th>Capital Base</th>
+										<th>Base Loan Rate</th>
+									</tr>
+								</thead>
+								 <tbody class="databody det1 scrollable-tbody" id="det1">
+
+									<tr th:if="${bankdata}!=null" th:each="bank : ${bankdata}">
+
+										<td style="width:50px; text-align: center;"><a data-toggle="tooltip" class="editrec"
+												title="Click to Edit this Record"><i
+													th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+													class="fas fa-edit" style="color: blue;" th:attr="data-repdate=${#dates.format(bank.reportDate, 'dd-MM-yyyy')},
+								data-tier1=${bank.tier1_capital_adequacy},
+								data-tier2=${bank.tier2_capital_adequacy},
+								data-tier3=${bank.tier3_capital_adequacy},
+								data-base_deposit_rate=${bank.base_deposit_rate},
+								data-staturoty_reserve=${bank.staturoty_reserve},
+								data-assigned_capital=${bank.assigned_capital},
+								data-assigned_capital_fc=${bank.assigned_capital_fc},
+								data-retained_earnings_fc=${bank.retained_earnings_fc},
+								data-other_reserves=${bank.other_reserves},
+								data-capital_base=${bank.capital_base},
+								data-base_loan_rate=${bank.base_loan_rate}" onclick="editRecord(this)"></i></a></td>
+
+
+										<td style="width:50px; text-align: center;"><a data-toggle="tooltip" class="editrec text-danger" 
+												title="Click to delete this Record"><i
+													th:classappend="${session.PERMISSIONS == 'W'}  ? addedit "
+													class="fas fa-minus-circle" th:attr="data-repdate=${#dates.format(bank.reportDate, 'dd-MM-yyyy')},
+													data-tier1=${bank.tier1_capital_adequacy},
+													data-tier2=${bank.tier2_capital_adequacy},
+													data-tier3=${bank.tier3_capital_adequacy},
+													data-base_deposit_rate=${bank.base_deposit_rate},
+													data-staturoty_reserve=${bank.staturoty_reserve},
+													data-assigned_capital=${bank.assigned_capital},
+													data-assigned_capital_fc=${bank.assigned_capital_fc},
+													data-retained_earnings_fc=${bank.retained_earnings_fc},
+													data-other_reserves=${bank.other_reserves},
+													data-capital_base=${bank.capital_base},
+													data-base_loan_rate=${bank.base_loan_rate}" onclick="deleteRecord(this)"></i></a></td>
+
+										<td th:text="${#dates.format(bank.reportDate, 'dd-MM-yyyy')}"></td>
+										<td th:text="${bank.tier1_capital_adequacy}"></td>
+										<td th:text="${bank.tier2_capital_adequacy}"></td>
+										<td th:text="${bank.tier3_capital_adequacy}"></td>
+										<td th:text="${bank.base_deposit_rate}"></td>
+										<td th:text="${bank.staturoty_reserve}"></td>
+										<td th:text="${bank.assigned_capital}"></td>
+										<td th:text="${bank.assigned_capital_fc	}">CHENNAI</td>
+										<td th:text="${bank.retained_earnings_fc	}">CHENNAI</td>
+										<td th:text="${bank.other_reserves	}">CHENNAI</td>
+										<td th:text="${bank.capital_base	}">CHENNAI</td>
+										<td style="width:72px;"th:text="${bank.base_loan_rate}"></td>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					<!--<div class="card-footer d-flex justify-content-center gap-3">
+						<button type="button" class="btn btn-xs headderbutton" onclick="goHome();" id="btnUpload">
+							Home
+						</button>
+						<button type="reset" class="btn btn-xs headderbutton" id="btnClear" onclick="goBack();">
+							Back
+						</button>
+					</div>-->
+					<div class="card-footer text-center"
+						style="background-color: #376275;">
+						<button type="button" class="btn btn-xs btn-primary" id="btnHome"
+							onclick="goHome();">Home</button>
+						<button type="button" class="btn btn-xs btn-primary" id="btnBack"
+							onclick="goBack();">Back</button>
+					</div>
+					 <!-- Close card-footer -->
+
+				</div> <!-- Close card -->
+			</div> <!-- Close col -->
+		</div> <!-- Close row -->
+	</div> <!-- Close container -->
+
+
+
+	<!-- -----------------------------------Details edit modal form--------------------------------------------------- -->
+	<div class="modal fade" id="addedit" th:fragment="dataedit">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Add/Edit Records</h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center">
+					<form th:object=${singledetail} id="dataedit" method="post">
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-5">Report Date</label> <input class="form-control col-sm-5"
+									type="text" th:field="*{reportDate}" th:value="${reportDate}" id="repDate" />
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Tier1</label> <input class="form-control col-sm-5" type="number"
+									th:field="*{tier1_capital_adequacy}" th:value="${tier1_capital_adequacy}"
+									id="tier1" />
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Tier2</label> <input class="form-control col-sm-5" type="number"
+									th:field="*{tier2_capital_adequacy}" th:value="${tier2_capital_adequacy}"
+									id="tier2" />
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Tier3</label> <input class="form-control col-sm-5" type="number"
+									th:field="*{tier3_capital_adequacy}" th:value="${tier3_capital_adequacy}"
+									id="tier3">
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Base Deposit Rate</label> <input class="form-control col-sm-5"
+									type="number" th:field="*{base_deposit_rate}" th:value="${base_deposit_rate}"
+									id="basedepositerate">
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Staturoty Reserve</label> <input class="form-control col-sm-5"
+									type="number" th:field="*{staturoty_reserve}" th:value="${staturoty_reserve}"
+									id="stareserve">
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Assigned Capital</label> <input class="form-control col-sm-5"
+									type="number" th:field="*{assigned_capital}" th:value="${assigned_capital}"
+									id="assignedcapital">
+							</div>
+
+
+							<div class="row">
+								<label class="col-sm-5">Assigned Capital FC</label> <input class="form-control col-sm-5"
+									type="number" th:field="*{assigned_capital_fc}" th:value="${assigned_capital_fc}"
+									id="assigned_capital_fc">
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Retained Earnings Fc</label> <input
+									class="form-control col-sm-5" type="number" th:field="*{retained_earnings_fc}"
+									th:value="${retained_earnings_fc}" id="retained_earnings_fc">
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Other Reserves</label> <input class="form-control col-sm-5"
+									type="number" th:field="*{other_reserves}" th:value="${other_reserves}"
+									id="other_reserves">
+							</div>
+							<div class="row">
+								<label class="col-sm-5">Capital Base</label> <input class="form-control col-sm-5"
+									type="number" th:field="*{capital_base}" th:value="${capital_base}"
+									id="capital_base">
+							</div>
+
+							<div class="row">
+								<label class="col-sm-5">Base Loan Rate</label>
+								<input class="form-control col-sm-5" type="number" th:field="*{base_loan_rate}"
+									th:value="${base_loan_rate}" id="base_loan_rate">
+
+							</div>
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="submitdataform();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details edit modal form----------------------------------------------------->
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+	<div class="modal fade" id="datadelete">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<button type="button" class="close" data-dismiss="modal">×</button>
+					Are you Sure want to delete?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="submitdataform();">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-------------------------------------Details delete modal dialog----------------------------------------------------->
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<div class="modal fade" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn btn-primary" onclick="location.reload();"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+</body>
+
+</html>
