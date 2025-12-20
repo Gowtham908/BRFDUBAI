@@ -36,17 +36,17 @@ public interface BRF2_MAPPING_REPO extends JpaRepository<BRF2_MAPPING_ENTITY, St
 
 	//Mapped Query
 	@Query(value = "select s.cust_id as custid,s.foracid as foracid , s.acct_name as acctname , s.report_name_1 as reportname1 , "
-			+ " s.report_label_1 as reportlabel1 , s.gl_sub_head_code as glsubheadcode , s.schm_code as schmcode,"
+			+ " s.report_lable_1 as reportlabel1 , s.gl_sub_head_code as glsubheadcode , s.schm_code as schmcode,"
 			+ " s.report_addl_criteria_1 as reportaddlcriteria1,s.report_addl_criteria_2 as reportaddlcriteria2,s.report_addl_criteria_3 as reportaddlcriteria3"
-			+ " from BRF2_MAPPING_TABLE s  WHERE s.report_label_1 is not null AND s.report_addl_criteria_1 IS NOT NULL"
+			+ " from BRF2_MAPPING_TABLE s  WHERE s.report_lable_1 is not null AND s.report_addl_criteria_1 IS NOT NULL"
 			+ " and s.report_name_1=?1", nativeQuery = true)
 	List<BRF_MAPPING_PROPERTY> genMapped(String report_code);
 
 	//Unmapped Query
 	@Query(value = "SELECT  s.cust_id as custid,s.foracid as foracid , s.acct_name as acctname , s.report_name_1 as reportname1 ,"
-			+ " s.report_label_1 as reportlabel1 , s.gl_sub_head_code as glsubheadcode , s.schm_code as schmcode,"
+			+ " s.report_lable_1 as reportlabel1 , s.gl_sub_head_code as glsubheadcode , s.schm_code as schmcode,"
 			+ " s.report_addl_criteria_1 as reportaddlcriteria1,s.report_addl_criteria_2 as reportaddlcriteria2,s.report_addl_criteria_3 as reportaddlcriteria3"
-			+ " FROM BRF2_MAPPING_TABLE s WHERE s.report_label_1 IS  NULL OR s.report_addl_criteria_1 IS NULL", nativeQuery = true)
+			+ " FROM BRF2_MAPPING_TABLE s WHERE s.report_lable_1 IS  NULL OR s.report_addl_criteria_1 IS NULL", nativeQuery = true)
 	List<BRF_MAPPING_PROPERTY> genUnMapped();
 
 	
