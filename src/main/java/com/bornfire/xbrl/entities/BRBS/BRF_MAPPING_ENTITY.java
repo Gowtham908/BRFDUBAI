@@ -470,14 +470,14 @@ public class BRF_MAPPING_ENTITY extends BRF_MAPPING_PARENT {
 			String acct_crncy_code2, String acct_name2, String acid2, BigDecimal act_balance_amt_lc, String bacid2,
 			String constitution_code2, String constitution_desc2, String country2, String country_of_incorp2,
 			Date create_time2, String create_user2, String cust_id2, String cust_type2, Character del_flg2,
-			Character entity_flg2, String foracid2, String gender2, String gl_code2, String gl_sub_head_code2,
-			String gl_sub_head_desc2, String group_id2, BigDecimal hni_networth2, String legal_entity_type2,
-			Date maturity_date2, Character modify_flg2, Date modify_time2, String modify_user2, Character nre_flg2,
-			Character nre_status2, String purpose_of_advn2, String remarks2, String report_addl_criteria_12,
-			String report_addl_criteria_22, String report_addl_criteria_32, Date report_date2, String report_label_12,
-			String report_name_12, String schm_code2, String schm_type2, String sector2, String sector_code2,
-			String segment2, String sol_id2, String sub_sector2, String sub_segment2, String turnover2,
-			Date verify_time2, String verify_user2, String version2) {
+			BigDecimal eab_lc, Character entity_flg2, String foracid2, String gender2, String gl_code2,
+			String gl_sub_head_code2, String gl_sub_head_desc2, String group_id2, BigDecimal hni_networth2,
+			String legal_entity_type2, Date maturity_date2, Character modify_flg2, Date modify_time2,
+			String modify_user2, Character nre_flg2, Character nre_status2, String purpose_of_advn2, String remarks2,
+			String report_addl_criteria_12, String report_addl_criteria_22, String report_addl_criteria_32,
+			Date report_date2, String report_label_12, String report_name_12, String schm_code2, String schm_type2,
+			String sector2, String sector_code2, String segment2, String sol_id2, String sub_sector2,
+			String sub_segment2, String turnover2, Date verify_time2, String verify_user2, String version2) {
 		super(cust_id, foracid, acct_name, acct_crncy_code, gl_code, gl_sub_head_code, gl_sub_head_desc,
 				country_of_incorp, cust_type, schm_code, schm_type, sol_id, acid, segment, sub_segment, sector,
 				sub_sector, sector_code, group_id, constitution_code, country, legal_entity_type, constitution_desc,
@@ -536,30 +536,9 @@ public class BRF_MAPPING_ENTITY extends BRF_MAPPING_PARENT {
 		version = version2;
 	}
 
-	@Override
-	public String toString() {
-		return "BRF_MAPPING_ENTITY [acct_crncy_code=" + acct_crncy_code + ", acct_name=" + acct_name + ", acid=" + acid
-				+ ", act_balance_amt_lc=" + act_balance_amt_lc + ", bacid=" + bacid + ", constitution_code="
-				+ constitution_code + ", constitution_desc=" + constitution_desc + ", country=" + country
-				+ ", country_of_incorp=" + country_of_incorp + ", create_time=" + create_time + ", create_user="
-				+ create_user + ", cust_id=" + cust_id + ", cust_type=" + cust_type + ", del_flg=" + del_flg
-				+ ", entity_flg=" + entity_flg + ", foracid=" + foracid + ", gender=" + gender + ", gl_code=" + gl_code
-				+ ", gl_sub_head_code=" + gl_sub_head_code + ", gl_sub_head_desc=" + gl_sub_head_desc + ", group_id="
-				+ group_id + ", hni_networth=" + hni_networth + ", legal_entity_type=" + legal_entity_type
-				+ ", maturity_date=" + maturity_date + ", modify_flg=" + modify_flg + ", modify_time=" + modify_time
-				+ ", modify_user=" + modify_user + ", nre_flg=" + nre_flg + ", nre_status=" + nre_status
-				+ ", purpose_of_advn=" + purpose_of_advn + ", remarks=" + remarks + ", report_addl_criteria_1="
-				+ report_addl_criteria_1 + ", report_addl_criteria_2=" + report_addl_criteria_2
-				+ ", report_addl_criteria_3=" + report_addl_criteria_3 + ", report_date=" + report_date
-				+ ", report_label_1=" + report_label_1 + ", report_name_1=" + report_name_1 + ", schm_code=" + schm_code
-				+ ", schm_type=" + schm_type + ", sector=" + sector + ", sector_code=" + sector_code + ", segment="
-				+ segment + ", sol_id=" + sol_id + ", sub_sector=" + sub_sector + ", sub_segment=" + sub_segment
-				+ ", turnover=" + turnover + ", verify_time=" + verify_time + ", verify_user=" + verify_user
-				+ ", version=" + version + "]";
-	}
-
 	public BRF_MAPPING_ENTITY() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
 }

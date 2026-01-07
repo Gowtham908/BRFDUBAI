@@ -763,7 +763,7 @@ public class XBRLNavigationController {
 
 	@Autowired
 	Brecon_Aani_payment_dup_rep Brecon_Aani_payment_dup_rep;
-	
+
 	@Autowired
 	Ecdd_profile_report_repo Ecdd_profile_report_repo;
 
@@ -805,8 +805,8 @@ public class XBRLNavigationController {
 
 	@GetMapping("/systemotp")
 	public String showOtpForm(Model model, HttpSession session) {
-	    String otp = (String) session.getAttribute("otp");
-	    model.addAttribute("otp", otp);
+		String otp = (String) session.getAttribute("otp");
+		model.addAttribute("otp", otp);
 		return "XBRLOtpvalidation.html"; // Thymeleaf or HTML page
 	}
 
@@ -1569,11 +1569,10 @@ public class XBRLNavigationController {
 
 		return "XBRLBankMaster";
 	}
-	
-	
+
 	@Autowired
 	Gl_balance_recon_rep Gl_balance_recon_rep;
-	
+
 	@RequestMapping(value = "GLBalanceRecon", method = { RequestMethod.GET, RequestMethod.POST })
 	public String GLBalanceRecon(@RequestParam(required = false) String formmode,
 			@RequestParam(value = "Selecteddate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date Selecteddate,
@@ -1581,11 +1580,9 @@ public class XBRLNavigationController {
 			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req) {
 
 		String roleId = (String) req.getSession().getAttribute("ROLEID");
-		
+
 		LocalDate today = LocalDate.now();
-		
-		
-		
+
 		if (Selecteddate != null) {
 			Selecteddate = Selecteddate;
 		} else {
@@ -1598,14 +1595,13 @@ public class XBRLNavigationController {
 			md.addAttribute("formmode", "list");
 			md.addAttribute("Selectedreport_date", Selecteddate);
 			md.addAttribute("Gl_balance_recon_data", Gl_balance_recon_rep.GlGetGlbalancebydate(Selecteddate));
-		} 
+		}
 
 		md.addAttribute("adminflag", "adminflag");
 		md.addAttribute("userprofileflag", "userprofileflag");
 
 		return "GLBalanceRecon";
 	}
-	
 
 	@RequestMapping(value = "EtlMonitor", method = RequestMethod.GET)
 	public String etlMonitor(Model md, HttpServletRequest req) {
@@ -3418,23 +3414,23 @@ public class XBRLNavigationController {
 
 		return "User_Audit";
 	}
+
 	@RequestMapping(value = "User_Audit/DownloadExcel", method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> downloadUserAuditExcel() {
-	    try {
-	        ByteArrayInputStream in = reportServices.generateUserAuditExcel();
-	        
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add("Content-Disposition", "attachment; filename=User_Audit_Log.xlsx");
+		try {
+			ByteArrayInputStream in = reportServices.generateUserAuditExcel();
 
-	        return ResponseEntity
-	                .ok()
-	                .headers(headers)
-	                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-	                .body(new InputStreamResource(in));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(500).build();
-	    }
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=User_Audit_Log.xlsx");
+
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType
+							.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(new InputStreamResource(in));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).build();
+		}
 	}
 
 	@RequestMapping(value = "Audits", method = { RequestMethod.GET, RequestMethod.POST })
@@ -3497,24 +3493,24 @@ public class XBRLNavigationController {
 
 		return "Audits";
 	}
+
 	@RequestMapping(value = "Audits/DownloadExcel", method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> downloadServiceAuditExcel() {
-	    try {
-	        // Call the service method created in Step 2
-	        ByteArrayInputStream in = reportServices.generateServiceAuditExcel(); 
-	        
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.add("Content-Disposition", "attachment; filename=Service_Audit_Log.xlsx");
+		try {
+			// Call the service method created in Step 2
+			ByteArrayInputStream in = reportServices.generateServiceAuditExcel();
 
-	        return ResponseEntity
-	                .ok()
-	                .headers(headers)
-	                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-	                .body(new InputStreamResource(in));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(500).build();
-	    }
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=Service_Audit_Log.xlsx");
+
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType
+							.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(new InputStreamResource(in));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).build();
+		}
 	}
 
 	@RequestMapping(value = "getchanges2", method = RequestMethod.GET)
@@ -4881,82 +4877,43 @@ public class XBRLNavigationController {
 
 			md.addAttribute("rf_code", report_code);
 
-		} else if (formmode.equals("Mapped_Accounts")) {
-			md.addAttribute("formmode", "Mapped_Accounts");
-			md.addAttribute("formmode1", formmode);
+		} else if (formmode.equals("Mapped_Accounts") || formmode.equals("UnMapped_Accounts")) {
+			md.addAttribute("formmode", formmode);
+			md.addAttribute("rf_code", report_code);
 			md.addAttribute("refCodeTypeList", brf_REP.getLiist());
 			md.addAttribute("refCodeTypeList1", brf_REP.getLiist1(report_code));
 
-			List<BRF_MAPPING_PROPERTY> is = reportServices.Mapped(report_code);
-
-			List<BRF_MAPPING_TABLE> entityList = new ArrayList<>();
-
-			for (BRF_MAPPING_PROPERTY array : is) {
-				BRF_MAPPING_TABLE entity = new BRF_MAPPING_TABLE();
-
-				// Assuming the order of elements in the array matches the entity's properties
-				if (array.getCustid() != null) {
-					entity.setCust_id(array.getCustid().toString());
-				} else {
-					System.out.println("Cust_ddid is null");
-				}
-
-				if (array.getForacid() != null) {
-					entity.setForacid(array.getForacid().toString());
-				} else {
-					System.out.println("Cust_ddid is null");
-				}
-				if (array.getAcctname() != null) {
-					entity.setAcct_name(array.getAcctname().toString());
-				} else {
-					System.out.println("Cust_ddid is null");
-				}
-				if (array.getSchmcode() != null) {
-					entity.setSchm_code(array.getSchmcode().toString());
-				} else {
-					System.out.println("Cust_ddid is null");
-				}
-
-				if (array.getReportlabel1() != null) {
-					entity.setReport_label_1(array.getReportlabel1().toString());
-				} else {
-					System.out.println("Cust_ddid is null");
-				}
-				if (array.getReportaddlcriteria1() != null) {
-					entity.setReport_addl_criteria_1(array.getReportaddlcriteria1().toString());
-				} else {
-					System.out.println("Cust_id is null");
-				}
-
-				if (array.getGlsubheadcode() != null) {
-					entity.setGl_sub_head_code(array.getGlsubheadcode().toString());
-				} else {
-					System.out.println("Cust_id is null");
-				}
-
-				if (array.getReportname1() != null) {
-					entity.setReport_name_1(array.getReportname1().toString());
-				} else {
-					System.out.println("Cust_id is null");
-				}
-
-				entityList.add(entity);
+			// Determine which service method to call
+			List<BRF_MAPPING_PROPERTY> rawList;
+			if (formmode.equals("Mapped_Accounts")) {
+				rawList = reportServices.Mapped(report_code);
+			} else {
+				rawList = reportServices.returnUnmappedObject(report_code);
 			}
-			// md.addAttribute("refCodeTypeList", brf_REP.getLiist());
-			// md.addAttribute("refCodeTypeList1", brf_REP.getLiist1(report_code));
-			md.addAttribute("Mapped_Accounts", entityList);
-			md.addAttribute("rf_code", report_code);
-		} else if (formmode.equals("UnMapped_Accounts")) {
-			System.out.println(formmode);
-			md.addAttribute("formmode", "UnMapped_Accounts");
-			md.addAttribute("formmode1", formmode);
-			md.addAttribute("rf_code", report_code);
-			md.addAttribute("UnMapped_Accounts", reportServices.genUnMapped(report_code));
-			md.addAttribute("refCodeTypeList", brf_REP.getLiist());
-			md.addAttribute("refCodeTypeList1", brf_REP.getLiist1(report_code));
-		}
 
-		else if (formmode.equals("Mapping")) {
+			// Convert different Entity types into one List for the HTML table
+			List<BRF_MAPPING_TABLE> displayList = new ArrayList<>();
+			for (BRF_MAPPING_PROPERTY item : rawList) {
+				BRF_MAPPING_TABLE dto = new BRF_MAPPING_TABLE();
+				dto.setCust_id(item.getCustid() != null ? item.getCustid().toString() : "");
+				dto.setForacid(item.getForacid() != null ? item.getForacid().toString() : "");
+				dto.setAcct_name(item.getAcctname() != null ? item.getAcctname().toString() : "");
+				dto.setSchm_code(item.getSchmcode() != null ? item.getSchmcode().toString() : "");
+				dto.setReport_label_1(item.getReportlabel1() != null ? item.getReportlabel1().toString() : "");
+				dto.setGl_sub_head_code(item.getGlsubheadcode() != null ? item.getGlsubheadcode().toString() : "");
+				dto.setReport_addl_criteria_1(
+						item.getReportaddlcriteria1() != null ? item.getReportaddlcriteria1().toString() : "");
+				dto.setReport_name_1(item.getReportname1() != null ? item.getReportname1().toString() : report_code);
+				displayList.add(dto);
+			}
+
+			// Set the list based on the mode
+			if (formmode.equals("Mapped_Accounts")) {
+				md.addAttribute("Mapped_Accounts", displayList);
+			} else {
+				md.addAttribute("UnMapped_Accounts", displayList);
+			}
+		} else if (formmode.equals("Mapping")) {
 			md.addAttribute("rf_code", report_code);
 			md.addAttribute("formmode", "Mapping");
 			// md.addAttribute("Mapped_Accounts", reportlist_repo.Mapping1());
@@ -9175,222 +9132,254 @@ public class XBRLNavigationController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	@GetMapping("kyc/Reportstatus/Download")
 	@ResponseBody
 	public ResponseEntity<InputStreamResource> Downlaodkycstatus(
-			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date Fromdate,HttpServletRequest req) {
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date Fromdate,
+			HttpServletRequest req) {
 
 		logger.info("Receiving Kyc status download request");
 		LocalDate today = LocalDate.now(); // Get today's date
 		Date fromDateToUse; // Declare a variable for the date to use
-		
-		if(Fromdate!=null) {
+
+		if (Fromdate != null) {
 			fromDateToUse = Fromdate;
-		}else {
-		
+		} else {
+
 			fromDateToUse = java.sql.Date.valueOf(today.minusDays(0));
 		}
-		List<Ecdd_profile_report_entity> ecddProfileReportList = Ecdd_profile_report_repo.getcorporatedata(fromDateToUse);
-		List<Ecdd_profile_report_entity> ecddProfileReportListIndv = Ecdd_profile_report_repo.getindividualdata(fromDateToUse);
-		
+		List<Ecdd_profile_report_entity> ecddProfileReportList = Ecdd_profile_report_repo
+				.getcorporatedata(fromDateToUse);
+		List<Ecdd_profile_report_entity> ecddProfileReportListIndv = Ecdd_profile_report_repo
+				.getindividualdata(fromDateToUse);
+
 		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			
+
 			Sheet sheet = workbook.createSheet("ECDD Report Status");
-			
+
 			// Create title style
-		    CellStyle titleStyle = workbook.createCellStyle();
-		    Font titleFont = workbook.createFont();
-		    titleFont.setBold(true);
-		    titleFont.setFontHeightInPoints((short) 14);
-		    titleStyle.setFont(titleFont);
-		    titleStyle.setAlignment(HorizontalAlignment.CENTER);
-		    titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-		    
-		    // Create header style
-		    CellStyle headerStyle = workbook.createCellStyle();
-		    Font headerFont = workbook.createFont();
-		    headerFont.setBold(true);
-		    headerStyle.setFont(headerFont);
-		    headerStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
-		    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		    headerStyle.setBorderBottom(BorderStyle.THIN);
-		    headerStyle.setBorderTop(BorderStyle.THIN);
-		    headerStyle.setBorderLeft(BorderStyle.THIN);
-		    headerStyle.setBorderRight(BorderStyle.THIN);
-		    headerStyle.setAlignment(HorizontalAlignment.CENTER);
-		    
-		    // Border style for data cells
-		    CellStyle borderStyle = workbook.createCellStyle();
-		    borderStyle.setBorderBottom(BorderStyle.THIN);
-		    borderStyle.setBorderTop(BorderStyle.THIN);
-		    borderStyle.setBorderLeft(BorderStyle.THIN);
-		    borderStyle.setBorderRight(BorderStyle.THIN);
-		    
-		    // Corporate Completed:Columns A–J
-		    Row CorpTitleRow = sheet.createRow(1);
-		    CorpTitleRow.setHeightInPoints(20);
-		    Cell CorpBankCell = CorpTitleRow.createCell(0);
-		    CorpBankCell.setCellValue("CORPORATE ECDD");
-		    CorpBankCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 9));
-		    
-		    // SOL ID (A3:A4)
-		    Row secondTitleRow = sheet.createRow(2);
-		    Cell solIdCell = secondTitleRow.createCell(0);
-		    solIdCell.setCellValue("SOL ID");
-		    solIdCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(2, 3, 0, 0)); // Merge A3:A4
+			CellStyle titleStyle = workbook.createCellStyle();
+			Font titleFont = workbook.createFont();
+			titleFont.setBold(true);
+			titleFont.setFontHeightInPoints((short) 14);
+			titleStyle.setFont(titleFont);
+			titleStyle.setAlignment(HorizontalAlignment.CENTER);
+			titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
-		    // Completed (B3:D3)
-		    Cell completedCell = secondTitleRow.createCell(1);
-		    completedCell.setCellValue("Completed");
-		    completedCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 3));
-		    
-		    // Pending (E3:G3)
-		    Cell pendingCell = secondTitleRow.createCell(4);
-		    pendingCell.setCellValue("Pending for Verification");
-		    pendingCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(2, 2, 4, 6));
-		    
-		    // Unattended (H3:I3)
-		    Cell UnattendCell = secondTitleRow.createCell(7);
-		    UnattendCell.setCellValue("Not attended yet");
-		    UnattendCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(2, 2, 7, 9));
-		    
-		    Row Headerrow = sheet.createRow(3);
-		    String[] subHeaders = { "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW" };
-		    int col = 1;
-		    for (String subHeader : subHeaders) {
-		        Cell cell = Headerrow.createCell(col++);
-		        cell.setCellValue(subHeader);
-		        cell.setCellStyle(titleStyle);
-		       
-		    }
-		    
-		    int corporaterownum = 4;
-		   
-		    for (Ecdd_profile_report_entity entityloopdata : ecddProfileReportList) {
+			// Create header style
+			CellStyle headerStyle = workbook.createCellStyle();
+			Font headerFont = workbook.createFont();
+			headerFont.setBold(true);
+			headerStyle.setFont(headerFont);
+			headerStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setBorderBottom(BorderStyle.THIN);
+			headerStyle.setBorderTop(BorderStyle.THIN);
+			headerStyle.setBorderLeft(BorderStyle.THIN);
+			headerStyle.setBorderRight(BorderStyle.THIN);
+			headerStyle.setAlignment(HorizontalAlignment.CENTER);
 
-		        Row row = sheet.createRow(corporaterownum++);
-		        
-		        Cell cell0 = row.createCell(0);
-		        Cell cell1 = row.createCell(1);
-		        Cell cell2 = row.createCell(2);
-		        Cell cell3 = row.createCell(3);
-		        Cell cell4 = row.createCell(4);
-		        Cell cell5 = row.createCell(5);
-		        Cell cell6 = row.createCell(6);
-		        Cell cell7 = row.createCell(7);
-		        Cell cell8 = row.createCell(8);
-		        Cell cell9 = row.createCell(9);
+			// Border style for data cells
+			CellStyle borderStyle = workbook.createCellStyle();
+			borderStyle.setBorderBottom(BorderStyle.THIN);
+			borderStyle.setBorderTop(BorderStyle.THIN);
+			borderStyle.setBorderLeft(BorderStyle.THIN);
+			borderStyle.setBorderRight(BorderStyle.THIN);
 
-		        cell0.setCellValue(entityloopdata.getBranch_code() != null ? entityloopdata.getBranch_code() : "");
-		        cell1.setCellValue(entityloopdata.getHigh_risk_completed() != null ? entityloopdata.getHigh_risk_completed().toString() : "");
-		        cell2.setCellValue(entityloopdata.getMedium_risk_completed() != null ? entityloopdata.getMedium_risk_completed().toString() : "");
-		        cell3.setCellValue(entityloopdata.getLow_risk_completed() != null ? entityloopdata.getLow_risk_completed().toString() : "");
-		        cell4.setCellValue(entityloopdata.getHigh_risk_pending() != null ? entityloopdata.getHigh_risk_pending().toString() : "");
-		        cell5.setCellValue(entityloopdata.getMedium_risk_pending() != null ? entityloopdata.getMedium_risk_pending().toString(): "");
-		        cell6.setCellValue(entityloopdata.getLow_risk_pending() != null ? entityloopdata.getLow_risk_pending().toString() : "");
-		        cell7.setCellValue(entityloopdata.getHigh_risk_non_atended() != null ? entityloopdata.getHigh_risk_non_atended().toString() : "");
-		        cell8.setCellValue(entityloopdata.getMedium_risk_non_atended() != null ? entityloopdata.getMedium_risk_non_atended().toString(): "");
-		        cell9.setCellValue(entityloopdata.getLow_risk_non_atended() != null ? entityloopdata.getLow_risk_non_atended().toString(): "");
+			// Corporate Completed:Columns A–J
+			Row CorpTitleRow = sheet.createRow(1);
+			CorpTitleRow.setHeightInPoints(20);
+			Cell CorpBankCell = CorpTitleRow.createCell(0);
+			CorpBankCell.setCellValue("CORPORATE ECDD");
+			CorpBankCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 9));
 
-		    }
-		    
+			// SOL ID (A3:A4)
+			Row secondTitleRow = sheet.createRow(2);
+			Cell solIdCell = secondTitleRow.createCell(0);
+			solIdCell.setCellValue("SOL ID");
+			solIdCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(2, 3, 0, 0)); // Merge A3:A4
+
+			// Completed (B3:D3)
+			Cell completedCell = secondTitleRow.createCell(1);
+			completedCell.setCellValue("Completed");
+			completedCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 3));
+
+			// Pending (E3:G3)
+			Cell pendingCell = secondTitleRow.createCell(4);
+			pendingCell.setCellValue("Pending for Verification");
+			pendingCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(2, 2, 4, 6));
+
+			// Unattended (H3:I3)
+			Cell UnattendCell = secondTitleRow.createCell(7);
+			UnattendCell.setCellValue("Not attended yet");
+			UnattendCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(2, 2, 7, 9));
+
+			Row Headerrow = sheet.createRow(3);
+			String[] subHeaders = { "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW" };
+			int col = 1;
+			for (String subHeader : subHeaders) {
+				Cell cell = Headerrow.createCell(col++);
+				cell.setCellValue(subHeader);
+				cell.setCellStyle(titleStyle);
+
+			}
+
+			int corporaterownum = 4;
+
+			for (Ecdd_profile_report_entity entityloopdata : ecddProfileReportList) {
+
+				Row row = sheet.createRow(corporaterownum++);
+
+				Cell cell0 = row.createCell(0);
+				Cell cell1 = row.createCell(1);
+				Cell cell2 = row.createCell(2);
+				Cell cell3 = row.createCell(3);
+				Cell cell4 = row.createCell(4);
+				Cell cell5 = row.createCell(5);
+				Cell cell6 = row.createCell(6);
+				Cell cell7 = row.createCell(7);
+				Cell cell8 = row.createCell(8);
+				Cell cell9 = row.createCell(9);
+
+				cell0.setCellValue(entityloopdata.getBranch_code() != null ? entityloopdata.getBranch_code() : "");
+				cell1.setCellValue(entityloopdata.getHigh_risk_completed() != null
+						? entityloopdata.getHigh_risk_completed().toString()
+						: "");
+				cell2.setCellValue(entityloopdata.getMedium_risk_completed() != null
+						? entityloopdata.getMedium_risk_completed().toString()
+						: "");
+				cell3.setCellValue(entityloopdata.getLow_risk_completed() != null
+						? entityloopdata.getLow_risk_completed().toString()
+						: "");
+				cell4.setCellValue(
+						entityloopdata.getHigh_risk_pending() != null ? entityloopdata.getHigh_risk_pending().toString()
+								: "");
+				cell5.setCellValue(entityloopdata.getMedium_risk_pending() != null
+						? entityloopdata.getMedium_risk_pending().toString()
+						: "");
+				cell6.setCellValue(
+						entityloopdata.getLow_risk_pending() != null ? entityloopdata.getLow_risk_pending().toString()
+								: "");
+				cell7.setCellValue(entityloopdata.getHigh_risk_non_atended() != null
+						? entityloopdata.getHigh_risk_non_atended().toString()
+						: "");
+				cell8.setCellValue(entityloopdata.getMedium_risk_non_atended() != null
+						? entityloopdata.getMedium_risk_non_atended().toString()
+						: "");
+				cell9.setCellValue(entityloopdata.getLow_risk_non_atended() != null
+						? entityloopdata.getLow_risk_non_atended().toString()
+						: "");
+
+			}
+
 			// INDIVIDUAL Completed:Columns A–J
-		    Row indivTitleRow = sheet.createRow(12);
-		    indivTitleRow.setHeightInPoints(20);
-		    Cell indivBankCell = indivTitleRow.createCell(0);
-		    indivBankCell.setCellValue("RETAIL ECDD");
-		    indivBankCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(12, 12, 0, 9));
-		    
-		    // SOL ID (A13:A14)
-		    Row corpsecondTitleRow = sheet.createRow(13);
-		    Cell corpsolIdCell = corpsecondTitleRow.createCell(0);
-		    corpsolIdCell.setCellValue("SOL ID");
-		    corpsolIdCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(13, 14, 0, 0)); // Merge A3:A4
+			Row indivTitleRow = sheet.createRow(12);
+			indivTitleRow.setHeightInPoints(20);
+			Cell indivBankCell = indivTitleRow.createCell(0);
+			indivBankCell.setCellValue("RETAIL ECDD");
+			indivBankCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(12, 12, 0, 9));
 
-		    // Completed (B13:D13)
-		    Cell corpcompletedCell = corpsecondTitleRow.createCell(1);
-		    corpcompletedCell.setCellValue("Completed");
-		    corpcompletedCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(13, 13, 1, 3));
-		    
-		    // Pending (E13:G13)
-		    Cell corppendingCell = corpsecondTitleRow.createCell(4);
-		    corppendingCell.setCellValue("Pending for Verification");
-		    corppendingCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(13, 13, 4, 6));
-		    
-		    // Unattended (H13:I13)
-		    Cell corpUnattendCell = corpsecondTitleRow.createCell(7);
-		    corpUnattendCell.setCellValue("Not attended yet");
-		    corpUnattendCell.setCellStyle(titleStyle);
-		    sheet.addMergedRegion(new CellRangeAddress(13, 13, 7, 9));
-		    
-		    Row corpHeaderrow = sheet.createRow(14);
-		    String[] corpsubHeaders = { "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW" };
-		    int col1 = 1;
-		    for (String subHeader : corpsubHeaders) {
-		        Cell cell = corpHeaderrow.createCell(col1++);
-		        cell.setCellValue(subHeader);
-		        cell.setCellStyle(titleStyle);
-		       
-		    }
-		    
-		    int Indvrownum = 15;
-		    
-		    for (Ecdd_profile_report_entity entityloopdata : ecddProfileReportListIndv) {
+			// SOL ID (A13:A14)
+			Row corpsecondTitleRow = sheet.createRow(13);
+			Cell corpsolIdCell = corpsecondTitleRow.createCell(0);
+			corpsolIdCell.setCellValue("SOL ID");
+			corpsolIdCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(13, 14, 0, 0)); // Merge A3:A4
 
-		        Row row = sheet.createRow(Indvrownum++);
-		        
-		        Cell cell0 = row.createCell(0);
-		        Cell cell1 = row.createCell(1);
-		        Cell cell2 = row.createCell(2);
-		        Cell cell3 = row.createCell(3);
-		        Cell cell4 = row.createCell(4);
-		        Cell cell5 = row.createCell(5);
-		        Cell cell6 = row.createCell(6);
-		        Cell cell7 = row.createCell(7);
-		        Cell cell8 = row.createCell(8);
-		        Cell cell9 = row.createCell(9);
+			// Completed (B13:D13)
+			Cell corpcompletedCell = corpsecondTitleRow.createCell(1);
+			corpcompletedCell.setCellValue("Completed");
+			corpcompletedCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(13, 13, 1, 3));
 
-		        cell0.setCellValue(entityloopdata.getBranch_code() != null ? entityloopdata.getBranch_code() : "");
-		        cell1.setCellValue(entityloopdata.getHigh_risk_completed() != null ? entityloopdata.getHigh_risk_completed().toString() : "");
-		        cell2.setCellValue(entityloopdata.getMedium_risk_completed() != null ? entityloopdata.getMedium_risk_completed().toString() : "");
-		        cell3.setCellValue(entityloopdata.getLow_risk_completed() != null ? entityloopdata.getLow_risk_completed().toString() : "");
-		        cell4.setCellValue(entityloopdata.getHigh_risk_pending() != null ? entityloopdata.getHigh_risk_pending().toString() : "");
-		        cell5.setCellValue(entityloopdata.getMedium_risk_pending() != null ? entityloopdata.getMedium_risk_pending().toString(): "");
-		        cell6.setCellValue(entityloopdata.getLow_risk_pending() != null ? entityloopdata.getLow_risk_pending().toString() : "");
-		        cell7.setCellValue(entityloopdata.getHigh_risk_non_atended() != null ? entityloopdata.getHigh_risk_non_atended().toString() : "");
-		        cell8.setCellValue(entityloopdata.getMedium_risk_non_atended() != null ? entityloopdata.getMedium_risk_non_atended().toString(): "");
-		        cell9.setCellValue(entityloopdata.getLow_risk_non_atended() != null ? entityloopdata.getLow_risk_non_atended().toString(): "");
+			// Pending (E13:G13)
+			Cell corppendingCell = corpsecondTitleRow.createCell(4);
+			corppendingCell.setCellValue("Pending for Verification");
+			corppendingCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(13, 13, 4, 6));
 
-		    }
-		    
+			// Unattended (H13:I13)
+			Cell corpUnattendCell = corpsecondTitleRow.createCell(7);
+			corpUnattendCell.setCellValue("Not attended yet");
+			corpUnattendCell.setCellStyle(titleStyle);
+			sheet.addMergedRegion(new CellRangeAddress(13, 13, 7, 9));
 
-		    // Write to output stream
-		    workbook.write(out);
-		    ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+			Row corpHeaderrow = sheet.createRow(14);
+			String[] corpsubHeaders = { "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW", "HIGH", "MEDIUM", "LOW" };
+			int col1 = 1;
+			for (String subHeader : corpsubHeaders) {
+				Cell cell = corpHeaderrow.createCell(col1++);
+				cell.setCellValue(subHeader);
+				cell.setCellStyle(titleStyle);
 
-		    // If you want to return as ResponseEntity (Spring Boot)
-		    HttpHeaders headersHttp = new HttpHeaders();
-		    headersHttp.add("Content-Disposition", "attachment; filename=ecdd_completed_report.xlsx");
+			}
 
-		    return ResponseEntity.ok()
-		        .headers(headersHttp)
-		        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-		        .body(new InputStreamResource(in));
-		
+			int Indvrownum = 15;
 
-		
-			
-			
+			for (Ecdd_profile_report_entity entityloopdata : ecddProfileReportListIndv) {
+
+				Row row = sheet.createRow(Indvrownum++);
+
+				Cell cell0 = row.createCell(0);
+				Cell cell1 = row.createCell(1);
+				Cell cell2 = row.createCell(2);
+				Cell cell3 = row.createCell(3);
+				Cell cell4 = row.createCell(4);
+				Cell cell5 = row.createCell(5);
+				Cell cell6 = row.createCell(6);
+				Cell cell7 = row.createCell(7);
+				Cell cell8 = row.createCell(8);
+				Cell cell9 = row.createCell(9);
+
+				cell0.setCellValue(entityloopdata.getBranch_code() != null ? entityloopdata.getBranch_code() : "");
+				cell1.setCellValue(entityloopdata.getHigh_risk_completed() != null
+						? entityloopdata.getHigh_risk_completed().toString()
+						: "");
+				cell2.setCellValue(entityloopdata.getMedium_risk_completed() != null
+						? entityloopdata.getMedium_risk_completed().toString()
+						: "");
+				cell3.setCellValue(entityloopdata.getLow_risk_completed() != null
+						? entityloopdata.getLow_risk_completed().toString()
+						: "");
+				cell4.setCellValue(
+						entityloopdata.getHigh_risk_pending() != null ? entityloopdata.getHigh_risk_pending().toString()
+								: "");
+				cell5.setCellValue(entityloopdata.getMedium_risk_pending() != null
+						? entityloopdata.getMedium_risk_pending().toString()
+						: "");
+				cell6.setCellValue(
+						entityloopdata.getLow_risk_pending() != null ? entityloopdata.getLow_risk_pending().toString()
+								: "");
+				cell7.setCellValue(entityloopdata.getHigh_risk_non_atended() != null
+						? entityloopdata.getHigh_risk_non_atended().toString()
+						: "");
+				cell8.setCellValue(entityloopdata.getMedium_risk_non_atended() != null
+						? entityloopdata.getMedium_risk_non_atended().toString()
+						: "");
+				cell9.setCellValue(entityloopdata.getLow_risk_non_atended() != null
+						? entityloopdata.getLow_risk_non_atended().toString()
+						: "");
+
+			}
+
+			// Write to output stream
+			workbook.write(out);
+			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+
+			// If you want to return as ResponseEntity (Spring Boot)
+			HttpHeaders headersHttp = new HttpHeaders();
+			headersHttp.add("Content-Disposition", "attachment; filename=ecdd_completed_report.xlsx");
+
+			return ResponseEntity.ok().headers(headersHttp).contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.body(new InputStreamResource(in));
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

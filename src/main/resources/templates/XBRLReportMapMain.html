@@ -796,37 +796,33 @@ PURPOSE		: ReportCodeMapping->ReportCodelist,
 
 
 
+								<!-- Example for UnMapped Table Body -->
 								<tbody id="arunfilter">
-									<tr th:each="listone,iterator : ${UnMapped_Accounts}"
-										th:style="${iterator.index > 300} ? 'display: none' : ''" class="userlist"
+									<tr th:each="listone : ${UnMapped_Accounts}" class="userlist"
 										style="cursor: pointer">
-
-
-										<td class="first_left"><a data-toggle="tooltip" class="editrec"
-												title="Click to Edit this Record"><i class="fas fa-edit"
-													th:classappend="${session.PERMISSIONS == 'W'}  ? addedit " th:attr="data-cust_id=${listone.cust_id},
-												data-foracid=${listone.foracid},
-												data-acct_name=${listone.acct_name},
-											    data-report_name_1=${listone.report_name_1},
-												data-report_label_1=${listone.report_label_1},					
-												data-schm_code=${listone.schm_code},
-												data-gl_sub_head_code=${listone.gl_sub_head_code},									
-												data-report_addl_criteria_1=${listone.report_addl_criteria_1}" onclick="editRecord(this)"></i></a></td>
-
-
-										<td th:text="${listone.cust_id}" style="text-align: right;">456</td>
-										<td th:text="${listone.foracid}">1</td>
-										<td th:text="${listone.acct_name}" style="width: 600px;">456</td>
+										<td class="first_left">
+											<a data-toggle="tooltip" class="editrec" title="Edit">
+												<i class="fas fa-edit" th:attr="data-cust_id=${listone.cust_id},
+								                            data-foracid=${listone.foracid},
+								                            data-acct_name=${listone.acct_name},
+								                            data-report_name_1=${listone.report_name_1},
+								                            data-report_label_1=${listone.report_label_1},
+								                            data-schm_code=${listone.schm_code},
+								                            data-gl_sub_head_code=${listone.gl_sub_head_code},
+								                            data-report_addl_criteria_1=${listone.report_addl_criteria_1}"
+													onclick="editRecord(this)"></i>
+											</a>
+										</td>
+										<td th:text="${listone.cust_id}"></td>
+										<td th:text="${listone.foracid}"></td>
+										<td th:text="${listone.acct_name}"></td>
 										<td th:text="${listone.report_name_1}"></td>
-										<td th:text="${listone.report_label_1}">TEST</td>
-
-										<td th:text="${listone.schm_code}">TEST</td>
-										<td th:text="${listone.gl_sub_head_code}">TEST</td>
-
-										<td th:text="${listone.report_addl_criteria_1}" style="width: 400px;">TEST</td>
-										<td></td>
-										<td></td>
-
+										<td th:text="${listone.report_label_1}"></td>
+										<td th:text="${listone.schm_code}"></td>
+										<td th:text="${listone.gl_sub_head_code}"></td>
+										<td th:text="${listone.report_addl_criteria_1}"></td>
+										<td></td> <!-- Criteria 2 -->
+										<td></td> <!-- Criteria 3 -->
 									</tr>
 								</tbody>
 							</table>

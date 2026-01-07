@@ -13,14 +13,13 @@ public interface BRF2_MAPPING_REPO extends JpaRepository<BRF2_MAPPING_ENTITY, St
 	@Query(value = "select * from BRF2_MAPPING_TABLE where report_name_1=?1", nativeQuery = true)
 	List<BRF2_MAPPING_ENTITY> getdesc(String report_name_1);
 
-	//Product_Mapping
+	// Product_Mapping
 	@Query(value = "select s.cust_id as custid, s.foracid as foracid, s.acct_name as acctname, s.report_name_1 as reportname1, "
-	        + "s.report_label_1 as reportlabel1, s.gl_sub_head_code as glsubheadcode, s.schm_code as schmcode, "
-	        + "s.report_addl_criteria_1 as reportaddlcriteria1, s.report_addl_criteria_2 as reportaddlcriteria2, "
-	        + "s.report_addl_criteria_3 as reportaddlcriteria3 "
-	        + "from BRF2_MAPPING_TABLE s where s.report_label_1=?1", nativeQuery = true)
+			+ "s.report_label_1 as reportlabel1, s.gl_sub_head_code as glsubheadcode, s.schm_code as schmcode, "
+			+ "s.report_addl_criteria_1 as reportaddlcriteria1, s.report_addl_criteria_2 as reportaddlcriteria2, "
+			+ "s.report_addl_criteria_3 as reportaddlcriteria3 "
+			+ "from BRF2_MAPPING_TABLE s where s.report_label_1=?1", nativeQuery = true)
 	List<BRF_PRODUCT_MAPPINGREPO> getproduct(String report_label_1);
-
 
 	@Query(value = "select * from BRF2_MAPPING_TABLE", nativeQuery = true)
 	List<BRF2_MAPPING_ENTITY> Mapping1();
@@ -34,27 +33,24 @@ public interface BRF2_MAPPING_REPO extends JpaRepository<BRF2_MAPPING_ENTITY, St
 	@Query(value = "SELECT * FROM BRF2_MAPPING_TABLE WHERE REPORT_NAME_1=?1", nativeQuery = true)
 	List<BRF2_MAPPING_ENTITY> getLiist(String REPORT_NAME_1);
 
-	//Mapped Query
-	@Query(value = "select s.cust_id as custid,s.foracid as foracid , s.acct_name as acctname , s.report_name_1 as reportname1 , "
-			+ " s.report_lable_1 as reportlabel1 , s.gl_sub_head_code as glsubheadcode , s.schm_code as schmcode,"
-			+ " s.report_addl_criteria_1 as reportaddlcriteria1,s.report_addl_criteria_2 as reportaddlcriteria2,s.report_addl_criteria_3 as reportaddlcriteria3"
-			+ " from BRF2_MAPPING_TABLE s  WHERE s.report_lable_1 is not null AND s.report_addl_criteria_1 IS NOT NULL"
-			+ " and s.report_name_1=?1", nativeQuery = true)
+	@Query(value = "select s.cust_id as custid, s.foracid as foracid, s.acct_name as acctname, s.report_name_1 as reportname1, "
+			+ "s.report_lable_1 as reportlabel1, s.glsh_code as glsubheadcode, s.schm_code as schmcode, "
+			+ "s.report_addl_criteria_1 as reportaddlcriteria1, '' as reportaddlcriteria2, '' as reportaddlcriteria3 "
+			+ "from BRF2_MAPPING_TABLE s WHERE s.report_lable_1 is not null AND s.report_addl_criteria_1 IS NOT NULL "
+			+ "and s.report_name_1=?1", nativeQuery = true)
 	List<BRF_MAPPING_PROPERTY> genMapped(String report_code);
 
-	//Unmapped Query
+	// Unmapped Query
 	@Query(value = "SELECT  s.cust_id as custid,s.foracid as foracid , s.acct_name as acctname , s.report_name_1 as reportname1 ,"
-			+ " s.report_lable_1 as reportlabel1 , s.gl_sub_head_code as glsubheadcode , s.schm_code as schmcode,"
+			+ " s.report_lable_1 as reportlabel1 , s.glsh_code as glsubheadcode , s.schm_code as schmcode,"
 			+ " s.report_addl_criteria_1 as reportaddlcriteria1,s.report_addl_criteria_2 as reportaddlcriteria2,s.report_addl_criteria_3 as reportaddlcriteria3"
 			+ " FROM BRF2_MAPPING_TABLE s WHERE s.report_lable_1 IS  NULL OR s.report_addl_criteria_1 IS NULL", nativeQuery = true)
 	List<BRF_MAPPING_PROPERTY> genUnMapped();
 
-	
 	@Query(value = "SELECT * FROM BRF2_MAPPING_TABLE WHERE SCHM_CODE = :scheme_code and GL_SUB_HEAD_CODE = :GL_SUB_HEAD_CODE", nativeQuery = true)
 	List<Object[]> getListByCustomerId(@Param("scheme_code") String scheme_code,
 			@Param("GL_SUB_HEAD_CODE") String GL_SUB_HEAD_CODE);
 
-	
 //	Query For Filter 
 	@Query(value = "SELECT s.cust_id as custid, s.foracid as foracid, s.acct_name as acctname, s.report_label_1 as reportlabel1, "
 			+ "s.gl_sub_head_code as glsubheadcode, s.schm_code as schmcode "

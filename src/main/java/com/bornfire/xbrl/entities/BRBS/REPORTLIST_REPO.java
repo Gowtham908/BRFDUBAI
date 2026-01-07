@@ -1,13 +1,10 @@
 package com.bornfire.xbrl.entities.BRBS;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import com.bornfire.xbrl.entities.BRF_REF_CODE_ENTITY;
 
 public interface REPORTLIST_REPO extends JpaRepository<BRF_MAPPING_ENTITY, String>, BRF_MAPPING {
 
@@ -33,21 +30,18 @@ public interface REPORTLIST_REPO extends JpaRepository<BRF_MAPPING_ENTITY, Strin
 			+ "from BRF_MAPPING_TABLE s where s.report_label_1=?1", nativeQuery = true)
 	List<BRF_PRODUCT_MAPPINGREPO> getproduct(String report_label_1);
 
-	@Query(value = "SELECT s.report_name_1 AS reportname1, s.foracid, "
-			+ "       s.report_label_1 AS reportlabel1, s.gl_sub_head_code AS glsubheadcode, "
-			+ "       s.report_addl_criteria_1 AS reportaddlcriteria1, "
-			+ "       s.report_addl_criteria_2 AS reportaddlcriteria2, "
-			+ "       s.report_addl_criteria_3 AS reportaddlcriteria3 " + "FROM BRF_MAPPING_TABLE s "
-			+ "WHERE s.report_label_1 IS NOT NULL " + "  AND s.report_addl_criteria_1 IS NOT NULL "
-			+ "  AND s.report_name_1 = ?1", nativeQuery = true)
+	@Query(value = "select s.cust_id as custid, s.foracid as foracid, s.acct_name as acctname, s.report_name_1 as reportname1, "
+	        + "s.report_lable_1 as reportlabel1, s.glsh_code as glsubheadcode, s.schm_code as schmcode, "
+	        + "s.report_addl_criteria_1 as reportaddlcriteria1, '' as reportaddlcriteria2, '' as reportaddlcriteria3 " // Use empty string if columns don't exist
+	        + "from BRF1_MAPPING_TABLE s WHERE s.report_lable_1 is not null AND s.report_addl_criteria_1 IS NOT NULL "
+	        + "and s.report_name_1=?1", nativeQuery = true)
 	List<BRF_MAPPING_PROPERTY> genMapped(String report_code);
 
-	@Query(value = "SELECT s.report_name_1 AS reportname1, s.foracid, "
-			+ "       s.report_label_1 AS reportlabel1, s.gl_sub_head_code AS glsubheadcode, "
-			+ "       s.report_addl_criteria_1 AS reportaddlcriteria1, "
-			+ "       s.report_addl_criteria_2 AS reportaddlcriteria2, "
-			+ "       s.report_addl_criteria_3 AS reportaddlcriteria3 " + "FROM BRF_MAPPING_TABLE s "
-			+ "WHERE s.report_label_1 IS NULL " + "  AND s.report_addl_criteria_1 IS NULL", nativeQuery = true)
+	@Query(value = "select s.cust_id as custid, s.foracid as foracid, s.acct_name as acctname, s.report_name_1 as reportname1, "
+	        + "s.report_lable_1 as reportlabel1, s.glsh_code as glsubheadcode, s.schm_code as schmcode, "
+	        + "s.report_addl_criteria_1 as reportaddlcriteria1, '' as reportaddlcriteria2, '' as reportaddlcriteria3 "
+	        + "from BRF1_MAPPING_TABLE s "
+	        + "WHERE s.report_lable_1 IS NULL OR s.report_addl_criteria_1 IS NULL", nativeQuery = true)
 	List<BRF_MAPPING_PROPERTY> genUnMapped();
 
 	@Query(value = "SELECT * FROM BRF_MAPPING_TABLE WHERE SCHM_CODE = :scheme_code and gl_sub_head_code = :gl_sub_head_code", nativeQuery = true)
